@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import About from './components/About';
@@ -6,39 +6,18 @@ import Portfolio from './components/Portfolio';
 import ExperienceComponent from './components/Experience';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
-import type { Project, Experience, Education } from './types';
+import PrintButton from './components/PrintButton';
 import { GitHubIcon, LinkedInIcon } from './components/Icons';
-
-const projects: Project[] = [
-    { name: 'Belajar NestJS (API)', description: 'Proyek fundamental untuk mempelajari framework NestJS dalam membangun API yang scalable dan efisien.', problem: 'Memahami arsitektur backend modern menggunakan NestJS.', tech: ['NestJS', 'TypeScript', 'TypeORM'], links: [{ type: 'github', url: 'https://github.com/TioHaidarHanif/belajar-nestjs' }] },
-    { name: 'QR Generator', description: 'Aplikasi web sederhana untuk membuat kode QR secara dinamis dari input teks atau URL.', problem: 'Menyediakan alat yang cepat dan mudah untuk membuat kode QR.', links: [{ type: 'live', url: 'https://wajihah-qr-generator.pages.dev/' }] },
-    { name: 'TA Backend', description: 'Sistem backend untuk aplikasi tugas akhir yang menangani logika bisnis dan manajemen data.', problem: 'Menyediakan API yang andal untuk aplikasi capstone project.', links: [{ type: 'github', url: 'https://github.com/TioHaidarHanif/Draft-Tugas-Akhir' }, { type: 'postman', url: 'https://capstone-bang.postman.co/' }] },
-    { name: 'Surat Generator', description: 'Alat untuk membuat dokumen surat formal secara otomatis berdasarkan template yang ada.', problem: 'Mempercepat proses pembuatan surat yang seringkali repetitif.', links: [{ type: 'live', url: 'https://tiohaidarhanif.github.io/Surat-Generator/' }] },
-    { name: 'Statistik Chat WA', description: 'Menganalisis dan memvisualisasikan data dari ekspor riwayat obrolan WhatsApp.', problem: 'Memberikan wawasan dari data percakapan WhatsApp yang tidak terstruktur.', links: [{ type: 'live', url: 'https://atiohaidar.github.io/statistik-chat-wa/' }] },
-    { name: 'Extractor Metadata Penelitian', description: 'Alat untuk mengekstrak metadata penting dari dokumen penelitian secara otomatis.', problem: 'Mengurangi waktu entri data manual untuk metadata penelitian.', links: [{ type: 'live', url: 'https://atiohaidar.github.io/extractor-metadata-of-research/' }] },
-    { name: 'Verifikasi Publikasi', description: 'Aplikasi untuk memfilter dan memverifikasi data publikasi dari Google Scholar.', problem: 'Memastikan akurasi dan klasifikasi data publikasi dosen.', links: [{ type: 'live', url: 'https://atiohaidar.github.io/filter-data-verif-gs-ppm/' }] },
-    { name: 'Bot Telegram Google Appscript', description: 'Bot Telegram yang dibangun di atas Google Appscript untuk otomatisasi tugas MSDM.', problem: 'Otomatisasi proses manajemen sumber daya manusia melalui Telegram.', links: [{ type: 'github', url: 'https://github.com/Al-Fath-Developer/Bot-Telegram-MSDM-Prada-1446H' }] },
-    { name: 'Google Appscript Template', description: 'Template kode Google Appscript untuk menambahkan fungsionalitas kustom di Google Sheets.', problem: 'Menyediakan solusi boilerplate untuk otomatisasi tugas di Spreadsheet.', links: [{ type: 'github', url: 'https://github.com/Al-Fath-Developer/AlFathTemplate2024' }] },
-];
-
-const experiences: Experience[] = [
-    { date: 'Sep 2025 - Sekarang', title: 'Asisten Praktikum Pemrograman Web', company: 'Informatics Lab - Telkom University', description: 'Membantu mahasiswa memahami konsep dan menyelesaikan tugas praktikum. Melakukan penilaian tugas.' },
-    { date: 'Agu 2025 - Sep 2025', title: 'Verifikator data Google Scholar (TLH)', company: 'Direktorat Penelitian dan Pengabdian Masyarakat - Telkom University', description: 'Verifikasi data publikasi dosen dari Google Scholar, memastikan akurasi klasifikasi jurnal dan konferensi. Membuat otomatisasi tugas repetitif untuk efisiensi.' },
-    { date: 'Feb 2025 - Jun 2025', title: 'Asisten Praktikum Basis Data', company: 'Informatics Lab - Telkom University', description: 'Membantu mahasiswa dalam memahami konsep basis data dan menyelesaikan tugas praktikum. Melakukan penilaian tugas.' },
-    { date: 'Sep 2024 - Des 2024', title: 'Asisten Praktikum Algoritma Pemrograman dan Pemrograman Web', company: 'Informatics Lab - Telkom University', description: 'Membantu mahasiswa dalam memahami konsep basis data dan menyelesaikan tugas praktikum. Melakukan penilaian tugas.' },
-];
-
-const education: Education[] = [
-    { date: 'Sep 2021 - Nov 2025 (Expected)', degree: 'Sarjana S1 Rekayasa Perangkat Lunak', institution: 'Universitas Telkom - Bandung' },
-];
+import { getProfile, getAbout, getProjects, getExperiences, getEducation } from './api';
+import type { Profile, About as AboutType, Project, Experience, Education, SocialLinks as SocialLinksType } from './types';
 
 
-const SocialLinks: React.FC = () => (
-    <div className="hidden md:flex flex-col items-center fixed bottom-0 left-10 z-10">
-        <a href="https://github.com/TioHaidarHanif" target="_blank" rel="noopener noreferrer" className="text-soft-gray hover:text-accent-blue p-2 transition-all hover:-translate-y-1">
+const SocialLinks: React.FC<{ socials: SocialLinksType }> = ({ socials }) => (
+    <div className="hidden md:flex flex-col items-center fixed bottom-0 left-10 z-10 print:hidden">
+        <a href={socials.github} target="_blank" rel="noopener noreferrer" className="text-soft-gray hover:text-accent-blue p-2 transition-all hover:-translate-y-1">
             <GitHubIcon className="w-6 h-6" />
         </a>
-        <a href="https://www.linkedin.com/in/tiohaidarhanif/" target="_blank" rel="noopener noreferrer" className="text-soft-gray hover:text-accent-blue p-2 transition-all hover:-translate-y-1">
+        <a href={socials.linkedin} target="_blank" rel="noopener noreferrer" className="text-soft-gray hover:text-accent-blue p-2 transition-all hover:-translate-y-1">
             <LinkedInIcon className="w-6 h-6" />
         </a>
         <div className="w-px h-24 bg-soft-gray mt-2"></div>
@@ -46,18 +25,86 @@ const SocialLinks: React.FC = () => (
 );
 
 const App: React.FC = () => {
+    const [profile, setProfile] = useState<Profile | null>(null);
+    const [about, setAbout] = useState<AboutType | null>(null);
+    const [projects, setProjects] = useState<Project[]>([]);
+    const [experiences, setExperiences] = useState<Experience[]>([]);
+    const [education, setEducation] = useState<Education[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                const [profileData, aboutData, projectsData, experiencesData, educationData] = await Promise.all([
+                    getProfile(),
+                    getAbout(),
+                    getProjects(),
+                    getExperiences(),
+                    getEducation(),
+                ]);
+                setProfile(profileData);
+                setAbout(aboutData);
+                setProjects(projectsData);
+                setExperiences(experiencesData);
+                setEducation(educationData);
+            } catch (err) {
+                setError('Failed to load portfolio data. Please try again later.');
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadData();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-deep-navy text-accent-blue text-xl font-poppins">
+                Loading Portfolio...
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-deep-navy text-red-500 text-xl font-poppins">
+                {error}
+            </div>
+        );
+    }
+    
+    if (!profile || !about) {
+        return null; // Should not happen if loading is false and no error, but good for type safety
+    }
+
     return (
         <div className="relative">
-            <Navbar />
-            <SocialLinks />
+            <Navbar logoSrc={profile.logoSrc} />
+            <SocialLinks socials={profile.socials} />
             <main className="mx-auto">
-                <Hero />
-                <About />
+                <Hero 
+                    greeting={profile.heroGreeting}
+                    name={profile.name}
+                    tagline={profile.heroTagline}
+                    bio={profile.heroBio}
+                    linkedinUrl={profile.socials.linkedin}
+                />
+                <About 
+                    description={about.description}
+                    coreValues={about.coreValues}
+                    interests={about.interests}
+                />
                 <Portfolio projects={projects} />
                 <ExperienceComponent experiences={experiences} education={education} />
-                <Contact />
+                <Contact 
+                    pitch={profile.contactPitch}
+                    linkedinUrl={profile.socials.linkedin}
+                />
             </main>
-            <Footer />
+            <Footer socials={profile.socials} copyright={profile.copyright} />
+            <PrintButton />
         </div>
     );
 }

@@ -1,0 +1,15 @@
+
+{
+  "name": "Tio Haidar Hanif",
+  "logoSrc": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAAoACgDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAn/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AJVAAAAAAAAAAAAAAAAAA//2gAMAwEAAhEDEQA/AJVAAAAAAAAAAAAAAAAAA//2gAMAwEAAhEDEQA/AJVAAAAAAAAAAAAAAAAAA//2gAMAwEAAhEDEQA/AJVAAAAAAAAAAAAAAAAAA//2Q==",
+  "heroGreeting": "Halo, nama saya",
+  "heroTagline": "Saya Membangun Solusi Digital Inovatif.",
+  "heroBio": "Saya adalah seorang lulusan S1 Rekayasa Perangkat Lunak dari Universitas Telkom dengan minat mendalam pada pengembangan perangkat lunak, khususnya di bidang backend. Saya memiliki semangat belajar yang tinggi, rasa ingin tahu yang besar, dan kemampuan beradaptasi yang cepat.",
+  "contactPitch": "Meskipun saya saat ini tidak sedang mencari peluang baru, saya selalu terbuka untuk berdiskusi. Jika Anda ingin bertanya atau sekadar menyapa, jangan ragu untuk terhubung dengan saya di LinkedIn.",
+  "socials": {
+    "github": "https://github.com/atiohaidar",
+    "linkedin": "https://www.linkedin.com/in/atiohaidar/",
+    "instagram": "https://www.instagram.com/tiohaidarhanif"
+  },
+  "copyright": "Didesain & Dibangun oleh AISTUDIO Google"
+}
