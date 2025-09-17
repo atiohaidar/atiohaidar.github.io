@@ -233,49 +233,9 @@ Proyek ini dimungkinkan berkat kontribusi komunitas open source:
 
 ---
 
-## Lisensi
-
-Proyek ini menggunakan lisensi MIT. Anda bebas untuk menggunakan, memodifikasi, dan mendistribusikan kode ini dengan tetap mencantumkan credit yang sesuai.
-
-### MIT License
-```
-Copyright (c) 2025 Tio Haidar Hanif
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-```
-
----
-
 ## AI-Powered Development Process
 
-Website ini dikembangkan dengan memanfaatkan AI tools modern untuk mengoptimalkan kualitas kode dan efisiensi development:
-
-### AI Studio Google Integration
-- **Architecture Planning**: Menggunakan AI Studio untuk merancang struktur komponen dan data flow yang optimal
-- **Problem Solving**: AI assistance dalam menyelesaikan complex challenges seperti print optimization dan responsive design
-- **Code Review**: AI-powered analysis untuk memastikan best practices dan code quality
-- **Performance Optimization**: AI recommendations untuk improving loading times dan user experience
-
-### GitHub Copilot Workflow
-- **Smart Code Completion**: Accelerated development dengan intelligent code suggestions
-- **Refactoring Assistance**: AI-guided refactoring untuk maintainable dan scalable code structure
-- **Documentation Generation**: Auto-generated JSDoc comments dan comprehensive documentation
-- **Testing Strategy**: AI-assisted test planning dan implementation guidance
-
-### Hybrid Development Approach
-- **Human Creativity + AI Efficiency**: Menggabungkan creative vision manusia dengan AI capabilities untuk optimal results
-- **Iterative Development**: AI-assisted iteration cycles untuk continuous improvement
-- **Quality Assurance**: AI tools untuk code validation, error detection, dan performance monitoring
-- **Best Practices Implementation**: AI guidance dalam applying modern React patterns dan TypeScript conventions
-
+Website ini dikembangkan dengan memanfaatkan AI tools modern untuk mengoptimalkan kualitas kode dan efisiensi development: AI Studio Google dan Github Copilot Agent Mode
 ---
 
 ## Contact & Support
