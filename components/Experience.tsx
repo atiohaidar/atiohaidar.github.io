@@ -1,8 +1,16 @@
+/**
+ * @file Komponen untuk bagian "Pengalaman".
+ * Menampilkan linimasa (timeline) untuk pengalaman kerja dan pendidikan.
+ */
 import React from 'react';
+import Section from './Section';
 import type { Experience, Education } from '../types';
-import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 
-
+/**
+ * Komponen untuk menampilkan satu item dalam linimasa.
+ * Dapat digunakan untuk pengalaman kerja maupun pendidikan.
+ * @param {{ item: Experience | Education }} props Props yang berisi detail item.
+ */
 const TimelineItem: React.FC<{ item: Experience | Education }> = ({ item }) => (
     <div className="relative pl-8 sm:pl-12 py-4 group print-avoid-break">
         <div className="absolute left-0 h-full w-px bg-soft-gray/30 print:bg-gray-400"></div>
@@ -18,19 +26,17 @@ const TimelineItem: React.FC<{ item: Experience | Education }> = ({ item }) => (
     </div>
 );
 
+/**
+ * Props untuk komponen Experience.
+ */
+interface ExperienceProps {
+  experiences: Experience[];
+  education: Education[];
+}
 
-const ExperienceComponent: React.FC<{ experiences: Experience[], education: Education[] }> = ({ experiences, education }) => {
-    const [ref, isIntersecting] = useIntersectionObserver({ threshold: 0.1 });
-    const animationClass = isIntersecting ? 'animate-fade-in-up' : 'opacity-0';
-
+const ExperienceComponent: React.FC<ExperienceProps> = ({ experiences, education }) => {
     return (
-        <section id="experience" ref={ref} className={`py-24 container mx-auto px-6 md:px-10 max-w-3xl print-break-before print:py-12 ${animationClass}`}>
-            <h2 className="text-2xl md:text-3xl font-poppins font-bold text-white mb-12 flex items-center print:text-black print:text-2xl">
-                <span className="text-accent-blue mr-3 print:text-gray-600">03.</span>
-                Pengalaman
-                <span className="h-px w-20 sm:w-40 bg-soft-gray/30 ml-4 print:bg-gray-400"></span>
-            </h2>
-
+        <Section id="experience" number="04" title="Pengalaman" className="max-w-3xl">
             <div className="space-y-8">
                 <div>
                     <h3 className="text-xl font-poppins text-light-slate mb-6 print:text-black">Pengalaman Kerja</h3>
@@ -50,7 +56,7 @@ const ExperienceComponent: React.FC<{ experiences: Experience[], education: Educ
                     </div>
                 </div>
             </div>
-        </section>
+        </Section>
     );
 };
 

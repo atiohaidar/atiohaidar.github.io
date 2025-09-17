@@ -1,22 +1,24 @@
+/**
+ * @file Komponen untuk bagian "Tentang Saya".
+ * Menampilkan deskripsi naratif, nilai-nilai inti (core values), dan minat.
+ */
 import React from 'react';
+import Section from './Section';
 import type { About as AboutType } from '../types';
-import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 
-const SectionTitle: React.FC<{ number: string; title: string }> = ({ number, title }) => (
-    <h2 className="text-2xl md:text-3xl font-poppins font-bold text-white mb-8 flex items-center print:text-black print:text-2xl">
-        <span className="text-accent-blue mr-3 print:text-gray-600">{number}.</span>
-        {title}
-        <span className="h-px w-20 sm:w-40 bg-soft-gray/30 ml-4 print:bg-gray-400"></span>
-    </h2>
-);
+/**
+ * Props untuk komponen About.
+ * Menerima semua data yang diperlukan untuk ditampilkan.
+ */
+interface AboutProps {
+  data: AboutType;
+}
 
-const About: React.FC<AboutType> = ({ description, coreValues, interests }) => {
-    const [ref, isIntersecting] = useIntersectionObserver({ threshold: 0.1 });
-    const animationClass = isIntersecting ? 'animate-fade-in-up' : 'opacity-0';
+const About: React.FC<AboutProps> = ({ data }) => {
+    const { description, coreValues, interests } = data;
 
     return (
-        <section id="about" ref={ref} className={`py-24 container mx-auto px-6 md:px-10 print-break-before print:py-12 ${animationClass}`}>
-            <SectionTitle number="01" title="Tentang Saya" />
+        <Section id="about" number="01" title="Tentang Saya">
             <div className="grid grid-cols-1 md:grid-cols-5 gap-12">
                 <div className="md:col-span-3 text-soft-gray space-y-4 leading-relaxed print:text-black">
                     {description.map((paragraph, index) => (
@@ -42,7 +44,7 @@ const About: React.FC<AboutType> = ({ description, coreValues, interests }) => {
                     </div>
                 </div>
             </div>
-        </section>
+        </Section>
     );
 };
 

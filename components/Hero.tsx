@@ -1,10 +1,22 @@
+/**
+ * @file Komponen Hero, bagian pertama yang dilihat pengguna.
+ * Menampilkan perkenalan singkat, nama, tagline, bio, dan tombol CTA.
+ */
 import React from 'react';
 
+/**
+ * Props untuk komponen Hero.
+ */
 interface HeroProps {
+    /** Teks sapaan, mis. "Halo, nama saya". */
     greeting: string;
+    /** Nama lengkap. */
     name: string;
+    /** Tagline atau jabatan. */
     tagline: string;
+    /** Paragraf bio singkat. */
     bio: string;
+    /** URL profil LinkedIn untuk ditampilkan di versi cetak. */
     linkedinUrl: string;
 }
 

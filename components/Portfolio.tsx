@@ -1,9 +1,21 @@
+/**
+ * @file Komponen untuk bagian "Portofolio".
+ * Menampilkan grid proyek-proyek yang telah dikerjakan.
+ */
 import React from 'react';
+import Section from './Section';
 import type { Project } from '../types';
 import { GitHubIcon, ExternalLinkIcon, PostmanIcon, FolderIcon } from './Icons';
-import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 
+/**
+ * Komponen kartu untuk menampilkan satu proyek.
+ * @param {{ project: Project }} props Props yang berisi detail proyek.
+ */
 const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
+    /**
+     * Mengembalikan komponen ikon berdasarkan tipe tautan.
+     * @param {Project['links'][0]['type']} type Tipe tautan ('github', 'live', 'postman').
+     */
     const getIconForLink = (type: Project['links'][0]['type']) => {
         const iconProps = { className: "w-5 h-5 mr-2 flex-shrink-0" };
         switch (type) {
@@ -36,7 +48,7 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
                             href={link.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center text-sm text-soft-gray hover:text-accent-blue transition-colors duration-300 group/link print:text-blue-600 print:hover:text-blue-800"
+                            className="flex items-center text-sm text-soft-gray hover:text-accent-blue transition-colors duration-300 group/link print:text-blue-600 print:hover:text-blue-800 overflow-hidden"
                         >
                             {getIconForLink(link.type)}
                             <span className="truncate group-hover/link:underline">{link.url.replace(/^https?:\/\//, '')}</span>
@@ -53,23 +65,23 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
     );
 };
 
+/**
+ * Props untuk komponen Portfolio.
+ */
+interface PortfolioProps {
+  /** Daftar proyek yang akan ditampilkan. */
+  projects: Project[];
+}
 
-const Portfolio: React.FC<{ projects: Project[] }> = ({ projects }) => {
-     const [ref, isIntersecting] = useIntersectionObserver({ threshold: 0.1 });
-     const animationClass = isIntersecting ? 'animate-fade-in-up' : 'opacity-0';
-
+const Portfolio: React.FC<PortfolioProps> = ({ projects }) => {
     return (
-        <section id="portfolio" ref={ref} className={`py-24 container mx-auto px-6 md:px-10 print-break-before print:py-12 ${animationClass}`}>
-            <h2 className="text-2xl md:text-3xl font-poppins font-bold text-white mb-8 flex items-center justify-center print:text-black print:text-2xl">
-                <span className="text-accent-blue mr-3 print:text-gray-600">02.</span>
-                Portofolio
-            </h2>
+        <Section id="portfolio" number="03" title="Portofolio" centerTitle>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 print:grid-cols-1">
                 {projects.map((project, index) => (
                     <ProjectCard key={index} project={project} />
                 ))}
             </div>
-        </section>
+        </Section>
     );
 };
 

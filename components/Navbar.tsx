@@ -1,14 +1,16 @@
+/**
+ * @file Komponen Navbar yang bersifat sticky dan responsif.
+ * Menampilkan navigasi utama dan beradaptasi ke menu mobile pada layar kecil.
+ */
 import React, { useState, useEffect } from 'react';
+import { NAV_LINKS } from '../constants';
 
-const navLinks = [
-    { name: 'Tentang Saya', href: '#about' },
-    { name: 'Portofolio', href: '#portfolio' },
-    { name: 'Pengalaman', href: '#experience' },
-    { name: 'Kontak', href: '#contact' },
-];
-
+/**
+ * Props untuk komponen Navbar.
+ */
 interface NavbarProps {
-    logoSrc: string;
+  /** Sumber (URL atau data URI) untuk gambar logo. */
+  logoSrc: string;
 }
 
 const Navbar: React.FC<NavbarProps> = ({ logoSrc }) => {
@@ -32,7 +34,7 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc }) => {
                 
                 {/* Desktop Nav */}
                 <ul className="hidden md:flex items-center space-x-8">
-                    {navLinks.map((link, index) => (
+                    {NAV_LINKS.map((link, index) => (
                         <li key={link.name}>
                             <a href={link.href} className="text-light-slate hover:text-accent-blue transition-colors duration-300">
                                 <span className="text-accent-blue mr-1">0{index + 1}.</span>{link.name}
@@ -58,7 +60,7 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc }) => {
             {/* Mobile Menu */}
             <div className={`md:hidden fixed top-0 right-0 h-full w-3/4 bg-light-navy transform transition-transform duration-300 ease-in-out ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
                 <ul className="flex flex-col items-center justify-center h-full space-y-8">
-                    {navLinks.map((link, index) => (
+                    {NAV_LINKS.map((link, index) => (
                         <li key={link.name}>
                             <a href={link.href} onClick={() => setIsMenuOpen(false)} className="text-2xl text-light-slate hover:text-accent-blue transition-colors duration-300">
                                 <span className="text-accent-blue mr-2">0{index + 1}.</span>{link.name}

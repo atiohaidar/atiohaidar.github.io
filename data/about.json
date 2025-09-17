@@ -5,13 +5,12 @@
     "Dengan latar belakang di Rekayasa Perangkat Lunak, saya memiliki pemahaman yang kuat tentang siklus hidup pengembangan perangkat lunak, mulai dari analisis kebutuhan hingga penerapan dan pemeliharaan. Saya selalu tertarik untuk menjelajahi teknologi baru dan menerapkannya untuk menciptakan solusi yang efisien dan andal."
   ],
   "coreValues": [
-    { "title": "Innovation", "description": "Selalu mencari solusi baru." },
-    { "title": "Reliability", "description": "Konsistensi dalam kualitas hasil." },
-    { "title": "Problem-Solving", "description": "Fokus menyelesaikan masalah." },
-    { "title": "Continuous Learning", "description": "Selalu berkembang." }
+    { "title": "Innovation", "description": "Selalu mencari solusi yang lebih efektif dan efisien." },
+    { "title": "Curiosity", "description": "Memiliki rasa keingintahuan yang tinggi terhadap hal yang menarik." },
+    { "title": "Continuous Learning", "description": "Masih belajar untuk memperbaiki diri." }
   ],
   "interests": [
-    { "title": "Integrasi AI", "description": "Untuk segala pekerjaan." },
-    { "title": "Workflow Simplification", "description": "Melalui otomasi." }
+    { "title": "Workflow Simplification", "description": "Mempermudah tugas melalui otomasi (jika memungkinkan)" },
+    { "title": "Integrasi AI", "description": "Untuk segala pekerjaan, terutama yang bersifat repetitif" }
   ]
 }

@@ -1,18 +1,23 @@
+/**
+ * @file Komponen untuk bagian "Kontak".
+ * Menampilkan ajakan untuk terhubung dan sebuah tombol yang mengarah ke profil LinkedIn.
+ */
 import React from 'react';
-import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
+import Section from './Section';
 
+/**
+ * Props untuk komponen Contact.
+ */
 interface ContactProps {
+    /** Teks ajakan untuk menghubungi. */
     pitch: string;
+    /** URL profil LinkedIn. */
     linkedinUrl: string;
 }
 
 const Contact: React.FC<ContactProps> = ({ pitch, linkedinUrl }) => {
-    const [ref, isIntersecting] = useIntersectionObserver({ threshold: 0.1 });
-    const animationClass = isIntersecting ? 'animate-fade-in-up' : 'opacity-0';
-
     return (
-        <section id="contact" ref={ref} className={`py-24 container mx-auto px-6 md:px-10 text-center max-w-2xl print-break-before print:py-12 ${animationClass}`}>
-            <h2 className="text-lg text-accent-blue font-poppins mb-2 print:text-gray-600">04. Apa Selanjutnya?</h2>
+        <Section id="contact" number="05" title="Apa Selanjutnya?" className="text-center max-w-2xl">
             <h3 className="text-4xl font-poppins font-bold text-white mb-4 print:text-black print:text-3xl">Terhubung Dengan Saya</h3>
             <p className="text-soft-gray leading-relaxed mb-8 print:text-black">
                 {pitch}
@@ -24,7 +29,7 @@ const Contact: React.FC<ContactProps> = ({ pitch, linkedinUrl }) => {
                 <p>Anda dapat menemukan saya di LinkedIn:</p>
                 <p className="font-semibold text-blue-600">{linkedinUrl}</p>
             </div>
-        </section>
+        </Section>
     );
 };
 
