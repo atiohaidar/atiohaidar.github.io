@@ -21,19 +21,31 @@ import type { Profile, About as AboutType, Project, ResearchItem, Experience, Ed
 
 
 const SocialLinks: React.FC<{ socials: SocialLinksType }> = ({ socials }) => (
-    <div className="hidden md:flex flex-col items-center fixed bottom-0 left-10 z-10 print:hidden">
-        <a href={socials.github} target="_blank" rel="noopener noreferrer" className="text-soft-gray hover:text-accent-blue p-2 transition-all hover:-translate-y-1">
-            <GitHubIcon className="w-6 h-6" />
-        </a>
-        <a href={socials.linkedin} target="_blank" rel="noopener noreferrer" className="text-soft-gray hover:text-accent-blue p-2 transition-all hover:-translate-y-1">
-            <LinkedInIcon className="w-6 h-6" />
-        </a>
-        {socials.instagram && (
-            <a href={socials.instagram} target="_blank" rel="noopener noreferrer" className="text-soft-gray hover:text-accent-blue p-2 transition-all hover:-translate-y-1">
-                <InstagramIcon className="w-6 h-6" />
+    <div className="hidden md:flex flex-col items-center fixed bottom-24 right-6 z-10 print:hidden group">
+        {/* Background circle overlay that covers all icons initially */}
+        <div className="absolute inset-0 bg-light-navy rounded-full w-12 h-12 flex items-center justify-center transition-all duration-300 group-hover:opacity-0 group-hover:scale-0 shadow-lg">
+            <div className="w-6 h-6 bg-accent-blue rounded-full flex items-center justify-center">
+                <span className="text-deep-navy text-xs font-bold">+</span>
+            </div>
+        </div>
+        
+        {/* Social media icons - initially stacked and hidden */}
+        <div className="flex flex-col items-center space-y-2 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-100">
+            <a href={socials.github} target="_blank" rel="noopener noreferrer" className="text-soft-gray hover:text-accent-blue p-2 transition-all hover:-translate-y-1 bg-light-navy rounded-full shadow-md transform translate-y-8 group-hover:translate-y-0" style={{ transitionDelay: '0.1s' }}>
+                <GitHubIcon className="w-5 h-5" />
             </a>
-        )}
-        <div className="w-px h-24 bg-soft-gray mt-2"></div>
+            <a href={socials.linkedin} target="_blank" rel="noopener noreferrer" className="text-soft-gray hover:text-accent-blue p-2 transition-all hover:-translate-y-1 bg-light-navy rounded-full shadow-md transform translate-y-8 group-hover:translate-y-0" style={{ transitionDelay: '0.15s' }}>
+                <LinkedInIcon className="w-5 h-5" />
+            </a>
+            {socials.instagram && (
+                <a href={socials.instagram} target="_blank" rel="noopener noreferrer" className="text-soft-gray hover:text-accent-blue p-2 transition-all hover:-translate-y-1 bg-light-navy rounded-full shadow-md transform translate-y-8 group-hover:translate-y-0" style={{ transitionDelay: '0.2s' }}>
+                    <InstagramIcon className="w-5 h-5" />
+                </a>
+            )}
+        </div>
+        
+        {/* Vertical line that appears after icons expand */}
+        <div className="w-px h-16 bg-soft-gray mt-2 opacity-0 group-hover:opacity-100 transition-all duration-300 delay-300"></div>
     </div>
 );
 
@@ -103,9 +115,9 @@ const App: React.FC = () => {
 
     // Merender UI utama setelah data berhasil dimuat
     return (
-        <div className="relative">
-            <Navbar logoSrc={profile.logoSrc} />
-            <SocialLinks socials={profile.socials} />
+        <div className="relative print-preserve-colors">
+            <Navbar logoSrc={profile.logoSrc} socials={profile.socials} />
+            {/* <SocialLinks socials={profile.socials} /> */}
             <main className="mx-auto">
                 <Hero 
                     greeting={profile.heroGreeting}

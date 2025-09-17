@@ -36,7 +36,7 @@ interface ExperienceProps {
 
 const ExperienceComponent: React.FC<ExperienceProps> = ({ experiences, education }) => {
     return (
-        <Section id="experience" number="04" title="Pengalaman" className="max-w-3xl">
+        <Section id="experience" number="04" title="Pengalaman" className="max-w-3xl" delay={2000} printPageBreak={true}>
             <div className="space-y-8">
                 <div>
                     <h3 className="text-xl font-poppins text-light-slate mb-6 print:text-black">Pengalaman Kerja</h3>

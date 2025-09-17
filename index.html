@@ -2,7 +2,7 @@
 <html lang="id" style="scroll-behavior: smooth;">
 <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="./PP-Tio.jpg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tio Haidar Hanif | Software Developer</title>
     
@@ -50,20 +50,236 @@
         scrollbar-width: none;  /* Firefox */
       }
       
+      /* Print color classes that ensure colors are preserved */
+      .print-preserve-colors * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      
       @media print {
         @page {
           size: A4;
           margin: 0.75in;
         }
         
+        /* Force print background colors and images */
+        * {
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+        
         /* Utility to avoid breaking elements across pages */
         .print-avoid-break {
-            break-inside: avoid;
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
         }
 
         /* Utility for page breaks */
         .print-break-before {
             break-before: page;
+        }
+        
+        /* Remove unnecessary page breaks for certain sections */
+        .print-no-break {
+            break-before: auto !important;
+        }
+        
+        /* Smart page breaks - only when needed */
+        @media print {
+            /* Remove forced page breaks from sections that don't need them */
+            #portfolio {
+                break-before: auto !important;
+            }
+            
+            /* Force page break for major sections */
+            #research, #experience, #contact {
+                break-before: page !important;
+            }
+            
+            /* Ensure no empty pages by controlling margins */
+            section {
+                margin-bottom: 0 !important;
+            }
+            
+            /* Compact footer to avoid empty pages */
+            footer {
+                margin-top: 1rem !important;
+                margin-bottom: 0 !important;
+            }
+        }
+        
+        /* Special handling for About section to stay in one page */
+        #about {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+        }
+        
+        /* Compact print layout for About section */
+        @media print {
+            #about .grid {
+                gap: 1.5rem !important;
+            }
+            
+            #about p, #about li {
+                font-size: 0.875rem !important;
+                line-height: 1.4 !important;
+            }
+            
+            #about h3 {
+                font-size: 1rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+        }
+        
+        /* Ensure body maintains website styling */
+        body {
+          background-color: #222222 !important;
+          color: #AAAAAA !important;
+        }
+        
+        /* Preserve website colors for headings */
+        h1, h2, h3, h4, h5, h6 {
+          color: #FFFFFF !important;
+        }
+        
+        /* Preserve accent colors */
+        .text-accent-blue {
+          color: #E0E0E0 !important;
+        }
+        
+        .bg-accent-blue {
+          background-color: #E0E0E0 !important;
+        }
+        
+        /* Preserve card backgrounds */
+        .bg-light-navy {
+          background-color: #494949 !important;
+        }
+        
+        .bg-deep-navy {
+          background-color: #222222 !important;
+        }
+        
+        /* Preserve text colors */
+        .text-white {
+          color: #FFFFFF !important;
+        }
+        
+        .text-soft-gray {
+          color: #AAAAAA !important;
+        }
+        
+        .text-light-slate {
+          color: #D0D0D0 !important;
+        }
+        
+        /* Preserve gradients and shadows for print */
+        .shadow-lg, .shadow-md {
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
+        }
+        
+        /* Ensure rounded corners are preserved */
+        .rounded-md, .rounded-lg {
+          border-radius: 0.375rem !important;
+        }
+        
+        .rounded-full {
+          border-radius: 9999px !important;
+        }
+        
+        /* Override any print-specific overrides that remove colors */
+        .print\\:text-black {
+          color: #FFFFFF !important;
+        }
+        
+        .print\\:text-gray-600 {
+          color: #AAAAAA !important;
+        }
+        
+        .print\\:text-gray-800 {
+          color: #AAAAAA !important;
+        }
+        
+        .print\\:bg-white {
+          background-color: #494949 !important;
+        }
+        
+        .print\\:bg-transparent {
+          background-color: #494949 !important;
+        }
+        
+        /* Ensure links maintain their styling and are clickable in PDF */
+        a {
+          color: #E0E0E0 !important;
+          text-decoration: underline !important;
+        }
+        
+        a:hover {
+          color: #FFFFFF !important;
+        }
+        
+        /* Ensure PDF links are clearly visible and clickable */
+        a[href^="http"], a[href^="https"] {
+          color: #E0E0E0 !important;
+          text-decoration: underline !important;
+          border-bottom: 1px solid #E0E0E0 !important;
+        }
+        
+        a[href^="http"]:after, a[href^="https"]:after {
+          content: " 🔗";
+          font-size: 0.8em;
+          opacity: 0.7;
+        }
+        
+        /* Make sure link text is not truncated in print */
+        .truncate {
+          overflow: visible !important;
+          text-overflow: clip !important;
+          white-space: normal !important;
+        }
+        
+        /* Ensure all links have pointer cursor and are recognizable */
+        a {
+          cursor: pointer !important;
+        }
+        
+        /* Portfolio cards should maintain compact size */
+        .print\\:grid-cols-2 {
+          grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        }
+        
+        /* Ensure card content doesn't overflow */
+        .print\\:gap-4 {
+          gap: 1rem !important;
+        }
+        
+        /* Make sure cards have proper max width */
+        .grid > div {
+          max-width: 100% !important;
+        }
+        
+        /* Ensure proper text wrapping in cards */
+        .print-avoid-break {
+          break-inside: avoid !important;
+          page-break-inside: avoid !important;
+        }
+        
+        /* Compact spacing for print */
+        .print\\:py-8 {
+          padding-top: 2rem !important;
+          padding-bottom: 2rem !important;
+        }
+        
+        .print\\:py-4 {
+          padding-top: 1rem !important;
+          padding-bottom: 1rem !important;
+        }
+        
+        /* Ensure consistent card sizing */
+        @media print {
+          .grid {
+            display: grid !important;
+          }
         }
       }
     </style>
@@ -77,7 +293,7 @@
 }
 </script>
 </head>
-<body class="bg-deep-navy font-sans text-soft-gray print:bg-white print:text-black">
+<body class="bg-deep-navy font-sans text-soft-gray">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
 </body>

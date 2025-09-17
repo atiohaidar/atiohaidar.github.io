@@ -27,26 +27,26 @@ const ResearchCard: React.FC<ResearchCardProps> = ({ item }) => {
     };
     
     return (
-        <div className="bg-light-navy rounded-md shadow-lg p-6 flex flex-col h-full transition-transform duration-300 hover:-translate-y-2 group print:shadow-none print:border print:border-gray-300 print:rounded-none print:bg-transparent print-avoid-break">
+        <div className="bg-light-navy rounded-md shadow-lg p-6 flex flex-col h-full transition-transform duration-300 hover:-translate-y-2 group print-avoid-break">
             <main className="flex-grow">
-                <p className="text-xs font-semibold uppercase tracking-wider text-accent-blue mb-2 print:text-gray-600">
+                <p className="text-xs font-semibold uppercase tracking-wider text-accent-blue mb-2">
                     {item.type}
                 </p>
-                <h3 className="text-xl font-poppins font-bold text-white mb-2 group-hover:text-accent-blue transition-colors print:text-black">{item.title}</h3>
-                <p className="text-sm text-soft-gray mb-2 leading-relaxed print:text-gray-800">{item.description}</p>
-                <p className="text-sm text-soft-gray leading-relaxed print:text-gray-800"><span className="font-semibold text-light-slate print:text-black">Kontribusi:</span> {item.contribution}</p>
+                <h3 className="text-xl font-poppins font-bold text-white mb-2 group-hover:text-accent-blue transition-colors">{item.title}</h3>
+                <p className="text-sm text-soft-gray mb-2 leading-relaxed">{item.description}</p>
+                <p className="text-sm text-soft-gray leading-relaxed"><span className="font-semibold text-light-slate">Kontribusi:</span> {item.contribution}</p>
             </main>
-            <footer className="mt-4 pt-4 border-t border-soft-gray/20 print:border-gray-300">
+            <footer className="mt-4 pt-4 border-t border-soft-gray/20">
                 {item.links.map(link => (
                      <a
                         key={link.url}
                         href={link.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center text-sm text-soft-gray hover:text-accent-blue transition-colors duration-300 group/link print:text-blue-600 print:hover:text-blue-800 overflow-hidden"
+                        className="flex items-center text-sm text-soft-gray hover:text-accent-blue transition-colors duration-300 group/link overflow-hidden mb-1"
                     >
                         {getIconForLink(link.type)}
-                        <span className="truncate group-hover/link:underline">{link.url.replace(/^https?:\/\//, '')}</span>
+                        <span className="group-hover/link:underline print:underline">{link.url.replace(/^https?:\/\//, '')}</span>
                     </a>
                 ))}
             </footer>
@@ -64,8 +64,8 @@ interface ResearchProps {
 
 const Research: React.FC<ResearchProps> = ({ research }) => {
   return (
-    <Section id="research" number="02" title="Penelitian">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <Section id="research" number="02" title="Penelitian" delay={1200} printPageBreak={true}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 print:grid-cols-2 print:gap-6">
             {research.map((item, index) => (
                 <ResearchCard key={index} item={item} />
             ))}

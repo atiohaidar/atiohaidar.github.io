@@ -7,9 +7,44 @@ Ini adalah kode sumber untuk website portofolio pribadi Tio Haidar Hanif. Proyek
 - **Single Page Application (SPA)**: Semua informasi disajikan dalam satu halaman dengan navigasi *smooth-scrolling*.
 - **Desain Responsif**: Tampilan yang dioptimalkan untuk perangkat desktop, tablet, dan mobile.
 - **Didukung Data JSON**: Seluruh konten (profil, proyek, pengalaman, dll.) dikelola melalui file JSON, memisahkan data dari logika tampilan.
-- **Animasi Halus**: Animasi *fade-in-on-scroll* yang subtle untuk pengalaman pengguna yang lebih menarik.
-- **Fitur Cetak ke PDF**: Terdapat fitur untuk mencetak atau menyimpan portofolio sebagai file PDF yang rapi dan profesional.
+- **Animasi Halus**: Animasi bertahap saat page load untuk pengalaman pengguna yang lebih menarik.
+- **Fitur Cetak ke PDF**: Terdapat fitur untuk mencetak atau menyimpan portofolio sebagai file PDF yang rapi dan profesional dengan warna yang dipertahankan.
+- **Interactive Social Media**: FAB (Floating Action Button) dan dropdown social media yang elegant.
+- **Print Optimization**: Layout khusus untuk print dengan page breaks yang optimal dan tanpa halaman kosong.
 - **Kode Terdokumentasi**: Setiap komponen dan fungsi memiliki dokumentasi JSDoc untuk kemudahan pemeliharaan.
+
+## Teknologi yang Digunakan
+
+### Frontend Framework & Library
+- **[React 19.1.1](https://reactjs.org/)** - Frontend library untuk membangun user interface
+- **[TypeScript 5.8.2](https://www.typescriptlang.org/)** - Static type checking untuk JavaScript
+- **[Vite 6.2.0](https://vitejs.dev/)** - Build tool dan development server yang cepat
+
+### Styling & UI
+- **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first CSS framework via CDN
+- **[Google Fonts](https://fonts.google.com/)** - Inter & Poppins font families
+- **Custom CSS** - Print optimization dan advanced styling
+
+### Development Tools
+- **[Node.js](https://nodejs.org/)** - JavaScript runtime environment
+- **[npm](https://www.npmjs.com/)** - Package manager
+- **[@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react)** - Vite plugin untuk React
+- **[@types/node](https://www.npmjs.com/package/@types/node)** - TypeScript definitions untuk Node.js
+
+### Hosting & Deployment
+- **[GitHub Pages](https://pages.github.com/)** - Static site hosting
+- **[GitHub Actions](https://github.com/features/actions)** - CI/CD untuk automated deployment
+
+### Development Environment
+- **[Visual Studio Code](https://code.visualstudio.com/)** - Code editor
+- **[GitHub Codespaces](https://github.com/features/codespaces)** - Cloud development environment
+- **[Git](https://git-scm.com/)** - Version control system
+
+### Design & Assets
+- **Custom SVG Icons** - Hand-crafted social media dan navigation icons
+- **CSS Grid & Flexbox** - Modern layout techniques
+- **CSS Animations** - Smooth transitions dan fade-in effects
+- **Print CSS** - Optimized untuk PDF generation dengan color preservation
 
 ## Struktur Proyek
 
@@ -147,3 +182,81 @@ Arsitektur proyek ini memudahkan penambahan bagian (section) baru. Ikuti langkah
 -   **Render Komponen**: Impor komponen `Certifications` yang baru Anda buat dan render di posisi yang diinginkan di dalam `<main>`.
 
 Dengan mengikuti pola ini, Anda dapat memperluas portofolio dengan bagian-bagian baru secara konsisten dan terstruktur.
+
+---
+
+## Optimasi Print & PDF
+
+Portofolio ini dioptimalkan khusus untuk pencetakan dan export PDF dengan fitur-fitur berikut:
+
+### Fitur Print
+- **Color Preservation**: Warna website dipertahankan dalam PDF menggunakan `print-color-adjust: exact`
+- **Smart Page Breaks**: Sistem page break yang cerdas menghindari halaman kosong
+- **Compact Layout**: Spacing dan margin yang dioptimalkan untuk print
+- **Clickable Links**: Semua link eksternal tetap berfungsi di PDF
+- **Professional Format**: Layout yang konsisten dengan website namun dioptimalkan untuk kertas
+
+### Cara Mendapatkan PDF Terbaik
+1. Klik tombol Print (🖨️) di pojok kanan bawah
+2. Ikuti instruksi popup untuk mengaktifkan "Background graphics"
+3. Pilih "Save as PDF" untuk hasil optimal
+4. PDF yang dihasilkan akan memiliki warna dan link yang aktif
+
+---
+
+## Credits & Acknowledgments
+
+### Open Source Technologies
+Proyek ini dimungkinkan berkat kontribusi komunitas open source:
+
+- **React Team** - Untuk React library yang powerful
+- **Tailwind Labs** - Untuk Tailwind CSS framework
+- **Vite Team** - Untuk build tool yang sangat cepat
+- **TypeScript Team** - Untuk static typing yang robust
+- **Google Fonts** - Untuk font Inter dan Poppins yang beautiful
+- **GitHub** - Untuk hosting gratis melalui GitHub Pages
+
+### Development Tools
+- **Microsoft** - Visual Studio Code dan GitHub Codespaces
+- **Vercel** - Inspirasi untuk developer experience yang excellent
+- **MDN Web Docs** - Referensi web standards yang comprehensive
+
+### Design Inspiration
+- **Modern portfolio websites** - Inspirasi untuk clean design
+- **Material Design** - Untuk FAB dan interaction patterns
+- **Minimalism philosophy** - Less is more approach
+
+---
+
+## Lisensi
+
+Proyek ini menggunakan lisensi MIT. Anda bebas untuk menggunakan, memodifikasi, dan mendistribusikan kode ini dengan tetap mencantumkan credit yang sesuai.
+
+### MIT License
+```
+Copyright (c) 2025 Tio Haidar Hanif
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+```
+
+---
+
+## Contact & Support
+
+Jika Anda memiliki pertanyaan atau saran untuk proyek ini:
+
+- **Portfolio**: [https://atiohaidar.github.io](https://atiohaidar.github.io)
+- **GitHub**: [https://github.com/atiohaidar](https://github.com/atiohaidar)
+- **LinkedIn**: [Connect with me](https://linkedin.com/in/your-profile)
+
+---
+
+**Made with ❤️ by Tio Haidar Hanif**

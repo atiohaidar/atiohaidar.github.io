@@ -37,8 +37,8 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
             </header>
             <main className="flex-grow">
                 <h3 className="text-xl font-poppins font-bold text-white mb-2 group-hover:text-accent-blue transition-colors print:text-black">{project.name}</h3>
-                <p className="text-sm text-soft-gray mb-2 leading-relaxed print:text-gray-800">{project.description}</p>
-                <p className="text-sm text-soft-gray leading-relaxed print:text-gray-800"><span className="font-semibold text-light-slate print:text-black">Kontribusi:</span> {project.contribution}</p>
+                <p className="text-sm text-soft-gray mb-2 leading-relaxed">{project.description}</p>
+                <p className="text-sm text-soft-gray leading-relaxed"><span className="font-semibold text-light-slate">Kontribusi:</span> {project.contribution}</p>
             </main>
             <footer className="mt-4">
                 <div className="mb-4 space-y-2">
@@ -48,15 +48,15 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
                             href={link.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center text-sm text-soft-gray hover:text-accent-blue transition-colors duration-300 group/link print:text-blue-600 print:hover:text-blue-800 overflow-hidden"
+                            className="flex items-center text-sm text-soft-gray hover:text-accent-blue transition-colors duration-300 group/link overflow-hidden mb-1"
                         >
                             {getIconForLink(link.type)}
-                            <span className="truncate group-hover/link:underline">{link.url.replace(/^https?:\/\//, '')}</span>
+                            <span className="group-hover/link:underline print:underline">{link.url.replace(/^https?:\/\//, '')}</span>
                         </a>
                     ))}
                 </div>
                 {project.tech && (
-                    <ul className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-soft-gray pt-4 border-t border-soft-gray/20 print:text-gray-600 print:border-gray-300">
+                    <ul className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-soft-gray pt-4 border-t border-soft-gray/20">
                         {project.tech.map(t => <li key={t}>{t}</li>)}
                     </ul>
                 )}
@@ -75,8 +75,8 @@ interface PortfolioProps {
 
 const Portfolio: React.FC<PortfolioProps> = ({ projects }) => {
     return (
-        <Section id="portfolio" number="03" title="Portofolio" centerTitle>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 print:grid-cols-1">
+        <Section id="portfolio" number="03" title="Portofolio" centerTitle delay={1600} printPageBreak={false}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 print:grid-cols-2 print:gap-4">
                 {projects.map((project, index) => (
                     <ProjectCard key={index} project={project} />
                 ))}

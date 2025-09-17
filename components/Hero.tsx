@@ -22,23 +22,36 @@ interface HeroProps {
 
 const Hero: React.FC<HeroProps> = ({ greeting, name, tagline, bio, linkedinUrl }) => {
     return (
-        <section id="hero" className="min-h-screen flex items-center container mx-auto px-6 md:px-10 print:min-h-0 print:py-12">
-            <div className="max-w-3xl space-y-4">
+        <>
+            {/* Header untuk print dengan URL portfolio */}
+            <div className="hidden print:block text-center py-4 border-b border-soft-gray/30" style={{ animation: 'fadeInUp 0.5s ease-out 0.1s forwards', opacity: 0 }}>
+                <h3 className="text-lg font-semibold text-white mb-2">Portfolio Online</h3>
+                <p className="text-sm text-soft-gray">
+                    Portfolio: 
+                    <a href="https://atiohaidar.github.io" className="text-accent-blue underline ml-1" target="_blank" rel="noopener noreferrer">
+                        https://atiohaidar.github.io 🔗
+                    </a>
+                </p>
+            </div>
+            
+            <section id="hero" className="min-h-screen flex items-center container mx-auto px-6 md:px-16 lg:px-20 print:min-h-0 print:py-4 print:px-4">
+                <div className="max-w-3xl space-y-4 print:space-y-2">
                 <p className="text-accent-blue text-lg print:text-gray-600 print:text-base" style={{ animation: 'fadeInUp 0.5s ease-out 0.2s forwards', opacity: 0 }}>
                     {greeting}
                 </p>
-                <h1 className="text-4xl sm:text-6xl lg:text-7xl font-poppins font-bold text-white print:text-black print:text-5xl" style={{ animation: 'fadeInUp 0.5s ease-out 0.4s forwards', opacity: 0 }}>
+                <h1 className="text-4xl sm:text-6xl lg:text-7xl font-poppins font-bold text-white" style={{ animation: 'fadeInUp 0.5s ease-out 0.4s forwards', opacity: 0 }}>
                     {name}.
                 </h1>
-                <h2 className="text-3xl sm:text-5xl lg:text-6xl font-poppins font-bold text-soft-gray print:text-gray-700 print:text-4xl" style={{ animation: 'fadeInUp 0.5s ease-out 0.6s forwards', opacity: 0 }}>
+                <h2 className="text-3xl sm:text-5xl lg:text-6xl font-poppins font-bold text-soft-gray" style={{ animation: 'fadeInUp 0.5s ease-out 0.6s forwards', opacity: 0 }}>
                     {tagline}
                 </h2>
 
-                <div className="hidden print:block pt-2 text-sm text-gray-600">
-                    <p>LinkedIn: <a href={linkedinUrl} className="text-blue-600">{linkedinUrl}</a></p>
+                <div className="hidden print:block pt-2 text-sm">
+                    <p>Portfolio: <a href="https://atiohaidar.github.io" className="text-accent-blue underline">https://atiohaidar.github.io</a></p>
+                    <p>LinkedIn: <a href={linkedinUrl} className="text-accent-blue underline">{linkedinUrl}</a></p>
                 </div>
                 
-                <p className="max-w-xl text-soft-gray leading-relaxed pt-4 print:text-black print:text-base" style={{ animation: 'fadeInUp 0.5s ease-out 0.8s forwards', opacity: 0 }}>
+                <p className="max-w-xl text-soft-gray leading-relaxed pt-4" style={{ animation: 'fadeInUp 0.5s ease-out 0.8s forwards', opacity: 0 }}>
                     {bio}
                 </p>
                 <div className="pt-8 print:hidden" style={{ animation: 'fadeInUp 0.5s ease-out 1s forwards', opacity: 0 }}>
@@ -48,6 +61,7 @@ const Hero: React.FC<HeroProps> = ({ greeting, name, tagline, bio, linkedinUrl }
                 </div>
             </div>
         </section>
+        </>
     );
 };
 
