@@ -16,7 +16,7 @@
         ]
     },
     {
-        "name": "QR Generator",
+        "name": "QR Generator For Wajihah",
         "description": "Aplikasi web sederhana untuk membuat kode QR dengan menambahkan logo pada QR tersebut serta dapat menyesuaikan style dari kode QR itu sendiri.",
         "contribution": "Menyediakan alat yang cepat dan mudah untuk membuat kode QR yang bisa diubah logonya.",
         "tech": [
@@ -67,7 +67,7 @@
         ]
     },
     {
-        "name": "Surat Generator",
+        "name": "Surat Generator (Experimental)",
         "description": "Alat untuk membuat dokumen surat formal secara otomatis berdasarkan template yang ditentukan.",
         "contribution": "Mempercepat proses pembuatan surat yang seringkali repetitif.",
         "tech": [
@@ -115,8 +115,8 @@
         ]
     },
     {
-        "name": "Bot Telegram Google Appscript",
-        "description": "Bot Telegram yang dibangun di atas Google Appscript untuk otomatisasi tugas MSDM.",
+        "name": "Bot Telegram Google Appscript MSDM",
+        "description": "Bot Telegram yang dibangun di atas Google Appscript.",
         "contribution": "Otomatisasi melalui Telegram.",
         "tech": [
             "Google Apps Script",
@@ -130,7 +130,7 @@
         ]
     },
     {
-        "name": "Google Appscript Template",
+        "name": "Google Appscript Template for Google Sheets",
         "description": "Template kode Google Appscript untuk menambahkan fungsionalitas kustom di Google Sheets.",
         "contribution": "Menyediakan solusi untuk otomatisasi tugas di Spreadsheet.",
         "tech": [
