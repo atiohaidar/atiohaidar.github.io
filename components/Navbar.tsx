@@ -1,10 +1,12 @@
 /**
- * @file Komponen Navbar yang bersifat sticky dan responsif.
+ * @file Komponen Navbar dengan refactored utilities
  * Menampilkan navigasi utama dan beradaptasi ke menu mobile pada layar kecil.
  */
 import React, { useState, useEffect } from 'react';
 import { NAV_LINKS } from '../constants';
 import { GitHubIcon, LinkedInIcon, InstagramIcon } from './Icons';
+import { COLORS, LAYOUT, PRINT, SPACING } from '../utils/styles';
+import { getExternalLinkProps } from '../utils/url';
 import type { SocialLinks } from '../types';
 
 /**
@@ -30,8 +32,8 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials }) => {
     }, []);
 
     return (
-        <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 print:hidden ${isScrolled ? 'bg-deep-navy/80 shadow-lg backdrop-blur-sm' : 'bg-transparent'}`}>
-            <nav className="container mx-auto px-6 md:px-16 lg:px-20 py-4 flex justify-between items-center">
+        <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${PRINT.HIDE} ${isScrolled ? 'bg-deep-navy/80 shadow-lg backdrop-blur-sm' : 'bg-transparent'}`}>
+            <nav className={`container mx-auto ${SPACING.CONTAINER_PADDING} py-4 ${LAYOUT.FLEX_BETWEEN}`}>
                 {/* Logo with social media dropdown */}
                 <div className="relative group z-50">
                     <a href="#hero" className="block">

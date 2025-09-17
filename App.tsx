@@ -1,5 +1,5 @@
 /**
- * @file Komponen root aplikasi.
+ * @file Komponen root aplikasi dengan refactored architecture
  * Bertanggung jawab untuk:
  * - Mengambil semua data dari 'API'.
  * - Mengelola state loading dan error.
@@ -17,15 +17,18 @@ import Footer from './components/Footer';
 import PrintButton from './components/PrintButton';
 import { GitHubIcon, LinkedInIcon, InstagramIcon } from './components/Icons';
 import { getProfile, getAbout, getProjects, getResearch, getExperiences, getEducation } from './api';
+import { COLORS, LAYOUT, PRINT, TYPOGRAPHY } from './utils/styles';
 import type { Profile, About as AboutType, Project, ResearchItem, Experience, Education, SocialLinks as SocialLinksType } from './types';
 
-
+/**
+ * Komponen Social Links dengan FAB effect
+ */
 const SocialLinks: React.FC<{ socials: SocialLinksType }> = ({ socials }) => (
-    <div className="hidden md:flex flex-col items-center fixed bottom-24 right-6 z-10 print:hidden group">
+    <div className={`hidden md:flex flex-col items-center ${LAYOUT.FIXED_BOTTOM_RIGHT_ALT} z-10 ${PRINT.HIDE} group`}>
         {/* Background circle overlay that covers all icons initially */}
         <div className="absolute inset-0 bg-light-navy rounded-full w-12 h-12 flex items-center justify-center transition-all duration-300 group-hover:opacity-0 group-hover:scale-0 shadow-lg">
-            <div className="w-6 h-6 bg-accent-blue rounded-full flex items-center justify-center">
-                <span className="text-deep-navy text-xs font-bold">+</span>
+            <div className={`w-6 h-6 ${COLORS.BG_ACCENT} rounded-full ${LAYOUT.FLEX_CENTER}`}>
+                <span className={`${COLORS.TEXT_PRIMARY} text-xs ${TYPOGRAPHY.WEIGHT_BOLD}`}>+</span>
             </div>
         </div>
         
@@ -93,7 +96,7 @@ const App: React.FC = () => {
     // Menampilkan state loading
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-deep-navy text-accent-blue text-xl font-poppins">
+            <div className={`min-h-screen ${LAYOUT.FLEX_CENTER} ${COLORS.BG_PRIMARY} ${COLORS.TEXT_ACCENT} text-xl font-poppins`}>
                 Memuat Portofolio...
             </div>
         );
@@ -102,7 +105,7 @@ const App: React.FC = () => {
     // Menampilkan state error
     if (error) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-deep-navy text-red-500 text-xl font-poppins">
+            <div className={`min-h-screen ${LAYOUT.FLEX_CENTER} ${COLORS.BG_PRIMARY} text-red-500 text-xl font-poppins`}>
                 {error}
             </div>
         );
@@ -115,7 +118,7 @@ const App: React.FC = () => {
 
     // Merender UI utama setelah data berhasil dimuat
     return (
-        <div className="relative print-preserve-colors">
+        <div className={`relative ${PRINT.PRESERVE_COLORS}`}>
             <Navbar logoSrc={profile.logoSrc} socials={profile.socials} />
             {/* <SocialLinks socials={profile.socials} /> */}
             <main className="mx-auto">

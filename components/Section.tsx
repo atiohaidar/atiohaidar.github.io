@@ -1,5 +1,5 @@
 /**
- * @file Komponen wrapper generik untuk setiap bagian utama halaman.
+ * @file Komponen wrapper generik untuk setiap bagian utama halaman dengan refactored utilities.
  * Komponen ini menangani:
  * - Rendering judul bernomor yang konsisten.
  * - Menerapkan animasi fade-in-on-scroll.
@@ -8,6 +8,8 @@
  */
 import React from 'react';
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
+import { COLORS, LAYOUT, PRINT, SPACING, TYPOGRAPHY } from '../utils/styles';
+import { createAnimationStyle } from '../utils/animations';
 
 interface SectionProps {
   /** ID unik untuk section, digunakan untuk navigasi. */
@@ -33,16 +35,16 @@ const Section: React.FC<SectionProps> = ({ id, number, title, children, centerTi
   const animationClass = isIntersecting ? 'animate-fade-in-up' : 'opacity-0';
 
   const titleAlignment = centerTitle ? 'justify-center' : '';
-  const pageBreakClass = printPageBreak ? 'print-break-before' : 'print-no-break';
+  const pageBreakClass = printPageBreak ? PRINT.PAGE_BREAK : PRINT.NO_BREAK;
 
   return (
     <section 
       id={id} 
       ref={ref} 
-      className={`py-24 container mx-auto px-6 md:px-16 lg:px-20 ${pageBreakClass} print:py-12 ${animationClass} ${className}`}
+      className={`${SPACING.SECTION_PADDING} ${pageBreakClass} ${SPACING.SECTION_PADDING_PRINT} ${animationClass} ${className}`}
     >
-      <h2 className={`text-2xl md:text-3xl font-poppins font-bold text-white mb-8 flex items-center ${titleAlignment}`}>
-        <span className="text-accent-blue mr-3">{number}.</span>
+      <h2 className={`${TYPOGRAPHY.HEADING_SECTION} ${COLORS.TEXT_WHITE} mb-8 ${LAYOUT.FLEX_CENTER} ${titleAlignment}`}>
+        <span className={`${COLORS.TEXT_ACCENT} mr-3`}>{number}.</span>
         {title}
         {!centerTitle && <span className="h-px w-20 sm:w-40 bg-soft-gray/30 ml-4 print:bg-gray-400"></span>}
       </h2>
