@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { GitHubIcon, LinkedInIcon } from './Icons';
 
@@ -9,7 +8,7 @@ const Footer: React.FC = () => {
                 <a href="https://github.com/TioHaidarHanif" target="_blank" rel="noopener noreferrer" className="hover:text-accent-blue transition-colors">
                     <GitHubIcon className="w-6 h-6" />
                 </a>
-                <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-accent-blue transition-colors">
+                <a href="https://www.linkedin.com/in/tiohaidarhanif/" target="_blank" rel="noopener noreferrer" className="hover:text-accent-blue transition-colors">
                     <LinkedInIcon className="w-6 h-6" />
                 </a>
             </div>

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -39,17 +38,8 @@ const SocialLinks: React.FC = () => (
         <a href="https://github.com/TioHaidarHanif" target="_blank" rel="noopener noreferrer" className="text-soft-gray hover:text-accent-blue p-2 transition-all hover:-translate-y-1">
             <GitHubIcon className="w-6 h-6" />
         </a>
-        <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer" className="text-soft-gray hover:text-accent-blue p-2 transition-all hover:-translate-y-1">
+        <a href="https://www.linkedin.com/in/tiohaidarhanif/" target="_blank" rel="noopener noreferrer" className="text-soft-gray hover:text-accent-blue p-2 transition-all hover:-translate-y-1">
             <LinkedInIcon className="w-6 h-6" />
-        </a>
-        <div className="w-px h-24 bg-soft-gray mt-2"></div>
-    </div>
-);
-
-const EmailLink: React.FC = () => (
-    <div className="hidden md:flex flex-col items-center fixed bottom-0 right-10 z-10">
-        <a href="mailto:tiohaidarhanif@gmail.com" className="text-soft-gray hover:text-accent-blue p-2 transition-all hover:-translate-y-1 text-sm" style={{ writingMode: 'vertical-rl' }}>
-            tiohaidarhanif@gmail.com
         </a>
         <div className="w-px h-24 bg-soft-gray mt-2"></div>
     </div>
@@ -60,7 +50,6 @@ const App: React.FC = () => {
         <div className="relative">
             <Navbar />
             <SocialLinks />
-            <EmailLink />
             <main className="mx-auto">
                 <Hero />
                 <About />
