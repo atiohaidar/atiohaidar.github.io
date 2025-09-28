@@ -28,6 +28,8 @@ export const ANIMATION_DELAYS = {
   },
 } as const;
 
+import * as React from 'react';
+
 /**
  * Membuat style object untuk animasi CSS dengan delay
  */

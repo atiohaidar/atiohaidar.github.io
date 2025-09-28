@@ -1,5 +1,52 @@
 [
     {
+        "name": "Web App 'Ploting Jadwal Dosen' (Latihan)",
+        "description": "Aplikasi Fullstack untuk memplot jadwal dosen secara otomatis berdasarkan data yang diunggah.",
+        "contribution": "Mempermudah proses ploting Jadwal Dosen",
+        "tech": [
+            "React JS",
+            "NestJS",
+            "Prisma",
+            "Python" 
+        ],
+        "links": [
+            {
+                "type": "github",
+                "url": "https://github.com/atiohaidar/ploting-jadwal-dosen"
+            }
+        ]
+    },
+    {
+        "name": "MCP Todolist (Latihan)",
+        "description": "Mencoba membangung MCP (Model Context Protocol) pada aplikasi todolist",
+        "contribution": "Mempelajari konsep MCP",
+        "tech": [
+            "Python"
+        ],
+        "links": [
+            {
+                "type": "github",
+                "url": "https://github.com/atiohaidar/belajar-mcp-todolist"
+            }
+        ]
+    },
+    {
+        "name": "Eksplor Teknologi untuk Software Engineering",
+        "description": "Github repository untuk eksplorasi berbagai teknologi yang relevan dengan rekayasa perangkat lunak.",
+        "contribution": "Mempelajari hal baru",
+        "tech": [
+            "Rust",
+            "Python",
+            "Go"
+        ],
+        "links": [
+            {
+                "type": "github",
+                "url": "https://github.com/atiohaidar/explore-tech"
+            }
+        ]
+    },
+    {
         "name": "Belajar NestJS (API)",
         "description": "Proyek dasar untuk mempelajari framework NestJS dalam membangun API.",
         "contribution": "Memahami arsitektur backend menggunakan NestJS.",
@@ -15,6 +62,20 @@
             }
         ]
     },
+{
+  "name": "Glosarium",
+    "description": "Aplikasi web untuk menyimpan istilah-istilah teknis dalam berbagai bidang.",
+    "contribution": "Menyediakan referensi cepat untuk istilah teknis.",
+    "tech": [
+        "React JS"
+    ],
+    "links": [
+        {
+            "type": "live",
+            "url": "https://atiohaidar.github.io/glosarium/"
+        }
+    ]
+},
     {
         "name": "QR Generator For Wajihah",
         "description": "Aplikasi web sederhana untuk membuat kode QR dengan menambahkan logo pada QR tersebut serta dapat menyesuaikan style dari kode QR itu sendiri.",
@@ -143,5 +204,6 @@
                 "url": "https://github.com/Al-Fath-Developer/AlFathTemplate2024"
             }
         ]
+        
     }
 ]

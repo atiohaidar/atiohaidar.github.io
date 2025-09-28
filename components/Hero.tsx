@@ -1,11 +1,12 @@
 /**
- * @file Komponen Hero dengan refactored utilities
+ * @file Komponen Hero dengan refactored utilities dan particle background
  * Menampilkan perkenalan singkat, nama, tagline, bio, dan tombol CTA.
  */
 import React from 'react';
 import { COLORS, LAYOUT, PRINT, SPACING, TYPOGRAPHY } from '../utils/styles';
 import { createAnimationStyle, ANIMATION_DELAYS } from '../utils/animations';
 import { getExternalLinkProps } from '../utils/url';
+import ParticleBackground from './ParticleBackground';
 
 /**
  * Props untuk komponen Hero.
@@ -37,8 +38,9 @@ const Hero: React.FC<HeroProps> = ({ greeting, name, tagline, bio, linkedinUrl }
                 </p>
             </div>
             
-            <section id="hero" className={`min-h-screen flex items-center container mx-auto px-6 md:px-16 lg:px-20 ${PRINT.COMPACT_SPACING} print:min-h-0 print:py-4 print:px-4`}>
-                <div className={`max-w-3xl space-y-4 ${PRINT.COMPACT_SPACING}`}>
+            <section id="hero" className={`h-screen ${LAYOUT.FLEX_CENTER} container mx-auto px-6 md:px-16 lg:px-20 ${PRINT.COMPACT_SPACING} print:min-h-0 print:py-4 print:px-4 relative overflow-hidden bg-gradient-to-br from-deep-navy/95 via-slate-navy/95 to-midnight/95`}>
+                <ParticleBackground />
+                <div className={`max-w-3xl space-y-4 ${PRINT.COMPACT_SPACING} text-center relative z-10`}>
                 <p className={`${COLORS.TEXT_ACCENT} text-lg print:text-gray-600 print:text-base`} style={createAnimationStyle(ANIMATION_DELAYS.HERO.NAME)}>
                     {greeting}
                 </p>
