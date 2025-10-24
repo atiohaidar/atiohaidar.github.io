@@ -4,11 +4,24 @@
         "type": "Skripsi",
         "title": "Perbandingan Efisiensi Model AI (GPT dan Claude) pada GitHub Copilot Agent Mode untuk melakukan Code Generation pada Pengembangan Software Backend API",
         "description": "Studi komparatif yang menganalisis performa dan efisiensi model AI generatif, khususnya GPT dan Claude, saat diintegrasikan dalam GitHub Copilot Agent Mode untuk tugas-tugas pengembangan backend.",
-        "contribution": "Memberikan wawasan kuantitatif mengenai model AI mana yang lebih efektif untuk akselerasi pengembangan backend API, membantu pengembang dalam memilih alat bantu AI yang paling optimal untuk alur kerja mereka.",
+        "contribution": "Memberikan wawasan kuantitatif mengenai model AI mana yang lebih efektif untuk akselerasi pengembangan backend API (khusus project ini), membantu pengembang dalam memilih alat bantu AI yang paling optimal untuk alur kerja mereka.",
         "links": [
             {
-                "type": "researchgate",
-                "url": "https://www.researchgate.net/publication/395572896_Perbandingan_Efisiensi_Model_AI_GPT_dan_Claude_pada_GitHub_Copilot_Agent_Mode_untuk_melakukan_Code_Generation_pada_Pengembangan_Software_Backend_API"
+                "type": "repository",
+                "url": "https://openlibrary.telkomuniversity.ac.id/home/catalog/id/242939/slug/perbandingan-efisiensi-model-ai-gpt-dan-claude-pada-github-copilot-agent-mode-untuk-melakukan-code-generation-pada-pengembangan-software-backend-api-dalam-bentuk-buku-karya-ilmiah.html"
+            }
+        ]
+    },
+    
+    {
+        "type": "Sharing",
+        "title": "Panduan bikin App dengan bantuan AI",
+        "description": "Lesson Learn selama saya membuat aplikasi menggunakan bantuan AI",
+        "contribution": "Memberikan pandangan terkait cara menggunakan AI untuk membangun aplikasi secara efektif dan efisien",
+        "links": [
+            {
+                "type": "notion",
+                "url": "https://atiohaidar.notion.site/Panduan-bikin-App-dengan-bantuan-AI-f48d7d457fbd45ee9a3eb5a5b1b219c3"
             }
         ]
     }
