@@ -64,7 +64,7 @@ interface ResearchProps {
 
 const Research: React.FC<ResearchProps> = ({ research }) => {
   return (
-    <Section id="research" number="02" title="Penelitian" delay={1200} printPageBreak={true}>
+    <Section id="research" number="02" title="Riset/Tulisan" delay={1200} printPageBreak={true}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 print:grid-cols-2 print:gap-6">
             {research.map((item, index) => (
                 <ResearchCard key={index} item={item} />
