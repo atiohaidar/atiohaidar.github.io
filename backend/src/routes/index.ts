@@ -22,10 +22,14 @@ import {
 	BookingUpdateStatus,
 	BookingCancel,
 } from "../controllers/booking.controller";
+import { StatsGet } from "../controllers/stats.controller";
 
 export const registerRoutes = (openapi: any) => {
 	// Auth routes
 	openapi.post("/api/auth/login", AuthLogin);
+
+	// Stats routes
+	openapi.get("/api/stats", StatsGet);
 
 	// User routes
 	openapi.get("/api/users", UserController.list, { schema: UserController.listSchema });
