@@ -1,7 +1,7 @@
 import { Bool, OpenAPIRoute, Str } from "chanfana";
 import { z } from "zod";
-import { deleteTask } from "../data/tasks";
-import { type AppContext, Task } from "../types";
+import { deleteTask } from "../services/tasks";
+import { type AppContext, Task } from "../models/types";
 
 export class TaskDelete extends OpenAPIRoute {
 	schema = {

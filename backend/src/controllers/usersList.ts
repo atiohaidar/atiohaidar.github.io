@@ -1,8 +1,8 @@
 import { Bool, OpenAPIRoute, Str } from "chanfana";
 import { z } from "zod";
-import { listUsers } from "../data/users";
-import { ensureAdmin } from "../utils/auth";
-import { type AppContext, UserPublicSchema } from "../types";
+import { listUsers } from "../services/users";
+import { ensureAdmin } from "../middlewares/auth";
+import { type AppContext, UserPublicSchema } from "../models/types";
 
 export class UsersList extends OpenAPIRoute {
 	schema = {

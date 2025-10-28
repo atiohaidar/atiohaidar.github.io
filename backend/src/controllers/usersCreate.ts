@@ -1,8 +1,8 @@
 import { Bool, OpenAPIRoute } from "chanfana";
 import { z } from "zod";
-import { createUser } from "../data/users";
-import { ensureAdmin } from "../utils/auth";
-import { type AppContext, UserCreateSchema, UserPublicSchema } from "../types";
+import { createUser } from "../services/users";
+import { ensureAdmin } from "../middlewares/auth";
+import { type AppContext, UserCreateSchema, UserPublicSchema } from "../models/types";
 
 export class UsersCreate extends OpenAPIRoute {
 	schema = {

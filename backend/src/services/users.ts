@@ -6,7 +6,7 @@ import {
 	UserUpdateSchema,
 	type UserPublic,
 	type UserRole,
-} from "../types";
+} from "../models/types";
 
 const PublicRowSchema = z.object({
 	username: z.string(),

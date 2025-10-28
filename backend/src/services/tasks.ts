@@ -4,7 +4,7 @@ import {
 	TaskCreateSchema,
 	TaskUpdateSchema,
 	type AppContext,
-} from "../types";
+} from "../models/types";
 
 export type TaskRecord = z.infer<typeof Task>;
 

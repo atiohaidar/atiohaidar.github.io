@@ -1,8 +1,8 @@
 import { Bool, OpenAPIRoute, Str } from "chanfana";
 import { z } from "zod";
-import { validateUserCredentials } from "../data/users";
-import { createToken } from "../utils/auth";
-import { type AppContext, UserPublicSchema } from "../types";
+import { validateUserCredentials } from "../services/users";
+import { createToken } from "../middlewares/auth";
+import { type AppContext, UserPublicSchema } from "../models/types";
 
 export class AuthLogin extends OpenAPIRoute {
 	schema = {

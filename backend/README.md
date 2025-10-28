@@ -1,25 +1,96 @@
-# Cloudflare Workers OpenAPI 3.1
+# Backend - Task & User Management API
 
-This is a Cloudflare Worker with OpenAPI 3.1 using [chanfana](https://github.com/cloudflare/chanfana) and [Hono](https://github.com/honojs/hono).
+This is a Cloudflare Workers API built with Hono and OpenAPI (chanfana) that provides task management and user authentication.
 
-This is an example project made to be used as a quick start into building OpenAPI compliant Workers that generates the
-`openapi.json` schema automatically from code and validates the incoming request to the defined parameters or request body.
+## 📁 Project Structure
 
-## Get started
+```
+src/
+├── controllers/        # Request handlers (endpoints)
+│   ├── authLogin.ts   # Authentication endpoint
+│   ├── taskCreate.ts  # Create task
+│   ├── taskDelete.ts  # Delete task
+│   ├── taskFetch.ts   # Get single task
+│   ├── taskList.ts    # List all tasks
+│   ├── usersCreate.ts # Create user
+│   ├── usersDelete.ts # Delete user
+│   ├── usersList.ts   # List all users
+│   └── usersUpdate.ts # Update user
+├── services/          # Business logic & data access
+│   ├── tasks.ts       # Task service
+│   └── users.ts       # User service
+├── middlewares/       # Authentication & middleware
+│   └── auth.ts        # Token handling
+├── models/           # Type definitions & schemas
+│   └── types.ts      # Zod schemas and TypeScript types
+├── routes/           # Route registration
+│   └── index.ts      # Central route configuration
+└── index.ts          # Application entry point
+```
 
-1. Sign up for [Cloudflare Workers](https://workers.dev). The free tier is more than enough for most use cases.
-2. Clone this project and install dependencies with `npm install`
-3. Run `wrangler login` to login to your Cloudflare account in wrangler
-4. Run `wrangler deploy` to publish the API to Cloudflare Workers
+## 🚀 Getting Started
 
-## Project structure
+### Installation
+```bash
+npm install
+```
 
-1. Your main router is defined in `src/index.ts`.
-2. Each endpoint has its own file in `src/endpoints/`.
-3. For more information read the [chanfana documentation](https://chanfana.pages.dev/) and [Hono documentation](https://hono.dev/docs).
+### Development
+```bash
+npm run dev
+# or
+wrangler dev
+```
 
-## Development
+### Deployment
+```bash
+npm run deploy
+# or
+wrangler deploy
+```
 
-1. Run `wrangler dev` to start a local instance of the API.
-2. Open `http://localhost:8787/` in your browser to see the Swagger interface where you can try the endpoints.
-3. Changes made in the `src/` folder will automatically trigger the server to reload, you only need to refresh the Swagger interface.
+## 📡 API Endpoints
+
+### Authentication
+- `POST /api/auth/login` - Login and get access token
+
+### Users
+- `GET /api/users` - List all users (Admin only)
+- `POST /api/users` - Create new user (Admin only)
+- `PUT /api/users/:username` - Update user (Admin only)
+- `DELETE /api/users/:username` - Delete user (Admin only)
+
+### Tasks
+- `GET /api/tasks` - List tasks with pagination
+- `POST /api/tasks` - Create new task
+- `GET /api/tasks/:taskSlug` - Get specific task
+- `DELETE /api/tasks/:taskSlug` - Delete task
+
+## 🗄️ Database
+
+This API uses Cloudflare D1 (SQLite) database. The database schema is defined in `migrations/001_init.sql`.
+
+### Default Users
+- Admin: `username: admin, password: admin123`
+- Member: `username: user, password: user123`
+
+## 🔐 Authentication
+
+The API uses a simple Bearer token authentication. After logging in via `/api/auth/login`, include the token in subsequent requests:
+
+```
+Authorization: Bearer <token>
+```
+
+## 📖 API Documentation
+
+When running the dev server, visit the root URL `/` to see the OpenAPI Swagger interface where you can try the endpoints.
+
+## 🛠️ Tech Stack
+
+- **Runtime**: Cloudflare Workers
+- **Framework**: Hono
+- **OpenAPI**: chanfana
+- **Database**: Cloudflare D1
+- **Validation**: Zod
+- **Language**: TypeScript

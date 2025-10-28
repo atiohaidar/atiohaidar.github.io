@@ -1,26 +1,44 @@
 import { Bool, OpenAPIRoute, Str } from "chanfana";
 import { z } from "zod";
-import { deleteUser } from "../data/users";
-import { ensureAdmin } from "../utils/auth";
-import { type AppContext, UserPublicSchema } from "../types";
+import { updateUser } from "../services/users";
+import { ensureAdmin } from "../middlewares/auth";
+import { type AppContext, UserPublicSchema, UserUpdateSchema } from "../models/types";
 
-export class UsersDelete extends OpenAPIRoute {
+export class UsersUpdate extends OpenAPIRoute {
 	schema = {
 		tags: ["Users"],
-		summary: "Hapus pengguna berdasarkan username",
+		summary: "Perbarui data pengguna",
 		request: {
 			params: z.object({
-				username: Str({ description: "Username yang akan dihapus" }),
+				username: Str({ description: "Username yang akan diperbarui" }),
 			}),
+			body: {
+				content: {
+					"application/json": {
+						schema: UserUpdateSchema,
+					},
+				},
+			},
 		},
 		responses: {
 			"200": {
-				description: "Pengguna berhasil dihapus",
+				description: "Pengguna berhasil diperbarui",
 				content: {
 					"application/json": {
 						schema: z.object({
 							success: Bool(),
 							user: UserPublicSchema,
+						}),
+					},
+				},
+			},
+			"400": {
+				description: "Validasi gagal",
+				content: {
+					"application/json": {
+						schema: z.object({
+							success: Bool(),
+							message: Str({ example: "Minimal satu field harus diisi" }),
 						}),
 					},
 				},
@@ -65,13 +83,13 @@ export class UsersDelete extends OpenAPIRoute {
 		const data = await this.getValidatedData<typeof this.schema>();
 
 		try {
-			const user = await deleteUser(c.env.DB, data.params.username);
+			const user = await updateUser(c.env.DB, data.params.username, data.body);
 			return c.json({
 				success: true,
 				user,
 			});
 		} catch (error) {
-			const message = error instanceof Error ? error.message : "Gagal menghapus pengguna";
+			const message = error instanceof Error ? error.message : "Gagal memperbarui pengguna";
 			const status = message.includes("tidak ditemukan") ? 404 : 400;
 			return c.json(
 				{

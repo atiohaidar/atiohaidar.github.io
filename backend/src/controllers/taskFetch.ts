@@ -1,7 +1,7 @@
 import { Bool, OpenAPIRoute, Str } from "chanfana";
 import { z } from "zod";
-import { getTask } from "../data/tasks";
-import { type AppContext, Task } from "../types";
+import { getTask } from "../services/tasks";
+import { type AppContext, Task } from "../models/types";
 
 export class TaskFetch extends OpenAPIRoute {
 	schema = {

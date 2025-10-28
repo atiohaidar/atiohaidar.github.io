@@ -1,5 +1,5 @@
-import type { UserRecord } from "../data/users";
-import { UserRoleSchema, type AppContext, type UserRole } from "../types";
+import type { UserRecord } from "../services/users";
+import { UserRoleSchema, type AppContext, type UserRole } from "../models/types";
 
 export type TokenPayload = {
 	sub: string;
