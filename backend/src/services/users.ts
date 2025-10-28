@@ -7,6 +7,7 @@ import {
 	type UserPublic,
 	type UserRole,
 } from "../models/types";
+import { hashPassword, comparePasswords } from "../utils/auth";
 
 const PublicRowSchema = z.object({
 	username: z.string(),
@@ -26,20 +27,17 @@ let initializedPromise: Promise<void> | undefined;
 const ensureInitialized = async (db: D1Database) => {
 	if (!initializedPromise) {
 		initializedPromise = (async () => {
-			// Use batch for multiple statements
-			await db.batch([
-				db.prepare(`
-					CREATE TABLE IF NOT EXISTS users (
-						username TEXT PRIMARY KEY,
-						name TEXT NOT NULL,
-						password TEXT NOT NULL,
-						role TEXT NOT NULL CHECK(role IN ('admin', 'member')),
-						created_at TEXT DEFAULT CURRENT_TIMESTAMP
-					)
-				`),
-				db.prepare(`INSERT OR IGNORE INTO users (username, name, password, role) VALUES ('admin', 'Administrator', 'admin123', 'admin')`),
-				db.prepare(`INSERT OR IGNORE INTO users (username, name, password, role) VALUES ('user', 'Sample Member', 'user123', 'member')`)
-			]);
+			// Create table without inserting default users
+			// Users should be seeded with hashed passwords via seeder
+			await db.prepare(`
+				CREATE TABLE IF NOT EXISTS users (
+					username TEXT PRIMARY KEY,
+					name TEXT NOT NULL,
+					password TEXT NOT NULL,
+					role TEXT NOT NULL CHECK(role IN ('admin', 'member')),
+					created_at TEXT DEFAULT CURRENT_TIMESTAMP
+				)
+			`).run();
 		})();
 	}
 
@@ -100,10 +98,13 @@ export const createUser = async (
 	await ensureInitialized(db);
 	const data = UserCreateSchema.parse(input);
 
+	// Hash the password before storing
+	const hashedPassword = await hashPassword(data.password);
+
 	try {
 		await db
 			.prepare("INSERT INTO users (username, name, password, role) VALUES (?, ?, ?, ?)")
-			.bind(data.username, data.name, data.password, data.role)
+			.bind(data.username, data.name, hashedPassword, data.role)
 			.run();
 	} catch (error) {
 		if (error instanceof Error && error.message.includes("UNIQUE")) {
@@ -137,8 +138,10 @@ export const updateUser = async (
 	}
 
 	if (typeof updates.password === "string") {
+		// Hash the password before updating
+		const hashedPassword = await hashPassword(updates.password);
 		setFragments.push("password = ?");
-		values.push(updates.password);
+		values.push(hashedPassword);
 	}
 
 	if (typeof updates.role === "string" && UserRoleSchema.safeParse(updates.role).success) {
@@ -189,7 +192,9 @@ export const validateUserCredentials = async (
 		return undefined;
 	}
 
-	if (record.password !== password) {
+	// Use bcrypt to compare passwords
+	const isValid = await comparePasswords(password, record.password);
+	if (!isValid) {
 		return undefined;
 	}
 

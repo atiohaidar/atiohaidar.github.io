@@ -8,6 +8,20 @@ import {
 	ArticleUpdate, 
 	ArticleDelete 
 } from "../controllers/article.controller";
+import {
+	RoomList,
+	RoomGet,
+	RoomCreate,
+	RoomUpdate,
+	RoomDelete,
+} from "../controllers/room.controller";
+import {
+	BookingList,
+	BookingGet,
+	BookingCreate,
+	BookingUpdateStatus,
+	BookingCancel,
+} from "../controllers/booking.controller";
 
 export const registerRoutes = (openapi: any) => {
 	// Auth routes
@@ -33,4 +47,18 @@ export const registerRoutes = (openapi: any) => {
 	openapi.get("/api/articles/:slug", ArticleGet);
 	openapi.put("/api/articles/:slug", ArticleUpdate);
 	openapi.delete("/api/articles/:slug", ArticleDelete);
+
+	// Room routes
+	openapi.get("/api/rooms", RoomList);
+	openapi.post("/api/rooms", RoomCreate);
+	openapi.get("/api/rooms/:roomId", RoomGet);
+	openapi.put("/api/rooms/:roomId", RoomUpdate);
+	openapi.delete("/api/rooms/:roomId", RoomDelete);
+
+	// Booking routes
+	openapi.get("/api/bookings", BookingList);
+	openapi.post("/api/bookings", BookingCreate);
+	openapi.get("/api/bookings/:bookingId", BookingGet);
+	openapi.put("/api/bookings/:bookingId", BookingUpdateStatus);
+	openapi.delete("/api/bookings/:bookingId", BookingCancel);
 };

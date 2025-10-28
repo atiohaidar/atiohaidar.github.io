@@ -93,3 +93,63 @@ export const UserUpdateSchema = z
 	.refine((data) => Object.keys(data).length > 0, {
 		message: "Minimal satu field harus diisi",
 	});
+
+// Room schemas
+export const Room = z.object({
+	id: Str({ description: "Unique identifier", example: "room-001" }),
+	name: Str({ example: "Meeting Room A" }),
+	capacity: z.number({ description: "Room capacity" }),
+	description: Str({ required: false, example: "Ruang meeting dengan proyektor" }),
+	available: Bool({ default: true }),
+	created_at: Str({ required: false }),
+	updated_at: Str({ required: false }),
+});
+
+export const RoomCreateSchema = z.object({
+	id: Str({ example: "room-001" }),
+	name: Str({ example: "Meeting Room A" }),
+	capacity: z.number().int().positive(),
+	description: Str({ required: false }),
+	available: Bool({ default: true }),
+});
+
+export const RoomUpdateSchema = z
+	.object({
+		name: Str({ required: false }),
+		capacity: z.number().int().positive().optional(),
+		description: Str({ required: false }),
+		available: Bool({ required: false }),
+	})
+	.refine((data) => Object.keys(data).length > 0, {
+		message: "Minimal satu field harus diisi",
+	});
+
+// Booking schemas
+export const BookingStatusSchema = z.enum(["pending", "approved", "rejected", "cancelled"], {
+	description: "Status peminjaman ruangan",
+});
+
+export type BookingStatus = z.infer<typeof BookingStatusSchema>;
+
+export const Booking = z.object({
+	id: Str({ description: "Unique identifier", example: "booking-001" }),
+	room_id: Str({ example: "room-001" }),
+	user_username: Str({ example: "user" }),
+	start_time: Str({ description: "ISO 8601 datetime", example: "2024-01-15T09:00:00Z" }),
+	end_time: Str({ description: "ISO 8601 datetime", example: "2024-01-15T11:00:00Z" }),
+	status: BookingStatusSchema.default("pending"),
+	purpose: Str({ required: false, example: "Team meeting" }),
+	created_at: Str({ required: false }),
+	updated_at: Str({ required: false }),
+});
+
+export const BookingCreateSchema = z.object({
+	room_id: Str({ example: "room-001" }),
+	start_time: Str({ description: "ISO 8601 datetime" }),
+	end_time: Str({ description: "ISO 8601 datetime" }),
+	purpose: Str({ required: false }),
+});
+
+export const BookingUpdateSchema = z.object({
+	status: BookingStatusSchema,
+});
