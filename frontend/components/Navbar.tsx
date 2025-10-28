@@ -3,10 +3,12 @@
  * Menampilkan navigasi utama dan beradaptasi ke menu mobile pada layar kecil.
  */
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { NAV_LINKS } from '../constants';
 import { GitHubIcon, LinkedInIcon, InstagramIcon } from './Icons';
 import { COLORS, LAYOUT, PRINT, SPACING } from '../utils/styles';
 import { getExternalLinkProps } from '../utils/url';
+import ThemeToggle from './ThemeToggle';
 import type { SocialLinks } from '../types';
 
 /**
@@ -17,11 +19,16 @@ interface NavbarProps {
   logoSrc: string;
   /** Social media links untuk dropdown hover. */
   socials: SocialLinks;
+  /** Username jika user sudah login */
+  loggedInUser?: string | null;
+  /** Callback untuk logout */
+  onLogout?: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials }) => {
+const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogout }) => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -30,6 +37,20 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials }) => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (isUserMenuOpen) {
+                const target = event.target as HTMLElement;
+                if (!target.closest('.user-menu-container')) {
+                    setIsUserMenuOpen(false);
+                }
+            }
+        };
+        
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, [isUserMenuOpen]);
 
     return (
         <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${PRINT.HIDE} ${isScrolled ? 'bg-deep-navy/80 shadow-lg backdrop-blur-sm' : 'bg-transparent'}`}>
@@ -68,11 +89,70 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials }) => {
                 <ul className="hidden md:flex items-center space-x-8">
                     {NAV_LINKS.map((link, index) => (
                         <li key={link.name}>
-                            <a href={link.href} className="text-light-slate hover:text-accent-blue transition-colors duration-300">
-                                <span className="text-accent-blue mr-1">0{index + 1}.</span>{link.name}
-                            </a>
+                            {link.href.startsWith('#') ? (
+                                <a href={link.href} className="text-light-slate hover:text-accent-blue transition-colors duration-300">
+                                    <span className="text-accent-blue mr-1">0{index + 1}.</span>{link.name}
+                                </a>
+                            ) : (
+                                <Link to={link.href} className="text-light-slate hover:text-accent-blue transition-colors duration-300">
+                                    <span className="text-accent-blue mr-1">0{index + 1}.</span>{link.name}
+                                </Link>
+                            )}
                         </li>
                     ))}
+                    
+                    {/* Theme Toggle */}
+                    <li>
+                        <ThemeToggle />
+                    </li>
+                    
+                    {/* User info atau Login button */}
+                    {loggedInUser ? (
+                        <li className="relative user-menu-container">
+                            <button 
+                                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                                className="flex items-center space-x-2 text-light-slate hover:text-accent-blue transition-colors duration-300 bg-light-navy/50 px-4 py-2 rounded-lg border border-accent-blue/30"
+                            >
+                                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                                </svg>
+                                <span>{loggedInUser}</span>
+                                <svg className={`w-4 h-4 transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </button>
+                            
+                            {/* User dropdown menu */}
+                            {isUserMenuOpen && (
+                                <div className="absolute top-full right-0 mt-2 bg-light-navy rounded-lg shadow-xl p-2 min-w-[180px] border border-soft-gray/20">
+                                    <a 
+                                        href="/dashboard" 
+                                        className="block px-4 py-2 text-sm text-soft-gray hover:text-accent-blue hover:bg-deep-navy rounded transition-colors duration-200"
+                                    >
+                                        Dashboard
+                                    </a>
+                                    <button 
+                                        onClick={() => {
+                                            setIsUserMenuOpen(false);
+                                            onLogout?.();
+                                        }}
+                                        className="w-full text-left px-4 py-2 text-sm text-soft-gray hover:text-red-400 hover:bg-deep-navy rounded transition-colors duration-200"
+                                    >
+                                        Logout
+                                    </button>
+                                </div>
+                            )}
+                        </li>
+                    ) : (
+                        <li>
+                            <a 
+                                href="/login" 
+                                className="text-accent-blue border border-accent-blue px-4 py-2 rounded hover:bg-accent-blue hover:text-deep-navy transition-all duration-300"
+                            >
+                                Login
+                            </a>
+                        </li>
+                    )}
                 </ul>
 
                 {/* Mobile Menu Button */}
@@ -94,11 +174,63 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials }) => {
                 <ul className="flex flex-col items-center justify-center h-full space-y-8">
                     {NAV_LINKS.map((link, index) => (
                         <li key={link.name}>
-                            <a href={link.href} onClick={() => setIsMenuOpen(false)} className="text-2xl text-light-slate hover:text-accent-blue transition-colors duration-300">
-                                <span className="text-accent-blue mr-2">0{index + 1}.</span>{link.name}
-                            </a>
+                            {link.href.startsWith('#') ? (
+                                <a href={link.href} onClick={() => setIsMenuOpen(false)} className="text-2xl text-light-slate hover:text-accent-blue transition-colors duration-300">
+                                    <span className="text-accent-blue mr-2">0{index + 1}.</span>{link.name}
+                                </a>
+                            ) : (
+                                <Link to={link.href} onClick={() => setIsMenuOpen(false)} className="text-2xl text-light-slate hover:text-accent-blue transition-colors duration-300">
+                                    <span className="text-accent-blue mr-2">0{index + 1}.</span>{link.name}
+                                </Link>
+                            )}
                         </li>
                     ))}
+                    
+                    {/* Mobile user info atau login */}
+                    {loggedInUser ? (
+                        <>
+                            <li className="pt-4 border-t border-soft-gray/20 w-full text-center">
+                                <div className="text-light-slate mb-4">
+                                    <div className="flex items-center justify-center space-x-2 mb-2">
+                                        <svg className="w-6 h-6 text-accent-blue" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                                        </svg>
+                                        <span className="text-xl">{loggedInUser}</span>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <a 
+                                    href="/dashboard" 
+                                    onClick={() => setIsMenuOpen(false)}
+                                    className="text-xl text-accent-blue hover:text-accent-blue transition-colors duration-300"
+                                >
+                                    Dashboard
+                                </a>
+                            </li>
+                            <li>
+                                <button 
+                                    onClick={() => {
+                                        setIsMenuOpen(false);
+                                        onLogout?.();
+                                    }}
+                                    className="text-xl text-red-400 hover:text-red-300 transition-colors duration-300"
+                                >
+                                    Logout
+                                </button>
+                            </li>
+                        </>
+                    ) : (
+                        <li className="pt-4 border-t border-soft-gray/20">
+                            <a 
+                                href="/login" 
+                                onClick={() => setIsMenuOpen(false)}
+                                className="text-xl text-accent-blue border border-accent-blue px-6 py-3 rounded hover:bg-accent-blue hover:text-deep-navy transition-all duration-300 inline-block"
+                            >
+                                Login
+                            </a>
+                        </li>
+                    )}
                 </ul>
             </div>
              {isMenuOpen && <div onClick={() => setIsMenuOpen(false)} className="md:hidden fixed inset-0 bg-black/50 z-30"></div>}

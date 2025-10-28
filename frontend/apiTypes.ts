@@ -48,6 +48,28 @@ export interface TaskUpdate {
     due_date?: string;
 }
 
+export interface Article {
+    slug: string;
+    title: string;
+    content: string;
+    published: boolean;
+    created_at?: string;
+    updated_at?: string;
+}
+
+export interface ArticleCreate {
+    slug: string;
+    title: string;
+    content: string;
+    published?: boolean;
+}
+
+export interface ArticleUpdate {
+    title?: string;
+    content?: string;
+    published?: boolean;
+}
+
 export interface LoginRequest {
     username: string;
     password: string;
@@ -83,4 +105,14 @@ export interface TasksListResponse {
 export interface TaskResponse {
     success: boolean;
     task: Task;
+}
+
+export interface ArticlesListResponse {
+    success: boolean;
+    articles: Article[];
+}
+
+export interface ArticleResponse {
+    success: boolean;
+    article: Article;
 }

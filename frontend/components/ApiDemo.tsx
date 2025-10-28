@@ -1,108 +1,56 @@
 /**
- * @file API Demo section with tabbed interface
+ * @file Ajakan untuk mencoba dashboard API demo pada route terpisah
  */
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Section from './Section';
-import Login from './Login';
-import UsersManager from './UsersManager';
-import TasksManager from './TasksManager';
-import { useLogout } from '../hooks/useApi';
-import { getAuthToken, getStoredUser } from '../apiClient';
 import { COLORS } from '../utils/styles';
-
-type Tab = 'tasks' | 'users';
+import { getAuthToken, getStoredUser } from '../apiClient';
 
 const ApiDemo: React.FC = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [activeTab, setActiveTab] = useState<Tab>('tasks');
-    const [user, setUser] = useState<{ username: string; name: string; role: string } | null>(null);
-    const logout = useLogout();
 
     useEffect(() => {
-        // Check if user is already authenticated
         const token = getAuthToken();
         const storedUser = getStoredUser();
-        if (token && storedUser) {
-            setIsAuthenticated(true);
-            setUser(storedUser);
-        }
+        setIsAuthenticated(Boolean(token && storedUser));
     }, []);
 
-    const handleLoginSuccess = () => {
-        setIsAuthenticated(true);
-        const storedUser = getStoredUser();
-        setUser(storedUser);
-    };
-
-    const handleLogout = () => {
-        logout();
-        setIsAuthenticated(false);
-        setUser(null);
-    };
-
     return (
-        <Section id="api-demo" title="API Demo" className="bg-deep-navy">
-            <div className="max-w-6xl mx-auto">
-                {!isAuthenticated ? (
-                    <div className="mb-8">
-                        <p className="text-center text-light-slate mb-6">
-                            Login to test the backend API endpoints for managing users and tasks.
-                        </p>
-                        <Login onLoginSuccess={handleLoginSuccess} />
-                    </div>
-                ) : (
-                    <div className="space-y-6">
-                        {/* User info and logout */}
-                        <div className="bg-light-navy p-4 rounded-lg flex justify-between items-center">
-                            <div>
-                                <p className="text-light-slate">
-                                    Logged in as: <strong className={COLORS.TEXT_ACCENT}>{user?.name}</strong>
-                                </p>
-                                <p className="text-soft-gray text-sm">
-                                    Username: {user?.username} • Role: {user?.role}
-                                </p>
-                            </div>
-                            <button
-                                onClick={handleLogout}
-                                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                            >
-                                Logout
-                            </button>
-                        </div>
+        <Section id="api-demo" number="05" title="API Demo" className="bg-deep-navy">
+            <div className="max-w-4xl mx-auto text-center space-y-6">
+                <p className="text-light-slate">
+                    Dashboard API demo sekarang berada pada halaman terpisah. Kamu bisa mencoba autentikasi, mengelola todo list,
+                    serta—jika login sebagai admin—mengatur data pengguna secara real-time dari backend Worker.
+                </p>
 
-                        {/* Tabs */}
-                        <div className="flex gap-2 border-b border-soft-gray/30">
-                            <button
-                                onClick={() => setActiveTab('tasks')}
-                                className={`px-6 py-3 font-semibold transition-colors ${
-                                    activeTab === 'tasks'
-                                        ? `${COLORS.TEXT_ACCENT} border-b-2 border-accent-blue`
-                                        : 'text-soft-gray hover:text-light-slate'
-                                }`}
-                            >
-                                Tasks
-                            </button>
-                            {user?.role === 'admin' && (
-                                <button
-                                    onClick={() => setActiveTab('users')}
-                                    className={`px-6 py-3 font-semibold transition-colors ${
-                                        activeTab === 'users'
-                                            ? `${COLORS.TEXT_ACCENT} border-b-2 border-accent-blue`
-                                            : 'text-soft-gray hover:text-light-slate'
-                                    }`}
-                                >
-                                    Users (Admin)
-                                </button>
-                            )}
-                        </div>
-
-                        {/* Tab content */}
-                        <div className="min-h-[400px]">
-                            {activeTab === 'tasks' && <TasksManager />}
-                            {activeTab === 'users' && user?.role === 'admin' && <UsersManager />}
-                        </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                    <div className="bg-light-navy/40 border border-soft-gray/20 rounded-xl p-6 space-y-3">
+                        <h3 className="text-lg font-semibold text-white">Untuk Semua Pengguna</h3>
+                        <ul className="text-soft-gray text-sm space-y-2 list-disc list-inside">
+                            <li>Mencoba proses login menggunakan kredensial demo</li>
+                            <li>Membuat, memfilter, dan menghapus tugas pada todo list</li>
+                            <li>Merasakan alur kerja full-stack dari frontend hingga backend</li>
+                        </ul>
                     </div>
-                )}
+                    <div className="bg-light-navy/40 border border-soft-gray/20 rounded-xl p-6 space-y-3">
+                        <h3 className="text-lg font-semibold text-white">Fitur Admin</h3>
+                        <ul className="text-soft-gray text-sm space-y-2 list-disc list-inside">
+                            <li>Membuat akun baru beserta role</li>
+                            <li>Memperbarui nama atau password pengguna</li>
+                            <li>Menghapus akun yang tidak diperlukan</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div className="pt-2">
+                    <Link
+                        to={isAuthenticated ? '/dashboard' : '/login'}
+                        className={`inline-flex items-center justify-center px-6 py-3 rounded-lg font-semibold shadow-lg transition-colors ${COLORS.BG_ACCENT} ${COLORS.TEXT_PRIMARY} hover:opacity-90`}
+                    >
+                        {isAuthenticated ? 'Buka Dashboard' : 'Coba Dashboard Sekarang'}
+                    </Link>
+                </div>
             </div>
         </Section>
     );

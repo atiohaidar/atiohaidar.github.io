@@ -15,6 +15,11 @@ import type {
     TaskUpdate,
     TasksListResponse,
     TaskResponse,
+    Article,
+    ArticleCreate,
+    ArticleUpdate,
+    ArticlesListResponse,
+    ArticleResponse,
 } from './apiTypes';
 
 // Authentication
@@ -84,4 +89,44 @@ export const deleteTask = async (slug: string): Promise<Task> => {
         method: 'DELETE',
     });
     return response.task;
+};
+
+// Articles
+export const listArticles = async (params?: { page?: number; published?: boolean }): Promise<Article[]> => {
+    const queryParams = new URLSearchParams();
+    // Always include page parameter with default 0
+    queryParams.append('page', (params?.page ?? 0).toString());
+    if (params?.published !== undefined) queryParams.append('published', params.published.toString());
+    
+    const endpoint = `/api/articles?${queryParams.toString()}`;
+    const response = await apiFetch<ArticlesListResponse>(endpoint);
+    return response.articles;
+};
+
+export const getArticle = async (slug: string): Promise<Article> => {
+    const response = await apiFetch<ArticleResponse>(`/api/articles/${slug}`);
+    return response.article;
+};
+
+export const createArticle = async (article: ArticleCreate): Promise<Article> => {
+    const response = await apiFetch<ArticleResponse>('/api/articles', {
+        method: 'POST',
+        body: JSON.stringify(article),
+    });
+    return response.article;
+};
+
+export const updateArticle = async (slug: string, updates: ArticleUpdate): Promise<Article> => {
+    const response = await apiFetch<ArticleResponse>(`/api/articles/${slug}`, {
+        method: 'PUT',
+        body: JSON.stringify(updates),
+    });
+    return response.article;
+};
+
+export const deleteArticle = async (slug: string): Promise<Article> => {
+    const response = await apiFetch<ArticleResponse>(`/api/articles/${slug}`, {
+        method: 'DELETE',
+    });
+    return response.article;
 };

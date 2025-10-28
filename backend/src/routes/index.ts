@@ -1,26 +1,36 @@
 import { AuthLogin } from "../controllers/authLogin";
-import { UsersCreate } from "../controllers/usersCreate";
-import { UsersDelete } from "../controllers/usersDelete";
-import { UsersList } from "../controllers/usersList";
-import { UsersUpdate } from "../controllers/usersUpdate";
-import { TaskCreate } from "../controllers/taskCreate";
-import { TaskDelete } from "../controllers/taskDelete";
-import { TaskFetch } from "../controllers/taskFetch";
-import { TaskList } from "../controllers/taskList";
+import { UserController } from "../controllers/user.controller";
+import { TaskController } from "../controllers/task.controller";
+import { 
+	ArticleList, 
+	ArticleGet, 
+	ArticleCreate, 
+	ArticleUpdate, 
+	ArticleDelete 
+} from "../controllers/article.controller";
 
 export const registerRoutes = (openapi: any) => {
 	// Auth routes
 	openapi.post("/api/auth/login", AuthLogin);
 
 	// User routes
-	openapi.get("/api/users", UsersList);
-	openapi.post("/api/users", UsersCreate);
-	openapi.put("/api/users/:username", UsersUpdate);
-	openapi.delete("/api/users/:username", UsersDelete);
+	openapi.get("/api/users", UserController.list, { schema: UserController.listSchema });
+	openapi.post("/api/users", UserController.create, { schema: UserController.createSchema });
+	openapi.get("/api/users/:username", UserController.get, { schema: UserController.getSchema });
+	openapi.put("/api/users/:username", UserController.update, { schema: UserController.updateSchema });
+	openapi.delete("/api/users/:username", UserController.delete, { schema: UserController.deleteSchema });
 
 	// Task routes
-	openapi.get("/api/tasks", TaskList);
-	openapi.post("/api/tasks", TaskCreate);
-	openapi.get("/api/tasks/:taskSlug", TaskFetch);
-	openapi.delete("/api/tasks/:taskSlug", TaskDelete);
+	openapi.get("/api/tasks", TaskController.list, { schema: TaskController.listSchema });
+	openapi.post("/api/tasks", TaskController.create, { schema: TaskController.createSchema });
+	openapi.get("/api/tasks/:taskSlug", TaskController.get, { schema: TaskController.getSchema });
+	openapi.put("/api/tasks/:taskSlug", TaskController.update, { schema: TaskController.updateSchema });
+	openapi.delete("/api/tasks/:taskSlug", TaskController.delete, { schema: TaskController.deleteSchema });
+
+	// Article routes
+	openapi.get("/api/articles", ArticleList);
+	openapi.post("/api/articles", ArticleCreate);
+	openapi.get("/api/articles/:slug", ArticleGet);
+	openapi.put("/api/articles/:slug", ArticleUpdate);
+	openapi.delete("/api/articles/:slug", ArticleDelete);
 };

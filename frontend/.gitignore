@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Environment variables
+# .env.local and .env*.local are ignored (sensitive/custom configs)
+# .env.development and .env.production are committed (safe URLs)
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

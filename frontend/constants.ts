@@ -20,6 +20,7 @@ export const NAV_LINKS: NavLink[] = [
     { name: 'Penelitian', href: '#research'},
     { name: 'Portofolio', href: '#portfolio' },
     { name: 'Pengalaman', href: '#experience' },
+    { name: 'Articles', href: '/articles' },
     { name: 'API Demo', href: '#api-demo' },
     { name: 'Kontak', href: '#contact' },
 ];

@@ -37,6 +37,32 @@ export const TaskUpdateSchema = z
 		message: "Minimal satu field harus diisi",
 	});
 
+export const Article = z.object({
+	slug: Str({ description: "Unique identifier", example: "introduction-to-astro" }),
+	title: Str({ example: "Introduction to Astro" }),
+	content: Str({ example: "Konten lengkap artikel" }),
+	published: Bool({ default: false }),
+	created_at: Str({ required: false }),
+	updated_at: Str({ required: false }),
+});
+
+export const ArticleCreateSchema = z.object({
+	slug: Str({ example: "introduction-to-astro" }),
+	title: Str({ example: "Introduction to Astro" }),
+	content: Str({ example: "Konten lengkap artikel" }),
+	published: Bool({ default: false }),
+});
+
+export const ArticleUpdateSchema = z
+	.object({
+		title: Str({ required: false }),
+		content: Str({ required: false }),
+		published: Bool({ required: false }),
+	})
+	.refine((data) => Object.keys(data).length > 0, {
+		message: "Minimal satu field harus diisi",
+	});
+
 export const UserRoleSchema = z.enum(["admin", "member"], {
 	description: "Role pengguna yang menentukan hak akses",
 });

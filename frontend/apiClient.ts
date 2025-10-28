@@ -3,8 +3,19 @@
  * Centralized API configuration for communicating with the backend
  */
 
-// Backend API base URL - update this when deploying
-export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8787';
+/**
+ * Backend API base URL
+ * - Development: http://localhost:8787 (from .env.development)
+ * - Production: https://backend.atiohaidar.workers.dev (from .env.production)
+ * 
+ * Vite automatically loads:
+ * - .env.development when running `npm run dev`
+ * - .env.production when running `npm run build`
+ */
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 
+    (import.meta.env.MODE === 'production' 
+        ? 'https://backend.atiohaidar.workers.dev' 
+        : 'http://localhost:8787');
 
 /**
  * Get stored authentication token from localStorage
@@ -47,6 +58,14 @@ export const setStoredUser = (user: { username: string; name: string; role: stri
  */
 export const removeStoredUser = (): void => {
     localStorage.removeItem('user');
+};
+
+/**
+ * Clear all authentication data (token and user)
+ */
+export const clearAuth = (): void => {
+    removeAuthToken();
+    removeStoredUser();
 };
 
 /**

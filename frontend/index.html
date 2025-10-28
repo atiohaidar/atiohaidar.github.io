@@ -13,6 +13,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class', // Enable class-based dark mode
             theme: {
                 extend: {
                     fontFamily: {
@@ -20,12 +21,20 @@
                         poppins: ['Poppins', 'sans-serif'],
                     },
                     colors: {
+                        // Dark mode colors
                         'deep-navy': '#222222',       // Main background, very dark gray
                         'light-navy': '#494949',      // Card background, from user palette
                         'accent-blue': '#E0E0E0',     // Accent for links/buttons, bright gray
                         'soft-gray': '#AAAAAA',       // Body text
                         'white': '#FFFFFF',           // Main headings
                         'light-slate': '#D0D0D0',     // Brighter text for secondary info
+                        
+                        // Light mode colors
+                        'light-bg': '#F5F5F5',        // Light background
+                        'light-card': '#FFFFFF',      // Light card background
+                        'light-accent': '#2563EB',    // Blue accent for light mode
+                        'light-text': '#1F2937',      // Dark text for light mode
+                        'light-muted': '#6B7280',     // Muted text for light mode
                     },
                     animation: {
                       'fade-in-up': 'fadeInUp 0.5s ease-out forwards',
