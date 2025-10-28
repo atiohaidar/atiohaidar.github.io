@@ -40,6 +40,7 @@ const toArticle = (row: Record<string, unknown>): ArticleRecord => {
 		title: row.title,
 		content: row.content,
 		published: Boolean(row.published),
+		owner: row.owner ?? undefined,
 		created_at: row.created_at ?? undefined,
 		updated_at: row.updated_at ?? undefined,
 	};
@@ -54,20 +55,30 @@ const toArticle = (row: Record<string, unknown>): ArticleRecord => {
 
 export const listArticles = async (
 	db: D1Database,
-	options: { page: number; published?: boolean | undefined },
+	options: { page: number; published?: boolean | undefined; owner?: string | undefined },
 ) => {
 	await ensureInitialized(db);
 
-	const { page, published } = options;
+	const { page, published, owner } = options;
 	const pageSize = 20;
 	const offset = Math.max(page, 0) * pageSize;
 
-	let query = "SELECT slug, title, content, published, created_at, updated_at FROM articles";
+	let query = "SELECT slug, title, content, published, owner, created_at, updated_at FROM articles";
 	const bindings: unknown[] = [];
+	const conditions: string[] = [];
 
 	if (typeof published === "boolean") {
-		query += " WHERE published = ?";
+		conditions.push("published = ?");
 		bindings.push(published ? 1 : 0);
+	}
+
+	if (owner) {
+		conditions.push("owner = ?");
+		bindings.push(owner);
+	}
+
+	if (conditions.length > 0) {
+		query += " WHERE " + conditions.join(" AND ");
 	}
 
 	query += " ORDER BY created_at DESC LIMIT ? OFFSET ?";
@@ -82,7 +93,7 @@ export const getArticle = async (db: D1Database, slug: string) => {
 	await ensureInitialized(db);
 	const row = await db
 		.prepare(
-			"SELECT slug, title, content, published, created_at, updated_at FROM articles WHERE slug = ?",
+			"SELECT slug, title, content, published, owner, created_at, updated_at FROM articles WHERE slug = ?",
 		)
 		.bind(slug)
 		.first();
@@ -93,6 +104,7 @@ export const getArticle = async (db: D1Database, slug: string) => {
 export const createArticle = async (
 	db: D1Database,
 	input: z.infer<typeof ArticleCreateSchema>,
+	owner?: string,
 ) => {
 	await ensureInitialized(db);
 	const data = ArticleCreateSchema.parse(input);
@@ -100,9 +112,9 @@ export const createArticle = async (
 	try {
 		await db
 			.prepare(
-				"INSERT INTO articles (slug, title, content, published) VALUES (?, ?, ?, ?)",
+				"INSERT INTO articles (slug, title, content, published, owner) VALUES (?, ?, ?, ?, ?)",
 			)
-			.bind(data.slug, data.title, data.content, data.published ? 1 : 0)
+			.bind(data.slug, data.title, data.content, data.published ? 1 : 0, owner ?? null)
 			.run();
 	} catch (error) {
 		if (error instanceof Error && error.message.includes("UNIQUE")) {

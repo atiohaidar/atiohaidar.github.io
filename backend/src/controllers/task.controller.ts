@@ -8,6 +8,7 @@ import {
   deleteTask 
 } from "../services/tasks";
 import { type AppContext, Task, TaskCreateSchema, TaskUpdateSchema } from "../models/types";
+import { getTokenPayloadFromRequest } from "../middlewares/auth";
 
 export class TaskController {
   // Schema definitions
@@ -207,16 +208,30 @@ export class TaskController {
 
   // Handler methods
   static async list(c: AppContext) {
+    const payload = getTokenPayloadFromRequest(c);
+    if (!payload) {
+      return c.json({ success: false, message: "Unauthorized" }, 401);
+    }
+
     const data = await this.validateData<{ 
       query: { page: number; isCompleted?: boolean } 
     }>(c, TaskController.listSchema);
     
     const { page, isCompleted } = data.query;
-    const tasks = await listTasks(c.env.DB, { page, isCompleted });
+    
+    // Admin can see all tasks, members can only see their own
+    const owner = payload.role === "admin" ? undefined : payload.sub;
+    
+    const tasks = await listTasks(c.env.DB, { page, isCompleted, owner });
     return c.json({ success: true, tasks });
   }
 
   static async get(c: AppContext) {
+    const payload = getTokenPayloadFromRequest(c);
+    if (!payload) {
+      return c.json({ success: false, message: "Unauthorized" }, 401);
+    }
+
     const data = await this.validateData<{ 
       params: { taskSlug: string } 
     }>(c, TaskController.getSchema);
@@ -230,17 +245,30 @@ export class TaskController {
         404
       );
     }
+
+    // Check authorization: admin can see all, members can only see their own
+    if (payload.role !== "admin" && task.owner !== payload.sub) {
+      return c.json(
+        { success: false, message: "Akses ditolak" },
+        403
+      );
+    }
     
     return c.json({ success: true, task });
   }
 
   static async create(c: AppContext) {
+    const payload = getTokenPayloadFromRequest(c);
+    if (!payload) {
+      return c.json({ success: false, message: "Unauthorized" }, 401);
+    }
+
     const data = await this.validateData<{ 
       body: { title: string; description?: string; isCompleted?: boolean } 
     }>(c, TaskController.createSchema);
     
     try {
-      const task = await createTask(c.env.DB, data.body);
+      const task = await createTask(c.env.DB, data.body, payload.sub);
       return c.json({ success: true, task }, 201);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to create task";
@@ -249,12 +277,28 @@ export class TaskController {
   }
 
   static async update(c: AppContext) {
+    const payload = getTokenPayloadFromRequest(c);
+    if (!payload) {
+      return c.json({ success: false, message: "Unauthorized" }, 401);
+    }
+
     const data = await this.validateData<{ 
       params: { taskSlug: string },
       body: { title?: string; description?: string; isCompleted?: boolean }
     }>(c, TaskController.updateSchema);
     
     const { taskSlug } = data.params;
+    
+    // Check if task exists and belongs to user
+    const existingTask = await getTask(c.env.DB, taskSlug);
+    if (!existingTask) {
+      return c.json({ success: false, message: "Task not found" }, 404);
+    }
+
+    // Check authorization: admin can update all, members can only update their own
+    if (payload.role !== "admin" && existingTask.owner !== payload.sub) {
+      return c.json({ success: false, message: "Akses ditolak" }, 403);
+    }
     
     try {
       const task = await updateTask(c.env.DB, taskSlug, data.body);
@@ -267,11 +311,27 @@ export class TaskController {
   }
 
   static async delete(c: AppContext) {
+    const payload = getTokenPayloadFromRequest(c);
+    if (!payload) {
+      return c.json({ success: false, message: "Unauthorized" }, 401);
+    }
+
     const data = await this.validateData<{ 
       params: { taskSlug: string } 
     }>(c, TaskController.deleteSchema);
     
     const { taskSlug } = data.params;
+    
+    // Check if task exists and belongs to user
+    const existingTask = await getTask(c.env.DB, taskSlug);
+    if (!existingTask) {
+      return c.json({ success: false, message: "Task not found" }, 404);
+    }
+
+    // Check authorization: admin can delete all, members can only delete their own
+    if (payload.role !== "admin" && existingTask.owner !== payload.sub) {
+      return c.json({ success: false, message: "Akses ditolak" }, 403);
+    }
     
     try {
       const task = await deleteTask(c.env.DB, taskSlug);

@@ -56,6 +56,7 @@ const toTask = (row: Record<string, unknown>) => {
 		description: row.description ?? undefined,
 		completed: Boolean(row.completed),
 		due_date: row.due_date ?? undefined,
+		owner: row.owner ?? undefined,
 		created_at: row.created_at ?? undefined,
 		updated_at: row.updated_at ?? undefined,
 	};
@@ -70,20 +71,30 @@ const toTask = (row: Record<string, unknown>) => {
 
 export const listTasks = async (
 	db: D1Database,
-	options: { page: number; isCompleted?: boolean | undefined },
+	options: { page: number; isCompleted?: boolean | undefined; owner?: string | undefined },
 ) => {
 	await ensureInitialized(db);
 
-	const { page, isCompleted } = options;
+	const { page, isCompleted, owner } = options;
 	const pageSize = 20;
 	const offset = Math.max(page, 0) * pageSize;
 
-	let query = "SELECT slug, name, description, completed, due_date, created_at, updated_at FROM tasks";
+	let query = "SELECT slug, name, description, completed, due_date, owner, created_at, updated_at FROM tasks";
 	const bindings: unknown[] = [];
+	const conditions: string[] = [];
 
 	if (typeof isCompleted === "boolean") {
-		query += " WHERE completed = ?";
+		conditions.push("completed = ?");
 		bindings.push(isCompleted ? 1 : 0);
+	}
+
+	if (owner) {
+		conditions.push("owner = ?");
+		bindings.push(owner);
+	}
+
+	if (conditions.length > 0) {
+		query += " WHERE " + conditions.join(" AND ");
 	}
 
 	query += " ORDER BY created_at DESC LIMIT ? OFFSET ?";
@@ -98,7 +109,7 @@ export const getTask = async (db: D1Database, slug: string) => {
 	await ensureInitialized(db);
 	const row = await db
 		.prepare(
-			"SELECT slug, name, description, completed, due_date, created_at, updated_at FROM tasks WHERE slug = ?",
+			"SELECT slug, name, description, completed, due_date, owner, created_at, updated_at FROM tasks WHERE slug = ?",
 		)
 		.bind(slug)
 		.first();
@@ -106,14 +117,18 @@ export const getTask = async (db: D1Database, slug: string) => {
 	return row ? toTask(row as Record<string, unknown>) : undefined;
 };
 
-export const createTask = async (db: D1Database, input: z.infer<typeof TaskCreateSchema>) => {
+export const createTask = async (
+	db: D1Database, 
+	input: z.infer<typeof TaskCreateSchema>,
+	owner?: string
+) => {
 	await ensureInitialized(db);
 	const data = TaskCreateSchema.parse(input);
 
 	try {
 		await db
 			.prepare(
-				"INSERT INTO tasks (slug, name, description, completed, due_date) VALUES (?, ?, ?, ?, ?)",
+				"INSERT INTO tasks (slug, name, description, completed, due_date, owner) VALUES (?, ?, ?, ?, ?, ?)",
 			)
 			.bind(
 				data.slug,
@@ -121,6 +136,7 @@ export const createTask = async (db: D1Database, input: z.infer<typeof TaskCreat
 				data.description ?? null,
 				data.completed ? 1 : 0,
 				data.due_date ?? null,
+				owner ?? null,
 			)
 			.run();
 	} catch (error) {

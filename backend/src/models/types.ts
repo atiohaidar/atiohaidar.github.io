@@ -14,6 +14,7 @@ export const Task = z.object({
 	description: Str({ required: false, example: "Tidy up before guests come" }),
 	completed: Bool({ default: false }),
 	due_date: Str({ required: false }),
+	owner: Str({ required: false, description: "Username of task owner" }),
 	created_at: Str({ required: false }),
 	updated_at: Str({ required: false }),
 });
@@ -42,6 +43,7 @@ export const Article = z.object({
 	title: Str({ example: "Introduction to Astro" }),
 	content: Str({ example: "Konten lengkap artikel" }),
 	published: Bool({ default: false }),
+	owner: Str({ required: false, description: "Username of article owner" }),
 	created_at: Str({ required: false }),
 	updated_at: Str({ required: false }),
 });

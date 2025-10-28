@@ -7,7 +7,7 @@ import {
   deleteArticle, 
   listArticles 
 } from "../services/articles";
-import { ensureAdmin } from "../middlewares/auth";
+import { ensureAdmin, getTokenPayloadFromRequest } from "../middlewares/auth";
 import { 
   type AppContext, 
   Article, 
@@ -48,10 +48,18 @@ export class ArticleList extends OpenAPIRoute {
   };
 
   async handle(c: AppContext) {
+    const payload = getTokenPayloadFromRequest(c);
+    if (!payload) {
+      return c.json({ success: false, message: "Unauthorized" }, 401);
+    }
+
     const data = await this.getValidatedData<typeof this.schema>();
     const { page, published } = data.query;
 
-    const articles = await listArticles(c.env.DB, { page, published });
+    // Admin can see all articles, members can only see their own
+    const owner = payload.role === "admin" ? undefined : payload.sub;
+
+    const articles = await listArticles(c.env.DB, { page, published, owner });
     return c.json({ success: true, articles });
   }
 }
@@ -93,6 +101,11 @@ export class ArticleGet extends OpenAPIRoute {
   };
 
   async handle(c: AppContext) {
+    const payload = getTokenPayloadFromRequest(c);
+    if (!payload) {
+      return c.json({ success: false, message: "Unauthorized" }, 401);
+    }
+
     const data = await this.getValidatedData<typeof this.schema>();
     const { slug } = data.params;
 
@@ -101,6 +114,14 @@ export class ArticleGet extends OpenAPIRoute {
       return c.json(
         { success: false, message: "Artikel tidak ditemukan" },
         404
+      );
+    }
+
+    // Check authorization: admin can see all, members can only see their own
+    if (payload.role !== "admin" && article.owner !== payload.sub) {
+      return c.json(
+        { success: false, message: "Akses ditolak" },
+        403
       );
     }
 
@@ -160,17 +181,14 @@ export class ArticleCreate extends OpenAPIRoute {
   };
 
   async handle(c: AppContext) {
-    const admin = ensureAdmin(c);
-    if (!admin) {
-      return c.json(
-        { success: false, message: "Hak akses admin diperlukan" },
-        403
-      );
+    const payload = getTokenPayloadFromRequest(c);
+    if (!payload) {
+      return c.json({ success: false, message: "Unauthorized" }, 401);
     }
 
     try {
       const data = await this.getValidatedData<typeof this.schema>();
-      const article = await createArticle(c.env.DB, data.body);
+      const article = await createArticle(c.env.DB, data.body, payload.sub);
       return c.json({ success: true, article }, 201);
     } catch (error) {
       const message = error instanceof Error ? error.message : "Gagal membuat artikel";
@@ -245,17 +263,26 @@ export class ArticleUpdate extends OpenAPIRoute {
   };
 
   async handle(c: AppContext) {
-    const admin = ensureAdmin(c);
-    if (!admin) {
-      return c.json(
-        { success: false, message: "Hak akses admin diperlukan" },
-        403
-      );
+    const payload = getTokenPayloadFromRequest(c);
+    if (!payload) {
+      return c.json({ success: false, message: "Unauthorized" }, 401);
     }
 
     try {
       const data = await this.getValidatedData<typeof this.schema>();
       const { slug } = data.params;
+      
+      // Check if article exists and belongs to user
+      const existingArticle = await getArticle(c.env.DB, slug);
+      if (!existingArticle) {
+        return c.json({ success: false, message: "Artikel tidak ditemukan" }, 404);
+      }
+
+      // Check authorization: admin can update all, members can only update their own
+      if (payload.role !== "admin" && existingArticle.owner !== payload.sub) {
+        return c.json({ success: false, message: "Akses ditolak" }, 403);
+      }
+      
       const article = await updateArticle(c.env.DB, slug, data.body);
       return c.json({ success: true, article });
     } catch (error) {
@@ -314,17 +341,26 @@ export class ArticleDelete extends OpenAPIRoute {
   };
 
   async handle(c: AppContext) {
-    const admin = ensureAdmin(c);
-    if (!admin) {
-      return c.json(
-        { success: false, message: "Hak akses admin diperlukan" },
-        403
-      );
+    const payload = getTokenPayloadFromRequest(c);
+    if (!payload) {
+      return c.json({ success: false, message: "Unauthorized" }, 401);
     }
 
     try {
       const data = await this.getValidatedData<typeof this.schema>();
       const { slug } = data.params;
+      
+      // Check if article exists and belongs to user
+      const existingArticle = await getArticle(c.env.DB, slug);
+      if (!existingArticle) {
+        return c.json({ success: false, message: "Artikel tidak ditemukan" }, 404);
+      }
+
+      // Check authorization: admin can delete all, members can only delete their own
+      if (payload.role !== "admin" && existingArticle.owner !== payload.sub) {
+        return c.json({ success: false, message: "Akses ditolak" }, 403);
+      }
+      
       const article = await deleteArticle(c.env.DB, slug);
       return c.json({ success: true, article });
     } catch (error) {
