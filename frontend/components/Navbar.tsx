@@ -125,12 +125,13 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
                             {/* User dropdown menu */}
                             {isUserMenuOpen && (
                                 <div className="absolute top-full right-0 mt-2 bg-light-navy rounded-lg shadow-xl p-2 min-w-[180px] border border-soft-gray/20">
-                                    <a 
-                                        href="/dashboard" 
+                                    <Link 
+                                        to="/dashboard" 
                                         className="block px-4 py-2 text-sm text-soft-gray hover:text-accent-blue hover:bg-deep-navy rounded transition-colors duration-200"
+                                        onClick={() => setIsUserMenuOpen(false)}
                                     >
                                         Dashboard
-                                    </a>
+                                    </Link>
                                     <button 
                                         onClick={() => {
                                             setIsUserMenuOpen(false);
@@ -145,12 +146,12 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
                         </li>
                     ) : (
                         <li>
-                            <a 
-                                href="/login" 
+                            <Link 
+                                to="/login" 
                                 className="text-accent-blue border border-accent-blue px-4 py-2 rounded hover:bg-accent-blue hover:text-deep-navy transition-all duration-300"
                             >
                                 Login
-                            </a>
+                            </Link>
                         </li>
                     )}
                 </ul>
@@ -200,13 +201,13 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
                                 </div>
                             </li>
                             <li>
-                                <a 
-                                    href="/dashboard" 
+                                <Link 
+                                    to="/dashboard" 
                                     onClick={() => setIsMenuOpen(false)}
                                     className="text-xl text-accent-blue hover:text-accent-blue transition-colors duration-300"
                                 >
                                     Dashboard
-                                </a>
+                                </Link>
                             </li>
                             <li>
                                 <button 
@@ -222,13 +223,13 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
                         </>
                     ) : (
                         <li className="pt-4 border-t border-soft-gray/20">
-                            <a 
-                                href="/login" 
+                            <Link 
+                                to="/login" 
                                 onClick={() => setIsMenuOpen(false)}
                                 className="text-xl text-accent-blue border border-accent-blue px-6 py-3 rounded hover:bg-accent-blue hover:text-deep-navy transition-all duration-300 inline-block"
                             >
                                 Login
-                            </a>
+                            </Link>
                         </li>
                     )}
                 </ul>
