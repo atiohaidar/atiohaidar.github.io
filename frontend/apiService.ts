@@ -57,10 +57,11 @@ export const deleteUser = async (username: string): Promise<User> => {
 // Tasks
 export const listTasks = async (params?: { page?: number; isCompleted?: boolean }): Promise<Task[]> => {
     const queryParams = new URLSearchParams();
-    if (params?.page !== undefined) queryParams.append('page', params.page.toString());
+    // Always include page parameter with default 0
+    queryParams.append('page', (params?.page ?? 0).toString());
     if (params?.isCompleted !== undefined) queryParams.append('isCompleted', params.isCompleted.toString());
     
-    const endpoint = `/api/tasks${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+    const endpoint = `/api/tasks?${queryParams.toString()}`;
     const response = await apiFetch<TasksListResponse>(endpoint);
     return response.tasks;
 };
