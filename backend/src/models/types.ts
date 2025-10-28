@@ -13,9 +13,9 @@ export const Task = z.object({
 	name: Str({ example: "Clean my room" }),
 	description: Str({ required: false, example: "Tidy up before guests come" }),
 	completed: Bool({ default: false }),
-	due_date: DateTime({ required: false }),
-	created_at: DateTime({ required: false }),
-	updated_at: DateTime({ required: false }),
+	due_date: Str({ required: false }),
+	created_at: Str({ required: false }),
+	updated_at: Str({ required: false }),
 });
 
 export const TaskCreateSchema = z.object({
@@ -23,7 +23,7 @@ export const TaskCreateSchema = z.object({
 	name: Str({ example: "Clean my room" }),
 	description: Str({ required: false }),
 	completed: Bool({ default: false }),
-	due_date: DateTime({ required: false }),
+	due_date: Str({ required: false }),
 });
 
 export const TaskUpdateSchema = z
@@ -31,7 +31,7 @@ export const TaskUpdateSchema = z
 		name: Str({ required: false }),
 		description: Str({ required: false }),
 		completed: Bool({ required: false }),
-		due_date: DateTime({ required: false }),
+		due_date: Str({ required: false }),
 	})
 	.refine((data) => Object.keys(data).length > 0, {
 		message: "Minimal satu field harus diisi",

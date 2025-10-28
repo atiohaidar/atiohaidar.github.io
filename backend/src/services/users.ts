@@ -26,22 +26,20 @@ let initializedPromise: Promise<void> | undefined;
 const ensureInitialized = async (db: D1Database) => {
 	if (!initializedPromise) {
 		initializedPromise = (async () => {
-			await db.exec(`
-		CREATE TABLE IF NOT EXISTS users (
-			username TEXT PRIMARY KEY,
-			name TEXT NOT NULL,
-			password TEXT NOT NULL,
-			role TEXT NOT NULL CHECK(role IN ('admin', 'member')),
-			created_at TEXT DEFAULT CURRENT_TIMESTAMP
-		);
-	`);
-
-		await db.exec(`
-		INSERT OR IGNORE INTO users (username, name, password, role)
-		VALUES
-			('admin', 'Administrator', 'admin123', 'admin'),
-			('user', 'Sample Member', 'user123', 'member');
-	`);
+			// Use batch for multiple statements
+			await db.batch([
+				db.prepare(`
+					CREATE TABLE IF NOT EXISTS users (
+						username TEXT PRIMARY KEY,
+						name TEXT NOT NULL,
+						password TEXT NOT NULL,
+						role TEXT NOT NULL CHECK(role IN ('admin', 'member')),
+						created_at TEXT DEFAULT CURRENT_TIMESTAMP
+					)
+				`),
+				db.prepare(`INSERT OR IGNORE INTO users (username, name, password, role) VALUES ('admin', 'Administrator', 'admin123', 'admin')`),
+				db.prepare(`INSERT OR IGNORE INTO users (username, name, password, role) VALUES ('user', 'Sample Member', 'user123', 'member')`)
+			]);
 		})();
 	}
 

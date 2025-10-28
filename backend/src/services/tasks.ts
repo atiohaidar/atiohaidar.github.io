@@ -21,24 +21,28 @@ let initializedPromise: Promise<void> | undefined;
 const ensureInitialized = async (db: D1Database) => {
 	if (!initializedPromise) {
 		initializedPromise = (async () => {
-			await db.exec(`
-				CREATE TABLE IF NOT EXISTS tasks (
-					slug TEXT PRIMARY KEY,
-					name TEXT NOT NULL,
-					description TEXT,
-					completed INTEGER NOT NULL DEFAULT 0,
-					due_date TEXT,
-					created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-					updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-				);
-
-				CREATE TRIGGER IF NOT EXISTS tasks_updated_at
-				AFTER UPDATE ON tasks
-				FOR EACH ROW
-				BEGIN
-					UPDATE tasks SET updated_at = CURRENT_TIMESTAMP WHERE slug = OLD.slug;
-				END;
-			`);
+			// Use batch for multiple statements
+			await db.batch([
+				db.prepare(`
+					CREATE TABLE IF NOT EXISTS tasks (
+						slug TEXT PRIMARY KEY,
+						name TEXT NOT NULL,
+						description TEXT,
+						completed INTEGER NOT NULL DEFAULT 0,
+						due_date TEXT,
+						created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+						updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+					)
+				`),
+				db.prepare(`
+					CREATE TRIGGER IF NOT EXISTS tasks_updated_at
+					AFTER UPDATE ON tasks
+					FOR EACH ROW
+					BEGIN
+						UPDATE tasks SET updated_at = CURRENT_TIMESTAMP WHERE slug = OLD.slug;
+					END
+				`)
+			]);
 		})();
 	}
 
