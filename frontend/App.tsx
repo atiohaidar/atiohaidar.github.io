@@ -6,12 +6,14 @@
  * - Merakit dan merender semua bagian utama halaman.
  */
 import React, { useState, useEffect } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import About from './components/About';
 import Research from './components/Research';
 import Portfolio from './components/Portfolio';
 import ExperienceComponent from './components/Experience';
+import ApiDemo from './components/ApiDemo';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import PrintButton from './components/PrintButton';
@@ -19,6 +21,16 @@ import { GitHubIcon, LinkedInIcon, InstagramIcon } from './components/Icons';
 import { getProfile, getAbout, getProjects, getResearch, getExperiences, getEducation } from './api';
 import { COLORS, LAYOUT, PRINT, TYPOGRAPHY } from './utils/styles';
 import type { Profile, About as AboutType, Project, ResearchItem, Experience, Education, SocialLinks as SocialLinksType } from './types';
+
+// Create a client for TanStack Query
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            refetchOnWindowFocus: false,
+            retry: 1,
+        },
+    },
+});
 
 /**
  * Komponen Social Links dengan FAB effect
@@ -118,29 +130,32 @@ const App: React.FC = () => {
 
     // Merender UI utama setelah data berhasil dimuat
     return (
-        <div className={`relative ${PRINT.PRESERVE_COLORS}`}>
-            <Navbar logoSrc={profile.logoSrc} socials={profile.socials} />
-            {/* <SocialLinks socials={profile.socials} /> */}
-            <main className="mx-auto">
-                <Hero 
-                    greeting={profile.heroGreeting}
-                    name={profile.name}
-                    tagline={profile.heroTagline}
-                    bio={profile.heroBio}
-                    linkedinUrl={profile.socials.linkedin}
-                />
-                <About data={about} />
-                <Research research={research} />
-                <Portfolio projects={projects} />
-                <ExperienceComponent experiences={experiences} education={education} />
-                <Contact 
-                    pitch={profile.contactPitch}
-                    linkedinUrl={profile.socials.linkedin}
-                />
-            </main>
-            <Footer socials={profile.socials} copyright={profile.copyright} />
-            <PrintButton />
-        </div>
+        <QueryClientProvider client={queryClient}>
+            <div className={`relative ${PRINT.PRESERVE_COLORS}`}>
+                <Navbar logoSrc={profile.logoSrc} socials={profile.socials} />
+                {/* <SocialLinks socials={profile.socials} /> */}
+                <main className="mx-auto">
+                    <Hero 
+                        greeting={profile.heroGreeting}
+                        name={profile.name}
+                        tagline={profile.heroTagline}
+                        bio={profile.heroBio}
+                        linkedinUrl={profile.socials.linkedin}
+                    />
+                    <About data={about} />
+                    <Research research={research} />
+                    <Portfolio projects={projects} />
+                    <ExperienceComponent experiences={experiences} education={education} />
+                    <ApiDemo />
+                    <Contact 
+                        pitch={profile.contactPitch}
+                        linkedinUrl={profile.socials.linkedin}
+                    />
+                </main>
+                <Footer socials={profile.socials} copyright={profile.copyright} />
+                <PrintButton />
+            </div>
+        </QueryClientProvider>
     );
 }
 
