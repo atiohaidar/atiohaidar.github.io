@@ -29,6 +29,7 @@ export interface Task {
     description?: string;
     completed: boolean;
     due_date?: string;
+    owner?: string;
     created_at?: string;
     updated_at?: string;
 }
@@ -53,6 +54,7 @@ export interface Article {
     title: string;
     content: string;
     published: boolean;
+    owner?: string;
     created_at?: string;
     updated_at?: string;
 }
@@ -68,6 +70,68 @@ export interface ArticleUpdate {
     title?: string;
     content?: string;
     published?: boolean;
+}
+
+export interface Room {
+    id: string;
+    name: string;
+    capacity: number;
+    description?: string;
+    available: boolean;
+    created_at?: string;
+    updated_at?: string;
+}
+
+export interface RoomCreate {
+    id: string;
+    name: string;
+    capacity: number;
+    description?: string;
+    available?: boolean;
+}
+
+export interface RoomUpdate {
+    name?: string;
+    capacity?: number;
+    description?: string;
+    available?: boolean;
+}
+
+export type BookingStatus = 'pending' | 'approved' | 'rejected' | 'cancelled';
+
+export interface Booking {
+    id: string;
+    room_id: string;
+    user_username: string;
+    start_time: string;
+    end_time: string;
+    status: BookingStatus;
+    purpose?: string;
+    created_at?: string;
+    updated_at?: string;
+}
+
+export interface BookingCreate {
+    room_id: string;
+    start_time: string;
+    end_time: string;
+    purpose?: string;
+}
+
+export interface BookingUpdate {
+    status: BookingStatus;
+}
+
+export interface DashboardStats {
+    totalUsers?: number;
+    totalTasks: number;
+    completedTasks: number;
+    totalArticles: number;
+    publishedArticles: number;
+    totalRooms?: number;
+    totalBookings: number;
+    pendingBookings: number;
+    approvedBookings: number;
 }
 
 export interface LoginRequest {
@@ -115,4 +179,29 @@ export interface ArticlesListResponse {
 export interface ArticleResponse {
     success: boolean;
     article: Article;
+}
+
+export interface RoomsListResponse {
+    success: boolean;
+    data: Room[];
+}
+
+export interface RoomResponse {
+    success: boolean;
+    data: Room;
+}
+
+export interface BookingsListResponse {
+    success: boolean;
+    data: Booking[];
+}
+
+export interface BookingResponse {
+    success: boolean;
+    data: Booking;
+}
+
+export interface StatsResponse {
+    success: boolean;
+    data: DashboardStats;
 }

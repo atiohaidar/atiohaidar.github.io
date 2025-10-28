@@ -1,5 +1,5 @@
 /**
- * @file API service functions for authentication, users, and tasks
+ * @file API service functions for authentication, users, tasks, articles, rooms, bookings, and stats
  */
 import { apiFetch } from './apiClient';
 import type {
@@ -20,6 +20,19 @@ import type {
     ArticleUpdate,
     ArticlesListResponse,
     ArticleResponse,
+    Room,
+    RoomCreate,
+    RoomUpdate,
+    RoomsListResponse,
+    RoomResponse,
+    Booking,
+    BookingCreate,
+    BookingUpdate,
+    BookingsListResponse,
+    BookingResponse,
+    DashboardStats,
+    StatsResponse,
+    BookingStatus,
 } from './apiTypes';
 
 // Authentication
@@ -129,4 +142,87 @@ export const deleteArticle = async (slug: string): Promise<Article> => {
         method: 'DELETE',
     });
     return response.article;
+};
+
+// Rooms
+export const listRooms = async (params?: { available?: boolean }): Promise<Room[]> => {
+    const queryParams = new URLSearchParams();
+    if (params?.available !== undefined) queryParams.append('available', params.available.toString());
+    
+    const endpoint = queryParams.toString() ? `/api/rooms?${queryParams.toString()}` : '/api/rooms';
+    const response = await apiFetch<RoomsListResponse>(endpoint);
+    return response.data;
+};
+
+export const getRoom = async (id: string): Promise<Room> => {
+    const response = await apiFetch<RoomResponse>(`/api/rooms/${id}`);
+    return response.data;
+};
+
+export const createRoom = async (room: RoomCreate): Promise<Room> => {
+    const response = await apiFetch<RoomResponse>('/api/rooms', {
+        method: 'POST',
+        body: JSON.stringify(room),
+    });
+    return response.data;
+};
+
+export const updateRoom = async (id: string, updates: RoomUpdate): Promise<Room> => {
+    const response = await apiFetch<RoomResponse>(`/api/rooms/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(updates),
+    });
+    return response.data;
+};
+
+export const deleteRoom = async (id: string): Promise<Room> => {
+    const response = await apiFetch<RoomResponse>(`/api/rooms/${id}`, {
+        method: 'DELETE',
+    });
+    return response.data;
+};
+
+// Bookings
+export const listBookings = async (params?: { roomId?: string; status?: BookingStatus }): Promise<Booking[]> => {
+    const queryParams = new URLSearchParams();
+    if (params?.roomId) queryParams.append('roomId', params.roomId);
+    if (params?.status) queryParams.append('status', params.status);
+    
+    const endpoint = queryParams.toString() ? `/api/bookings?${queryParams.toString()}` : '/api/bookings';
+    const response = await apiFetch<BookingsListResponse>(endpoint);
+    return response.data;
+};
+
+export const getBooking = async (id: string): Promise<Booking> => {
+    const response = await apiFetch<BookingResponse>(`/api/bookings/${id}`);
+    return response.data;
+};
+
+export const createBooking = async (booking: BookingCreate): Promise<Booking> => {
+    const response = await apiFetch<BookingResponse>('/api/bookings', {
+        method: 'POST',
+        body: JSON.stringify(booking),
+    });
+    return response.data;
+};
+
+export const updateBookingStatus = async (id: string, updates: BookingUpdate): Promise<Booking> => {
+    const response = await apiFetch<BookingResponse>(`/api/bookings/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(updates),
+    });
+    return response.data;
+};
+
+export const cancelBooking = async (id: string): Promise<Booking> => {
+    const response = await apiFetch<BookingResponse>(`/api/bookings/${id}`, {
+        method: 'DELETE',
+    });
+    return response.data;
+};
+
+// Stats
+export const getStats = async (): Promise<DashboardStats> => {
+    const response = await apiFetch<StatsResponse>('/api/stats');
+    return response.data;
 };
