@@ -115,7 +115,11 @@ const DiscussionForumPage: React.FC = () => {
                         </div>
                         <button
                             onClick={() => setIsCreateModalOpen(true)}
-                            className={`${palette.accent} hover:opacity-90 text-white px-6 py-2 rounded-lg font-medium transition-all`}
+                            className={`px-6 py-2 rounded-lg font-medium transition-all shadow-md ${
+                                theme === 'light'
+                                    ? 'bg-[#1F6FEB] text-white hover:bg-[#1A5FCC] focus:ring-2 focus:ring-[#1F6FEB]/40 focus:outline-none'
+                                    : `${palette.accent} text-white hover:opacity-90`
+                            }`}
                         >
                             + New Discussion
                         </button>

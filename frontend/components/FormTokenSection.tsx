@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { COLORS, LAYOUT } from '../utils/styles';
+import { COLORS } from '../utils/styles';
 
 const FormTokenSection: React.FC = () => {
     const [token, setToken] = useState('');

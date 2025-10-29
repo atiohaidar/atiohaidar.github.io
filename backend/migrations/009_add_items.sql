@@ -11,13 +11,7 @@ CREATE TABLE IF NOT EXISTS items (
   FOREIGN KEY (owner_username) REFERENCES users(username) ON DELETE CASCADE
 );
 
--- Ensure updated_at is refreshed on modifications
-CREATE TRIGGER IF NOT EXISTS items_updated_at
-AFTER UPDATE ON items
-FOR EACH ROW
-BEGIN
-  UPDATE items SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
-END;
+
 
 -- Helpful index for owner lookups
 CREATE INDEX IF NOT EXISTS idx_items_owner ON items(owner_username);
@@ -38,12 +32,6 @@ CREATE TABLE IF NOT EXISTS item_borrowings (
   FOREIGN KEY (borrower_username) REFERENCES users(username) ON DELETE CASCADE
 );
 
-CREATE TRIGGER IF NOT EXISTS item_borrowings_updated_at
-AFTER UPDATE ON item_borrowings
-FOR EACH ROW
-BEGIN
-  UPDATE item_borrowings SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
-END;
 
 -- Indexes to support common queries
 CREATE INDEX IF NOT EXISTS idx_item_borrowings_item ON item_borrowings(item_id);

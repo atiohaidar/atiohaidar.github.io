@@ -6,21 +6,28 @@
 /**
  * Mendefinisikan struktur untuk item tautan navigasi.
  */
-interface NavLink {
-  name: string;
-  href: string;
-}
+export type NavAction = "ticketing" | "form" | "anonymousChat";
+
+export type NavLink =
+  | {
+      name: string;
+      type: "route";
+      href: string;
+    }
+  | {
+      name: string;
+      type: "modal";
+      action: NavAction;
+    };
 
 /**
  * Daftar tautan navigasi yang ditampilkan di Navbar.
  * Menambahkan atau menghapus item di sini akan secara otomatis memperbarui navigasi.
  */
 export const NAV_LINKS: NavLink[] = [
-    { name: 'Tentang Saya', href: '#about' },
-    { name: 'Penelitian', href: '#research'},
-    { name: 'Portofolio', href: '#portfolio' },
-    { name: 'Pengalaman', href: '#experience' },
-    { name: 'Backend', href: '#backend' },
-    { name: 'Kontak', href: '#contact' },
-    { name: 'Diskusi', href: '/discussions' },
+    { name: 'Diskusi', type: 'route', href: '/discussions' },
+    { name: 'Ticketing', type: 'modal', action: 'ticketing' },
+    { name: 'Form', type: 'modal', action: 'form' },
+    { name: 'Anonymous Chat', type: 'modal', action: 'anonymousChat' },
+    { name: 'Backend Lainnya', type: 'route', href: '/login' },
 ];

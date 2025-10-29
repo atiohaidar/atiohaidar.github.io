@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { COLORS } from '../utils/styles';
 import { getTicketByToken, getTicketCommentsByToken, addTicketCommentByToken } from '../lib/api/services';
 import type { Ticket, TicketComment } from '../apiTypes';
 
-const TicketTrackingSection: React.FC = () => {
+interface TicketTrackingSectionProps {
+    prefillToken?: string | null;
+    onPrefillConsumed?: () => void;
+}
+
+const TicketTrackingSection: React.FC<TicketTrackingSectionProps> = ({ prefillToken, onPrefillConsumed }) => {
     const [token, setToken] = useState('');
     const [ticket, setTicket] = useState<Ticket | null>(null);
     const [comments, setComments] = useState<TicketComment[]>([]);
@@ -13,25 +18,43 @@ const TicketTrackingSection: React.FC = () => {
     const [commenterName, setCommenterName] = useState('');
     const [isSubmittingComment, setIsSubmittingComment] = useState(false);
 
-    const handleTrack = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const fetchTicket = useCallback(async (tokenValue: string) => {
         setIsLoading(true);
         setError(null);
         setTicket(null);
         setComments([]);
 
         try {
-            const ticketData = await getTicketByToken(token.trim());
+            const ticketData = await getTicketByToken(tokenValue);
             setTicket(ticketData);
-            
-            const commentsData = await getTicketCommentsByToken(token.trim());
+
+            const commentsData = await getTicketCommentsByToken(tokenValue);
             setComments(commentsData);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Gagal memuat tiket');
         } finally {
             setIsLoading(false);
         }
+    }, []);
+
+    const handleTrack = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const trimmed = token.trim();
+        if (!trimmed) {
+            return;
+        }
+        await fetchTicket(trimmed);
     };
+
+    useEffect(() => {
+        if (prefillToken && prefillToken.trim()) {
+            const trimmed = prefillToken.trim();
+            setToken(trimmed);
+            fetchTicket(trimmed).finally(() => {
+                onPrefillConsumed?.();
+            });
+        }
+    }, [prefillToken, fetchTicket, onPrefillConsumed]);
 
     const handleAddComment = async (e: React.FormEvent) => {
         e.preventDefault();

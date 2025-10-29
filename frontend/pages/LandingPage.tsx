@@ -17,6 +17,7 @@ import TicketTrackingSection from '../components/TicketTrackingSection';
 import { getProfile, getAbout, getProjects, getResearch, getExperiences, getEducation } from '../api';
 import { getAuthToken, getStoredUser, clearAuth } from '../apiClient';
 import { COLORS, LAYOUT, PRINT } from '../utils/styles';
+import type { NavAction } from '../constants';
 import type {
     Profile,
     About as AboutType,
@@ -38,6 +39,11 @@ const LandingPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [loggedInUser, setLoggedInUser] = useState<string | null>(null);
     const [isAnonymousChatOpen, setIsAnonymousChatOpen] = useState(false);
+    const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
+    const [ticketTokenInput, setTicketTokenInput] = useState('');
+    const [prefilledTicketToken, setPrefilledTicketToken] = useState<string | null>(null);
+    const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+    const [formTokenInput, setFormTokenInput] = useState('');
 
     useEffect(() => {
         const token = getAuthToken();
@@ -81,6 +87,61 @@ const LandingPage: React.FC = () => {
         navigate('/', { replace: true });
     };
 
+    const scrollToSection = (id: string) => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    };
+
+    const handleNavAction = (action: NavAction) => {
+        switch (action) {
+            case 'ticketing':
+                setTicketTokenInput('');
+                setIsTicketModalOpen(true);
+                break;
+            case 'form':
+                setFormTokenInput('');
+                setIsFormModalOpen(true);
+                break;
+            case 'anonymousChat':
+                setIsAnonymousChatOpen(true);
+                break;
+            default:
+                break;
+        }
+    };
+
+    const handleTicketModalSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        const trimmed = ticketTokenInput.trim();
+        if (!trimmed) {
+            return;
+        }
+
+        setPrefilledTicketToken(trimmed);
+        setIsTicketModalOpen(false);
+        scrollToSection('ticket-tracking');
+    };
+
+    const handleTicketCreateNew = () => {
+        setIsTicketModalOpen(false);
+        setPrefilledTicketToken(null);
+        setTicketTokenInput('');
+        scrollToSection('ticket-submission');
+    };
+
+    const handleFormModalSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        const trimmed = formTokenInput.trim();
+        if (!trimmed) {
+            return;
+        }
+
+        setIsFormModalOpen(false);
+        navigate(`/form/${trimmed}`);
+    };
+
     if (loading) {
         return (
             <div className={`min-h-screen ${LAYOUT.FLEX_CENTER} ${COLORS.BG_PRIMARY} ${COLORS.TEXT_ACCENT} text-xl font-poppins`}>
@@ -108,6 +169,7 @@ const LandingPage: React.FC = () => {
                 socials={profile.socials}
                 loggedInUser={loggedInUser}
                 onLogout={handleLogout}
+                onNavAction={handleNavAction}
             />
             <main className="mx-auto">
                 <Hero
@@ -123,7 +185,10 @@ const LandingPage: React.FC = () => {
                 <ExperienceComponent experiences={experiences} education={education} />
                 <ApiDemo />
                 <TicketSubmissionSection />
-                <TicketTrackingSection />
+                <TicketTrackingSection 
+                    prefillToken={prefilledTicketToken}
+                    onPrefillConsumed={() => setPrefilledTicketToken(null)}
+                />
                 <FormTokenSection />
                 <Contact
                     pitch={profile.contactPitch}
@@ -147,6 +212,113 @@ const LandingPage: React.FC = () => {
                 isOpen={isAnonymousChatOpen}
                 onClose={() => setIsAnonymousChatOpen(false)}
             />
+
+            {/* Ticket Tracking Modal */}
+            {isTicketModalOpen && (
+                <div
+                    className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+                    onClick={() => setIsTicketModalOpen(false)}
+                >
+                    <div
+                        className={`${COLORS.BG_SECONDARY} ${COLORS.BORDER} relative w-full max-w-md rounded-xl border p-6 shadow-2xl`}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <button
+                            type="button"
+                            onClick={() => setIsTicketModalOpen(false)}
+                            className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
+                            aria-label="Tutup modal ticketing"
+                        >
+                            ✕
+                        </button>
+                        <h2 className={`text-2xl font-semibold mb-2 ${COLORS.TEXT_PRIMARY}`}>
+                            Lacak Tiket
+                        </h2>
+                        <p className={`${COLORS.TEXT_SECONDARY} mb-6`}>
+                            Masukkan token tiket untuk melihat status pengaduan Anda atau buat tiket baru jika belum punya token.
+                        </p>
+                        <form onSubmit={handleTicketModalSubmit} className="space-y-4">
+                            <div>
+                                <label className={`block text-sm font-medium mb-2 ${COLORS.TEXT_PRIMARY}`} htmlFor="ticket-token-input">
+                                    Token Tiket
+                                </label>
+                                <input
+                                    id="ticket-token-input"
+                                    type="text"
+                                    value={ticketTokenInput}
+                                    onChange={(e) => setTicketTokenInput(e.target.value)}
+                                    placeholder="Contoh: TKT-ABC12345"
+                                    className={`w-full px-4 py-3 rounded-lg border ${COLORS.BORDER} ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} focus:outline-none focus:ring-2 focus:ring-coral-pink`}
+                                />
+                            </div>
+                            <div className="flex flex-col gap-3 sm:flex-row">
+                                <button
+                                    type="submit"
+                                    className={`flex-1 px-4 py-3 rounded-lg font-semibold ${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ON_ACCENT} hover:opacity-90 transition-opacity`}
+                                >
+                                    Lacak Tiket
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleTicketCreateNew}
+                                    className={`flex-1 px-4 py-3 rounded-lg font-semibold border ${COLORS.BORDER} ${COLORS.TEXT_PRIMARY} hover:bg-black/5 dark:hover:bg-white/10 transition-colors`}
+                                >
+                                    Buat Tiket Baru
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Form Token Modal */}
+            {isFormModalOpen && (
+                <div
+                    className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+                    onClick={() => setIsFormModalOpen(false)}
+                >
+                    <div
+                        className={`${COLORS.BG_SECONDARY} ${COLORS.BORDER} relative w-full max-w-md rounded-xl border p-6 shadow-2xl`}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <button
+                            type="button"
+                            onClick={() => setIsFormModalOpen(false)}
+                            className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
+                            aria-label="Tutup modal form"
+                        >
+                            ✕
+                        </button>
+                        <h2 className={`text-2xl font-semibold mb-2 ${COLORS.TEXT_PRIMARY}`}>
+                            Akses Formulir
+                        </h2>
+                        <p className={`${COLORS.TEXT_SECONDARY} mb-6`}>
+                            Masukkan token formulir untuk mulai mengisi form yang tersedia.
+                        </p>
+                        <form onSubmit={handleFormModalSubmit} className="space-y-4">
+                            <div>
+                                <label className={`block text-sm font-medium mb-2 ${COLORS.TEXT_PRIMARY}`} htmlFor="form-token-input">
+                                    Token Formulir
+                                </label>
+                                <input
+                                    id="form-token-input"
+                                    type="text"
+                                    value={formTokenInput}
+                                    onChange={(e) => setFormTokenInput(e.target.value)}
+                                    placeholder="Masukkan token formulir"
+                                    className={`w-full px-4 py-3 rounded-lg border ${COLORS.BORDER} ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} focus:outline-none focus:ring-2 focus:ring-coral-pink`}
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                className={`w-full px-4 py-3 rounded-lg font-semibold ${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ON_ACCENT} hover:opacity-90 transition-opacity`}
+                            >
+                                Buka Formulir
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

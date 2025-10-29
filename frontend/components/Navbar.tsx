@@ -4,10 +4,9 @@
  */
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { NAV_LINKS } from '../constants';
+import { NAV_LINKS, type NavAction } from '../constants';
 import { GitHubIcon, LinkedInIcon, InstagramIcon } from './Icons';
 import { COLORS, LAYOUT, PRINT, SPACING } from '../utils/styles';
-import { getExternalLinkProps } from '../utils/url';
 import ThemeToggle from './ThemeToggle';
 import type { SocialLinks } from '../types';
 
@@ -23,9 +22,11 @@ interface NavbarProps {
   loggedInUser?: string | null;
   /** Callback untuk logout */
   onLogout?: () => void;
+  /** Callback saat link modal di klik */
+  onNavAction?: (action: NavAction) => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogout }) => {
+const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogout, onNavAction }) => {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -89,14 +90,18 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
                 <ul className="hidden md:flex items-center space-x-8">
                     {NAV_LINKS.map((link, index) => (
                         <li key={link.name}>
-                            {link.href.startsWith('#') ? (
-                                <a href={link.href} className="text-light-muted dark:text-light-slate hover:text-light-accent dark:hover:text-accent-blue transition-colors duration-300">
-                                    <span className="text-light-accent dark:text-accent-blue mr-1">0{index + 1}.</span>{link.name}
-                                </a>
-                            ) : (
+                            {link.type === 'route' ? (
                                 <Link to={link.href} className="text-light-muted dark:text-light-slate hover:text-light-accent dark:hover:text-accent-blue transition-colors duration-300">
                                     <span className="text-light-accent dark:text-accent-blue mr-1">0{index + 1}.</span>{link.name}
                                 </Link>
+                            ) : (
+                                <button
+                                    type="button"
+                                    onClick={() => onNavAction?.(link.action)}
+                                    className="text-light-muted dark:text-light-slate hover:text-light-accent dark:hover:text-accent-blue transition-colors duration-300"
+                                >
+                                    <span className="text-light-accent dark:text-accent-blue mr-1">0{index + 1}.</span>{link.name}
+                                </button>
                             )}
                         </li>
                     ))}
@@ -191,16 +196,7 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
                         <ul className="flex flex-col px-6 py-8 space-y-6">
                             {NAV_LINKS.map((link, index) => (
                                 <li key={link.name}>
-                                    {link.href.startsWith('#') ? (
-                                        <a
-                                            href={link.href}
-                                            onClick={() => setIsMenuOpen(false)}
-                                            className="flex items-baseline gap-3 text-lg font-medium text-[#445171] dark:text-[#CED7EA] hover:text-[#1F6FEB] dark:hover:text-accent-blue transition-colors duration-200"
-                                        >
-                                            <span className="text-sm font-semibold text-[#1F6FEB] dark:text-accent-blue">0{index + 1}.</span>
-                                            {link.name}
-                                        </a>
-                                    ) : (
+                                    {link.type === 'route' ? (
                                         <Link
                                             to={link.href}
                                             onClick={() => setIsMenuOpen(false)}
@@ -209,6 +205,18 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
                                             <span className="text-sm font-semibold text-[#1F6FEB] dark:text-accent-blue">0{index + 1}.</span>
                                             {link.name}
                                         </Link>
+                                    ) : (
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                setIsMenuOpen(false);
+                                                onNavAction?.(link.action);
+                                            }}
+                                            className="flex items-baseline gap-3 text-lg font-medium text-[#445171] dark:text-[#CED7EA] hover:text-[#1F6FEB] dark:hover:text-accent-blue transition-colors duration-200"
+                                        >
+                                            <span className="text-sm font-semibold text-[#1F6FEB] dark:text-accent-blue">0{index + 1}.</span>
+                                            {link.name}
+                                        </button>
                                     )}
                                 </li>
                             ))}
