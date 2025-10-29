@@ -31,14 +31,14 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
     };
 
     return (
-        <div className="bg-light-navy rounded-md shadow-lg p-6 flex flex-col h-full transition-transform duration-300 hover:-translate-y-2 group print:shadow-none print:border print:border-gray-300 print:rounded-none print:bg-transparent print-avoid-break">
+        <div className="bg-white dark:bg-light-navy rounded-md shadow-lg p-6 flex flex-col h-full transition-transform duration-300 hover:-translate-y-2 group print:shadow-none print:border print:border-gray-300 print:rounded-none print:bg-transparent print-avoid-break">
             <header className="flex justify-between items-center mb-4 print:hidden">
-                <FolderIcon className="w-10 h-10 text-accent-blue" />
+                <FolderIcon className="w-10 h-10 text-light-accent dark:text-accent-blue" />
             </header>
             <main className="flex-grow">
-                <h3 className="text-xl font-poppins font-bold text-white mb-2 group-hover:text-accent-blue transition-colors print:text-black">{project.name}</h3>
-                <p className="text-sm text-soft-gray mb-2 leading-relaxed">{project.description}</p>
-                <p className="text-sm text-soft-gray leading-relaxed"><span className="font-semibold text-light-slate">Kontribusi:</span> {project.contribution}</p>
+                <h3 className="text-xl font-poppins font-bold text-light-text dark:text-white mb-2 group-hover:text-light-accent dark:group-hover:text-accent-blue transition-colors print:text-black">{project.name}</h3>
+                <p className="text-sm text-light-muted dark:text-soft-gray mb-2 leading-relaxed">{project.description}</p>
+                <p className="text-sm text-light-muted dark:text-soft-gray leading-relaxed"><span className="font-semibold text-light-text dark:text-light-slate">Kontribusi:</span> {project.contribution}</p>
             </main>
             <footer className="mt-4">
                 <div className="mb-4 space-y-2">
@@ -48,7 +48,7 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
                             href={link.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center text-sm text-soft-gray hover:text-accent-blue transition-colors duration-300 group/link overflow-hidden mb-1"
+                            className="flex items-center text-sm text-light-muted dark:text-soft-gray hover:text-light-accent dark:hover:text-accent-blue transition-colors duration-300 group/link overflow-hidden mb-1"
                         >
                             {getIconForLink(link.type)}
                             <span className="group-hover/link:underline print:underline">{link.url.replace(/^https?:\/\//, '')}</span>
@@ -56,7 +56,7 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
                     ))}
                 </div>
                 {project.tech && (
-                    <ul className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-soft-gray pt-4 border-t border-soft-gray/20">
+                    <ul className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-light-muted dark:text-soft-gray pt-4 border-t border-gray-300 dark:border-soft-gray/20">
                         {project.tech.map(t => <li key={t}>{t}</li>)}
                     </ul>
                 )}

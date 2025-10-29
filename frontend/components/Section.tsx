@@ -43,10 +43,10 @@ const Section: React.FC<SectionProps> = ({ id, number, title, children, centerTi
       ref={ref} 
       className={`${SPACING.SECTION_PADDING} ${pageBreakClass} ${SPACING.SECTION_PADDING_PRINT} ${animationClass} ${className}`}
     >
-      <h2 className={`${TYPOGRAPHY.HEADING_SECTION} ${COLORS.TEXT_WHITE} mb-8 ${LAYOUT.FLEX_CENTER} ${titleAlignment}`}>
-        <span className={`${COLORS.TEXT_ACCENT} mr-3`}>{number}.</span>
+      <h2 className={`${TYPOGRAPHY.HEADING_SECTION} text-light-text dark:text-white mb-8 ${LAYOUT.FLEX_CENTER} ${titleAlignment}`}>
+        <span className={`text-light-accent dark:text-accent-blue mr-3`}>{number}.</span>
         {title}
-        {!centerTitle && <span className="h-px w-20 sm:w-40 bg-soft-gray/30 ml-4 print:bg-gray-400"></span>}
+        {!centerTitle && <span className="h-px w-20 sm:w-40 bg-gray-300 dark:bg-soft-gray/30 ml-4 print:bg-gray-400"></span>}
       </h2>
       {children}
     </section>

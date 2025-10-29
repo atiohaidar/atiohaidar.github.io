@@ -27,23 +27,23 @@ const ResearchCard: React.FC<ResearchCardProps> = ({ item }) => {
     };
     
     return (
-        <div className="bg-light-navy rounded-md shadow-lg p-6 flex flex-col h-full transition-transform duration-300 hover:-translate-y-2 group print-avoid-break">
+        <div className="bg-white dark:bg-light-navy rounded-md shadow-lg p-6 flex flex-col h-full transition-transform duration-300 hover:-translate-y-2 group print-avoid-break">
             <main className="flex-grow">
-                <p className="text-xs font-semibold uppercase tracking-wider text-accent-blue mb-2">
+                <p className="text-xs font-semibold uppercase tracking-wider text-light-accent dark:text-accent-blue mb-2">
                     {item.type}
                 </p>
-                <h3 className="text-xl font-poppins font-bold text-white mb-2 group-hover:text-accent-blue transition-colors">{item.title}</h3>
-                <p className="text-sm text-soft-gray mb-2 leading-relaxed">{item.description}</p>
-                <p className="text-sm text-soft-gray leading-relaxed"><span className="font-semibold text-light-slate">Kontribusi:</span> {item.contribution}</p>
+                <h3 className="text-xl font-poppins font-bold text-light-text dark:text-white mb-2 group-hover:text-light-accent dark:group-hover:text-accent-blue transition-colors">{item.title}</h3>
+                <p className="text-sm text-light-muted dark:text-soft-gray mb-2 leading-relaxed">{item.description}</p>
+                <p className="text-sm text-light-muted dark:text-soft-gray leading-relaxed"><span className="font-semibold text-light-text dark:text-light-slate">Kontribusi:</span> {item.contribution}</p>
             </main>
-            <footer className="mt-4 pt-4 border-t border-soft-gray/20">
+            <footer className="mt-4 pt-4 border-t border-gray-300 dark:border-soft-gray/20">
                 {item.links.map(link => (
                      <a
                         key={link.url}
                         href={link.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center text-sm text-soft-gray hover:text-accent-blue transition-colors duration-300 group/link overflow-hidden mb-1"
+                        className="flex items-center text-sm text-light-muted dark:text-soft-gray hover:text-light-accent dark:hover:text-accent-blue transition-colors duration-300 group/link overflow-hidden mb-1"
                     >
                         {getIconForLink(link.type)}
                         <span className="group-hover/link:underline print:underline">{link.url.replace(/^https?:\/\//, '')}</span>

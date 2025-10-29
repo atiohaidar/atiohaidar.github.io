@@ -30,23 +30,33 @@ export const TYPOGRAPHY = {
 } as const;
 
 /**
- * Color classes
+ * Color classes - Theme aware (using Tailwind dark: modifier)
  */
 export const COLORS = {
-  BG_PRIMARY: 'bg-deep-navy',
-  BG_SECONDARY: 'bg-light-navy',
-  PANEL: 'bg-[#2B303A]',
-  TEXT_PRIMARY: 'text-white',
-  TEXT_SECONDARY: 'text-[#B4C2D4]',
-  BORDER: 'border-[#3F4654]',
-  BG_ACCENT: 'bg-accent-blue',
-  BORDER_ACCENT: 'border-accent-blue',
-  HOVER_ACCENT: 'hover:bg-accent-blue',
-  HOVER_TEXT_PRIMARY: 'hover:text-deep-navy',
-  TEXT_ACCENT: 'text-accent-blue',
-  TEXT_WHITE: 'text-white',
-  TEXT_MUTED: 'text-light-slate',
-  BUTTON_PRIMARY: 'bg-accent-blue',
+  // Backgrounds
+  BG_PRIMARY: 'bg-light-bg dark:bg-deep-navy',
+  BG_SECONDARY: 'bg-light-card dark:bg-light-navy',
+  PANEL: 'bg-white dark:bg-[#2B303A]',
+  
+  // Text colors
+  TEXT_PRIMARY: 'text-light-text dark:text-white',
+  TEXT_SECONDARY: 'text-light-muted dark:text-soft-gray',
+  TEXT_MUTED: 'text-light-muted dark:text-light-slate',
+  TEXT_ACCENT: 'text-light-accent dark:text-accent-blue',
+  TEXT_WHITE: 'text-light-text dark:text-white',
+  
+  // Borders
+  BORDER: 'border-gray-300 dark:border-[#3F4654]',
+  BORDER_ACCENT: 'border-light-accent dark:border-accent-blue',
+  
+  // Backgrounds with accent
+  BG_ACCENT: 'bg-light-accent dark:bg-accent-blue',
+  BUTTON_PRIMARY: 'bg-light-accent dark:bg-accent-blue',
+  
+  // Hover states
+  HOVER_ACCENT: 'hover:bg-light-accent/10 dark:hover:bg-accent-blue/10',
+  HOVER_TEXT_PRIMARY: 'hover:text-light-text dark:hover:text-deep-navy',
+  HOVER_TEXT_ACCENT: 'hover:text-light-accent dark:hover:text-accent-blue',
 } as const;
 
 export type DashboardThemeMode = 'light' | 'dark';
