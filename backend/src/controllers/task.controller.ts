@@ -195,6 +195,8 @@ export class TaskController {
 	};
 
 	private static async validateData<T>(c: AppContext, schema: any): Promise<T> {
+		const result: Record<string, unknown> = {};
+
 		if (schema.request?.query) {
 			const query = c.req.query();
 			const normalized: Record<string, unknown> = {};
@@ -218,32 +220,32 @@ export class TaskController {
 				}
 			}
 
-			const result = schema.request.query.safeParse(normalized);
-			if (!result.success) {
-				throw new Error(`Query validation failed: ${result.error.message}`);
+			const parsedQuery = schema.request.query.safeParse(normalized);
+			if (!parsedQuery.success) {
+				throw new Error(`Query validation failed: ${parsedQuery.error.message}`);
 			}
 
-			return { query: result.data } as T;
+			result.query = parsedQuery.data;
 		}
 
 		if (schema.request?.params) {
-			const parsed = schema.request.params.safeParse(c.req.param());
-			if (!parsed.success) {
-				throw new Error(`Params validation failed: ${parsed.error.message}`);
+			const parsedParams = schema.request.params.safeParse(c.req.param());
+			if (!parsedParams.success) {
+				throw new Error(`Params validation failed: ${parsedParams.error.message}`);
 			}
 
-			return { params: parsed.data } as T;
+			result.params = parsedParams.data;
 		}
 
 		if (schema.request?.body?.content?.["application/json"]?.schema) {
 			try {
 				const body = await c.req.json();
 				const bodySchema = schema.request.body.content["application/json"].schema;
-				const parsed = bodySchema.safeParse(body);
-				if (!parsed.success) {
-					throw new Error(`Body validation failed: ${parsed.error.message}`);
+				const parsedBody = bodySchema.safeParse(body);
+				if (!parsedBody.success) {
+					throw new Error(`Body validation failed: ${parsedBody.error.message}`);
 				}
-				return { body: parsed.data } as T;
+				result.body = parsedBody.data;
 			} catch (error) {
 				if (error instanceof Error && error.message.includes("validation failed")) {
 					throw error;
@@ -252,7 +254,7 @@ export class TaskController {
 			}
 		}
 
-		return {} as T;
+		return result as T;
 	}
 
 	static async list(c: AppContext) {
