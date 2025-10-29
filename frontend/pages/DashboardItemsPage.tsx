@@ -225,7 +225,7 @@ const DashboardItemsPage: React.FC = () => {
                   type="number"
                   min="1"
                   value={formData.stock}
-                  onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value) })}
+                  onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value, 10) })}
                   className={`w-full px-3 py-2 border rounded-lg ${palette.input.bg} ${palette.input.border} ${palette.input.text}`}
                   required
                 />
@@ -302,9 +302,9 @@ const DashboardItemsPage: React.FC = () => {
                 </label>
                 <input
                   type="number"
-                  min="0"
+                  min="1"
                   value={formData.stock}
-                  onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value) })}
+                  onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value, 10) })}
                   className={`w-full px-3 py-2 border rounded-lg ${palette.input.bg} ${palette.input.border} ${palette.input.text}`}
                   required
                 />

@@ -262,7 +262,7 @@ const DashboardItemBorrowingsPage: React.FC = () => {
                   type="number"
                   min="1"
                   value={formData.quantity}
-                  onChange={(e) => setFormData({ ...formData, quantity: parseInt(e.target.value) })}
+                  onChange={(e) => setFormData({ ...formData, quantity: parseInt(e.target.value, 10) })}
                   className={`w-full px-3 py-2 border rounded-lg ${palette.input.bg} ${palette.input.border} ${palette.input.text}`}
                   required
                 />
