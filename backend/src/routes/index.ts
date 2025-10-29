@@ -48,6 +48,17 @@ import {
 	PublicArticleList,
 	PublicArticleGet,
 } from "../controllers/publicArticle.controller";
+import {
+	FormList,
+	FormGet,
+	FormGetByToken,
+	FormCreate,
+	FormUpdate,
+	FormDelete,
+	FormResponseSubmit,
+	FormResponseList,
+	FormResponseGet,
+} from "../controllers/form.controller";
 
 export const registerRoutes = (openapi: any) => {
 	// Public routes (no authentication required)
@@ -120,4 +131,17 @@ export const registerRoutes = (openapi: any) => {
 	// Anonymous chat routes
 	openapi.get("/api/anonymous/messages", AnonymousMessageList);
 	openapi.post("/api/anonymous/messages", AnonymousMessageSend);
+
+	// Form routes
+	openapi.get("/api/forms", FormList);
+	openapi.post("/api/forms", FormCreate);
+	openapi.get("/api/forms/:formId", FormGet);
+	openapi.put("/api/forms/:formId", FormUpdate);
+	openapi.delete("/api/forms/:formId", FormDelete);
+	openapi.get("/api/forms/:formId/responses", FormResponseList);
+	openapi.get("/api/forms/:formId/responses/:responseId", FormResponseGet);
+
+	// Public form routes (no authentication required)
+	openapi.get("/api/public/forms/:token", FormGetByToken);
+	openapi.post("/api/public/forms/:token/submit", FormResponseSubmit);
 };

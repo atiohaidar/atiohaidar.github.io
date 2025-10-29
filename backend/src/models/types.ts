@@ -236,3 +236,64 @@ export const AnonymousMessageCreateSchema = z.object({
 	content: Str({ example: "Hello anonymously!" }),
 	reply_to_id: Str({ required: false }),
 });
+
+// Form schemas
+export const FormQuestion = z.object({
+	id: Str({ description: "Unique identifier", example: "q-001" }),
+	form_id: Str({ example: "form-001" }),
+	question_text: Str({ example: "What is your name?" }),
+	question_order: z.number().int().positive(),
+	created_at: Str({ required: false }),
+});
+
+export const Form = z.object({
+	id: Str({ description: "Unique identifier", example: "form-001" }),
+	title: Str({ example: "Customer Feedback Form" }),
+	description: Str({ required: false, example: "Tell us about your experience" }),
+	token: Str({ description: "Access token for respondents" }),
+	created_by: Str({ example: "admin" }),
+	created_at: Str({ required: false }),
+	updated_at: Str({ required: false }),
+});
+
+export const FormCreateSchema = z.object({
+	title: Str({ example: "Customer Feedback Form" }),
+	description: Str({ required: false }),
+	questions: z.array(z.object({
+		question_text: Str({ example: "What is your name?" }),
+		question_order: z.number().int().positive(),
+	})),
+});
+
+export const FormUpdateSchema = z.object({
+	title: Str({ required: false }),
+	description: Str({ required: false }),
+	questions: z.array(z.object({
+		id: Str({ required: false }),
+		question_text: Str({ example: "What is your name?" }),
+		question_order: z.number().int().positive(),
+	})).optional(),
+});
+
+export const FormResponse = z.object({
+	id: Str({ description: "Unique identifier", example: "resp-001" }),
+	form_id: Str({ example: "form-001" }),
+	respondent_name: Str({ required: false, example: "John Doe" }),
+	submitted_at: Str({ required: false }),
+});
+
+export const FormAnswer = z.object({
+	id: Str({ description: "Unique identifier", example: "ans-001" }),
+	response_id: Str({ example: "resp-001" }),
+	question_id: Str({ example: "q-001" }),
+	answer_text: Str({ example: "John Doe" }),
+	created_at: Str({ required: false }),
+});
+
+export const FormResponseCreateSchema = z.object({
+	respondent_name: Str({ required: false }),
+	answers: z.array(z.object({
+		question_id: Str({ example: "q-001" }),
+		answer_text: Str({ example: "My answer" }),
+	})),
+});
