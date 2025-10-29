@@ -13,7 +13,7 @@ const PrintButton: React.FC = () => {
     return (
         <button
             onClick={triggerPrint}
-            className={`${LAYOUT.FIXED_BOTTOM_RIGHT} ${COLORS.BG_ACCENT} ${COLORS.TEXT_PRIMARY} w-14 h-14 rounded-full shadow-lg ${LAYOUT.FLEX_CENTER} hover:bg-white transition-colors duration-300 ${PRINT.HIDE}`}
+            className={`${LAYOUT.FIXED_BOTTOM_LEFT} ${COLORS.BG_ACCENT} ${COLORS.TEXT_PRIMARY} w-14 h-14 rounded-full shadow-lg ${LAYOUT.FLEX_CENTER} hover:bg-white transition-colors duration-300 ${PRINT.HIDE}`}
             aria-label="Cetak Portofolio"
             title="Cetak Portofolio - Pastikan 'Background graphics' aktif untuk hasil terbaik"
         >

@@ -13,6 +13,7 @@ import {
 } from "../models/types";
 import { verifyAuth } from "../utils/auth";
 import { ChatService } from "../services/chats";
+import { getUser } from "../services/users";
 
 // Get user conversations
 export class ConversationList extends OpenAPIRoute {
@@ -603,8 +604,21 @@ export class GroupAddMember extends OpenAPIRoute {
 		}
 
 		const { groupId } = c.req.param();
-		const data = await this.getValidatedData<typeof GroupMemberAddSchema>();
-		const { user_username, role } = data.body;
+		const body = await c.req.json();
+		const parsedBody = GroupMemberAddSchema.safeParse(body);
+		if (!parsedBody.success) {
+			return c.json({
+				success: false,
+				error: "Invalid request payload",
+				details: parsedBody.error.flatten(),
+			}, 400);
+		}
+		const { user_username, role } = parsedBody.data;
+
+		const targetUser = await getUser(c.env.DB, user_username);
+		if (!targetUser) {
+			return c.json({ error: "User not found" }, 404);
+		}
 
 		const chatService = new ChatService(c.env);
 		

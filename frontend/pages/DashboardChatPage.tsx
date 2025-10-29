@@ -8,6 +8,7 @@ import {
     getGroups,
     getConversationMessages,
     getGroupMessages,
+    getOrCreateConversation,
     sendMessage,
     type Conversation,
     type GroupChat,
@@ -32,6 +33,10 @@ const ChatPage: React.FC<ChatPageProps> = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isGroupManagementOpen, setIsGroupManagementOpen] = useState(false);
+    const [isNewChatModalOpen, setIsNewChatModalOpen] = useState(false);
+    const [newChatUsername, setNewChatUsername] = useState('');
+    const [newChatLoading, setNewChatLoading] = useState(false);
+    const [newChatError, setNewChatError] = useState<string | null>(null);
 
     useEffect(() => {
         loadChats();
@@ -61,17 +66,19 @@ const ChatPage: React.FC<ChatPageProps> = () => {
         }
     };
 
-    const loadMessages = async () => {
-        if (!selectedChat || !chatType) return;
+    const loadMessages = async (options?: { id: string; type: 'conversation' | 'group' }) => {
+        const targetId = options?.id ?? selectedChat;
+        const targetType = options?.type ?? chatType;
+        if (!targetId || !targetType) return;
 
         setLoading(true);
         setError(null);
         try {
             let data: Message[];
-            if (chatType === 'conversation') {
-                data = await getConversationMessages(selectedChat);
+            if (targetType === 'conversation') {
+                data = await getConversationMessages(targetId);
             } else {
-                data = await getGroupMessages(selectedChat);
+                data = await getGroupMessages(targetId);
             }
             setMessages(data);
         } catch (err: any) {
@@ -135,6 +142,79 @@ const ChatPage: React.FC<ChatPageProps> = () => {
         }
     };
 
+    const openNewChatModal = () => {
+        setNewChatUsername('');
+        setNewChatError(null);
+        setIsNewChatModalOpen(true);
+    };
+
+    const closeNewChatModal = () => {
+        if (newChatLoading) return;
+        setIsNewChatModalOpen(false);
+        setNewChatUsername('');
+        setNewChatError(null);
+    };
+
+    const handleStartNewChat = async () => {
+        if (!user) {
+            setNewChatError('Pengguna tidak ditemukan. Silakan login ulang.');
+            return;
+        }
+
+        const target = newChatUsername.trim();
+        if (!target) {
+            setNewChatError('Username wajib diisi');
+            return;
+        }
+
+        if (target.toLowerCase() === user.username.toLowerCase()) {
+            setNewChatError('Tidak dapat memulai chat dengan diri sendiri');
+            return;
+        }
+
+        setNewChatLoading(true);
+        setNewChatError(null);
+
+        try {
+            const conversation = await getOrCreateConversation(target);
+            const otherUsername = conversation.user1_username === user.username
+                ? conversation.user2_username
+                : conversation.user1_username;
+
+            const enrichedConversation: Conversation = {
+                ...conversation,
+                other_username: otherUsername,
+                other_name: conversation.other_name ?? otherUsername,
+            };
+
+            setActiveTab('direct');
+            setConversations((prev) => {
+                const filtered = prev.filter((item) => item.id !== enrichedConversation.id);
+                return [enrichedConversation, ...filtered];
+            });
+
+            setSelectedChat(enrichedConversation.id);
+            setChatType('conversation');
+            setMessages([]);
+
+            await loadMessages({ id: enrichedConversation.id, type: 'conversation' });
+
+            setIsNewChatModalOpen(false);
+            setNewChatUsername('');
+        } catch (err: any) {
+            const rawMessage = err?.message || 'Gagal memulai percakapan';
+            if (rawMessage.includes('Cannot create conversation with yourself')) {
+                setNewChatError('Tidak dapat memulai chat dengan diri sendiri');
+            } else if (rawMessage.includes('not found') || rawMessage.includes('tidak ditemukan')) {
+                setNewChatError('Username tidak ditemukan');
+            } else {
+                setNewChatError(rawMessage);
+            }
+        } finally {
+            setNewChatLoading(false);
+        }
+    };
+
     return (
         <div className={`h-full flex ${palette.surface} rounded-lg shadow-lg`}>
             {/* Chat List Sidebar */}
@@ -171,6 +251,12 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                         className={`w-full py-2 px-4 rounded ${palette.button.primary} text-white hover:opacity-90 transition-opacity disabled:opacity-50`}
                     >
                         {loading ? '⟳ Refreshing...' : '🔄 Refresh'}
+                    </button>
+                    <button
+                        onClick={openNewChatModal}
+                        className={`w-full py-2 px-4 rounded ${palette.button.secondary} hover:opacity-90 transition-opacity`}
+                    >
+                        ➕ Start New Chat
                     </button>
                     {activeTab === 'group' && (
                         <button
@@ -253,7 +339,7 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                         <div className={`p-4 ${palette.sidebar.border} flex justify-between items-center`}>
                             <h2 className="text-xl font-bold">{getChatName()}</h2>
                             <button
-                                onClick={loadMessages}
+                                onClick={() => loadMessages()}
                                 disabled={loading}
                                 className={`py-1 px-3 rounded ${palette.button.secondary} hover:opacity-90 transition-opacity disabled:opacity-50`}
                             >
@@ -364,6 +450,57 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                     loadChats();
                 }}
             />
+
+            {isNewChatModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+                    <div className={`${palette.surface} rounded-lg shadow-2xl max-w-md w-full`}
+                    >
+                        <div className={`p-4 ${palette.sidebar.border} flex justify-between items-center`}>
+                            <h2 className="text-lg font-semibold">Mulai Percakapan Baru</h2>
+                            <button
+                                onClick={closeNewChatModal}
+                                className="text-2xl leading-none hover:text-red-500"
+                                aria-label="Tutup"
+                            >
+                                ×
+                            </button>
+                        </div>
+                        <div className="p-4 space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium mb-2">Username Tujuan</label>
+                                <input
+                                    type="text"
+                                    value={newChatUsername}
+                                    onChange={(e) => setNewChatUsername(e.target.value)}
+                                    placeholder="Masukkan username pengguna"
+                                    className={`w-full px-4 py-2 rounded ${palette.input} focus:ring-2 focus:ring-blue-500 focus:outline-none`}
+                                />
+                            </div>
+                            {newChatError && (
+                                <div className="text-sm text-red-500">
+                                    {newChatError}
+                                </div>
+                            )}
+                            <div className="flex justify-end gap-2">
+                                <button
+                                    onClick={closeNewChatModal}
+                                    disabled={newChatLoading}
+                                    className={`px-4 py-2 rounded ${palette.buttons?.ghost ?? 'border border-gray-300 text-gray-600 hover:border-accent-blue hover:text-accent-blue'} disabled:opacity-50`}
+                                >
+                                    Batal
+                                </button>
+                                <button
+                                    onClick={handleStartNewChat}
+                                    disabled={newChatLoading}
+                                    className={`px-4 py-2 rounded ${palette.button.primary} text-white hover:opacity-90 transition-opacity disabled:opacity-50`}
+                                >
+                                    {newChatLoading ? 'Memulai...' : 'Mulai Chat'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

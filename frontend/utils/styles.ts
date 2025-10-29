@@ -46,6 +46,7 @@ export const COLORS = {
   TEXT_ACCENT: 'text-accent-blue',
   TEXT_WHITE: 'text-white',
   TEXT_MUTED: 'text-light-slate',
+  BUTTON_PRIMARY: 'bg-accent-blue',
 } as const;
 
 export type DashboardThemeMode = 'light' | 'dark';
@@ -64,6 +65,8 @@ export interface DashboardThemeConfig {
     linkActive: string;
     badgeAdmin: string;
     badgeDefault: string;
+    active: string;
+    hover: string;
   };
   header: {
     bg: string;
@@ -85,6 +88,13 @@ export interface DashboardThemeConfig {
     primary: string;
     secondary: string;
     ghost: string;
+  };
+  surface: string;
+  input: string;
+  listDivider: string;
+  button: {
+    primary: string;
+    secondary: string;
   };
   timeline: {
     border: string;
@@ -112,6 +122,8 @@ export const DASHBOARD_THEME: Record<DashboardThemeMode, DashboardThemeConfig> =
       linkActive: 'bg-[#1F6FEB]/10 text-[#1F6FEB] border border-[#1F6FEB]/40',
       badgeAdmin: 'bg-[#1F6FEB]/12 text-[#1F6FEB]',
       badgeDefault: 'bg-[#E8EBF2] text-[#5B6887]',
+      active: 'bg-[#EEF4FF] border border-[#D6E2FF] text-[#1A2136]',
+      hover: 'bg-[#F2F7FF]',
     },
     header: {
       bg: 'bg-white/90',
@@ -133,6 +145,13 @@ export const DASHBOARD_THEME: Record<DashboardThemeMode, DashboardThemeConfig> =
       primary: 'bg-accent-blue text-white hover:bg-accent-blue/90',
       secondary: 'bg-[#EEF2FA] text-[#1A2136] hover:bg-[#E3E8F6]',
       ghost: 'border border-[#CBD5E1] text-[#5B6887] hover:border-accent-blue hover:text-accent-blue',
+    },
+    surface: 'bg-white text-[#1A2136]',
+    input: 'bg-white border border-[#CBD5E1] text-[#1A2136] focus:border-[#1F6FEB] focus:ring-[#1F6FEB]/15',
+    listDivider: 'border-[#E1E8F5]',
+    button: {
+      primary: 'bg-accent-blue',
+      secondary: 'bg-[#EEF2FA]',
     },
     timeline: {
       border: 'border-[#E1E8F5]',
@@ -158,6 +177,8 @@ export const DASHBOARD_THEME: Record<DashboardThemeMode, DashboardThemeConfig> =
       linkActive: 'bg-accent-blue/20 text-white border border-accent-blue/40',
       badgeAdmin: 'bg-accent-blue/15 text-accent-blue',
       badgeDefault: 'bg-[#2F3542] text-[#8E9CB3]',
+      active: 'bg-[#1F2633] border border-accent-blue/40 text-white',
+      hover: 'bg-[#1F2633]',
     },
     header: {
       bg: 'bg-[#151B26]/95',
@@ -179,6 +200,13 @@ export const DASHBOARD_THEME: Record<DashboardThemeMode, DashboardThemeConfig> =
       primary: 'bg-accent-blue text-white hover:bg-accent-blue/90',
       secondary: 'bg-[#1F2633] text-[#CED7EA] hover:bg-[#252E3D]',
       ghost: 'border border-[#2F3542] text-[#8E9CB3] hover:border-accent-blue hover:text-accent-blue',
+    },
+    surface: 'bg-[#1A2230] text-white',
+    input: 'bg-[#1F2633] border border-[#2F3542] text-white focus:border-accent-blue focus:ring-accent-blue/20',
+    listDivider: 'border-[#2F3542]',
+    button: {
+      primary: 'bg-accent-blue',
+      secondary: 'bg-[#1F2633]',
     },
     timeline: {
       border: 'border-[#2F3542]',
