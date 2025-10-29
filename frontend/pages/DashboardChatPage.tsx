@@ -349,7 +349,7 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                     <>
                         {/* Chat Header */}
                         <div className={`p-3 ${palette.sidebar.border} flex justify-between items-center ${theme === 'dark' ? 'bg-[#1f2c34]' : 'bg-[#f0f2f5]'}`}>
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3 flex-1 min-w-0">
                                 <button
                                     onClick={() => setIsMobileChatListOpen(true)}
                                     className="md:hidden text-xl"
@@ -359,13 +359,18 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                                 <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 ${theme === 'dark' ? 'bg-[#2a3942]' : 'bg-gray-400'}`}>
                                     {chatType === 'group' ? '👥' : getChatName().charAt(0).toUpperCase()}
                                 </div>
-                                <h2 className="text-base md:text-lg font-medium">{getChatName()}</h2>
+                                <div className="flex-1 min-w-0">
+                                    <h2 className="text-base font-medium truncate">{getChatName()}</h2>
+                                    <p className={`text-xs ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+                                        {chatType === 'group' ? 'Grup chat' : 'Online'}
+                                    </p>
+                                </div>
                             </div>
                             <button
                                 onClick={() => loadMessages()}
                                 disabled={loading}
                                 className={`p-2 rounded-full ${theme === 'dark' ? 'hover:bg-[#2a3942]' : 'hover:bg-gray-200'} transition-colors disabled:opacity-50`}
-                                title="Refresh"
+                                title="Muat ulang pesan"
                             >
                                 {loading ? '⟳' : '🔄'}
                             </button>

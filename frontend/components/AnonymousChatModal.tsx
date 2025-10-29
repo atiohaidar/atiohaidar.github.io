@@ -84,32 +84,35 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-            <div className={`${COLORS.BG_SECONDARY} rounded-lg shadow-2xl max-w-2xl w-full max-h-[80vh] flex flex-col overflow-hidden`}>
+            <div className={`${COLORS.BG_SECONDARY} rounded-lg shadow-2xl max-w-4xl w-full h-[90vh] flex flex-col overflow-hidden`}>
                 {/* Header */}
-                <div className={`p-4 ${COLORS.BORDER_PRIMARY} flex justify-between items-center bg-[#00a884]`}>
+                <div className={`p-3 ${COLORS.BORDER_PRIMARY} flex justify-between items-center bg-[#00a884]`}>
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-xl">
                             💬
                         </div>
-                        <h2 className={`text-xl font-bold text-white`}>Chat Anonim</h2>
+                        <div>
+                            <h2 className={`text-base font-medium text-white`}>Chat Anonim</h2>
+                            <p className="text-xs text-white/80">Ruang chat publik</p>
+                        </div>
                     </div>
-                    <button
-                        onClick={onClose}
-                        className={`text-white hover:text-red-200 text-2xl font-bold`}
-                    >
-                        ×
-                    </button>
-                </div>
-
-                {/* Refresh Button */}
-                <div className="px-4 py-2 bg-[#111b21]">
-                    <button
-                        onClick={loadMessages}
-                        disabled={loading}
-                        className={`w-full py-2 px-4 rounded-lg bg-[#00a884] text-white hover:bg-[#008069] transition-colors disabled:opacity-50`}
-                    >
-                        {loading ? '⟳ Memuat ulang...' : '🔄 Muat Ulang Pesan'}
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={loadMessages}
+                            disabled={loading}
+                            className={`p-2 rounded-full text-white hover:bg-white/10 transition-colors disabled:opacity-50`}
+                            title="Muat ulang pesan"
+                        >
+                            {loading ? '⟳' : '🔄'}
+                        </button>
+                        <button
+                            onClick={onClose}
+                            className={`p-2 rounded-full text-white hover:bg-white/10 transition-colors`}
+                            title="Tutup"
+                        >
+                            ✕
+                        </button>
+                    </div>
                 </div>
 
                 {/* Messages */}
