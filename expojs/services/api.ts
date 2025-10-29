@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Types from '../types/api';
+import * as Types from '@/types/api';
 
 // Configure the base URL for your API
 // You can change this to your actual backend URL

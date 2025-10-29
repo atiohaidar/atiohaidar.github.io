@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import { Card, Text, useTheme, Avatar, ActivityIndicator } from 'react-native-paper';
-import { useAuth } from '../../contexts/AuthContext';
-import ApiService from '../../services/api';
-import { DashboardStats } from '../../types/api';
+import { useAuth } from '@/contexts/AuthContext';
+import ApiService from '@/services/api';
+import { DashboardStats } from '@/types/api';
 
 export default function HomeScreen() {
   const [stats, setStats] = useState<DashboardStats | null>(null);

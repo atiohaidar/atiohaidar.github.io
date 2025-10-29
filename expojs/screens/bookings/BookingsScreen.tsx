@@ -14,9 +14,9 @@ import {
   TextInput,
   Divider,
 } from 'react-native-paper';
-import { useAuth } from '../../contexts/AuthContext';
-import ApiService from '../../services/api';
-import { Booking, BookingCreate, Room } from '../../types/api';
+import { useAuth } from '@/contexts/AuthContext';
+import ApiService from '@/services/api';
+import { Booking, BookingCreate, Room } from '@/types/api';
 
 export default function BookingsScreen() {
   const [bookings, setBookings] = useState<Booking[]>([]);

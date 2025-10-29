@@ -20,9 +20,9 @@ import {
   Button,
   TextInput,
 } from 'react-native-paper';
-import { useAuth } from '../../contexts/AuthContext';
-import ApiService from '../../services/api';
-import { Task, TaskCreate, TaskUpdate } from '../../types/api';
+import { useAuth } from '@/contexts/AuthContext';
+import ApiService from '@/services/api';
+import { Task, TaskCreate, TaskUpdate } from '@/types/api';
 
 export default function TasksScreen() {
   const [tasks, setTasks] = useState<Task[]>([]);

@@ -14,9 +14,9 @@ import {
   TextInput,
   Checkbox,
 } from 'react-native-paper';
-import { useAuth } from '../../contexts/AuthContext';
-import ApiService from '../../services/api';
-import { Article, ArticleCreate, ArticleUpdate } from '../../types/api';
+import { useAuth } from '@/contexts/AuthContext';
+import ApiService from '@/services/api';
+import { Article, ArticleCreate, ArticleUpdate } from '@/types/api';
 
 export default function ArticlesScreen() {
   const [articles, setArticles] = useState<Article[]>([]);

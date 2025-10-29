@@ -16,9 +16,9 @@ import {
   Divider,
   SegmentedButtons,
 } from 'react-native-paper';
-import { useAuth } from '../../contexts/AuthContext';
-import ApiService from '../../services/api';
-import { Conversation, GroupChat, Message, User } from '../../types/api';
+import { useAuth } from '@/contexts/AuthContext';
+import ApiService from '@/services/api';
+import { Conversation, GroupChat, Message, User } from '@/types/api';
 
 type ChatMode = 'conversations' | 'groups';
 
