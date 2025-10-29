@@ -190,14 +190,14 @@ const ArticlesPage: React.FC = () => {
                 onLogout={handleLogout}
             />
 
-            <main className="mx-auto pt-24 pb-16">
+            <main className="mx-auto pt-20 md:pt-24 pb-16">
                 <div className={`container mx-auto ${SPACING.CONTAINER_PADDING}`}>
                     {/* Header */}
-                    <div className="max-w-4xl mx-auto mb-12 text-center">
-                        <h1 className="text-4xl md:text-5xl font-bold text-light-text dark:text-white mb-4">
+                    <div className="max-w-4xl mx-auto mb-8 md:mb-12 text-center">
+                        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-light-text dark:text-white mb-3 md:mb-4">
                             <span className="text-light-accent dark:text-accent-blue">📰</span> Articles
                         </h1>
-                        <p className="text-light-muted dark:text-light-slate text-lg">
+                        <p className="text-light-muted dark:text-light-slate text-base md:text-lg px-4">
                             Berbagi pemikiran, pengalaman, dan pembelajaran dalam teknologi dan pengembangan perangkat lunak
                         </p>
                     </div>
@@ -212,35 +212,35 @@ const ArticlesPage: React.FC = () => {
                         </div>
                     ) : selectedArticle ? (
                         /* Article Detail View */
-                        <div className="max-w-4xl mx-auto">
+                        <div className="max-w-4xl mx-auto px-2 md:px-0">
                             <button
                                 onClick={handleBackToList}
-                                className="flex items-center gap-2 text-light-accent dark:text-accent-blue hover:text-light-accent/80 dark:hover:text-accent-blue/80 mb-6 transition-colors"
+                                className="flex items-center gap-2 text-light-accent dark:text-accent-blue hover:text-light-accent/80 dark:hover:text-accent-blue/80 mb-4 md:mb-6 transition-colors text-sm md:text-base"
                             >
                                 ← Kembali ke daftar artikel
                             </button>
 
                             {detailLoading ? (
-                                <div className="bg-white dark:bg-light-navy rounded-xl p-8 border border-gray-300 dark:border-light-slate/20 text-center">
+                                <div className="bg-white dark:bg-light-navy rounded-xl p-6 md:p-8 border border-gray-300 dark:border-light-slate/20 text-center">
                                     <p className="text-light-muted dark:text-light-slate">Memuat artikel…</p>
                                 </div>
                             ) : detailError ? (
-                                <div className="bg-status-danger-muted border border-status-danger/40 text-status-danger-dark rounded-xl p-6">
+                                <div className="bg-status-danger-muted border border-status-danger/40 text-status-danger-dark rounded-xl p-4 md:p-6 text-sm md:text-base">
                                     {detailError}
                                 </div>
                             ) : (
-                            <article className="bg-white dark:bg-light-navy rounded-xl p-8 md:p-12 border border-gray-300 dark:border-light-slate/20">
-                                <h1 className="text-3xl md:text-4xl font-bold text-light-text dark:text-white mb-4">
+                            <article className="bg-white dark:bg-light-navy rounded-xl p-6 md:p-8 lg:p-12 border border-gray-300 dark:border-light-slate/20">
+                                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-light-text dark:text-white mb-3 md:mb-4">
                                     {selectedArticle.title}
                                 </h1>
-                                <div className="flex items-center gap-4 text-light-muted dark:text-soft-gray text-sm mb-8 pb-6 border-b border-gray-300 dark:border-light-slate/20">
+                                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-light-muted dark:text-soft-gray text-xs md:text-sm mb-6 md:mb-8 pb-4 md:pb-6 border-b border-gray-300 dark:border-light-slate/20">
                                     <span>📅 {formatDate(selectedArticle.created_at)}</span>
                                     {selectedArticle.updated_at && selectedArticle.updated_at !== selectedArticle.created_at && (
                                         <span>✏️ Updated: {formatDate(selectedArticle.updated_at)}</span>
                                     )}
                                 </div>
 
-                                <div className="prose dark:prose-invert prose-lg max-w-none text-light-text dark:text-light-slate">
+                                <div className="prose dark:prose-invert prose-sm md:prose-base lg:prose-lg max-w-none text-light-text dark:text-light-slate">
                                     <ReactMarkdown
                                         remarkPlugins={[remarkGfm]}
                                         rehypePlugins={[rehypeRaw]}
@@ -254,33 +254,33 @@ const ArticlesPage: React.FC = () => {
                         </div>
                     ) : (
                         /* Articles Grid */
-                        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 px-2 md:px-0">
                             {articles.map((article) => (
                                 <div
                                     key={article.slug}
-                                    className="bg-white dark:bg-light-navy rounded-xl p-6 border border-gray-300 dark:border-light-slate/20 hover:border-light-accent dark:hover:border-accent-blue/50 transition-all duration-300 cursor-pointer group"
+                                    className="bg-white dark:bg-light-navy rounded-xl p-5 md:p-6 border border-gray-300 dark:border-light-slate/20 hover:border-light-accent dark:hover:border-accent-blue/50 transition-all duration-300 cursor-pointer group"
                                     onClick={() => handleSelectArticle(article)}
                                 >
-                                    <h2 className="text-2xl font-bold text-light-text dark:text-white mb-3 group-hover:text-light-accent dark:group-hover:text-accent-blue transition-colors">
+                                    <h2 className="text-xl md:text-2xl font-bold text-light-text dark:text-white mb-2 md:mb-3 group-hover:text-light-accent dark:group-hover:text-accent-blue transition-colors line-clamp-2">
                                         {article.title}
                                     </h2>
                                     
-                                    <p className="text-light-muted dark:text-soft-gray text-sm mb-4">
+                                    <p className="text-light-muted dark:text-soft-gray text-xs md:text-sm mb-3 md:mb-4">
                                         📅 {formatDate(article.created_at)}
                                     </p>
 
-                                    <div className="mb-4 overflow-hidden">
+                                    <div className="mb-3 md:mb-4 overflow-hidden">
                                         <ReactMarkdown
                                             remarkPlugins={[remarkGfm]}
                                             rehypePlugins={[rehypeRaw]}
-                                            className="prose prose-sm dark:prose-invert max-w-none text-light-text dark:text-light-slate line-clamp-4"
+                                            className="prose prose-sm dark:prose-invert max-w-none text-light-text dark:text-light-slate line-clamp-3 md:line-clamp-4"
                                             components={listComponents}
                                         >
                                             {buildArticleExcerpt(article.content)}
                                         </ReactMarkdown>
                                     </div>
 
-                                    <div className="flex items-center text-light-accent dark:text-accent-blue text-sm font-medium group-hover:gap-2 transition-all">
+                                    <div className="flex items-center text-light-accent dark:text-accent-blue text-xs md:text-sm font-medium group-hover:gap-2 transition-all">
                                         <span>Baca selengkapnya</span>
                                         <span className="inline-block group-hover:translate-x-1 transition-transform">→</span>
                                     </div>
