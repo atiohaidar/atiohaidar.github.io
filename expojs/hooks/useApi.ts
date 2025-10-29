@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import ApiService from './api';
-import { queryKeys } from './queryClient';
+import ApiService from '@/services/api';
+import { queryKeys } from '@/services/queryClient';
 import * as Types from '@/types/api';
 
 // ============================================================================

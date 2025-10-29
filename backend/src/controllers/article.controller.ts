@@ -24,8 +24,10 @@ export class ArticleList extends OpenAPIRoute {
       query: z.object({
         page: Num({
           description: "Nomor halaman",
-          default: 0,
-        }),
+          required: false,
+        })
+          .optional()
+          .transform((val) => (typeof val === "number" ? val : 0)),
         published: Bool({
           description: "Filter berdasarkan status publikasi",
           required: false,
