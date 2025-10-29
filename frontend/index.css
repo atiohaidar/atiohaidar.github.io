@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Mobile-friendly touch targets */
+@layer base {
+  /* Ensure minimum touch target size on mobile devices */
+  @media (max-width: 768px) {
+    button, a {
+      min-height: 44px;
+      min-width: 44px;
+    }
+  }
+}
+
 /* Global utilities migrated from inline <style> in index.html */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
