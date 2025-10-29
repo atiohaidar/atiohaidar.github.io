@@ -1,6 +1,9 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import NetInfo from '@react-native-community/netinfo';
 import * as Types from '@/types/api';
+import { errorEvents } from './errorEvents';
+import { tokenStorage } from './tokenStorage';
 
 // Configure the base URL for your API
 // You can override this via EXPO_PUBLIC_API_BASE_URL for physical devices/other hosts
@@ -21,8 +24,15 @@ class ApiService {
     // Add request interceptor to include auth token
     this.api.interceptors.request.use(
       async (config) => {
+        const netState = await NetInfo.fetch();
+        if (!netState.isConnected) {
+          errorEvents.emit({
+            message: 'Tidak ada koneksi internet. Periksa jaringan Anda.',
+            endpoint: config.url,
+          });
+        }
         if (!this.token) {
-          this.token = await AsyncStorage.getItem('authToken');
+          this.token = await tokenStorage.get();
         }
         if (this.token) {
           config.headers.Authorization = `Bearer ${this.token}`;
@@ -36,6 +46,15 @@ class ApiService {
     this.api.interceptors.response.use(
       (response) => response,
       async (error: AxiosError) => {
+        const status = error.response?.status;
+        const message = (error.response?.data as { message?: string })?.message ?? error.message;
+
+        errorEvents.emit({
+          message: message || 'Terjadi kesalahan tak terduga.',
+          status,
+          endpoint: error.config?.url,
+        });
+
         if (error.response?.status === 401) {
           // Token expired or invalid, clear storage
           await this.logout();
@@ -64,11 +83,12 @@ class ApiService {
   private handleError(error: any): never {
     if (error.response?.data?.error) {
       throw new Error(error.response.data.error);
+    } else if (error.response?.data?.message) {
+      throw new Error(error.response.data.message);
     } else if (error.message) {
       throw new Error(error.message);
-    } else {
-      throw new Error('An unexpected error occurred');
     }
+    throw new Error('An unexpected error occurred');
   }
 
   // Auth APIs
@@ -91,7 +111,7 @@ class ApiService {
 
       if (payload?.token && payload?.user) {
         this.token = payload.token;
-        await AsyncStorage.setItem('authToken', this.token);
+        await tokenStorage.set(this.token);
         await AsyncStorage.setItem('currentUser', JSON.stringify(payload.user));
         return payload;
       }
@@ -104,7 +124,7 @@ class ApiService {
 
   async logout(): Promise<void> {
     this.token = null;
-    await AsyncStorage.removeItem('authToken');
+    await tokenStorage.delete();
     await AsyncStorage.removeItem('currentUser');
   }
 

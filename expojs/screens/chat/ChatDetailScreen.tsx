@@ -1,5 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -51,6 +58,11 @@ export default function ChatDetailScreen() {
   );
 
   const avatarLabel = useMemo(() => displayName.substring(0, 2).toUpperCase(), [displayName]);
+
+  const safeBottomInset = useMemo(
+    () => Math.max(insets.bottom + insets.top, Platform.OS === 'android' ? 32 : 16),
+    [insets.bottom],
+  );
 
   const loadMessages = useCallback(async () => {
     if (!chatType || !id) {
@@ -111,6 +123,12 @@ export default function ChatDetailScreen() {
     }
   };
 
+  const keyboardBehavior: 'height' | 'padding' | undefined = Platform.OS === 'ios'
+    ? 'padding'
+    : Platform.OS === 'android'
+    ? 'height'
+    : undefined;
+
   if (!chatType || !id) {
     return (
       <View style={styles.centerContainer}>
@@ -122,7 +140,8 @@ export default function ChatDetailScreen() {
   return (
     <KeyboardAvoidingView
       style={[styles.container, { paddingTop: insets.top, backgroundColor: theme.colors.background }]}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={keyboardBehavior}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top : 0}
     >
       <ChatHeader
         name={displayName}
@@ -133,7 +152,13 @@ export default function ChatDetailScreen() {
         loading={messagesLoading}
       />
 
-      <View style={[styles.messagesWrapper, { backgroundColor: theme.colors.surfaceVariant }]}
+      <View
+        style={[
+          styles.messagesWrapper,
+          {
+            backgroundColor: theme.colors.surfaceVariant,
+          },
+        ]}
       >
         <MessageList
           messages={messages}
@@ -149,7 +174,7 @@ export default function ChatDetailScreen() {
         onChangeText={setMessageText}
         onSend={handleSendMessage}
         disabled={sending || messagesLoading}
-        bottomInset={insets.bottom}
+        bottomInset={safeBottomInset}
       />
     </KeyboardAvoidingView>
   );

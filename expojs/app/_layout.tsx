@@ -3,6 +3,7 @@ import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { PaperProvider } from 'react-native-paper';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useEffect } from 'react';
 import { QueryClientProvider } from '@tanstack/react-query';
 
@@ -10,6 +11,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
 import { lightTheme, darkTheme } from '@/constants/paperTheme';
 import { queryClient } from '@/services/queryClient';
+import GlobalFeedback from '@/components/GlobalFeedback';
 
 export const unstable_settings = {
   anchor: '(public)',
@@ -48,6 +50,7 @@ function RootLayoutNav() {
           <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
         </Stack>
         <StatusBar style="auto" />
+        <GlobalFeedback />
       </ThemeProvider>
     </PaperProvider>
   );
@@ -57,7 +60,9 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <RootLayoutNav />
+        <SafeAreaProvider>
+          <RootLayoutNav />
+        </SafeAreaProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

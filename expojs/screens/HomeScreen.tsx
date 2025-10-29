@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import { Card, Text, useTheme, Avatar, ActivityIndicator } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '@/contexts/AuthContext';
 import { useStats } from '@/hooks/useApi';
 import { AppColors } from '@/constants/colors';
@@ -9,6 +10,7 @@ export default function HomeScreen() {
   const { data: stats, isLoading, refetch, isRefetching } = useStats();
   const { user, isAdmin } = useAuth();
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
 
   if (isLoading) {
     return (
@@ -65,6 +67,7 @@ export default function HomeScreen() {
   return (
     <ScrollView
       style={styles.container}
+      contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
       refreshControl={
         <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} />
       }

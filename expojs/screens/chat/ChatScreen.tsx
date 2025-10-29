@@ -11,6 +11,7 @@ import { ConversationList } from './components/ConversationList';
 import { GroupList } from './components/GroupList';
 import { CreateGroupDialog } from './components/CreateGroupDialog';
 import CreateDirectMessageDialog from './components/CreateDirectMessageDialog';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type ChatMode = 'conversations' | 'groups';
 
@@ -32,6 +33,7 @@ export default function ChatScreen() {
 
   const { user } = useAuth();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     setLoading(true);
@@ -147,7 +149,15 @@ export default function ChatScreen() {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+        }}
+      >
         <ActivityIndicator size="large" />
       </View>
     );
@@ -160,9 +170,10 @@ export default function ChatScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}> 
       <ScrollView
         style={styles.scrollView}
+        contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         <ChatListHeader mode={mode} onModeChange={setMode} />
@@ -184,7 +195,7 @@ export default function ChatScreen() {
       {mode === 'conversations' ? (
         <FAB
           icon="message-plus"
-          style={styles.fab}
+          style={[styles.fab, { bottom: insets.bottom + 16 }]}
           onPress={openDirectDialog}
           label={creatingConversation ? 'Starting…' : 'New Chat'}
           disabled={creatingConversation}
@@ -192,7 +203,7 @@ export default function ChatScreen() {
       ) : (
         <FAB
           icon="plus"
-          style={styles.fab}
+          style={[styles.fab, { bottom: insets.bottom + 16 }]}
           onPress={() => setDialogVisible(true)}
           label="New Group"
         />
