@@ -297,3 +297,73 @@ export const FormResponseCreateSchema = z.object({
 		answer_text: Str({ example: "My answer" }),
 	})),
 });
+
+// Item schemas (for item borrowing feature)
+export const Item = z.object({
+	id: Str({ description: "Unique identifier", example: "item-001" }),
+	name: Str({ example: "Proyektor Epson" }),
+	description: Str({ required: false, example: "Proyektor untuk presentasi" }),
+	stock: z.number({ description: "Available stock quantity" }).int().nonnegative(),
+	attachment_link: Str({ required: false, example: "https://example.com/manual.pdf" }),
+	owner_username: Str({ example: "user" }),
+	created_at: Str({ required: false }),
+	updated_at: Str({ required: false }),
+});
+
+export const ItemCreateSchema = z.object({
+	name: Str({ example: "Proyektor Epson" }),
+	description: Str({ required: false }),
+	stock: z.number().int().positive(),
+	attachment_link: Str({ required: false }),
+});
+
+export const ItemUpdateSchema = z
+	.object({
+		name: Str({ required: false }),
+		description: Str({ required: false }),
+		stock: z.number().int().nonnegative().optional(),
+		attachment_link: Str({ required: false }),
+	})
+	.refine((data) => Object.keys(data).length > 0, {
+		message: "Minimal satu field harus diisi",
+	});
+
+// ItemBorrowing schemas
+export const ItemBorrowingStatusSchema = z.enum([
+	"pending",
+	"approved",
+	"rejected",
+	"returned",
+	"damaged",
+	"extended",
+], {
+	description: "Status peminjaman barang",
+});
+
+export type ItemBorrowingStatus = z.infer<typeof ItemBorrowingStatusSchema>;
+
+export const ItemBorrowing = z.object({
+	id: Str({ description: "Unique identifier", example: "borrow-001" }),
+	item_id: Str({ example: "item-001" }),
+	borrower_username: Str({ example: "user" }),
+	quantity: z.number({ description: "Quantity borrowed" }).int().positive(),
+	start_date: Str({ description: "ISO 8601 date", example: "2024-01-15" }),
+	end_date: Str({ description: "ISO 8601 date", example: "2024-01-20" }),
+	status: ItemBorrowingStatusSchema.default("pending"),
+	notes: Str({ required: false, example: "Untuk keperluan presentasi" }),
+	created_at: Str({ required: false }),
+	updated_at: Str({ required: false }),
+});
+
+export const ItemBorrowingCreateSchema = z.object({
+	item_id: Str({ example: "item-001" }),
+	quantity: z.number().int().positive(),
+	start_date: Str({ description: "ISO 8601 date" }),
+	end_date: Str({ description: "ISO 8601 date" }),
+	notes: Str({ required: false }),
+});
+
+export const ItemBorrowingUpdateStatusSchema = z.object({
+	status: ItemBorrowingStatusSchema,
+	notes: Str({ required: false }),
+});

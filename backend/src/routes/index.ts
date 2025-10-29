@@ -59,6 +59,20 @@ import {
 	FormResponseList,
 	FormResponseGet,
 } from "../controllers/form.controller";
+import {
+	ItemList,
+	ItemGet,
+	ItemCreate,
+	ItemUpdate,
+	ItemDelete,
+} from "../controllers/item.controller";
+import {
+	ItemBorrowingList,
+	ItemBorrowingGet,
+	ItemBorrowingCreate,
+	ItemBorrowingUpdateStatus,
+	ItemBorrowingCancel,
+} from "../controllers/itemBorrowing.controller";
 
 export const registerRoutes = (openapi: any) => {
 	// Public routes (no authentication required)
@@ -144,4 +158,18 @@ export const registerRoutes = (openapi: any) => {
 	// Public form routes (no authentication required)
 	openapi.get("/api/public/forms/:token", FormGetByToken);
 	openapi.post("/api/public/forms/:token/submit", FormResponseSubmit);
+
+	// Item routes
+	openapi.get("/api/items", ItemList);
+	openapi.post("/api/items", ItemCreate);
+	openapi.get("/api/items/:itemId", ItemGet);
+	openapi.put("/api/items/:itemId", ItemUpdate);
+	openapi.delete("/api/items/:itemId", ItemDelete);
+
+	// Item borrowing routes
+	openapi.get("/api/item-borrowings", ItemBorrowingList);
+	openapi.post("/api/item-borrowings", ItemBorrowingCreate);
+	openapi.get("/api/item-borrowings/:borrowingId", ItemBorrowingGet);
+	openapi.put("/api/item-borrowings/:borrowingId/status", ItemBorrowingUpdateStatus);
+	openapi.delete("/api/item-borrowings/:borrowingId", ItemBorrowingCancel);
 };
