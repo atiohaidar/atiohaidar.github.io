@@ -74,6 +74,12 @@ const menuItems: MenuItem[] = [
         path: '/dashboard/tickets',
     },
     {
+        id: 'events',
+        label: 'Acara',
+        icon: '🎉',
+        path: '/dashboard/events',
+    },
+    {
         id: 'users',
         label: 'User Management',
         icon: '👥',

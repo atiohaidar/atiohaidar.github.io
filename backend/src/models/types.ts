@@ -476,3 +476,86 @@ export const TicketAssignSchema = z.object({
 	assigned_to: Str({ example: "user1" }),
 	notes: Str({ required: false, example: "Assigning to specialist" }),
 });
+
+// Event schemas
+export const Event = z.object({
+	id: Str({ description: "Unique identifier", example: "event-001" }),
+	title: Str({ example: "Tech Conference 2024" }),
+	description: Str({ required: false, example: "Annual technology conference" }),
+	event_date: Str({ description: "ISO 8601 datetime", example: "2024-12-15T10:00:00Z" }),
+	location: Str({ required: false, example: "Main Auditorium" }),
+	created_by: Str({ example: "admin" }),
+	created_at: Str({ required: false }),
+	updated_at: Str({ required: false }),
+});
+
+export const EventCreateSchema = z.object({
+	title: Str({ example: "Tech Conference 2024" }),
+	description: Str({ required: false }),
+	event_date: Str({ description: "ISO 8601 datetime" }),
+	location: Str({ required: false }),
+});
+
+export const EventUpdateSchema = z
+	.object({
+		title: Str({ required: false }),
+		description: Str({ required: false }),
+		event_date: Str({ required: false }),
+		location: Str({ required: false }),
+	})
+	.refine((data) => Object.keys(data).length > 0, {
+		message: "Minimal satu field harus diisi",
+	});
+
+// Event attendee schemas
+export const AttendeeStatusSchema = z.enum(["registered", "present", "absent"], {
+	description: "Status kehadiran peserta acara",
+});
+
+export type AttendeeStatus = z.infer<typeof AttendeeStatusSchema>;
+
+export const EventAttendee = z.object({
+	id: Str({ description: "Unique identifier", example: "attendee-001" }),
+	event_id: Str({ example: "event-001" }),
+	user_username: Str({ example: "user1" }),
+	attendance_token: Str({ description: "Token for QR code", example: "abc123xyz" }),
+	status: AttendeeStatusSchema.default("registered"),
+	registered_at: Str({ required: false }),
+});
+
+export const EventAttendeeRegisterSchema = z.object({
+	event_id: Str({ example: "event-001" }),
+});
+
+export const EventAttendeeUpdateStatusSchema = z.object({
+	status: AttendeeStatusSchema,
+});
+
+// Event admin schemas
+export const EventAdmin = z.object({
+	id: Str({ description: "Unique identifier", example: "admin-001" }),
+	event_id: Str({ example: "event-001" }),
+	user_username: Str({ example: "user1" }),
+	assigned_by: Str({ example: "admin" }),
+	assigned_at: Str({ required: false }),
+});
+
+export const EventAdminAssignSchema = z.object({
+	user_username: Str({ example: "user1" }),
+});
+
+// Attendance scan schemas
+export const AttendanceScan = z.object({
+	id: Str({ description: "Unique identifier", example: "scan-001" }),
+	attendee_id: Str({ example: "attendee-001" }),
+	scanned_by: Str({ example: "admin" }),
+	scanned_at: Str({ required: false }),
+	latitude: z.number().optional(),
+	longitude: z.number().optional(),
+});
+
+export const AttendanceScanCreateSchema = z.object({
+	attendance_token: Str({ description: "Token from QR code", example: "abc123xyz" }),
+	latitude: z.number().optional(),
+	longitude: z.number().optional(),
+});

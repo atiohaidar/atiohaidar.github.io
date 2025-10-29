@@ -53,6 +53,18 @@ import type {
     TicketAssignment,
     TicketAssign,
     TicketStats,
+    Event,
+    EventCreate,
+    EventUpdate,
+    EventAttendee,
+    EventAttendeeRegister,
+    EventAttendeeUpdateStatus,
+    EventAdmin,
+    EventAdminAssign,
+    AttendanceScan,
+    AttendanceScanCreate,
+    AttendeeWithScans,
+    EventScanHistory,
 } from './types';
 
 // ============================================================================
@@ -608,4 +620,139 @@ export const addTicketComment = ticketService.addComment;
 export const getTicketAssignments = ticketService.getAssignments;
 export const assignTicket = ticketService.assign;
 export const getTicketStats = ticketService.getStats;
+
+// ============================================================================
+// Events API
+// ============================================================================
+export const eventService = {
+    list: async (): Promise<Event[]> => {
+        const response = await apiFetch<{ success: boolean; data: Event[] }>('/api/events');
+        return response.data;
+    },
+
+    get: async (eventId: string): Promise<Event> => {
+        const response = await apiFetch<{ success: boolean; data: Event }>(`/api/events/${eventId}`);
+        return response.data;
+    },
+
+    create: async (data: EventCreate): Promise<Event> => {
+        const response = await apiFetch<{ success: boolean; data: Event }>('/api/events', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+        return response.data;
+    },
+
+    update: async (eventId: string, data: EventUpdate): Promise<Event> => {
+        const response = await apiFetch<{ success: boolean; data: Event }>(`/api/events/${eventId}`, {
+            method: 'PUT',
+            body: JSON.stringify(data),
+        });
+        return response.data;
+    },
+
+    delete: async (eventId: string): Promise<void> => {
+        await apiFetch(`/api/events/${eventId}`, {
+            method: 'DELETE',
+        });
+    },
+
+    // Attendee operations
+    listAttendees: async (eventId: string): Promise<EventAttendee[]> => {
+        const response = await apiFetch<{ success: boolean; data: EventAttendee[] }>(`/api/events/${eventId}/attendees`);
+        return response.data;
+    },
+
+    register: async (eventId: string): Promise<EventAttendee> => {
+        const response = await apiFetch<{ success: boolean; data: EventAttendee }>('/api/events/register', {
+            method: 'POST',
+            body: JSON.stringify({ event_id: eventId }),
+        });
+        return response.data;
+    },
+
+    updateAttendeeStatus: async (eventId: string, attendeeId: string, status: EventAttendeeUpdateStatus): Promise<EventAttendee> => {
+        const response = await apiFetch<{ success: boolean; data: EventAttendee }>(
+            `/api/events/${eventId}/attendees/${attendeeId}/status`,
+            {
+                method: 'PUT',
+                body: JSON.stringify(status),
+            }
+        );
+        return response.data;
+    },
+
+    unregister: async (eventId: string, attendeeId: string): Promise<void> => {
+        await apiFetch(`/api/events/${eventId}/attendees/${attendeeId}`, {
+            method: 'DELETE',
+        });
+    },
+
+    getAttendeeWithScans: async (eventId: string, attendeeId: string): Promise<AttendeeWithScans> => {
+        const response = await apiFetch<{ success: boolean; data: AttendeeWithScans }>(
+            `/api/events/${eventId}/attendees/${attendeeId}/scans`
+        );
+        return response.data;
+    },
+
+    // Admin operations
+    listAdmins: async (eventId: string): Promise<EventAdmin[]> => {
+        const response = await apiFetch<{ success: boolean; data: EventAdmin[] }>(`/api/events/${eventId}/admins`);
+        return response.data;
+    },
+
+    assignAdmin: async (eventId: string, username: string): Promise<EventAdmin> => {
+        const response = await apiFetch<{ success: boolean; data: EventAdmin }>(`/api/events/${eventId}/admins`, {
+            method: 'POST',
+            body: JSON.stringify({ user_username: username }),
+        });
+        return response.data;
+    },
+
+    removeAdmin: async (eventId: string, username: string): Promise<void> => {
+        await apiFetch(`/api/events/${eventId}/admins/${username}`, {
+            method: 'DELETE',
+        });
+    },
+
+    // Attendance scan operations
+    scanAttendance: async (eventId: string, data: AttendanceScanCreate): Promise<{
+        attendee: EventAttendee;
+        scan: AttendanceScan;
+        isFirstScan: boolean;
+    }> => {
+        const response = await apiFetch<{
+            success: boolean;
+            data: { attendee: EventAttendee; scan: AttendanceScan; isFirstScan: boolean };
+        }>(`/api/events/${eventId}/scan`, {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+        return response.data;
+    },
+
+    // Get scan history for an event
+    getScanHistory: async (eventId: string): Promise<EventScanHistory[]> => {
+        const response = await apiFetch<{ success: boolean; data: EventScanHistory[] }>(
+            `/api/events/${eventId}/scan-history`
+        );
+        return response.data;
+    },
+};
+
+export const listEvents = eventService.list;
+export const getEvent = eventService.get;
+export const createEvent = eventService.create;
+export const updateEvent = eventService.update;
+export const deleteEvent = eventService.delete;
+export const listEventAttendees = eventService.listAttendees;
+export const registerForEvent = eventService.register;
+export const updateAttendeeStatus = eventService.updateAttendeeStatus;
+export const unregisterFromEvent = eventService.unregister;
+export const getAttendeeWithScans = eventService.getAttendeeWithScans;
+export const listEventAdmins = eventService.listAdmins;
+export const assignEventAdmin = eventService.assignAdmin;
+export const removeEventAdmin = eventService.removeAdmin;
+export const scanAttendance = eventService.scanAttendance;
+export const getEventScanHistory = eventService.getScanHistory;
 
