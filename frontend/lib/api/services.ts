@@ -374,3 +374,104 @@ export const deleteForm = formService.delete;
 export const getFormResponses = formService.getResponses;
 export const getFormResponseDetail = formService.getResponseDetail;
 export const submitFormResponse = formService.submitResponse;
+
+// ============================================================================
+// Items API
+// ============================================================================
+export const itemService = {
+    list: async (params?: { owner?: string }) => {
+        const queryParams = new URLSearchParams();
+        if (params?.owner) {
+            queryParams.append('owner', params.owner);
+        }
+        const url = `/api/items${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+        const response = await apiFetch<any>(url);
+        return response.data;
+    },
+
+    get: async (itemId: string) => {
+        const response = await apiFetch<any>(`/api/items/${itemId}`);
+        return response.data;
+    },
+
+    create: async (itemData: any) => {
+        const response = await apiFetch<any>('/api/items', {
+            method: 'POST',
+            body: JSON.stringify(itemData),
+        });
+        return response.data;
+    },
+
+    update: async (itemId: string, updates: any) => {
+        const response = await apiFetch<any>(`/api/items/${itemId}`, {
+            method: 'PUT',
+            body: JSON.stringify(updates),
+        });
+        return response.data;
+    },
+
+    delete: async (itemId: string) => {
+        const response = await apiFetch<any>(`/api/items/${itemId}`, {
+            method: 'DELETE',
+        });
+        return response.data;
+    },
+};
+
+// ============================================================================
+// Item Borrowings API
+// ============================================================================
+export const itemBorrowingService = {
+    list: async (params?: { itemId?: string; status?: string }) => {
+        const queryParams = new URLSearchParams();
+        if (params?.itemId) {
+            queryParams.append('itemId', params.itemId);
+        }
+        if (params?.status) {
+            queryParams.append('status', params.status);
+        }
+        const url = `/api/item-borrowings${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+        const response = await apiFetch<any>(url);
+        return response.data;
+    },
+
+    get: async (borrowingId: string) => {
+        const response = await apiFetch<any>(`/api/item-borrowings/${borrowingId}`);
+        return response.data;
+    },
+
+    create: async (borrowingData: any) => {
+        const response = await apiFetch<any>('/api/item-borrowings', {
+            method: 'POST',
+            body: JSON.stringify(borrowingData),
+        });
+        return response.data;
+    },
+
+    updateStatus: async (borrowingId: string, updates: any) => {
+        const response = await apiFetch<any>(`/api/item-borrowings/${borrowingId}/status`, {
+            method: 'PUT',
+            body: JSON.stringify(updates),
+        });
+        return response.data;
+    },
+
+    cancel: async (borrowingId: string) => {
+        const response = await apiFetch<any>(`/api/item-borrowings/${borrowingId}`, {
+            method: 'DELETE',
+        });
+        return response.data;
+    },
+};
+
+export const listItems = itemService.list;
+export const getItem = itemService.get;
+export const createItem = itemService.create;
+export const updateItem = itemService.update;
+export const deleteItem = itemService.delete;
+
+export const listItemBorrowings = itemBorrowingService.list;
+export const getItemBorrowing = itemBorrowingService.get;
+export const createItemBorrowing = itemBorrowingService.create;
+export const updateItemBorrowingStatus = itemBorrowingService.updateStatus;
+export const cancelItemBorrowing = itemBorrowingService.cancel;

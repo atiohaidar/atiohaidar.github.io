@@ -56,6 +56,18 @@ const menuItems: MenuItem[] = [
         path: '/dashboard/forms',
     },
     {
+        id: 'items',
+        label: 'Barang',
+        icon: '📦',
+        path: '/dashboard/items',
+    },
+    {
+        id: 'item-borrowings',
+        label: 'Peminjaman Barang',
+        icon: '🔄',
+        path: '/dashboard/item-borrowings',
+    },
+    {
         id: 'users',
         label: 'User Management',
         icon: '👥',

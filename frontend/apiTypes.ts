@@ -293,3 +293,78 @@ export interface FormResponseDetailResponse {
     success: boolean;
     data: FormResponseDetail;
 }
+
+// Item types
+export interface Item {
+    id: string;
+    name: string;
+    description?: string;
+    stock: number;
+    attachment_link?: string;
+    owner_username: string;
+    created_at?: string;
+    updated_at?: string;
+}
+
+export interface ItemCreate {
+    name: string;
+    description?: string;
+    stock: number;
+    attachment_link?: string;
+}
+
+export interface ItemUpdate {
+    name?: string;
+    description?: string;
+    stock?: number;
+    attachment_link?: string;
+}
+
+// Item Borrowing types
+export type ItemBorrowingStatus = 'pending' | 'approved' | 'rejected' | 'returned' | 'damaged' | 'extended';
+
+export interface ItemBorrowing {
+    id: string;
+    item_id: string;
+    borrower_username: string;
+    quantity: number;
+    start_date: string;
+    end_date: string;
+    status: ItemBorrowingStatus;
+    notes?: string;
+    created_at?: string;
+    updated_at?: string;
+}
+
+export interface ItemBorrowingCreate {
+    item_id: string;
+    quantity: number;
+    start_date: string;
+    end_date: string;
+    notes?: string;
+}
+
+export interface ItemBorrowingUpdateStatus {
+    status: ItemBorrowingStatus;
+    notes?: string;
+}
+
+export interface ItemsListResponse {
+    success: boolean;
+    data: Item[];
+}
+
+export interface ItemResponse {
+    success: boolean;
+    data: Item;
+}
+
+export interface ItemBorrowingsListResponse {
+    success: boolean;
+    data: ItemBorrowing[];
+}
+
+export interface ItemBorrowingResponse {
+    success: boolean;
+    data: ItemBorrowing;
+}

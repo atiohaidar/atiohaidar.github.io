@@ -25,6 +25,8 @@ import DashboardFormsPage from './pages/DashboardFormsPage';
 import DashboardFormEditorPage from './pages/DashboardFormEditorPage';
 import DashboardFormResponsesPage from './pages/DashboardFormResponsesPage';
 import DashboardFormResponseDetailPage from './pages/DashboardFormResponseDetailPage';
+import DashboardItemsPage from './pages/DashboardItemsPage';
+import DashboardItemBorrowingsPage from './pages/DashboardItemBorrowingsPage';
 import FormFillPage from './pages/FormFillPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -104,6 +106,8 @@ const App: React.FC = () => {
                             <Route path="forms/:formId/edit" element={<DashboardFormEditorPage />} />
                             <Route path="forms/:formId/responses" element={<DashboardFormResponsesPage />} />
                             <Route path="forms/:formId/responses/:responseId" element={<DashboardFormResponseDetailPage />} />
+                            <Route path="items" element={<DashboardItemsPage />} />
+                            <Route path="item-borrowings" element={<DashboardItemBorrowingsPage />} />
                         </Route>
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
