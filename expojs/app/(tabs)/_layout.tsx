@@ -75,6 +75,56 @@ export default function TabLayout() {
         }}
       />
       <Drawer.Screen
+        name="tickets"
+        options={{
+          title: 'Tickets',
+          drawerLabel: 'Tickets',
+          drawerIcon: ({ color, size }) => (
+            <IconButton icon="ticket" size={size} iconColor={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="forms"
+        options={{
+          title: 'Forms',
+          drawerLabel: 'Forms',
+          drawerIcon: ({ color, size }) => (
+            <IconButton icon="form-select" size={size} iconColor={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="items"
+        options={{
+          title: 'Items',
+          drawerLabel: 'Items',
+          drawerIcon: ({ color, size }) => (
+            <IconButton icon="package-variant" size={size} iconColor={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="item-borrowings"
+        options={{
+          title: 'Borrowings',
+          drawerLabel: 'Borrowings',
+          drawerIcon: ({ color, size }) => (
+            <IconButton icon="clipboard-list" size={size} iconColor={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="discussions"
+        options={{
+          title: 'Discussions',
+          drawerLabel: 'Discussions',
+          drawerIcon: ({ color, size }) => (
+            <IconButton icon="forum" size={size} iconColor={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
         name="profile"
         options={{
           title: 'Profile',
