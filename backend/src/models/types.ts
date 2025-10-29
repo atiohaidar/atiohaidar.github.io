@@ -156,3 +156,84 @@ export const BookingCreateSchema = z.object({
 export const BookingUpdateSchema = z.object({
 	status: BookingStatusSchema,
 });
+
+// Chat schemas
+export const Message = z.object({
+	id: Str({ description: "Unique identifier", example: "msg-001" }),
+	conversation_id: Str({ required: false }),
+	group_id: Str({ required: false }),
+	sender_username: Str({ example: "user" }),
+	content: Str({ example: "Hello there!" }),
+	reply_to_id: Str({ required: false }),
+	created_at: Str({ required: false }),
+});
+
+export const MessageCreateSchema = z.object({
+	conversation_id: Str({ required: false }),
+	group_id: Str({ required: false }),
+	content: Str({ example: "Hello there!" }),
+	reply_to_id: Str({ required: false }),
+});
+
+export const Conversation = z.object({
+	id: Str({ description: "Unique identifier", example: "conv-001" }),
+	user1_username: Str({ example: "user1" }),
+	user2_username: Str({ example: "user2" }),
+	created_at: Str({ required: false }),
+	updated_at: Str({ required: false }),
+});
+
+export const GroupChat = z.object({
+	id: Str({ description: "Unique identifier", example: "group-001" }),
+	name: Str({ example: "Team Chat" }),
+	description: Str({ required: false }),
+	created_by: Str({ example: "admin" }),
+	created_at: Str({ required: false }),
+	updated_at: Str({ required: false }),
+});
+
+export const GroupChatCreateSchema = z.object({
+	name: Str({ example: "Team Chat" }),
+	description: Str({ required: false }),
+});
+
+export const GroupChatUpdateSchema = z
+	.object({
+		name: Str({ required: false }),
+		description: Str({ required: false }),
+	})
+	.refine((data) => Object.keys(data).length > 0, {
+		message: "Minimal satu field harus diisi",
+	});
+
+export const GroupMemberRoleSchema = z.enum(["admin", "member"], {
+	description: "Role anggota grup",
+});
+
+export type GroupMemberRole = z.infer<typeof GroupMemberRoleSchema>;
+
+export const GroupMember = z.object({
+	group_id: Str({ example: "group-001" }),
+	user_username: Str({ example: "user" }),
+	role: GroupMemberRoleSchema.default("member"),
+	joined_at: Str({ required: false }),
+});
+
+export const GroupMemberAddSchema = z.object({
+	user_username: Str({ example: "user" }),
+	role: GroupMemberRoleSchema.default("member"),
+});
+
+export const AnonymousMessage = z.object({
+	id: Str({ description: "Unique identifier", example: "anon-001" }),
+	sender_id: Str({ description: "Anonymous sender identifier" }),
+	content: Str({ example: "Hello anonymously!" }),
+	reply_to_id: Str({ required: false }),
+	created_at: Str({ required: false }),
+});
+
+export const AnonymousMessageCreateSchema = z.object({
+	sender_id: Str({ description: "Anonymous sender identifier" }),
+	content: Str({ example: "Hello anonymously!" }),
+	reply_to_id: Str({ required: false }),
+});

@@ -24,6 +24,26 @@ import {
 	BookingCancel,
 } from "../controllers/booking.controller";
 import { StatsGet } from "../controllers/stats.controller";
+import {
+	ConversationList,
+	ConversationGetOrCreate,
+	ConversationMessages,
+	MessageSend,
+	GroupList,
+	GroupCreate,
+	GroupGet,
+	GroupUpdate,
+	GroupDelete,
+	GroupMessages,
+	GroupMembers,
+	GroupAddMember,
+	GroupRemoveMember,
+	GroupUpdateMemberRole,
+} from "../controllers/chat.controller";
+import {
+	AnonymousMessageList,
+	AnonymousMessageSend,
+} from "../controllers/anonymousChat.controller";
 
 export const registerRoutes = (openapi: any) => {
 	// Auth routes
@@ -67,4 +87,26 @@ export const registerRoutes = (openapi: any) => {
 	openapi.put("/api/bookings/:bookingId", BookingUpdateStatus);
 	openapi.put("/api/bookings/:bookingId/edit", BookingUpdate);
 	openapi.delete("/api/bookings/:bookingId", BookingCancel);
+
+	// Chat routes
+	openapi.get("/api/conversations", ConversationList);
+	openapi.get("/api/conversations/:username", ConversationGetOrCreate);
+	openapi.get("/api/conversations/:conversationId/messages", ConversationMessages);
+	openapi.post("/api/messages", MessageSend);
+
+	// Group chat routes
+	openapi.get("/api/groups", GroupList);
+	openapi.post("/api/groups", GroupCreate);
+	openapi.get("/api/groups/:groupId", GroupGet);
+	openapi.put("/api/groups/:groupId", GroupUpdate);
+	openapi.delete("/api/groups/:groupId", GroupDelete);
+	openapi.get("/api/groups/:groupId/messages", GroupMessages);
+	openapi.get("/api/groups/:groupId/members", GroupMembers);
+	openapi.post("/api/groups/:groupId/members", GroupAddMember);
+	openapi.delete("/api/groups/:groupId/members/:username", GroupRemoveMember);
+	openapi.put("/api/groups/:groupId/members/:username/role", GroupUpdateMemberRole);
+
+	// Anonymous chat routes
+	openapi.get("/api/anonymous/messages", AnonymousMessageList);
+	openapi.post("/api/anonymous/messages", AnonymousMessageSend);
 };
