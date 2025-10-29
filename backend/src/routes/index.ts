@@ -59,6 +59,22 @@ import {
 	FormResponseList,
 	FormResponseGet,
 } from "../controllers/form.controller";
+import {
+	CategoryList,
+	TicketList,
+	TicketGet,
+	TicketUpdate,
+	TicketDelete,
+	TicketCommentList,
+	TicketCommentCreate,
+	TicketAssignmentList,
+	TicketAssign,
+	TicketStatsGet,
+	PublicTicketCreate,
+	PublicTicketGetByToken,
+	PublicTicketCommentCreate,
+	PublicTicketCommentList,
+} from "../controllers/ticket.controller";
 
 export const registerRoutes = (openapi: any) => {
 	// Public routes (no authentication required)
@@ -144,4 +160,22 @@ export const registerRoutes = (openapi: any) => {
 	// Public form routes (no authentication required)
 	openapi.get("/api/public/forms/:token", FormGetByToken);
 	openapi.post("/api/public/forms/:token/submit", FormResponseSubmit);
+
+	// Public ticket routes (no authentication required)
+	openapi.post("/api/public/tickets", PublicTicketCreate.handle);
+	openapi.get("/api/public/tickets/:token", PublicTicketGetByToken.handle);
+	openapi.get("/api/public/tickets/:token/comments", PublicTicketCommentList.handle);
+	openapi.post("/api/public/tickets/:token/comments", PublicTicketCommentCreate.handle);
+
+	// Ticket routes (authenticated)
+	openapi.get("/api/tickets/categories", CategoryList.handle);
+	openapi.get("/api/tickets", TicketList.handle);
+	openapi.get("/api/tickets/stats", TicketStatsGet.handle);
+	openapi.get("/api/tickets/:ticketId", TicketGet.handle);
+	openapi.put("/api/tickets/:ticketId", TicketUpdate.handle);
+	openapi.delete("/api/tickets/:ticketId", TicketDelete.handle);
+	openapi.get("/api/tickets/:ticketId/comments", TicketCommentList.handle);
+	openapi.post("/api/tickets/:ticketId/comments", TicketCommentCreate.handle);
+	openapi.get("/api/tickets/:ticketId/assignments", TicketAssignmentList.handle);
+	openapi.post("/api/tickets/:ticketId/assign", TicketAssign.handle);
 };
