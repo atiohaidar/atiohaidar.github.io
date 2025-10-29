@@ -52,7 +52,7 @@ export class FormList extends OpenAPIRoute {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
 
-		const forms = await listForms(c.env.DB, payload.username);
+		const forms = await listForms(c.env.DB, payload.sub);
 
 		return c.json({
 			success: true,
@@ -113,7 +113,7 @@ export class FormGet extends OpenAPIRoute {
 			return c.json({ success: false, message: "Form tidak ditemukan" }, 404);
 		}
 
-		if (form.created_by !== payload.username) {
+		if (form.created_by !== payload.sub) {
 			return c.json({ success: false, message: "Akses ditolak" }, 403);
 		}
 
@@ -224,7 +224,7 @@ export class FormCreate extends OpenAPIRoute {
 		}
 
 		const data = await this.getValidatedData<typeof this.schema>();
-		const result = await createForm(c.env.DB, payload.username, data.body);
+		const result = await createForm(c.env.DB, payload.sub, data.body);
 
 		return c.json(
 			{
@@ -295,7 +295,7 @@ export class FormUpdate extends OpenAPIRoute {
 			return c.json({ success: false, message: "Form tidak ditemukan" }, 404);
 		}
 
-		if (form.created_by !== payload.username) {
+		if (form.created_by !== payload.sub) {
 			return c.json({ success: false, message: "Akses ditolak" }, 403);
 		}
 
@@ -357,7 +357,7 @@ export class FormDelete extends OpenAPIRoute {
 			return c.json({ success: false, message: "Form tidak ditemukan" }, 404);
 		}
 
-		if (form.created_by !== payload.username) {
+		if (form.created_by !== payload.sub) {
 			return c.json({ success: false, message: "Akses ditolak" }, 403);
 		}
 
@@ -476,7 +476,7 @@ export class FormResponseList extends OpenAPIRoute {
 			return c.json({ success: false, message: "Form tidak ditemukan" }, 404);
 		}
 
-		if (form.created_by !== payload.username) {
+		if (form.created_by !== payload.sub) {
 			return c.json({ success: false, message: "Akses ditolak" }, 403);
 		}
 
@@ -546,7 +546,7 @@ export class FormResponseGet extends OpenAPIRoute {
 			return c.json({ success: false, message: "Form tidak ditemukan" }, 404);
 		}
 
-		if (form.created_by !== payload.username) {
+		if (form.created_by !== payload.sub) {
 			return c.json({ success: false, message: "Akses ditolak" }, 403);
 		}
 
