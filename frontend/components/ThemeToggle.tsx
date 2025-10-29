@@ -7,14 +7,14 @@ const ThemeToggle: React.FC = () => {
     return (
         <button
             onClick={toggleTheme}
-            className="p-2 rounded-lg bg-light-navy/50 dark:bg-light-navy/50 hover:bg-light-navy dark:hover:bg-light-navy transition-colors border border-light-slate/20 dark:border-light-slate/20"
+            className="p-2 rounded-lg bg-gray-200 dark:bg-light-navy/50 hover:bg-gray-300 dark:hover:bg-light-navy transition-colors border border-gray-300 dark:border-light-slate/20"
             aria-label="Toggle theme"
             title={theme === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
         >
             {theme === 'light' ? (
                 // Moon icon untuk dark mode
                 <svg
-                    className="w-5 h-5 text-deep-navy dark:text-white"
+                    className="w-5 h-5 text-gray-700 dark:text-white"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -29,7 +29,7 @@ const ThemeToggle: React.FC = () => {
             ) : (
                 // Sun icon untuk light mode
                 <svg
-                    className="w-5 h-5 text-white dark:text-white"
+                    className="w-5 h-5 text-yellow-400 dark:text-white"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"

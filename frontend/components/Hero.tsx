@@ -38,10 +38,10 @@ const Hero: React.FC<HeroProps> = ({ greeting, name, tagline, bio, linkedinUrl }
                 </p>
             </div>
             
-            <section id="hero" className={`h-screen ${LAYOUT.FLEX_CENTER} container mx-auto px-6 md:px-16 lg:px-20 ${PRINT.COMPACT_SPACING} print:min-h-0 print:py-4 print:px-4 relative overflow-hidden bg-gradient-to-br from-deep-navy/95 via-slate-navy/95 to-midnight/95`}>
+            <section id="hero" className={`h-screen ${LAYOUT.FLEX_CENTER} container mx-auto px-6 md:px-16 lg:px-20 ${PRINT.COMPACT_SPACING} print:min-h-0 print:py-4 print:px-4 relative overflow-hidden bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 dark:from-deep-navy/95 dark:via-slate-navy/95 dark:to-midnight/95`}>
                 <ParticleBackground />
                 <div className={`max-w-3xl space-y-4 ${PRINT.COMPACT_SPACING} text-center relative z-10`}>
-                <p className={`${COLORS.TEXT_ACCENT} text-lg print:text-gray-600 print:text-base`} style={createAnimationStyle(ANIMATION_DELAYS.HERO.NAME)}>
+                <p className={`text-light-accent dark:text-accent-blue text-lg print:text-gray-600 print:text-base`} style={createAnimationStyle(ANIMATION_DELAYS.HERO.NAME)}>
                     {greeting}
                 </p>
                 <h1 className={TYPOGRAPHY.HEADING_LARGE} style={createAnimationStyle(ANIMATION_DELAYS.HERO.TAGLINE)}>
@@ -56,15 +56,15 @@ const Hero: React.FC<HeroProps> = ({ greeting, name, tagline, bio, linkedinUrl }
                     <p>LinkedIn: <a className={`${COLORS.TEXT_ACCENT} underline`} {...getExternalLinkProps(linkedinUrl)}>{linkedinUrl}</a></p>
                 </div>
                 
-                <p className={`max-w-xl ${TYPOGRAPHY.BODY_TEXT} pt-4`} style={createAnimationStyle(ANIMATION_DELAYS.HERO.CTA)}>
+                <p className={`max-w-xl ${TYPOGRAPHY.BODY_TEXT} pt-4 text-light-muted dark:text-soft-gray`} style={createAnimationStyle(ANIMATION_DELAYS.HERO.CTA)}>
                     {bio}
                 </p>
                 <div className={`pt-8 ${PRINT.HIDE}`} style={createAnimationStyle(1000)}>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <a href="#portfolio" className={`bg-transparent ${COLORS.TEXT_ACCENT} border ${COLORS.BORDER_ACCENT} rounded px-8 py-4 font-medium ${COLORS.HOVER_ACCENT}/10 transition-colors duration-300`}>
+                        <a href="#portfolio" className={`bg-transparent ${COLORS.TEXT_ACCENT} border ${COLORS.BORDER_ACCENT} rounded px-8 py-4 font-medium ${COLORS.HOVER_ACCENT} transition-colors duration-300`}>
                             Lihat Portofolio Saya
                         </a>
-                        <a href="/articles" className={`bg-accent-blue text-white border border-accent-blue rounded px-8 py-4 font-medium hover:bg-blue-600 transition-colors duration-300`}>
+                        <a href="/articles" className={`bg-light-accent dark:bg-accent-blue text-white border border-light-accent dark:border-accent-blue rounded px-8 py-4 font-medium hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors duration-300`}>
                             📰 Lihat Articles
                         </a>
                     </div>
