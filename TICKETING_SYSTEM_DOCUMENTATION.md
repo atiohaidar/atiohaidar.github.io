@@ -41,10 +41,12 @@ Sistem ticketing/complaint management yang telah diimplementasikan memungkinkan:
 
 #### `ticket_categories`
 ```sql
-- id (INTEGER PRIMARY KEY)
-- name (TEXT NOT NULL UNIQUE)
-- description (TEXT)
-- created_at (TEXT)
+CREATE TABLE ticket_categories (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT NOT NULL UNIQUE,
+  description TEXT,
+  created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
 ```
 
 Default categories:
@@ -283,12 +285,15 @@ Location: `frontend/pages/DashboardTicketDetailPage.tsx`
 
 ```
 open → in_progress → waiting → solved
-  ↓         ↓          ↓
-  └─────────┴──────────┘
-   (dapat kembali ke status sebelumnya jika perlu)
 ```
 
-- **open**: Ticket baru dibuat, belum ada yang handle
+Status can be changed in any direction by admin/staff as needed. Common flows:
+- **Forward progression**: open → in_progress → solved (typical resolution)
+- **Backward for clarification**: in_progress → waiting (need more info from submitter)
+- **Reopening**: solved → open (issue recurs or wasn't fully resolved)
+- **Skip steps**: open → solved (quick fixes)
+
+Status meanings:
 - **in_progress**: Sedang ditangani oleh assigned user
 - **waiting**: Menunggu response dari submitter atau pihak lain
 - **solved**: Masalah telah diselesaikan, tidak bisa comment lagi
@@ -320,13 +325,25 @@ Semua komponen menggunakan:
 
 ## Security Considerations
 
-1. **Token Generation**: Menggunakan random alphanumeric string (TKT-XXXXXXXX)
+1. **Token Generation**: 
+   - Format: TKT-XXXXXXXX (8 character alphanumeric after prefix)
+   - Character set: A-Z and 0-9 (36 possible characters per position)
+   - Total entropy: 36^8 = 2,821,109,907,456 possible combinations
+   - Collision probability is negligible for expected ticket volume
+   - Tokens are unique (enforced by database constraint)
+
 2. **Authorization**: 
    - Guest hanya bisa akses dengan token
    - User hanya bisa lihat tickets yang assigned ke mereka (kecuali admin)
    - Admin punya full access
+
 3. **Input Validation**: Semua input divalidasi di backend
-4. **Prevent Comment on Solved**: Ticket yang sudah solved tidak bisa menerima comment baru
+
+4. **Prevent Comment on Solved**: 
+   - Tickets with status 'solved' cannot receive new comments (applies to both guests and staff)
+   - This prevents ongoing discussion after ticket resolution
+   - Staff should change status back to 'waiting' or 'in_progress' if additional work is needed
+   - Internal notes for documentation should be added before marking as solved
 
 ## Future Enhancements (Optional)
 
