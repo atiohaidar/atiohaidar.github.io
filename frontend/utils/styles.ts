@@ -33,18 +33,164 @@ export const TYPOGRAPHY = {
  * Color classes
  */
 export const COLORS = {
-  TEXT_PRIMARY: 'text-deep-navy',
-  TEXT_SECONDARY: 'text-soft-gray',
-  TEXT_ACCENT: 'text-accent-blue',
-  TEXT_WHITE: 'text-white',
-  TEXT_MUTED: 'text-light-slate',
   BG_PRIMARY: 'bg-deep-navy',
   BG_SECONDARY: 'bg-light-navy',
+  PANEL: 'bg-[#2B303A]',
+  TEXT_PRIMARY: 'text-white',
+  TEXT_SECONDARY: 'text-[#B4C2D4]',
+  BORDER: 'border-[#3F4654]',
   BG_ACCENT: 'bg-accent-blue',
   BORDER_ACCENT: 'border-accent-blue',
   HOVER_ACCENT: 'hover:bg-accent-blue',
   HOVER_TEXT_PRIMARY: 'hover:text-deep-navy',
+  TEXT_ACCENT: 'text-accent-blue',
+  TEXT_WHITE: 'text-white',
+  TEXT_MUTED: 'text-light-slate',
 } as const;
+
+export type DashboardThemeMode = 'light' | 'dark';
+
+export interface DashboardThemeConfig {
+  appBg: string;
+  contentBg: string;
+  sidebar: {
+    bg: string;
+    border: string;
+    text: string;
+    textMuted: string;
+    toggleIcon: string;
+    linkBase: string;
+    linkHover: string;
+    linkActive: string;
+    badgeAdmin: string;
+    badgeDefault: string;
+  };
+  header: {
+    bg: string;
+    border: string;
+    subtitle: string;
+  };
+  panel: {
+    bg: string;
+    border: string;
+    text: string;
+    textMuted: string;
+    divider: string;
+  };
+  badges: {
+    success: string;
+    danger: string;
+  };
+  buttons: {
+    primary: string;
+    secondary: string;
+    ghost: string;
+  };
+  timeline: {
+    border: string;
+    headerBg: string;
+    headerText: string;
+    hourBg: string;
+    stripeEven: string;
+    stripeOdd: string;
+    today: string;
+  };
+}
+
+export const DASHBOARD_THEME: Record<DashboardThemeMode, DashboardThemeConfig> = {
+  light: {
+    appBg: 'bg-[#F5F7FB]',
+    contentBg: 'bg-[#F5F7FB]',
+    sidebar: {
+      bg: 'bg-white',
+      border: 'border-r border-[#E1E8F5]',
+      text: 'text-[#1A2136]',
+      textMuted: 'text-[#5B6887]',
+      toggleIcon: 'text-[#5B6887] hover:text-[#1A2136]',
+      linkBase: 'text-[#5B6887]',
+      linkHover: 'hover:bg-[#EEF4FF] hover:text-[#1A2136]',
+      linkActive: 'bg-[#1F6FEB]/10 text-[#1F6FEB] border border-[#1F6FEB]/40',
+      badgeAdmin: 'bg-[#1F6FEB]/12 text-[#1F6FEB]',
+      badgeDefault: 'bg-[#E8EBF2] text-[#5B6887]',
+    },
+    header: {
+      bg: 'bg-white/90',
+      border: 'border-b border-[#E1E8F5]',
+      subtitle: 'text-[#5B6887]',
+    },
+    panel: {
+      bg: 'bg-white',
+      border: 'border border-[#E1E8F5]',
+      text: 'text-[#1A2136]',
+      textMuted: 'text-[#5B6887]',
+      divider: 'border-[#E1E8F5]',
+    },
+    badges: {
+      success: 'bg-[#1AAE6F]/15 text-[#0F8A4B]',
+      danger: 'bg-[#FF6B6B]/15 text-[#C44545]',
+    },
+    buttons: {
+      primary: 'bg-accent-blue text-white hover:bg-accent-blue/90',
+      secondary: 'bg-[#EEF2FA] text-[#1A2136] hover:bg-[#E3E8F6]',
+      ghost: 'border border-[#CBD5E1] text-[#5B6887] hover:border-accent-blue hover:text-accent-blue',
+    },
+    timeline: {
+      border: 'border-[#E1E8F5]',
+      headerBg: 'bg-[#EEF2FA]',
+      headerText: 'text-[#1A2136]',
+      hourBg: 'bg-[#EEF2FA]',
+      stripeEven: 'bg-[#F8FAFF]',
+      stripeOdd: 'bg-white',
+      today: 'bg-[#1F6FEB]/10',
+    },
+  },
+  dark: {
+    appBg: 'bg-[#0D111A]',
+    contentBg: 'bg-[#0D111A]',
+    sidebar: {
+      bg: 'bg-[#121721]',
+      border: 'border-r border-[#2F3542]',
+      text: 'text-[#CED7EA]',
+      textMuted: 'text-[#8E9CB3]',
+      toggleIcon: 'text-[#8E9CB3] hover:text-white',
+      linkBase: 'text-[#8E9CB3]',
+      linkHover: 'hover:bg-[#1F2633] hover:text-white',
+      linkActive: 'bg-accent-blue/20 text-white border border-accent-blue/40',
+      badgeAdmin: 'bg-accent-blue/15 text-accent-blue',
+      badgeDefault: 'bg-[#2F3542] text-[#8E9CB3]',
+    },
+    header: {
+      bg: 'bg-[#151B26]/95',
+      border: 'border-b border-[#2F3542]',
+      subtitle: 'text-[#8E9CB3]',
+    },
+    panel: {
+      bg: 'bg-[#1A2230]',
+      border: 'border border-[#2F3542]',
+      text: 'text-white',
+      textMuted: 'text-[#A8B4CC]',
+      divider: 'border-[#2F3542]',
+    },
+    badges: {
+      success: 'bg-[#1AAE6F]/20 text-[#61DE9B]',
+      danger: 'bg-[#FF6B6B]/20 text-[#FF9A9A]',
+    },
+    buttons: {
+      primary: 'bg-accent-blue text-white hover:bg-accent-blue/90',
+      secondary: 'bg-[#1F2633] text-[#CED7EA] hover:bg-[#252E3D]',
+      ghost: 'border border-[#2F3542] text-[#8E9CB3] hover:border-accent-blue hover:text-accent-blue',
+    },
+    timeline: {
+      border: 'border-[#2F3542]',
+      headerBg: 'bg-[#1A2230]',
+      headerText: 'text-white',
+      hourBg: 'bg-[#1A2230]',
+      stripeEven: 'bg-[#1F2633]',
+      stripeOdd: 'bg-[#141A24]',
+      today: 'bg-accent-blue/10',
+    },
+  },
+};
 
 /**
  * Layout classes

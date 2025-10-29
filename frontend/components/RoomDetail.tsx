@@ -5,6 +5,11 @@ import { bookingService } from '../services/bookingService';
 import { getStoredUser } from '../apiClient';
 import type { Room } from '../types/room';
 import type { Booking } from '../types/booking';
+import { useTheme } from '../contexts/ThemeContext';
+import { DASHBOARD_THEME } from '../utils/styles';
+
+const cx = (...classes: Array<string | false | null | undefined>) =>
+  classes.filter(Boolean).join(' ');
 
 interface RoomDetailProps {
   showActions?: boolean;
@@ -37,6 +42,8 @@ const RoomDetail: React.FC<RoomDetailProps> = ({ showActions = true }) => {
   const [editError, setEditError] = useState<string | null>(null);
   const [editLoading, setEditLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { theme } = useTheme();
+  const palette = DASHBOARD_THEME[theme];
 
   const navigateDate = (direction: 'prev' | 'next') => {
     const days = viewMode === 'week' ? 7 : 1;
@@ -260,13 +267,13 @@ const RoomDetail: React.FC<RoomDetailProps> = ({ showActions = true }) => {
   const getRoomStatusBadge = (room: Room) => {
     if (!room.available) {
       return (
-        <span className="px-3 py-1 text-sm font-medium bg-red-100 text-red-800 rounded-full">
+        <span className={cx('px-3 py-1 text-sm font-medium rounded-full', palette.badges.danger)}>
           Tidak Tersedia
         </span>
       );
     }
     return (
-      <span className="px-3 py-1 text-sm font-medium bg-green-100 text-green-800 rounded-full">
+      <span className={cx('px-3 py-1 text-sm font-medium rounded-full', palette.badges.success)}>
         Tersedia
       </span>
     );
@@ -313,7 +320,7 @@ const RoomDetail: React.FC<RoomDetailProps> = ({ showActions = true }) => {
     };
 
     return (
-      <div className="border border-gray-200 dark:border-soft-gray/20 rounded-lg overflow-hidden">
+      <div className={cx('rounded-lg overflow-hidden', palette.timeline.border)}>
         <div className="max-h-[600px] overflow-auto">
           <div
             className="min-w-[480px]"
@@ -323,29 +330,40 @@ const RoomDetail: React.FC<RoomDetailProps> = ({ showActions = true }) => {
           >
             {/* Header Row */}
             <div
-              className="grid border-b border-gray-200 dark:border-soft-gray/20"
+              className={cx('grid border-b', palette.timeline.border)}
               style={{
                 gridTemplateColumns: `80px repeat(${displayDates.length}, minmax(${columnWidth}px, 1fr))`,
               }}
             >
-              <div className="sticky left-0 z-20 p-3 text-xs font-medium text-soft-gray bg-gray-50 dark:bg-light-slate border-r border-gray-200 dark:border-soft-gray/20">
+              <div
+                className={cx(
+                  'sticky left-0 z-20 p-3 text-xs font-medium border-r',
+                  palette.timeline.headerText,
+                  palette.timeline.hourBg,
+                  palette.timeline.border
+                )}
+              >
                 Jam
               </div>
               {displayDates.map((date, index) => (
-                <div key={index} className="p-3 text-center border-r border-gray-200 dark:border-soft-gray/20">
-                  <div className="text-xs font-medium text-white">
+                <div
+                  key={index}
+                  className={cx('p-3 text-center border-r', palette.timeline.border, palette.timeline.headerBg)}
+                >
+                  <div className={cx('text-xs font-medium', palette.timeline.headerText)}>
                     {date.toLocaleDateString('id-ID', { weekday: 'short' })}
                   </div>
                   <div
-                    className={`text-base font-semibold ${
+                    className={cx(
+                      'text-base font-semibold',
                       date.toDateString() === new Date().toDateString()
                         ? 'text-accent-blue'
-                        : 'text-soft-gray'
-                    }`}
+                        : palette.panel.textMuted
+                    )}
                   >
                     {date.getDate()}
                   </div>
-                  <div className="text-xs text-soft-gray">
+                  <div className={cx('text-xs', palette.panel.textMuted)}>
                     {date.toLocaleDateString('id-ID', { month: 'short' })}
                   </div>
                 </div>
@@ -362,13 +380,20 @@ const RoomDetail: React.FC<RoomDetailProps> = ({ showActions = true }) => {
               {hours.map((hour) => (
                 <div
                   key={hour}
-                  className="grid border-b border-gray-100 dark:border-soft-gray/10"
+                  className={cx('grid border-b', palette.timeline.border)}
                   style={{
                     gridTemplateColumns: `80px repeat(${displayDates.length}, minmax(${columnWidth}px, 1fr))`,
                     height: '64px',
                   }}
                 >
-                <div className="sticky left-0 z-10 px-3 py-2 text-xs text-soft-gray bg-gray-50 dark:bg-light-slate border-r border-gray-200 dark:border-soft-gray/20 flex items-start">
+                <div
+                  className={cx(
+                    'sticky left-0 z-10 px-3 py-2 text-xs flex items-start border-r',
+                    palette.timeline.hourBg,
+                    palette.panel.textMuted,
+                    palette.timeline.border
+                  )}
+                >
                   {hour.toString().padStart(2, '0')}:00
                 </div>
 
@@ -378,13 +403,15 @@ const RoomDetail: React.FC<RoomDetailProps> = ({ showActions = true }) => {
                   return (
                     <div
                       key={dateIndex}
-                      className={`relative border-r border-gray-200 dark:border-soft-gray/20 ${
+                      className={cx(
+                        'relative border-r',
+                        palette.timeline.border,
                         date.toDateString() === new Date().toDateString()
-                          ? 'bg-blue-50/5 dark:bg-accent-blue/5'
+                          ? palette.timeline.today
                           : hour % 2 === 0
-                            ? 'bg-gray-50/30 dark:bg-light-slate/10'
-                            : 'bg-white dark:bg-light-navy'
-                      }`}
+                            ? palette.timeline.stripeEven
+                            : palette.timeline.stripeOdd
+                      )}
                     >
                       {hourBookings.map((booking) => {
                         const style = getBookingStyle(booking, hour);
@@ -454,105 +481,96 @@ const RoomDetail: React.FC<RoomDetailProps> = ({ showActions = true }) => {
       <div className="mb-8">
         <Link
           to="/dashboard/rooms"
-          className="text-accent-blue hover:text-blue-400 transition-colors text-sm mb-4 inline-block"
+          className={cx('text-accent-blue hover:text-accent-blue/80 transition-colors text-sm mb-4 inline-block')}
         >
           ← Kembali ke Daftar Ruangan
         </Link>
-        
-        <div className="bg-light-navy border border-soft-gray/20 rounded-lg p-8">
-          <div className="flex justify-between items-start mb-6">
-            <h1 className="text-3xl font-bold text-white">{room.name}</h1>
-            {getRoomStatusBadge(room)}
-          </div>
-          
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Informasi Ruangan */}
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold text-white mb-4">Informasi Ruangan</h2>
+
+        <div className={cx(palette.panel.bg, palette.panel.border, 'rounded-lg p-8')}>
+          {/* Informasi Ruangan */}
+          <div className="space-y-4">
+            <h2 className={cx('text-xl font-semibold mb-4', palette.panel.text)}>Informasi Ruangan</h2>
+            
+            <div className="space-y-3">
+              <div className={cx('flex items-center', palette.panel.textMuted)}>
+                <svg className="w-5 h-5 mr-3 text-accent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0z" />
+                </svg>
+                <div>
+                  <div className={cx('font-medium', palette.panel.text)}>Kapasitas</div>
+                  <div className="text-sm">{room.capacity} orang</div>
+                </div>
+              </div>
               
-              <div className="space-y-3">
-                <div className="flex items-center text-soft-gray">
-                  <svg className="w-5 h-5 mr-3 text-accent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              {room.description && (
+                <div className={cx('flex items-start', palette.panel.textMuted)}>
+                  <svg className="w-5 h-5 mr-3 text-accent-blue mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   <div>
-                    <div className="font-medium text-white">Kapasitas</div>
-                    <div className="text-sm">{room.capacity} orang</div>
+                    <div className={cx('font-medium', palette.panel.text)}>Deskripsi</div>
+                    <div className="text-sm whitespace-pre-wrap">{room.description}</div>
                   </div>
                 </div>
-                
-                {room.description && (
-                  <div className="flex items-start text-soft-gray">
-                    <svg className="w-5 h-5 mr-3 text-accent-blue mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <div>
-                      <div className="font-medium text-white">Deskripsi</div>
-                      <div className="text-sm whitespace-pre-wrap">{room.description}</div>
-                    </div>
-                  </div>
-                )}
-              </div>
+              )}
             </div>
+          </div>
+          
+          {/* Status & Informasi Tambahan */}
+          <div className="space-y-4">
+            <h2 className={cx('text-xl font-semibold mb-4', palette.panel.text)}>Status & Informasi</h2>
             
-            {/* Status & Informasi Tambahan */}
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold text-white mb-4">Status & Informasi</h2>
+            <div className={cx('space-y-3 text-sm', palette.panel.textMuted)}>
+              <div>
+                <span className={cx('font-medium', palette.panel.text)}>Status Ketersediaan:</span>
+                <span className="ml-2">{room.available ? 'Tersedia' : 'Tidak Tersedia'}</span>
+              </div>
               
-              <div className="space-y-3 text-sm text-soft-gray">
+              <div>
+                <span className={cx('font-medium', palette.panel.text)}>ID Ruangan:</span>
+                <span className="ml-2 font-mono">{room.id}</span>
+              </div>
+              
+              <div>
+                <span className={cx('font-medium', palette.panel.text)}>Dibuat:</span>
+                <span className="ml-2">
+                  {new Date(room.created_at).toLocaleString('id-ID')}
+                </span>
+              </div>
+              
+              {room.updated_at !== room.created_at && (
                 <div>
-                  <span className="font-medium text-white">Status Ketersediaan:</span>
-                  <span className="ml-2">{room.available ? 'Tersedia' : 'Tidak Tersedia'}</span>
-                </div>
-                
-                <div>
-                  <span className="font-medium text-white">ID Ruangan:</span>
-                  <span className="ml-2 font-mono">{room.id}</span>
-                </div>
-                
-                <div>
-                  <span className="font-medium text-white">Dibuat:</span>
+                  <span className={cx('font-medium', palette.panel.text)}>Diperbarui:</span>
                   <span className="ml-2">
-                    {new Date(room.created_at).toLocaleString('id-ID')}
+                    {new Date(room.updated_at).toLocaleString('id-ID')}
                   </span>
                 </div>
-                
-                {room.updated_at !== room.created_at && (
-                  <div>
-                    <span className="font-medium text-white">Diperbarui:</span>
-                    <span className="ml-2">
-                      {new Date(room.updated_at).toLocaleString('id-ID')}
-                    </span>
-                  </div>
-                )}
-              </div>
+              )}
             </div>
           </div>
           
           {/* Booking Timeline */}
-          <div className="mt-8 pt-6 border-t border-soft-gray/20">
+          <div className={cx('mt-8 pt-6', 'border-t', palette.panel.divider)}>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-white">Jadwal Penggunaan Ruangan</h2>
+              <h2 className={cx('text-xl font-semibold', palette.panel.text)}>Jadwal Penggunaan Ruangan</h2>
               <div className="flex items-center gap-4">
                 {/* View Mode Toggle */}
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setViewMode('day')}
-                    className={`px-3 py-1 text-sm rounded transition-colors ${
-                      viewMode === 'day' 
-                        ? 'bg-accent-blue text-white' 
-                        : 'bg-gray-100 dark:bg-light-slate text-gray-700 dark:text-soft-gray hover:bg-gray-200 dark:hover:bg-light-slate/50'
-                    }`}
+                    className={cx(
+                      'px-3 py-1 text-sm rounded transition-colors',
+                      viewMode === 'day' ? palette.buttons.primary : palette.buttons.secondary
+                    )}
                   >
                     Hari
                   </button>
                   <button
                     onClick={() => setViewMode('week')}
-                    className={`px-3 py-1 text-sm rounded transition-colors ${
-                      viewMode === 'week' 
-                        ? 'bg-accent-blue text-white' 
-                        : 'bg-gray-100 dark:bg-light-slate text-gray-700 dark:text-soft-gray hover:bg-gray-200 dark:hover:bg-light-slate/50'
-                    }`}
+                    className={cx(
+                      'px-3 py-1 text-sm rounded transition-colors',
+                      viewMode === 'week' ? palette.buttons.primary : palette.buttons.secondary
+                    )}
                   >
                     Minggu
                   </button>
@@ -561,12 +579,12 @@ const RoomDetail: React.FC<RoomDetailProps> = ({ showActions = true }) => {
                 {/* Date Navigation */}
                 <button
                   onClick={() => navigateDate('prev')}
-                  className="px-3 py-1 text-sm bg-gray-100 dark:bg-light-slate text-gray-700 dark:text-soft-gray rounded hover:bg-gray-200 dark:hover:bg-light-slate/50 transition-colors"
+                  className={cx('px-3 py-1 text-sm rounded transition-colors', palette.buttons.secondary)}
                 >
                   ←
                 </button>
                 <div className="text-center">
-                  <div className="text-sm font-medium text-white">
+                  <div className={cx('text-sm font-medium', palette.panel.text)}>
                     {viewMode === 'week'
                       ? formatWeekRange(selectedDate)
                       : new Intl.DateTimeFormat('id-ID', {
@@ -582,14 +600,14 @@ const RoomDetail: React.FC<RoomDetailProps> = ({ showActions = true }) => {
                 </div>
                 <button
                   onClick={() => navigateDate('next')}
-                  className="px-3 py-1 text-sm bg-gray-100 dark:bg-light-slate text-gray-700 dark:text-soft-gray rounded hover:bg-gray-200 dark:hover:bg-light-slate/50 transition-colors"
+                  className={cx('px-3 py-1 text-sm rounded transition-colors', palette.buttons.secondary)}
                 >
                   →
                 </button>
                 {selectedDate.toDateString() !== new Date().toDateString() && (
                   <button
                     onClick={goToToday}
-                    className="px-3 py-1 text-xs bg-accent-blue text-white rounded hover:bg-blue-600 transition-colors"
+                    className={cx('px-3 py-1 text-xs rounded transition-colors', palette.buttons.primary)}
                   >
                     Hari Ini
                   </button>
@@ -612,18 +630,18 @@ const RoomDetail: React.FC<RoomDetailProps> = ({ showActions = true }) => {
           {/* Edit Booking Modal */}
           {isModalOpen && editingBooking && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-              <div className="relative w-full max-w-2xl bg-light-navy border border-soft-gray/20 rounded-2xl shadow-2xl">
+              <div className={cx('relative w-full max-w-2xl rounded-2xl shadow-2xl', palette.panel.bg, palette.panel.border.replace('border ', 'border-2 '))}>
                 <button
                   onClick={closeModal}
-                  className="absolute right-4 top-4 text-soft-gray hover:text-white transition-colors"
+                  className={cx('absolute right-4 top-4 transition-colors', palette.panel.textMuted, 'hover:text-white')}
                   aria-label="Tutup"
                 >
                   ×
                 </button>
                 <div className="p-6 md:p-8 space-y-6">
                   <div>
-                    <h3 className="text-2xl font-semibold text-white mb-1">Edit Booking</h3>
-                    <p className="text-sm text-soft-gray">Perbarui informasi booking sesuai kebutuhan</p>
+                    <h3 className={cx('text-2xl font-semibold mb-1', palette.panel.text)}>Edit Booking</h3>
+                    <p className={cx('text-sm', palette.panel.textMuted)}>Perbarui informasi booking sesuai kebutuhan</p>
                   </div>
 
                   {editError && (
@@ -634,17 +652,17 @@ const RoomDetail: React.FC<RoomDetailProps> = ({ showActions = true }) => {
 
                   <form onSubmit={handleEditSubmit} className="space-y-5">
                     <div>
-                      <label className="block text-sm font-medium text-white mb-2">Ruangan</label>
+                      <label className={cx('block text-sm font-medium mb-2', palette.panel.text)}>Ruangan</label>
                       <input
                         type="text"
                         value={room?.name || editingBooking.room_id}
                         disabled
-                        className="w-full px-4 py-3 bg-deep-navy border border-soft-gray/20 rounded-lg text-soft-gray cursor-not-allowed"
+                        className={cx('w-full px-4 py-3 rounded-lg cursor-not-allowed', palette.panel.border, palette.panel.bg, palette.panel.textMuted)}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-white mb-2">Judul Booking *</label>
+                      <label className={cx('block text-sm font-medium mb-2', palette.panel.text)}>Judul Booking *</label>
                       <input
                         type="text"
                         name="title"
@@ -652,36 +670,36 @@ const RoomDetail: React.FC<RoomDetailProps> = ({ showActions = true }) => {
                         onChange={handleEditInputChange}
                         required
                         maxLength={100}
-                        className="w-full px-4 py-3 bg-deep-navy border border-soft-gray/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                        className={cx('w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-blue', palette.panel.border, palette.panel.bg, palette.panel.text)}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-white mb-2">Deskripsi</label>
+                      <label className={cx('block text-sm font-medium mb-2', palette.panel.text)}>Deskripsi</label>
                       <textarea
                         name="description"
                         value={editForm.description}
                         onChange={handleEditInputChange}
                         rows={3}
                         maxLength={500}
-                        className="w-full px-4 py-3 bg-deep-navy border border-soft-gray/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent-blue resize-vertical"
+                        className={cx('w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-blue resize-vertical', palette.panel.border, palette.panel.bg, palette.panel.text)}
                       />
                     </div>
 
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-white mb-2">Waktu Mulai *</label>
+                        <label className={cx('block text-sm font-medium mb-2', palette.panel.text)}>Waktu Mulai *</label>
                         <input
                           type="datetime-local"
                           name="start_time"
                           value={editForm.start_time}
                           onChange={handleEditInputChange}
                           required
-                          className="w-full px-4 py-3 bg-deep-navy border border-soft-gray/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                          className={cx('w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-blue', palette.panel.border, palette.panel.bg, palette.panel.text)}
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-white mb-2">Waktu Selesai *</label>
+                        <label className={cx('block text-sm font-medium mb-2', palette.panel.text)}>Waktu Selesai *</label>
                         <input
                           type="datetime-local"
                           name="end_time"
@@ -689,7 +707,7 @@ const RoomDetail: React.FC<RoomDetailProps> = ({ showActions = true }) => {
                           min={editForm.start_time}
                           onChange={handleEditInputChange}
                           required
-                          className="w-full px-4 py-3 bg-deep-navy border border-soft-gray/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                          className={cx('w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-blue', palette.panel.border, palette.panel.bg, palette.panel.text)}
                         />
                       </div>
                     </div>
@@ -698,14 +716,14 @@ const RoomDetail: React.FC<RoomDetailProps> = ({ showActions = true }) => {
                       <button
                         type="button"
                         onClick={closeModal}
-                        className="w-full md:w-auto px-5 py-3 border border-soft-gray/30 text-soft-gray rounded-lg hover:border-soft-gray/60 hover:text-white transition-colors"
+                        className={cx('w-full md:w-auto px-5 py-3 rounded-lg transition-colors', palette.buttons.ghost)}
                       >
                         Batal
                       </button>
                       <button
                         type="submit"
                         disabled={editLoading}
-                        className="w-full md:w-auto px-6 py-3 bg-accent-blue text-white rounded-lg hover:bg-blue-600 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                        className={cx('w-full md:w-auto px-6 py-3 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed transition-colors', palette.buttons.primary)}
                       >
                         {editLoading ? 'Menyimpan...' : 'Simpan Perubahan'}
                       </button>
@@ -718,12 +736,12 @@ const RoomDetail: React.FC<RoomDetailProps> = ({ showActions = true }) => {
 
           {/* Actions */}
           {showActions && (
-            <div className="mt-8 pt-6 border-t border-soft-gray/20">
+            <div className={cx('mt-8 pt-6 border-t', palette.panel.divider)}>
               <div className="flex flex-wrap gap-4">
                 {room.available && (
                   <Link
                     to={`/dashboard/bookings/new?roomId=${room.id}`}
-                    className="px-6 py-3 bg-accent-blue text-white rounded-lg hover:bg-blue-600 transition-colors"
+                    className={cx('px-6 py-3 rounded-lg transition-colors', palette.buttons.primary)}
                   >
                     Booking Ruangan
                   </Link>
@@ -740,7 +758,7 @@ const RoomDetail: React.FC<RoomDetailProps> = ({ showActions = true }) => {
                 
                 <Link
                   to={`/dashboard/rooms`}
-                  className="px-6 py-3 border border-soft-gray text-soft-gray rounded-lg hover:border-accent-blue hover:text-accent-blue transition-colors"
+                  className={cx('px-6 py-3 rounded-lg transition-colors', palette.buttons.ghost)}
                 >
                   Lihat Ruangan Lain
                 </Link>
@@ -751,6 +769,7 @@ const RoomDetail: React.FC<RoomDetailProps> = ({ showActions = true }) => {
       </div>
     </div>
   );
-};
+}
 
 export default RoomDetail;
+

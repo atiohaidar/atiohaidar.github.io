@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -131,10 +133,25 @@ const ArticlesPage: React.FC = () => {
                                     )}
                                 </div>
 
-                                <div className="prose prose-invert prose-lg max-w-none">
-                                    <div className="text-light-slate whitespace-pre-wrap leading-relaxed">
+                                <div className="prose prose-invert prose-lg max-w-none text-light-slate">
+                                    <ReactMarkdown
+                                        remarkPlugins={[remarkGfm]}
+                                        components={{
+                                            a: ({ node, ...props }) => (
+                                                <a className="text-accent-blue hover:underline" {...props} />
+                                            ),
+                                            code: ({ node, inline, className, children, ...props }) => (
+                                                <code
+                                                    className={`${className ?? ''} ${inline ? 'bg-light-navy px-1 py-0.5 rounded' : ''}`.trim()}
+                                                    {...props}
+                                                >
+                                                    {children}
+                                                </code>
+                                            ),
+                                        }}
+                                    >
                                         {selectedArticle.content}
-                                    </div>
+                                    </ReactMarkdown>
                                 </div>
                             </article>
                         </div>

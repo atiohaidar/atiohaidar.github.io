@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useLogout } from '../hooks/useApi';
-import { COLORS } from '../utils/styles';
+import { DASHBOARD_THEME } from '../utils/styles';
+import { useTheme } from '../contexts/ThemeContext';
 import ThemeToggle from './ThemeToggle';
 
 interface StoredUser {
@@ -69,6 +70,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
     const location = useLocation();
     const logout = useLogout();
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const { theme } = useTheme();
+    const palette = DASHBOARD_THEME[theme];
+    const baseText = theme === 'light' ? 'text-[#1A2136]' : 'text-white';
+    const accentText = palette.sidebar.textMuted;
 
     const handleLogout = () => {
         logout();
@@ -82,21 +87,21 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
     const isActive = (path: string) => location.pathname === path;
 
     return (
-        <div className={`min-h-screen bg-light-bg dark:bg-deep-navy flex transition-colors duration-300`}>
+        <div className={`min-h-screen flex transition-colors duration-300 ${palette.appBg} ${baseText}`}>
             {/* Sidebar */}
             <aside
                 className={`${
                     isSidebarOpen ? 'w-64' : 'w-20'
-                } transition-all duration-300 border-r border-gray-200 dark:border-light-slate/20 flex flex-col bg-white dark:bg-deep-navy`}
+                } transition-all duration-300 flex flex-col ${palette.sidebar.bg} ${palette.sidebar.border}`}
             >
                 {/* Sidebar Header */}
-                <div className="p-4 border-b border-gray-200 dark:border-light-slate/20 flex items-center justify-between">
+                <div className={`p-4 flex items-center justify-between ${palette.sidebar.border}`}>
                     {isSidebarOpen ? (
                         <>
-                            <h2 className="text-xl font-bold text-light-text dark:text-white">Dashboard</h2>
+                            <h2 className={`text-xl font-bold ${palette.sidebar.text}`}>Dashboard</h2>
                             <button
                                 onClick={() => setIsSidebarOpen(false)}
-                                className="text-light-muted dark:text-soft-gray hover:text-light-text dark:hover:text-white transition-colors"
+                                className={`transition-colors ${palette.sidebar.toggleIcon}`}
                             >
                                 ◀
                             </button>
@@ -104,7 +109,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                     ) : (
                         <button
                             onClick={() => setIsSidebarOpen(true)}
-                            className="text-light-muted dark:text-soft-gray hover:text-light-text dark:hover:text-white transition-colors mx-auto"
+                            className={`transition-colors mx-auto ${palette.sidebar.toggleIcon}`}
                         >
                             ▶
                         </button>
@@ -112,16 +117,16 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                 </div>
 
                 {/* User Info */}
-                <div className="p-4 border-b border-gray-200 dark:border-light-slate/20">
+                <div className={`p-4 ${palette.sidebar.border}`}>
                     {isSidebarOpen ? (
                         <div>
-                            <p className="text-light-text dark:text-white font-semibold truncate">{user.name}</p>
-                            <p className="text-light-muted dark:text-soft-gray text-sm truncate">@{user.username}</p>
+                            <p className={`font-semibold truncate ${palette.sidebar.text}`}>{user.name}</p>
+                            <p className={`text-sm truncate ${palette.sidebar.textMuted}`}>@{user.username}</p>
                             <span
                                 className={`inline-block mt-2 px-2 py-1 text-xs rounded ${
                                     user.role === 'admin'
-                                        ? 'bg-light-accent/20 text-light-accent dark:bg-accent-blue/20 dark:text-accent-blue'
-                                        : 'bg-gray-200 text-light-muted dark:bg-soft-gray/20 dark:text-soft-gray'
+                                        ? palette.sidebar.badgeAdmin
+                                        : palette.sidebar.badgeDefault
                                 }`}
                             >
                                 {user.role}
@@ -129,7 +134,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                         </div>
                     ) : (
                         <div className="text-center">
-                            <div className="w-10 h-10 rounded-full bg-light-accent/20 dark:bg-accent-blue/20 flex items-center justify-center text-light-accent dark:text-accent-blue font-bold mx-auto">
+                            <div className={`w-10 h-10 rounded-full bg-accent-blue/20 text-accent-blue font-bold mx-auto flex items-center justify-center`}>
                                 {user.name.charAt(0).toUpperCase()}
                             </div>
                         </div>
@@ -144,8 +149,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                             to={item.path}
                             className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                                 isActive(item.path)
-                                    ? 'bg-light-accent/20 text-light-accent dark:bg-accent-blue/20 dark:text-accent-blue'
-                                    : 'text-light-muted dark:text-soft-gray hover:bg-gray-100 dark:hover:bg-light-slate/10 hover:text-light-text dark:hover:text-white'
+                                    ? palette.sidebar.linkActive
+                                    : `${palette.sidebar.linkBase} ${palette.sidebar.linkHover}`
                             }`}
                             title={!isSidebarOpen ? item.label : undefined}
                         >
@@ -156,7 +161,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                 </nav>
 
                 {/* Sidebar Footer */}
-                <div className="p-4 border-t border-gray-200 dark:border-light-slate/20 space-y-2">
+                <div className={`p-4 space-y-2 ${palette.sidebar.border}`}>
                     {/* Theme Toggle */}
                     <div className={`flex items-center ${isSidebarOpen ? 'justify-start px-4' : 'justify-center'}`}>
                         <ThemeToggle />
@@ -164,7 +169,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                     
                     <Link
                         to="/"
-                        className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-light-muted dark:text-soft-gray hover:bg-gray-100 dark:hover:bg-light-slate/10 hover:text-light-text dark:hover:text-white`}
+                        className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${palette.sidebar.linkBase} ${palette.sidebar.linkHover}`}
                         title={!isSidebarOpen ? 'Landing Page' : undefined}
                     >
                         <span className="text-xl">🏠</span>
@@ -172,7 +177,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                     </Link>
                     <button
                         onClick={handleLogout}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-red-400 hover:bg-red-500/10`}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-red-400 hover:bg-red-500/20"
                         title={!isSidebarOpen ? 'Logout' : undefined}
                     >
                         <span className="text-xl">🚪</span>
@@ -182,16 +187,16 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
             </aside>
 
             {/* Main Content */}
-            <div className="flex-1 flex flex-col min-h-screen overflow-x-hidden">
+            <div className={`flex-1 flex flex-col min-h-screen overflow-x-hidden ${palette.contentBg}`}>
                 {/* Top Header */}
-                <header className="px-6 py-4 border-b border-gray-200 dark:border-light-slate/20 bg-white/80 dark:bg-navy-darker/50 backdrop-blur-sm sticky top-0 z-10">
+                <header className={`px-6 py-4 backdrop-blur-sm sticky top-0 z-10 ${palette.header.bg} ${palette.header.border}`}>
                     <div className="flex items-center justify-between">
                         <div>
-                            <h1 className="text-2xl font-bold text-light-text dark:text-white">
+                            <h1 className={`text-2xl font-bold ${palette.sidebar.text}`}>
                                 {filteredMenuItems.find((item) => isActive(item.path))?.label ||
                                     'Dashboard'}
                             </h1>
-                            <p className="text-sm text-light-muted dark:text-soft-gray">
+                            <p className={`text-sm ${palette.header.subtitle}`}>
                                 Kelola aplikasi Anda dengan mudah
                             </p>
                         </div>
@@ -199,7 +204,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                 </header>
 
                 {/* Content Area */}
-                <main className="flex-1 p-6 overflow-y-auto bg-gray-50 dark:bg-deep-navy">{children}</main>
+                <main className="flex-1 p-6 overflow-y-auto">{children}</main>
             </div>
         </div>
     );
