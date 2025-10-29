@@ -84,7 +84,7 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-            <div className={`${COLORS.BG_SECONDARY} rounded-lg shadow-2xl max-w-4xl w-full h-[90vh] flex flex-col overflow-hidden`}>
+            <div className={`${COLORS.BG_SECONDARY} rounded-lg shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden`}>
                 {/* Header */}
                 <div className={`p-3 ${COLORS.BORDER_PRIMARY} flex justify-between items-center bg-[#00a884]`}>
                     <div className="flex items-center gap-3">
