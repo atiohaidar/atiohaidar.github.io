@@ -421,6 +421,11 @@ export interface TicketCommentCreate {
   is_internal?: boolean;
 }
 
+export interface TicketCommentCreateByToken {
+  comment_text: string;
+  commenter_name?: string;
+}
+
 export interface TicketAssignment {
   id: number;
   ticket_id: number;

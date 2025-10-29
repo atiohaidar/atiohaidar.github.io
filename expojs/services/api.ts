@@ -9,6 +9,15 @@ import { tokenStorage } from './tokenStorage';
 // You can override this via EXPO_PUBLIC_API_BASE_URL for physical devices/other hosts
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL ?? 'https://backend.atiohaidar.workers.dev';
 
+// Default empty ticket stats
+const EMPTY_TICKET_STATS: Types.TicketStats = {
+  total: 0,
+  open: 0,
+  in_progress: 0,
+  waiting: 0,
+  solved: 0,
+};
+
 class ApiService {
   private api: AxiosInstance;
   private token: string | null = null;
@@ -962,7 +971,7 @@ class ApiService {
 
   async createTicketCommentByToken(
     token: string,
-    comment: { comment_text: string; commenter_name?: string }
+    comment: Types.TicketCommentCreateByToken
   ): Promise<Types.TicketComment> {
     try {
       const response = await this.api.post<Types.ApiResponse<Types.TicketComment>>(
@@ -1012,13 +1021,7 @@ class ApiService {
         '/api/tickets/stats',
         { params: { assignedTo } }
       );
-      return this.extractResult<Types.TicketStats>(response.data, 'stats') ?? {
-        total: 0,
-        open: 0,
-        in_progress: 0,
-        waiting: 0,
-        solved: 0,
-      };
+      return this.extractResult<Types.TicketStats>(response.data, 'stats') ?? EMPTY_TICKET_STATS;
     } catch (error) {
       this.handleError(error);
     }
