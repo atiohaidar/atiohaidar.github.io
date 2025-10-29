@@ -56,6 +56,12 @@ const menuItems: MenuItem[] = [
         path: '/dashboard/forms',
     },
     {
+        id: 'tickets',
+        label: 'Tiket',
+        icon: '🎫',
+        path: '/dashboard/tickets',
+    },
+    {
         id: 'users',
         label: 'User Management',
         icon: '👥',

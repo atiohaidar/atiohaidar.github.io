@@ -28,6 +28,8 @@ import DashboardFormResponseDetailPage from './pages/DashboardFormResponseDetail
 import FormFillPage from './pages/FormFillPage';
 import DiscussionForumPage from './pages/DiscussionForumPage';
 import DiscussionDetailPage from './pages/DiscussionDetailPage';
+import DashboardTicketsPage from './pages/DashboardTicketsPage';
+import DashboardTicketDetailPage from './pages/DashboardTicketDetailPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 const queryClient = new QueryClient({
@@ -108,6 +110,8 @@ const App: React.FC = () => {
                             <Route path="forms/:formId/edit" element={<DashboardFormEditorPage />} />
                             <Route path="forms/:formId/responses" element={<DashboardFormResponsesPage />} />
                             <Route path="forms/:formId/responses/:responseId" element={<DashboardFormResponseDetailPage />} />
+                            <Route path="tickets" element={<DashboardTicketsPage />} />
+                            <Route path="tickets/:ticketId" element={<DashboardTicketDetailPage />} />
                         </Route>
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
