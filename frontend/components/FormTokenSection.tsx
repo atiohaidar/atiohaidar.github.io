@@ -14,7 +14,7 @@ const FormTokenSection: React.FC = () => {
     };
 
     return (
-        <section className={`py-16 md:py-20 ${COLORS.BG_PRIMARY}`}>
+        <section id="form-token" className={`py-16 md:py-20 ${COLORS.BG_PRIMARY}`}>
             <div className="container mx-auto px-4 max-w-2xl">
                 <div className={`${COLORS.BG_SECONDARY} rounded-lg shadow-xl p-8 md:p-12`}>
                     <h2 className={`text-3xl md:text-4xl font-bold ${COLORS.TEXT_PRIMARY} mb-4 text-center`}>

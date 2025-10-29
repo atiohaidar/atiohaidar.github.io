@@ -377,7 +377,7 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                         </div>
 
                         {/* Messages */}
-                        <div className="flex-1 overflow-y-auto p-4 space-y-2" style={{ backgroundColor: theme === 'dark' ? '#0a1014' : '#e5ddd5' }}>
+                        <div className="flex-1 h-[calc(100vh-280px)] overflow-y-auto p-4 space-y-2" style={{ backgroundColor: theme === 'dark' ? '#0a1014' : '#e5ddd5' }}>
                             {error && (
                                 <div className="bg-red-500 text-white p-3 rounded">
                                     {error}
@@ -474,7 +474,7 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                     <div className="flex-1 flex items-center justify-center" style={{ backgroundColor: theme === 'dark' ? '#0a1014' : '#e5ddd5' }}>
                         <div className={`text-center ${palette.sidebar.textMuted}`}>
                             <div className="text-6xl mb-4">💬</div>
-                            <div className="text-lg font-medium mb-2">WhatsApp Web</div>
+                            <div className="text-lg font-medium mb-2">Chattingan</div>
                             <div className="text-sm opacity-70">Pilih percakapan untuk mulai mengirim pesan</div>
                         </div>
                     </div>

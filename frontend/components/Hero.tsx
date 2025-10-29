@@ -73,6 +73,12 @@ const Hero: React.FC<HeroProps> = ({ greeting, name, tagline, bio, linkedinUrl }
                         >
                             �️ Coba Backend
                         </a>
+                        <a
+                            href="#form-token"
+                            className={`px-8 py-4 rounded font-medium transition-colors duration-300 ${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ON_ACCENT} border border-light-accent/40 dark:border-accent-blue/40 hover:opacity-90`}
+                        >
+                            Masukkan Token Formulir
+                        </a>
                     </div>
                 </div>
             </div>
