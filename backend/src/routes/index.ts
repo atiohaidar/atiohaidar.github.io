@@ -44,8 +44,16 @@ import {
 	AnonymousMessageList,
 	AnonymousMessageSend,
 } from "../controllers/anonymousChat.controller";
+import {
+	PublicArticleList,
+	PublicArticleGet,
+} from "../controllers/publicArticle.controller";
 
 export const registerRoutes = (openapi: any) => {
+	// Public routes (no authentication required)
+	openapi.get("/api/public/articles", PublicArticleList);
+	openapi.get("/api/public/articles/:slug", PublicArticleGet);
+
 	// Auth routes
 	openapi.post("/api/auth/login", AuthLogin);
 

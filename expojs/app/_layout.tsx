@@ -12,7 +12,7 @@ import { lightTheme, darkTheme } from '@/constants/paperTheme';
 import { queryClient } from '@/services/queryClient';
 
 export const unstable_settings = {
-  anchor: '(tabs)',
+  anchor: '(public)',
 };
 
 function RootLayoutNav() {
@@ -27,10 +27,12 @@ function RootLayoutNav() {
     if (loading) return;
 
     const inAuthGroup = segments[0] === '(auth)';
+    const inPublicGroup = segments[0] === '(public)';
 
-    if (!isAuthenticated && !inAuthGroup) {
-      router.replace('/(auth)/login');
-    } else if (isAuthenticated && inAuthGroup) {
+    if (!isAuthenticated && !inAuthGroup && !inPublicGroup) {
+      // Redirect to public articles by default if not authenticated
+      router.replace('/(public)/articles');
+    } else if (isAuthenticated && (inAuthGroup || inPublicGroup)) {
       router.replace('/(tabs)');
     }
   }, [isAuthenticated, loading, segments, router]);
@@ -39,6 +41,7 @@ function RootLayoutNav() {
     <PaperProvider theme={paperTheme}>
       <ThemeProvider value={navTheme}>
         <Stack>
+          <Stack.Screen name="(public)" options={{ headerShown: false }} />
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />

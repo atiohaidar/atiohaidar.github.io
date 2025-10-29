@@ -1,9 +1,7 @@
-import { Tabs } from 'expo-router';
+import { Drawer } from 'expo-router/drawer';
 import React from 'react';
 import { IconButton } from 'react-native-paper';
 
-import { HapticTab } from '@/components/haptic-tab';
-import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAuth } from '@/contexts/AuthContext';
@@ -13,17 +11,20 @@ export default function TabLayout() {
   const { logout } = useAuth();
 
   return (
-    <Tabs
+    <Drawer
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        drawerActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: true,
-        tabBarButton: HapticTab,
+        drawerPosition: 'left',
       }}>
-      <Tabs.Screen
+      <Drawer.Screen
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          drawerLabel: 'Home',
+          drawerIcon: ({ color, size }) => (
+            <IconButton icon="home" size={size} iconColor={color} />
+          ),
           headerRight: () => (
             <IconButton
               icon="logout"
@@ -33,41 +34,56 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
+      <Drawer.Screen
         name="tasks"
         options={{
           title: 'Tasks',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="checklist" color={color} />,
+          drawerLabel: 'Tasks',
+          drawerIcon: ({ color, size }) => (
+            <IconButton icon="checkbox-marked-circle" size={size} iconColor={color} />
+          ),
         }}
       />
-      <Tabs.Screen
+      <Drawer.Screen
         name="articles"
         options={{
           title: 'Articles',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="doc.text" color={color} />,
+          drawerLabel: 'Articles',
+          drawerIcon: ({ color, size }) => (
+            <IconButton icon="newspaper" size={size} iconColor={color} />
+          ),
         }}
       />
-      <Tabs.Screen
+      <Drawer.Screen
         name="bookings"
         options={{
           title: 'Bookings',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="calendar" color={color} />,
+          drawerLabel: 'Bookings',
+          drawerIcon: ({ color, size }) => (
+            <IconButton icon="calendar" size={size} iconColor={color} />
+          ),
         }}
       />
-      <Tabs.Screen
+      <Drawer.Screen
         name="chat"
         options={{
           title: 'Chat',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="bubble.left.and.bubble.right" color={color} />,
+          drawerLabel: 'Chat',
+          drawerIcon: ({ color, size }) => (
+            <IconButton icon="chat" size={size} iconColor={color} />
+          ),
         }}
       />
-      <Tabs.Screen
+      <Drawer.Screen
         name="profile"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
+          drawerLabel: 'Profile',
+          drawerIcon: ({ color, size }) => (
+            <IconButton icon="account" size={size} iconColor={color} />
+          ),
         }}
       />
-    </Tabs>
+    </Drawer>
   );
 }

@@ -262,10 +262,34 @@ class ApiService {
     }
   }
 
+  async listPublicArticles(): Promise<Types.Article[]> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.Article[]>>('/api/public/articles');
+      return this.extractResult<Types.Article[]>(response.data, 'articles') ?? [];
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
   async getArticle(slug: string): Promise<Types.Article> {
     try {
       const response = await this.api.get<Types.ApiResponse<Types.Article>>(
         `/api/articles/${slug}`
+      );
+      const article = this.extractResult<Types.Article>(response.data, 'article');
+      if (article) {
+        return article;
+      }
+      throw new Error('Article not found');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async getPublicArticle(slug: string): Promise<Types.Article> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.Article>>(
+        `/api/public/articles/${slug}`
       );
       const article = this.extractResult<Types.Article>(response.data, 'article');
       if (article) {
