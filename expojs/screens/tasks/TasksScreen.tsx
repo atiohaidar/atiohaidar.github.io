@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   StyleSheet,
   ScrollView,
   RefreshControl,
-  TouchableOpacity,
+  Alert,
 } from 'react-native';
 import {
   Card,
@@ -21,13 +21,16 @@ import {
   TextInput,
 } from 'react-native-paper';
 import { useAuth } from '@/contexts/AuthContext';
-import ApiService from '@/services/api';
+import { useTasks, useUpdateTask, useDeleteTask, useCreateTask } from '@/hooks/useApi';
 import { Task, TaskCreate, TaskUpdate } from '@/types/api';
+import { AppColors } from '@/constants/colors';
 
 export default function TasksScreen() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
+  const { data: tasks = [], isLoading, refetch, isRefetching } = useTasks();
+  const updateTaskMutation = useUpdateTask();
+  const deleteTaskMutation = useDeleteTask();
+  const createTaskMutation = useCreateTask();
+
   const [dialogVisible, setDialogVisible] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [formData, setFormData] = useState({
@@ -37,56 +40,42 @@ export default function TasksScreen() {
     completed: false,
     due_date: '',
   });
-  const [formLoading, setFormLoading] = useState(false);
 
   const { user, isAdmin } = useAuth();
   const theme = useTheme();
 
-  useEffect(() => {
-    loadTasks();
-  }, []);
-
-  const loadTasks = async () => {
-    try {
-      const data = await ApiService.listTasks();
-      setTasks(data);
-    } catch (error) {
-      console.error('Failed to load tasks:', error);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  };
-
-  const onRefresh = () => {
-    setRefreshing(true);
-    loadTasks();
-  };
-
   const handleToggleComplete = async (task: Task) => {
     try {
-      const updated = await ApiService.updateTask(task.slug, {
-        completed: !task.completed,
+      await updateTaskMutation.mutateAsync({
+        slug: task.slug,
+        updates: { completed: !task.completed },
       });
-      setTasks(tasks.map((t) => (t.slug === task.slug ? updated : t)));
     } catch (error: any) {
       console.error('Failed to update task:', error);
-      alert(error.message || 'Failed to update task');
+      Alert.alert('Error', error.message || 'Failed to update task');
     }
   };
 
   const handleDelete = async (task: Task) => {
-    if (!window.confirm('Are you sure you want to delete this task?')) {
-      return;
-    }
-
-    try {
-      await ApiService.deleteTask(task.slug);
-      setTasks(tasks.filter((t) => t.slug !== task.slug));
-    } catch (error: any) {
-      console.error('Failed to delete task:', error);
-      alert(error.message || 'Failed to delete task');
-    }
+    Alert.alert(
+      'Delete Task',
+      'Are you sure you want to delete this task?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deleteTaskMutation.mutateAsync(task.slug);
+            } catch (error: any) {
+              console.error('Failed to delete task:', error);
+              Alert.alert('Error', error.message || 'Failed to delete task');
+            }
+          },
+        },
+      ]
+    );
   };
 
   const openCreateDialog = () => {
@@ -115,11 +104,9 @@ export default function TasksScreen() {
 
   const handleSubmit = async () => {
     if (!formData.name) {
-      alert('Please enter a task name');
+      Alert.alert('Error', 'Please enter a task name');
       return;
     }
-
-    setFormLoading(true);
 
     try {
       if (editingTask) {
@@ -130,13 +117,14 @@ export default function TasksScreen() {
           completed: formData.completed,
           due_date: formData.due_date || undefined,
         };
-        const updated = await ApiService.updateTask(editingTask.slug, updates);
-        setTasks(tasks.map((t) => (t.slug === editingTask.slug ? updated : t)));
+        await updateTaskMutation.mutateAsync({
+          slug: editingTask.slug,
+          updates,
+        });
       } else {
         // Create new task
         if (!formData.slug) {
-          alert('Please enter a task slug');
-          setFormLoading(false);
+          Alert.alert('Error', 'Please enter a task slug');
           return;
         }
         const newTask: TaskCreate = {
@@ -146,19 +134,16 @@ export default function TasksScreen() {
           completed: formData.completed,
           due_date: formData.due_date || undefined,
         };
-        const created = await ApiService.createTask(newTask);
-        setTasks([created, ...tasks]);
+        await createTaskMutation.mutateAsync(newTask);
       }
       setDialogVisible(false);
     } catch (error: any) {
       console.error('Failed to save task:', error);
-      alert(error.message || 'Failed to save task');
-    } finally {
-      setFormLoading(false);
+      Alert.alert('Error', error.message || 'Failed to save task');
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <View style={styles.centerContainer}>
         <ActivityIndicator size="large" />
@@ -168,11 +153,18 @@ export default function TasksScreen() {
 
   const canEdit = (task: Task) => isAdmin || task.owner === user?.username;
 
+  const isFormLoading = 
+    updateTaskMutation.isPending || 
+    createTaskMutation.isPending || 
+    deleteTaskMutation.isPending;
+
   return (
     <View style={styles.container}>
       <ScrollView
         style={styles.scrollView}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={
+          <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} />
+        }
       >
         <Text variant="headlineMedium" style={styles.title}>
           My Tasks
@@ -268,7 +260,7 @@ export default function TasksScreen() {
                 onChangeText={(text) => setFormData({ ...formData, slug: text })}
                 mode="outlined"
                 style={styles.input}
-                disabled={formLoading}
+                disabled={isFormLoading}
               />
             )}
             <TextInput
@@ -277,7 +269,7 @@ export default function TasksScreen() {
               onChangeText={(text) => setFormData({ ...formData, name: text })}
               mode="outlined"
               style={styles.input}
-              disabled={formLoading}
+              disabled={isFormLoading}
             />
             <TextInput
               label="Description"
@@ -287,7 +279,7 @@ export default function TasksScreen() {
               multiline
               numberOfLines={3}
               style={styles.input}
-              disabled={formLoading}
+              disabled={isFormLoading}
             />
             <TextInput
               label="Due Date (YYYY-MM-DD)"
@@ -296,7 +288,7 @@ export default function TasksScreen() {
               mode="outlined"
               style={styles.input}
               placeholder="2024-12-31"
-              disabled={formLoading}
+              disabled={isFormLoading}
             />
             <View style={styles.checkboxRow}>
               <Checkbox
@@ -304,16 +296,16 @@ export default function TasksScreen() {
                 onPress={() =>
                   setFormData({ ...formData, completed: !formData.completed })
                 }
-                disabled={formLoading}
+                disabled={isFormLoading}
               />
               <Text variant="bodyLarge">Mark as completed</Text>
             </View>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={() => setDialogVisible(false)} disabled={formLoading}>
+            <Button onPress={() => setDialogVisible(false)} disabled={isFormLoading}>
               Cancel
             </Button>
-            <Button onPress={handleSubmit} loading={formLoading} disabled={formLoading}>
+            <Button onPress={handleSubmit} loading={isFormLoading} disabled={isFormLoading}>
               {editingTask ? 'Update' : 'Create'}
             </Button>
           </Dialog.Actions>

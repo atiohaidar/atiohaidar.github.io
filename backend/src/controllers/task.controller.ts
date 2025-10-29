@@ -19,8 +19,10 @@ export class TaskController {
       query: z.object({
         page: Num({
           description: "Page number",
-          default: 0,
-        }),
+          required: false,
+        })
+          .optional()
+          .transform((val) => (typeof val === "number" ? val : 0)),
         isCompleted: Bool({
           description: "Filter by completed flag",
           required: false,

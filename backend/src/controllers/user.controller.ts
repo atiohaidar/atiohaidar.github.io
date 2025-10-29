@@ -7,7 +7,7 @@ import {
   updateUser, 
   deleteUser 
 } from "../services/users";
-import { ensureAdmin } from "../middlewares/auth";
+import { ensureAdmin, getTokenPayloadFromRequest } from "../middlewares/auth";
 import { type AppContext, UserPublicSchema, UserCreateSchema, UserUpdateSchema } from "../models/types";
 
 export class UserController {
@@ -404,6 +404,73 @@ export class UserController {
       const message = error instanceof Error ? error.message : "Gagal menghapus pengguna";
       const status = message.includes("tidak ditemukan") ? 404 : 400;
       return c.json({ success: false, message }, status);
+    }
+  }
+
+  // Self-profile update (non-admin users can update their own profile)
+  static updateSelfProfileSchema = {
+    tags: ["Users"],
+    summary: "Update own profile",
+    request: {
+      body: {
+        content: {
+          "application/json": {
+            schema: z.object({
+              name: z.string().optional(),
+              password: z.string().min(6).optional(),
+            }),
+          },
+        },
+      },
+    },
+    responses: {
+      "200": {
+        description: "Profile updated successfully",
+        content: {
+          "application/json": {
+            schema: z.object({
+              success: Bool(),
+              user: UserPublicSchema,
+            }),
+          },
+        },
+      },
+      "401": {
+        description: "Not authenticated",
+        content: {
+          "application/json": {
+            schema: z.object({
+              success: Bool(),
+              message: z.string(),
+            }),
+          },
+        },
+      },
+    },
+  };
+
+  static async updateSelfProfile(c: AppContext) {
+    const payload = getTokenPayloadFromRequest(c);
+    if (!payload) {
+      return c.json(
+        { success: false, message: "Authentication required" },
+        401
+      );
+    }
+
+    const data = await UserController.validateData<{
+      body: {
+        name?: string;
+        password?: string;
+      };
+    }>(c, UserController.updateSelfProfileSchema);
+
+    try {
+      const user = await updateUser(c.env.DB, payload.sub, data.body);
+      return c.json({ success: true, user });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to update profile";
+      return c.json({ success: false, message }, 400);
     }
   }
 }

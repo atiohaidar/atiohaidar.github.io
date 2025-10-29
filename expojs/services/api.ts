@@ -166,6 +166,24 @@ class ApiService {
     }
   }
 
+  async updateSelfProfile(updates: Types.UserUpdate): Promise<Types.User> {
+    try {
+      const response = await this.api.put<Types.ApiResponse<Types.User>>(
+        '/api/profile',
+        updates
+      );
+      const updated = this.extractResult<Types.User>(response.data, 'user');
+      if (updated) {
+        // Update the cached user data
+        await AsyncStorage.setItem('currentUser', JSON.stringify(updated));
+        return updated;
+      }
+      throw new Error('Profile update failed');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
   async deleteUser(username: string): Promise<void> {
     try {
       await this.api.delete(`/api/users/${username}`);

@@ -58,6 +58,9 @@ export const registerRoutes = (openapi: any) => {
 	openapi.get("/api/users/:username", UserController.get, { schema: UserController.getSchema });
 	openapi.put("/api/users/:username", UserController.update, { schema: UserController.updateSchema });
 	openapi.delete("/api/users/:username", UserController.delete, { schema: UserController.deleteSchema });
+	
+	// Self-profile update route (for authenticated users)
+	openapi.put("/api/profile", UserController.updateSelfProfile, { schema: UserController.updateSelfProfileSchema });
 
 	// Task routes
 	openapi.get("/api/tasks", TaskController.list, { schema: TaskController.listSchema });

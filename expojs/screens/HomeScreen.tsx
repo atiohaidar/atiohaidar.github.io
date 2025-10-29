@@ -1,39 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import { Card, Text, useTheme, Avatar, ActivityIndicator } from 'react-native-paper';
 import { useAuth } from '@/contexts/AuthContext';
-import ApiService from '@/services/api';
-import { DashboardStats } from '@/types/api';
+import { useStats } from '@/hooks/useApi';
+import { AppColors } from '@/constants/colors';
 
 export default function HomeScreen() {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
+  const { data: stats, isLoading, refetch, isRefetching } = useStats();
   const { user, isAdmin } = useAuth();
   const theme = useTheme();
 
-  useEffect(() => {
-    loadStats();
-  }, []);
-
-  const loadStats = async () => {
-    try {
-      const data = await ApiService.getStats();
-      setStats(data);
-    } catch (error) {
-      console.error('Failed to load stats:', error);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  };
-
-  const onRefresh = () => {
-    setRefreshing(true);
-    loadStats();
-  };
-
-  if (loading) {
+  if (isLoading) {
     return (
       <View style={styles.centerContainer}>
         <ActivityIndicator size="large" />
@@ -48,7 +25,7 @@ export default function HomeScreen() {
             title: 'Total Users',
             value: stats.totalUsers,
             icon: 'account-group',
-            color: '#2196F3',
+            color: AppColors.statBlue,
           },
         ]
       : []),
@@ -57,14 +34,14 @@ export default function HomeScreen() {
       value: stats?.totalTasks || 0,
       subtitle: `${stats?.completedTasks || 0} completed`,
       icon: 'checkbox-marked-circle',
-      color: '#4CAF50',
+      color: AppColors.statGreen,
     },
     {
       title: 'Articles',
       value: stats?.totalArticles || 0,
       subtitle: `${stats?.publishedArticles || 0} published`,
       icon: 'file-document',
-      color: '#FF9800',
+      color: AppColors.statOrange,
     },
     ...(isAdmin && stats?.totalRooms
       ? [
@@ -72,7 +49,7 @@ export default function HomeScreen() {
             title: 'Rooms',
             value: stats.totalRooms,
             icon: 'door',
-            color: '#9C27B0',
+            color: AppColors.statPurple,
           },
         ]
       : []),
@@ -81,14 +58,16 @@ export default function HomeScreen() {
       value: stats?.totalBookings || 0,
       subtitle: `${stats?.pendingBookings || 0} pending`,
       icon: 'calendar-check',
-      color: '#F44336',
+      color: AppColors.statRed,
     },
   ];
 
   return (
     <ScrollView
       style={styles.container}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      refreshControl={
+        <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} />
+      }
     >
       <View style={styles.header}>
         <Text variant="headlineMedium" style={styles.welcomeText}>
