@@ -37,6 +37,7 @@ const ChatPage: React.FC<ChatPageProps> = () => {
     const [newChatUsername, setNewChatUsername] = useState('');
     const [newChatLoading, setNewChatLoading] = useState(false);
     const [newChatError, setNewChatError] = useState<string | null>(null);
+    const [isMobileChatListOpen, setIsMobileChatListOpen] = useState(true);
 
     useEffect(() => {
         loadChats();
@@ -121,6 +122,7 @@ const ChatPage: React.FC<ChatPageProps> = () => {
         setChatType(type);
         setMessages([]);
         setReplyTo(null);
+        setIsMobileChatListOpen(false); // Close mobile chat list when selecting a chat
     };
 
     const handleReply = (message: Message) => {
@@ -216,9 +218,9 @@ const ChatPage: React.FC<ChatPageProps> = () => {
     };
 
     return (
-        <div className={`h-full flex ${palette.surface} rounded-lg shadow-lg`}>
+        <div className={`h-full flex flex-col md:flex-row ${palette.surface} rounded-lg shadow-lg`}>
             {/* Chat List Sidebar */}
-            <div className={`w-80 ${palette.sidebar.bg} ${palette.sidebar.border} flex flex-col`}>
+            <div className={`${isMobileChatListOpen ? 'flex' : 'hidden'} md:flex w-full md:w-80 ${palette.sidebar.bg} ${palette.sidebar.border} flex-col`}>
                 {/* Tabs */}
                 <div className={`flex ${palette.sidebar.border}`}>
                     <button
@@ -332,12 +334,20 @@ const ChatPage: React.FC<ChatPageProps> = () => {
             </div>
 
             {/* Chat Area */}
-            <div className="flex-1 flex flex-col">
+            <div className={`${!isMobileChatListOpen || !selectedChat ? 'flex' : 'hidden'} md:flex flex-1 flex-col`}>
                 {selectedChat && chatType ? (
                     <>
                         {/* Chat Header */}
                         <div className={`p-4 ${palette.sidebar.border} flex justify-between items-center`}>
-                            <h2 className="text-xl font-bold">{getChatName()}</h2>
+                            <div className="flex items-center gap-3">
+                                <button
+                                    onClick={() => setIsMobileChatListOpen(true)}
+                                    className="md:hidden text-xl"
+                                >
+                                    ←
+                                </button>
+                                <h2 className="text-lg md:text-xl font-bold">{getChatName()}</h2>
+                            </div>
                             <button
                                 onClick={() => loadMessages()}
                                 disabled={loading}
