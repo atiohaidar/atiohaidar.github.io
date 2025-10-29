@@ -78,17 +78,7 @@ class ApiService {
         '/api/auth/login',
         credentials
       );
-      const basePayload = response.data.result ?? response.data.data;
-      const fallbackPayload = (response.data as unknown as Types.LoginResponse | undefined) ??
-        ((response.data as unknown as Record<string, unknown>)?.token &&
-        (response.data as unknown as Record<string, unknown>)?.user
-          ? {
-              token: (response.data as unknown as Record<string, unknown>).token as string,
-              user: (response.data as unknown as Record<string, unknown>).user as Types.User,
-            }
-          : undefined);
-
-      const payload = basePayload ?? fallbackPayload;
+      const payload = this.extractResult<Types.LoginResponse>(response.data, 'token');
 
       if (payload?.token && payload?.user) {
         this.token = payload.token;
@@ -118,8 +108,7 @@ class ApiService {
   async getStats(): Promise<Types.DashboardStats> {
     try {
       const response = await this.api.get<Types.ApiResponse<Types.DashboardStats>>('/api/stats');
-      const stats = response.data.result ?? response.data.data ?? (response.data as any)?.stats;
-      return stats || {};
+      return this.extractResult<Types.DashboardStats>(response.data, 'stats') ?? {};
     } catch (error) {
       this.handleError(error);
     }
@@ -129,7 +118,7 @@ class ApiService {
   async listUsers(): Promise<Types.User[]> {
     try {
       const response = await this.api.get<Types.ApiResponse<Types.User[]>>('/api/users');
-      return response.data.result || [];
+      return this.extractResult<Types.User[]>(response.data, 'users') ?? [];
     } catch (error) {
       this.handleError(error);
     }
@@ -138,8 +127,9 @@ class ApiService {
   async getUser(username: string): Promise<Types.User> {
     try {
       const response = await this.api.get<Types.ApiResponse<Types.User>>(`/api/users/${username}`);
-      if (response.data.result) {
-        return response.data.result;
+      const user = this.extractResult<Types.User>(response.data, 'user');
+      if (user) {
+        return user;
       }
       throw new Error('User not found');
     } catch (error) {
@@ -150,8 +140,9 @@ class ApiService {
   async createUser(user: Types.UserCreate): Promise<Types.User> {
     try {
       const response = await this.api.post<Types.ApiResponse<Types.User>>('/api/users', user);
-      if (response.data.result) {
-        return response.data.result;
+      const created = this.extractResult<Types.User>(response.data, 'user');
+      if (created) {
+        return created;
       }
       throw new Error('User creation failed');
     } catch (error) {
@@ -165,8 +156,9 @@ class ApiService {
         `/api/users/${username}`,
         updates
       );
-      if (response.data.result) {
-        return response.data.result;
+      const updated = this.extractResult<Types.User>(response.data, 'user');
+      if (updated) {
+        return updated;
       }
       throw new Error('User update failed');
     } catch (error) {
@@ -186,7 +178,7 @@ class ApiService {
   async listTasks(): Promise<Types.Task[]> {
     try {
       const response = await this.api.get<Types.ApiResponse<Types.Task[]>>('/api/tasks');
-      return response.data.result || [];
+      return this.extractResult<Types.Task[]>(response.data, 'tasks') ?? [];
     } catch (error) {
       this.handleError(error);
     }
@@ -195,8 +187,9 @@ class ApiService {
   async getTask(slug: string): Promise<Types.Task> {
     try {
       const response = await this.api.get<Types.ApiResponse<Types.Task>>(`/api/tasks/${slug}`);
-      if (response.data.result) {
-        return response.data.result;
+      const task = this.extractResult<Types.Task>(response.data, 'task');
+      if (task) {
+        return task;
       }
       throw new Error('Task not found');
     } catch (error) {
@@ -207,8 +200,9 @@ class ApiService {
   async createTask(task: Types.TaskCreate): Promise<Types.Task> {
     try {
       const response = await this.api.post<Types.ApiResponse<Types.Task>>('/api/tasks', task);
-      if (response.data.result) {
-        return response.data.result;
+      const created = this.extractResult<Types.Task>(response.data, 'task');
+      if (created) {
+        return created;
       }
       throw new Error('Task creation failed');
     } catch (error) {
@@ -222,8 +216,9 @@ class ApiService {
         `/api/tasks/${slug}`,
         updates
       );
-      if (response.data.result) {
-        return response.data.result;
+      const updated = this.extractResult<Types.Task>(response.data, 'task');
+      if (updated) {
+        return updated;
       }
       throw new Error('Task update failed');
     } catch (error) {
@@ -243,7 +238,7 @@ class ApiService {
   async listArticles(): Promise<Types.Article[]> {
     try {
       const response = await this.api.get<Types.ApiResponse<Types.Article[]>>('/api/articles');
-      return response.data.result || [];
+      return this.extractResult<Types.Article[]>(response.data, 'articles') ?? [];
     } catch (error) {
       this.handleError(error);
     }
@@ -254,8 +249,9 @@ class ApiService {
       const response = await this.api.get<Types.ApiResponse<Types.Article>>(
         `/api/articles/${slug}`
       );
-      if (response.data.result) {
-        return response.data.result;
+      const article = this.extractResult<Types.Article>(response.data, 'article');
+      if (article) {
+        return article;
       }
       throw new Error('Article not found');
     } catch (error) {
@@ -269,8 +265,9 @@ class ApiService {
         '/api/articles',
         article
       );
-      if (response.data.result) {
-        return response.data.result;
+      const created = this.extractResult<Types.Article>(response.data, 'article');
+      if (created) {
+        return created;
       }
       throw new Error('Article creation failed');
     } catch (error) {
@@ -284,8 +281,9 @@ class ApiService {
         `/api/articles/${slug}`,
         updates
       );
-      if (response.data.result) {
-        return response.data.result;
+      const updated = this.extractResult<Types.Article>(response.data, 'article');
+      if (updated) {
+        return updated;
       }
       throw new Error('Article update failed');
     } catch (error) {
@@ -308,7 +306,7 @@ class ApiService {
       const response = await this.api.get<Types.ApiResponse<Types.Room[]>>('/api/rooms', {
         params,
       });
-      return response.data.result || [];
+      return this.extractResult<Types.Room[]>(response.data, 'rooms', 'data') ?? [];
     } catch (error) {
       this.handleError(error);
     }
@@ -317,8 +315,9 @@ class ApiService {
   async getRoom(roomId: string): Promise<Types.Room> {
     try {
       const response = await this.api.get<Types.ApiResponse<Types.Room>>(`/api/rooms/${roomId}`);
-      if (response.data.result) {
-        return response.data.result;
+      const room = this.extractResult<Types.Room>(response.data, 'room', 'data');
+      if (room) {
+        return room;
       }
       throw new Error('Room not found');
     } catch (error) {
@@ -329,8 +328,9 @@ class ApiService {
   async createRoom(room: Types.RoomCreate): Promise<Types.Room> {
     try {
       const response = await this.api.post<Types.ApiResponse<Types.Room>>('/api/rooms', room);
-      if (response.data.result) {
-        return response.data.result;
+      const created = this.extractResult<Types.Room>(response.data, 'room', 'data');
+      if (created) {
+        return created;
       }
       throw new Error('Room creation failed');
     } catch (error) {
@@ -344,8 +344,9 @@ class ApiService {
         `/api/rooms/${roomId}`,
         updates
       );
-      if (response.data.result) {
-        return response.data.result;
+      const updated = this.extractResult<Types.Room>(response.data, 'room', 'data');
+      if (updated) {
+        return updated;
       }
       throw new Error('Room update failed');
     } catch (error) {
@@ -365,7 +366,7 @@ class ApiService {
   async listBookings(): Promise<Types.Booking[]> {
     try {
       const response = await this.api.get<Types.ApiResponse<Types.Booking[]>>('/api/bookings');
-      return response.data.result || [];
+      return this.extractResult<Types.Booking[]>(response.data, 'bookings', 'data') ?? [];
     } catch (error) {
       this.handleError(error);
     }
@@ -376,8 +377,9 @@ class ApiService {
       const response = await this.api.get<Types.ApiResponse<Types.Booking>>(
         `/api/bookings/${bookingId}`
       );
-      if (response.data.result) {
-        return response.data.result;
+      const booking = this.extractResult<Types.Booking>(response.data, 'booking', 'data');
+      if (booking) {
+        return booking;
       }
       throw new Error('Booking not found');
     } catch (error) {
@@ -391,8 +393,9 @@ class ApiService {
         '/api/bookings',
         booking
       );
-      if (response.data.result) {
-        return response.data.result;
+      const created = this.extractResult<Types.Booking>(response.data, 'booking', 'data');
+      if (created) {
+        return created;
       }
       throw new Error('Booking creation failed');
     } catch (error) {
@@ -409,8 +412,9 @@ class ApiService {
         `/api/bookings/${bookingId}`,
         updates
       );
-      if (response.data.result) {
-        return response.data.result;
+      const updated = this.extractResult<Types.Booking>(response.data, 'booking', 'data');
+      if (updated) {
+        return updated;
       }
       throw new Error('Booking update failed');
     } catch (error) {
@@ -432,7 +436,7 @@ class ApiService {
       const response = await this.api.get<Types.ApiResponse<Types.Conversation[]>>(
         '/api/conversations'
       );
-      return response.data.result || [];
+      return this.extractResult<Types.Conversation[]>(response.data, 'conversations', 'data') ?? [];
     } catch (error) {
       this.handleError(error);
     }
@@ -443,8 +447,9 @@ class ApiService {
       const response = await this.api.get<Types.ApiResponse<Types.Conversation>>(
         `/api/conversations/${username}`
       );
-      if (response.data.result) {
-        return response.data.result;
+      const conversation = this.extractResult<Types.Conversation>(response.data, 'conversation', 'data');
+      if (conversation) {
+        return conversation;
       }
       throw new Error('Failed to get conversation');
     } catch (error) {
@@ -457,7 +462,7 @@ class ApiService {
       const response = await this.api.get<Types.ApiResponse<Types.Message[]>>(
         `/api/conversations/${conversationId}/messages`
       );
-      return response.data.result || [];
+      return this.extractResult<Types.Message[]>(response.data, 'messages', 'data') ?? [];
     } catch (error) {
       this.handleError(error);
     }
@@ -469,8 +474,9 @@ class ApiService {
         '/api/messages',
         message
       );
-      if (response.data.result) {
-        return response.data.result;
+      const sent = this.extractResult<Types.Message>(response.data, 'message', 'data');
+      if (sent) {
+        return sent;
       }
       throw new Error('Failed to send message');
     } catch (error) {
@@ -482,7 +488,7 @@ class ApiService {
   async listGroups(): Promise<Types.GroupChat[]> {
     try {
       const response = await this.api.get<Types.ApiResponse<Types.GroupChat[]>>('/api/groups');
-      return response.data.result || [];
+      return this.extractResult<Types.GroupChat[]>(response.data, 'groups', 'data') ?? [];
     } catch (error) {
       this.handleError(error);
     }
@@ -493,8 +499,9 @@ class ApiService {
       const response = await this.api.get<Types.ApiResponse<Types.GroupChat>>(
         `/api/groups/${groupId}`
       );
-      if (response.data.result) {
-        return response.data.result;
+      const group = this.extractResult<Types.GroupChat>(response.data, 'group', 'data');
+      if (group) {
+        return group;
       }
       throw new Error('Group not found');
     } catch (error) {
@@ -508,8 +515,9 @@ class ApiService {
         '/api/groups',
         group
       );
-      if (response.data.result) {
-        return response.data.result;
+      const created = this.extractResult<Types.GroupChat>(response.data, 'group', 'data');
+      if (created) {
+        return created;
       }
       throw new Error('Group creation failed');
     } catch (error) {
@@ -523,8 +531,9 @@ class ApiService {
         `/api/groups/${groupId}`,
         updates
       );
-      if (response.data.result) {
-        return response.data.result;
+      const updated = this.extractResult<Types.GroupChat>(response.data, 'group', 'data');
+      if (updated) {
+        return updated;
       }
       throw new Error('Group update failed');
     } catch (error) {
@@ -545,7 +554,7 @@ class ApiService {
       const response = await this.api.get<Types.ApiResponse<Types.Message[]>>(
         `/api/groups/${groupId}/messages`
       );
-      return response.data.result || [];
+      return this.extractResult<Types.Message[]>(response.data, 'messages', 'data') ?? [];
     } catch (error) {
       this.handleError(error);
     }
@@ -556,7 +565,7 @@ class ApiService {
       const response = await this.api.get<Types.ApiResponse<Types.GroupMember[]>>(
         `/api/groups/${groupId}/members`
       );
-      return response.data.result || [];
+      return this.extractResult<Types.GroupMember[]>(response.data, 'members', 'data') ?? [];
     } catch (error) {
       this.handleError(error);
     }
@@ -596,7 +605,7 @@ class ApiService {
       const response = await this.api.get<Types.ApiResponse<Types.AnonymousMessage[]>>(
         '/api/anonymous/messages'
       );
-      return response.data.result || [];
+      return this.extractResult<Types.AnonymousMessage[]>(response.data, 'messages', 'data') ?? [];
     } catch (error) {
       this.handleError(error);
     }
@@ -610,8 +619,9 @@ class ApiService {
         '/api/anonymous/messages',
         message
       );
-      if (response.data.result) {
-        return response.data.result;
+      const created = this.extractResult<Types.AnonymousMessage>(response.data, 'message', 'data');
+      if (created) {
+        return created;
       }
       throw new Error('Failed to send anonymous message');
     } catch (error) {
