@@ -5,8 +5,10 @@
  * Centralized API configuration for communicating with the backend
  */
 
-// Re-export from the new consolidated API module
-export { API_BASE_URL, auth, apiFetch, createAuthHeaders } from './lib/api/client';
+// Import and re-export from the new consolidated API module
+import { API_BASE_URL, auth, apiFetch, createAuthHeaders } from './lib/api/client';
+
+export { API_BASE_URL, auth, apiFetch, createAuthHeaders };
 
 // Backwards compatibility aliases for old function names
 export const getAuthToken = () => auth.getToken();
