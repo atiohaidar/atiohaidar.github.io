@@ -1,8 +1,9 @@
 /**
- * @file Komponen Navbar dengan refactored utilities
+ * @file Komponen Navbar dengan enhanced motion animations
  * Menampilkan navigasi utama dan beradaptasi ke menu mobile pada layar kecil.
  */
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { NAV_LINKS } from '../constants';
 import { GitHubIcon, LinkedInIcon, InstagramIcon } from './Icons';
