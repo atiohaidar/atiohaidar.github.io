@@ -2,6 +2,22 @@
 
 Ini adalah kode sumber untuk website portofolio pribadi Tio Haidar Hanif. Proyek ini dibangun menggunakan React dan Tailwind CSS, dengan fokus pada desain yang bersih, minimalis, dan profesional. Aplikasi ini dirancang agar mudah dipelihara dan diperbarui melalui file data JSON.
 
+## ✨ Update Terbaru: Enhanced Animations dengan Framer Motion
+
+Website ini kini dilengkapi dengan sistem animasi yang modern dan menarik menggunakan **Framer Motion**! 
+
+### Fitur Animasi Baru:
+- 🎬 **Entrance Animations** - Elemen muncul dengan smooth transition
+- 📜 **Scroll-based Animations** - Animasi dipicu saat scroll
+- 🖱️ **Interactive Hover Effects** - Card hover, button interactions
+- ⏱️ **Stagger Animations** - Sequential animations untuk multiple elements
+- 🎯 **Timeline Animations** - Smooth timeline reveals untuk Experience section
+- 💫 **Optimized Performance** - GPU-accelerated transforms
+
+📖 **[Lihat Panduan Lengkap Animasi](./PANDUAN_ANIMASI.md)** untuk dokumentasi detail tentang cara menggunakan dan customize animations.
+
+---
+
 ## Fitur Utama
 
 - **Single Page Application (SPA)**: Semua informasi disajikan dalam satu halaman dengan navigasi *smooth-scrolling*.
@@ -19,11 +35,13 @@ Ini adalah kode sumber untuk website portofolio pribadi Tio Haidar Hanif. Proyek
 - **[React 19.1.1](https://reactjs.org/)** - Frontend library untuk membangun user interface
 - **[TypeScript 5.8.2](https://www.typescriptlang.org/)** - Static type checking untuk JavaScript
 - **[Vite 6.2.0](https://vitejs.dev/)** - Build tool dan development server yang cepat
+- **[Framer Motion 12.23.24](https://www.framer.com/motion/)** - Production-ready animation library untuk React
 
 ### Styling & UI
 - **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first CSS framework via CDN
 - **[Google Fonts](https://fonts.google.com/)** - Inter & Poppins font families
 - **Custom CSS** - Print optimization dan advanced styling
+- **Framer Motion Animations** - Smooth, performant animations dengan GPU acceleration
 
 ### Development Tools
 - **[Node.js](https://nodejs.org/)** - JavaScript runtime environment
