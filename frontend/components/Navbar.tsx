@@ -171,70 +171,91 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
             </nav>
 
             {/* Mobile Menu */}
-            <div className={`md:hidden fixed top-0 right-0 h-full w-3/4 bg-white dark:bg-light-navy transform transition-transform duration-300 ease-in-out ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-                <ul className="flex flex-col items-center justify-center h-full space-y-8">
-                    {NAV_LINKS.map((link, index) => (
-                        <li key={link.name}>
-                            {link.href.startsWith('#') ? (
-                                <a href={link.href} onClick={() => setIsMenuOpen(false)} className="text-2xl text-light-muted dark:text-light-slate hover:text-light-accent dark:hover:text-accent-blue transition-colors duration-300">
-                                    <span className="text-light-accent dark:text-accent-blue mr-2">0{index + 1}.</span>{link.name}
-                                </a>
-                            ) : (
-                                <Link to={link.href} onClick={() => setIsMenuOpen(false)} className="text-2xl text-light-muted dark:text-light-slate hover:text-light-accent dark:hover:text-accent-blue transition-colors duration-300">
-                                    <span className="text-light-accent dark:text-accent-blue mr-2">0{index + 1}.</span>{link.name}
-                                </Link>
-                            )}
-                        </li>
-                    ))}
-                    
-                    {/* Mobile user info atau login */}
-                    {loggedInUser ? (
-                        <>
-                            <li className="pt-4 border-t border-gray-300 dark:border-soft-gray/20 w-full text-center">
-                                <div className="text-light-muted dark:text-light-slate mb-4">
-                                    <div className="flex items-center justify-center space-x-2 mb-2">
-                                        <svg className="w-6 h-6 text-light-accent dark:text-accent-blue" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                                        </svg>
-                                        <span className="text-xl">{loggedInUser}</span>
+            <div
+                className={`md:hidden fixed inset-y-0 right-0 z-40 w-full max-w-xs ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'} transform transition-transform duration-300 ease-in-out`}
+            >
+                <div className="h-full flex flex-col bg-[#F5F7FB] dark:bg-[#121721] border-l border-[#E1E8F5] dark:border-[#2F3542] shadow-2xl">
+                    <div className="flex items-center justify-between px-6 py-5 border-b border-[#E1E8F5] dark:border-[#2F3542]">
+                        <span className="text-sm font-semibold tracking-wide text-[#445171] dark:text-[#8E9CB3] uppercase">Navigasi</span>
+                        <button
+                            onClick={() => setIsMenuOpen(false)}
+                            className="text-[#1F6FEB] dark:text-accent-blue hover:opacity-80 transition-opacity"
+                            aria-label="Tutup menu"
+                        >
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <nav className="flex-1 overflow-y-auto">
+                        <ul className="flex flex-col px-6 py-8 space-y-6">
+                            {NAV_LINKS.map((link, index) => (
+                                <li key={link.name}>
+                                    {link.href.startsWith('#') ? (
+                                        <a
+                                            href={link.href}
+                                            onClick={() => setIsMenuOpen(false)}
+                                            className="flex items-baseline gap-3 text-lg font-medium text-[#445171] dark:text-[#CED7EA] hover:text-[#1F6FEB] dark:hover:text-accent-blue transition-colors duration-200"
+                                        >
+                                            <span className="text-sm font-semibold text-[#1F6FEB] dark:text-accent-blue">0{index + 1}.</span>
+                                            {link.name}
+                                        </a>
+                                    ) : (
+                                        <Link
+                                            to={link.href}
+                                            onClick={() => setIsMenuOpen(false)}
+                                            className="flex items-baseline gap-3 text-lg font-medium text-[#445171] dark:text-[#CED7EA] hover:text-[#1F6FEB] dark:hover:text-accent-blue transition-colors duration-200"
+                                        >
+                                            <span className="text-sm font-semibold text-[#1F6FEB] dark:text-accent-blue">0{index + 1}.</span>
+                                            {link.name}
+                                        </Link>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                    </nav>
+                    <div className="px-6 py-6 border-t border-[#E1E8F5] dark:border-[#2F3542] space-y-4">
+                        {loggedInUser ? (
+                            <div className="flex flex-col space-y-3">
+                                <div className="flex items-center gap-3 text-[#445171] dark:text-[#CED7EA]">
+                                    <svg className="w-6 h-6 text-[#1F6FEB] dark:text-accent-blue" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                                    </svg>
+                                    <div>
+                                        <p className="text-sm text-[#5B6887] dark:text-[#8E9CB3]">Masuk sebagai</p>
+                                        <p className="text-lg font-semibold">{loggedInUser}</p>
                                     </div>
                                 </div>
-                            </li>
-                            <li>
-                                <Link 
-                                    to="/dashboard" 
+                                <Link
+                                    to="/dashboard"
                                     onClick={() => setIsMenuOpen(false)}
-                                    className="text-xl text-light-accent dark:text-accent-blue hover:text-light-accent dark:hover:text-accent-blue transition-colors duration-300"
+                                    className="inline-flex items-center justify-center w-full px-4 py-3 text-sm font-semibold text-white bg-[#1F6FEB] hover:bg-[#1F6FEB]/90 rounded-lg transition-colors duration-200"
                                 >
                                     Dashboard
                                 </Link>
-                            </li>
-                            <li>
-                                <button 
+                                <button
                                     onClick={() => {
                                         setIsMenuOpen(false);
                                         onLogout?.();
                                     }}
-                                    className="text-xl text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors duration-300"
+                                    className="inline-flex items-center justify-center w-full px-4 py-3 text-sm font-semibold text-[#C44545] dark:text-[#FF9A9A] border border-transparent hover:bg-[#FF6B6B]/10 rounded-lg transition-colors duration-200"
                                 >
                                     Logout
                                 </button>
-                            </li>
-                        </>
-                    ) : (
-                        <li className="pt-4 border-t border-gray-300 dark:border-soft-gray/20">
-                            <Link 
-                                to="/login" 
+                            </div>
+                        ) : (
+                            <Link
+                                to="/login"
                                 onClick={() => setIsMenuOpen(false)}
-                                className="text-xl text-light-accent dark:text-accent-blue border border-light-accent dark:border-accent-blue px-6 py-3 rounded hover:bg-light-accent dark:hover:bg-accent-blue hover:text-white transition-all duration-300 inline-block"
+                                className="inline-flex items-center justify-center w-full px-4 py-3 text-sm font-semibold text-[#1F6FEB] dark:text-accent-blue border border-[#1F6FEB] dark:border-accent-blue rounded-lg hover:bg-[#1F6FEB]/10 dark:hover:bg-accent-blue/10 transition-colors duration-200"
                             >
                                 Login
                             </Link>
-                        </li>
-                    )}
-                </ul>
+                        )}
+                    </div>
+                </div>
             </div>
-             {isMenuOpen && <div onClick={() => setIsMenuOpen(false)} className="md:hidden fixed inset-0 bg-black/50 z-30"></div>}
+            {isMenuOpen && <div onClick={() => setIsMenuOpen(false)} className="md:hidden fixed inset-0 bg-black/50 z-30"></div>}
         </header>
     );
 };
