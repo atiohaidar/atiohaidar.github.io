@@ -84,7 +84,7 @@ const ArticlesPage: React.FC = () => {
     }
 
     return (
-        <div className={`relative ${COLORS.BG_PRIMARY}`}>
+        <div className={`relative ${COLORS.BG_PRIMARY} transition-colors duration-300`}>
             <Navbar
                 logoSrc={profile.logoSrc}
                 socials={profile.socials}
@@ -96,10 +96,10 @@ const ArticlesPage: React.FC = () => {
                 <div className={`container mx-auto ${SPACING.CONTAINER_PADDING}`}>
                     {/* Header */}
                     <div className="max-w-4xl mx-auto mb-12 text-center">
-                        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-                            <span className="text-accent-blue">📰</span> Articles
+                        <h1 className="text-4xl md:text-5xl font-bold text-light-text dark:text-white mb-4">
+                            <span className="text-light-accent dark:text-accent-blue">📰</span> Articles
                         </h1>
-                        <p className="text-light-slate text-lg">
+                        <p className="text-light-muted dark:text-light-slate text-lg">
                             Berbagi pemikiran, pengalaman, dan pembelajaran dalam teknologi dan pengembangan perangkat lunak
                         </p>
                     </div>
@@ -108,7 +108,7 @@ const ArticlesPage: React.FC = () => {
                     {articles.length === 0 ? (
                         <div className="max-w-4xl mx-auto text-center py-16">
                             <div className="text-6xl mb-4">📝</div>
-                            <p className="text-light-slate text-xl">
+                            <p className="text-light-muted dark:text-light-slate text-xl">
                                 Belum ada artikel yang dipublikasikan.
                             </p>
                         </div>
@@ -117,32 +117,32 @@ const ArticlesPage: React.FC = () => {
                         <div className="max-w-4xl mx-auto">
                             <button
                                 onClick={() => setSelectedArticle(null)}
-                                className="flex items-center gap-2 text-accent-blue hover:text-accent-blue/80 mb-6 transition-colors"
+                                className="flex items-center gap-2 text-light-accent dark:text-accent-blue hover:text-light-accent/80 dark:hover:text-accent-blue/80 mb-6 transition-colors"
                             >
                                 ← Kembali ke daftar artikel
                             </button>
 
-                            <article className="bg-light-navy rounded-xl p-8 md:p-12 border border-light-slate/20">
-                                <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                            <article className="bg-white dark:bg-light-navy rounded-xl p-8 md:p-12 border border-gray-300 dark:border-light-slate/20">
+                                <h1 className="text-3xl md:text-4xl font-bold text-light-text dark:text-white mb-4">
                                     {selectedArticle.title}
                                 </h1>
-                                <div className="flex items-center gap-4 text-soft-gray text-sm mb-8 pb-6 border-b border-light-slate/20">
+                                <div className="flex items-center gap-4 text-light-muted dark:text-soft-gray text-sm mb-8 pb-6 border-b border-gray-300 dark:border-light-slate/20">
                                     <span>📅 {formatDate(selectedArticle.created_at)}</span>
                                     {selectedArticle.updated_at && selectedArticle.updated_at !== selectedArticle.created_at && (
                                         <span>✏️ Updated: {formatDate(selectedArticle.updated_at)}</span>
                                     )}
                                 </div>
 
-                                <div className="prose prose-invert prose-lg max-w-none text-light-slate">
+                                <div className="prose dark:prose-invert prose-lg max-w-none text-light-text dark:text-light-slate">
                                     <ReactMarkdown
                                         remarkPlugins={[remarkGfm]}
                                         components={{
                                             a: ({ node, ...props }) => (
-                                                <a className="text-accent-blue hover:underline" {...props} />
+                                                <a className="text-light-accent dark:text-accent-blue hover:underline" {...props} />
                                             ),
                                             code: ({ node, inline, className, children, ...props }) => (
                                                 <code
-                                                    className={`${className ?? ''} ${inline ? 'bg-light-navy px-1 py-0.5 rounded' : ''}`.trim()}
+                                                    className={`${className ?? ''} ${inline ? 'bg-gray-100 dark:bg-light-navy px-1 py-0.5 rounded' : ''}`.trim()}
                                                     {...props}
                                                 >
                                                     {children}
@@ -161,23 +161,23 @@ const ArticlesPage: React.FC = () => {
                             {articles.map((article) => (
                                 <div
                                     key={article.slug}
-                                    className="bg-light-navy rounded-xl p-6 border border-light-slate/20 hover:border-accent-blue/50 transition-all duration-300 cursor-pointer group"
+                                    className="bg-white dark:bg-light-navy rounded-xl p-6 border border-gray-300 dark:border-light-slate/20 hover:border-light-accent dark:hover:border-accent-blue/50 transition-all duration-300 cursor-pointer group"
                                     onClick={() => setSelectedArticle(article)}
                                 >
-                                    <h2 className="text-2xl font-bold text-white mb-3 group-hover:text-accent-blue transition-colors">
+                                    <h2 className="text-2xl font-bold text-light-text dark:text-white mb-3 group-hover:text-light-accent dark:group-hover:text-accent-blue transition-colors">
                                         {article.title}
                                     </h2>
                                     
-                                    <p className="text-soft-gray text-sm mb-4">
+                                    <p className="text-light-muted dark:text-soft-gray text-sm mb-4">
                                         📅 {formatDate(article.created_at)}
                                     </p>
 
-                                    <p className="text-light-slate line-clamp-3 mb-4">
+                                    <p className="text-light-text dark:text-light-slate line-clamp-3 mb-4">
                                         {article.content.substring(0, 200)}
                                         {article.content.length > 200 ? '...' : ''}
                                     </p>
 
-                                    <div className="flex items-center text-accent-blue text-sm font-medium group-hover:gap-2 transition-all">
+                                    <div className="flex items-center text-light-accent dark:text-accent-blue text-sm font-medium group-hover:gap-2 transition-all">
                                         <span>Baca selengkapnya</span>
                                         <span className="inline-block group-hover:translate-x-1 transition-transform">→</span>
                                     </div>
