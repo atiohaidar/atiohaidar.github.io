@@ -103,7 +103,7 @@ const FormFillPage: React.FC = () => {
                     <p className={`${COLORS.TEXT_SECONDARY} mb-6`}>{error || 'Formulir tidak ditemukan'}</p>
                     <button
                         onClick={() => navigate('/')}
-                        className={`${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ACCENT} py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity`}
+                        className={`${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ON_ACCENT} py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity`}
                     >
                         Kembali ke Beranda
                     </button>
@@ -129,7 +129,7 @@ const FormFillPage: React.FC = () => {
                     </div>
                     <button
                         onClick={() => navigate('/')}
-                        className={`${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ACCENT} py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity`}
+                        className={`${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ON_ACCENT} py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity`}
                     >
                         Kembali ke Beranda
                     </button>
@@ -196,7 +196,7 @@ const FormFillPage: React.FC = () => {
                             <button
                                 type="submit"
                                 disabled={submitting}
-                                className={`flex-1 ${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ACCENT} py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed`}
+                                className={`flex-1 ${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ON_ACCENT} py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed`}
                             >
                                 {submitting ? 'Mengirim...' : 'Kirim Jawaban'}
                             </button>

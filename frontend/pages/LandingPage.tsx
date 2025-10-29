@@ -132,7 +132,7 @@ const LandingPage: React.FC = () => {
             {/* Anonymous Chat Button */}
             <button
                 onClick={() => setIsAnonymousChatOpen(true)}
-                className={`fixed bottom-4 right-4 md:bottom-6 md:right-6 ${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ACCENT} p-3 md:p-4 rounded-full shadow-lg hover:opacity-90 transition-opacity z-[60]`}
+                className={`fixed bottom-4 right-4 md:bottom-6 md:right-6 ${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ON_ACCENT} p-3 md:p-4 rounded-full shadow-lg hover:opacity-90 transition-opacity z-[60]`}
                 title="Open Anonymous Chat"
             >
                 <span className="text-xl md:text-2xl">💬</span>

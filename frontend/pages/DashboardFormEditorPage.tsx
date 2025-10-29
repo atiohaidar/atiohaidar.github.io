@@ -215,7 +215,7 @@ const DashboardFormEditorPage: React.FC = () => {
                         <button
                             type="button"
                             onClick={handleAddQuestion}
-                            className={`${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ACCENT} py-2 px-4 rounded-lg font-semibold hover:opacity-90 transition-opacity text-sm`}
+                            className={`${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ON_ACCENT} py-2 px-4 rounded-lg font-semibold hover:opacity-90 transition-opacity text-sm`}
                         >
                             + Tambah Pertanyaan
                         </button>
@@ -293,7 +293,7 @@ const DashboardFormEditorPage: React.FC = () => {
                     <button
                         type="submit"
                         disabled={submitting}
-                        className={`flex-1 ${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ACCENT} py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed`}
+                        className={`flex-1 ${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ON_ACCENT} py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed`}
                     >
                         {submitting ? 'Menyimpan...' : isEditMode ? 'Simpan Perubahan' : 'Buat Formulir'}
                     </button>

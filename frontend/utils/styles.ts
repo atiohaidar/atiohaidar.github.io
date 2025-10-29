@@ -43,6 +43,7 @@ export const COLORS = {
   TEXT_SECONDARY: 'text-light-muted dark:text-soft-gray',
   TEXT_MUTED: 'text-light-muted dark:text-light-slate',
   TEXT_ACCENT: 'text-light-accent dark:text-accent-blue',
+  TEXT_ON_ACCENT: 'text-white',
   TEXT_WHITE: 'text-light-text dark:text-white',
   
   // Borders

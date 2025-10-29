@@ -40,7 +40,7 @@ const FormTokenSection: React.FC = () => {
                         </div>
                         <button
                             type="submit"
-                            className={`w-full ${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ACCENT} py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity`}
+                            className={`w-full ${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ON_ACCENT} py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity`}
                         >
                             Akses Formulir
                         </button>

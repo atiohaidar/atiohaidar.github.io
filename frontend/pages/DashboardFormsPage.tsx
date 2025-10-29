@@ -64,7 +64,7 @@ const DashboardFormsPage: React.FC = () => {
                 </h1>
                 <Link
                     to="/dashboard/forms/new"
-                    className={`${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ACCENT} py-2 px-4 rounded-lg font-semibold hover:opacity-90 transition-opacity`}
+                    className={`${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ON_ACCENT} py-2 px-4 rounded-lg font-semibold hover:opacity-90 transition-opacity`}
                 >
                     + Buat Formulir Baru
                 </Link>
@@ -83,7 +83,7 @@ const DashboardFormsPage: React.FC = () => {
                     </p>
                     <Link
                         to="/dashboard/forms/new"
-                        className={`inline-block ${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ACCENT} py-2 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity`}
+                        className={`inline-block ${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ON_ACCENT} py-2 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity`}
                     >
                         Buat Formulir
                     </Link>

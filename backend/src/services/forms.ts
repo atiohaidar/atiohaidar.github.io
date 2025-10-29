@@ -195,19 +195,43 @@ export const updateForm = async (
 	}
 
 	// Update questions if provided
-	if (updates.questions && updates.questions.length > 0) {
-		// Delete existing questions
-		await db.prepare("DELETE FROM form_questions WHERE form_id = ?").bind(id).run();
+	if (updates.questions) {
+		const existingQuestions = await getFormQuestions(db, id);
+		const existingById = new Map(existingQuestions.map((question) => [question.id, question]));
+		const incomingIds = new Set<string>();
 
-		// Insert new questions
 		for (const question of updates.questions) {
-			const questionId = question.id || `q-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
-			await db
-				.prepare(
-					"INSERT INTO form_questions (id, form_id, question_text, question_order) VALUES (?, ?, ?, ?)"
-				)
-				.bind(questionId, id, question.question_text, question.question_order)
-				.run();
+			const targetId =
+				(question.id && existingById.has(question.id))
+					? question.id
+					: question.id ?? `q-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+
+			incomingIds.add(targetId);
+
+			if (existingById.has(targetId)) {
+				await db
+					.prepare(
+						"UPDATE form_questions SET question_text = ?, question_order = ? WHERE id = ? AND form_id = ?"
+					)
+					.bind(question.question_text, question.question_order, targetId, id)
+					.run();
+			} else {
+				await db
+					.prepare(
+						"INSERT INTO form_questions (id, form_id, question_text, question_order) VALUES (?, ?, ?, ?)"
+					)
+					.bind(targetId, id, question.question_text, question.question_order)
+					.run();
+			}
+		}
+
+		for (const existing of existingQuestions) {
+			if (!incomingIds.has(existing.id)) {
+				await db
+					.prepare("DELETE FROM form_questions WHERE id = ? AND form_id = ?")
+					.bind(existing.id, id)
+					.run();
+			}
 		}
 	}
 
