@@ -128,7 +128,7 @@ export default function DiscussionsScreen() {
               key={discussion.id}
               style={styles.card}
               mode="elevated"
-              onPress={() => router.push(`/discussion/${discussion.id}`)}
+              onPress={() => router.push(`/discussions/${discussion.id}`)}
             >
               <Card.Content>
                 <View style={styles.cardHeader}>

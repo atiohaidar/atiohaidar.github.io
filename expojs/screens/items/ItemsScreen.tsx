@@ -16,6 +16,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import ApiService from '@/services/api';
 import { Item, ItemCreate } from '@/types/api';
+import { useRouter } from 'expo-router';
 
 export default function ItemsScreen() {
   const [items, setItems] = useState<Item[]>([]);
@@ -31,6 +32,7 @@ export default function ItemsScreen() {
   });
   const { user, isAdmin } = useAuth();
   const theme = useTheme();
+  const router = useRouter();
 
   useEffect(() => {
     loadData();
@@ -168,6 +170,18 @@ export default function ItemsScreen() {
                     />
                   )}
                 </View>
+                {item.stock > 0 && user && (
+                  <View style={styles.borrowButtonContainer}>
+                    <Button
+                      mode="contained"
+                      icon="hand-extended"
+                      onPress={() => router.push(`/items/borrow/${item.id}`)}
+                      style={styles.borrowButton}
+                    >
+                      Borrow Item
+                    </Button>
+                  </View>
+                )}
               </Card.Content>
             </Card>
           ))
@@ -298,6 +312,12 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: 16,
+  },
+  borrowButtonContainer: {
+    marginTop: 12,
+  },
+  borrowButton: {
+    width: '100%',
   },
   fab: {
     position: 'absolute',

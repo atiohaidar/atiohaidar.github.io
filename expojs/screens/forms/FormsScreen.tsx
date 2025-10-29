@@ -92,7 +92,7 @@ export default function FormsScreen() {
               key={form.id}
               style={styles.card}
               mode="elevated"
-              onPress={() => router.push(`/form/${form.id}`)}
+              onPress={() => router.push(`/forms/${form.id}`)}
             >
               <Card.Content>
                 <View style={styles.cardHeader}>
@@ -138,7 +138,7 @@ export default function FormsScreen() {
       <FAB
         icon="plus"
         style={styles.fab}
-        onPress={() => router.push('/form/create')}
+        onPress={() => router.push('/forms/new')}
         label="New Form"
       />
     </View>

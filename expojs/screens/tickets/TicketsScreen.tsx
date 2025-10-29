@@ -100,8 +100,7 @@ export default function TicketsScreen() {
   };
 
   const handleTicketPress = (ticket: Ticket) => {
-    // Navigate to ticket detail (we'll create this route)
-    router.push(`/ticket/${ticket.id}`);
+    router.push(`/tickets/${ticket.id}`);
   };
 
   if (loading) {
