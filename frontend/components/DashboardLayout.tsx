@@ -80,7 +80,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
     const { theme } = useTheme();
     const palette = DASHBOARD_THEME[theme];
     const baseText = theme === 'light' ? 'text-[#1A2136]' : 'text-white';
-    const accentText = palette.sidebar.textMuted;
+    const navItemBase =
+        'flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200';
 
     const handleLogout = () => {
         logout();
@@ -105,12 +106,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
 
             {/* Sidebar */}
             <aside
-                className={`${
+                className={`fixed md:static inset-y-0 left-0 z-50 flex flex-col transition-all duration-300 ${
                     isSidebarOpen ? 'w-64' : 'w-20'
-                } transition-all duration-300 flex flex-col ${palette.sidebar.bg} ${palette.sidebar.border}
-                fixed md:static inset-y-0 left-0 z-50
-                ${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
-                md:w-64 md:${isSidebarOpen ? 'w-64' : 'w-20'}`}
+                } md:${isSidebarOpen ? 'w-64' : 'w-20'} ${
+                    isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+                } ${palette.sidebar.bg} ${palette.sidebar.border}`}
             >
                 {/* Sidebar Header */}
                 <div className={`p-4 flex items-center justify-between ${palette.sidebar.border}`}>
@@ -191,23 +191,34 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                 </div>
 
                 {/* Navigation Menu */}
-                <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-                    {filteredMenuItems.map((item) => (
-                        <Link
-                            key={item.id}
-                            to={item.path}
-                            onClick={() => setIsMobileSidebarOpen(false)}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                                isActive(item.path)
-                                    ? palette.sidebar.linkActive
-                                    : `${palette.sidebar.linkBase} ${palette.sidebar.linkHover}`
-                            }`}
-                            title={!isSidebarOpen ? item.label : undefined}
-                        >
-                            <span className="text-xl">{item.icon}</span>
-                            <span className={`font-medium ${isSidebarOpen ? '' : 'md:hidden'}`}>{item.label}</span>
-                        </Link>
-                    ))}
+                <nav className="flex-1 px-4 py-5 space-y-2 overflow-y-auto">
+                    {filteredMenuItems.map((item) => {
+                        const active = isActive(item.path);
+                        return (
+                            <Link
+                                key={item.id}
+                                to={item.path}
+                                onClick={() => setIsMobileSidebarOpen(false)}
+                                className={`${navItemBase} ${
+                                    active
+                                        ? `${palette.sidebar.active} shadow-[0_12px_30px_rgba(31,111,235,0.12)]`
+                                        : `${palette.sidebar.linkBase} ${palette.sidebar.hover}`
+                                } ${
+                                    isSidebarOpen ? 'justify-start' : 'justify-center'
+                                }`}
+                                title={!isSidebarOpen ? item.label : undefined}
+                            >
+                                <span className="text-xl">{item.icon}</span>
+                                <span
+                                    className={`font-medium whitespace-nowrap transition-opacity duration-200 ${
+                                        isSidebarOpen ? 'opacity-100' : 'opacity-0 md:opacity-0 md:hidden'
+                                    }`}
+                                >
+                                    {item.label}
+                                </span>
+                            </Link>
+                        );
+                    })}
                 </nav>
 
                 {/* Sidebar Footer */}
@@ -216,7 +227,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                     <div className={`flex items-center ${isSidebarOpen ? 'justify-start px-4' : 'md:justify-center justify-start px-4'}`}>
                         <ThemeToggle />
                     </div>
-                    
+
                     <Link
                         to="/"
                         onClick={() => setIsMobileSidebarOpen(false)}
