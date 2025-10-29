@@ -96,13 +96,24 @@ export const createRoom = async (
 	await ensureInitialized(db);
 	const data = RoomCreateSchema.parse(input);
 
+	// Generate unique ID
+	const generateRoomId = () => {
+		const timestamp = Date.now();
+		const random = Math.random().toString(36).substring(2, 8);
+		return `room-${timestamp}-${random}`;
+	};
+
+	const roomId = generateRoomId();
+
 	try {
 		await db
 			.prepare(
 				"INSERT INTO rooms (id, name, capacity, description, available) VALUES (?, ?, ?, ?, ?)",
 			)
-			.bind(data.id, data.name, data.capacity, data.description ?? null, data.available ? 1 : 0)
+			.bind(roomId, data.name, data.capacity, data.description ?? null, data.available ? 1 : 0)
 			.run();
+		
+		return roomId;
 	} catch (error) {
 		if (error instanceof Error && error.message.includes("UNIQUE")) {
 			throw new Error("ID ruangan sudah digunakan");
@@ -110,7 +121,7 @@ export const createRoom = async (
 		throw error;
 	}
 
-	const room = await getRoom(db, data.id);
+	const room = await getRoom(db, roomId);
 	if (!room) {
 		throw new Error("Gagal mengambil data ruangan setelah membuat");
 	}

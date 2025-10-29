@@ -108,7 +108,6 @@ export const Room = z.object({
 });
 
 export const RoomCreateSchema = z.object({
-	id: Str({ example: "room-001" }),
 	name: Str({ example: "Meeting Room A" }),
 	capacity: z.number().int().positive(),
 	description: Str({ required: false }),
@@ -140,16 +139,18 @@ export const Booking = z.object({
 	start_time: Str({ description: "ISO 8601 datetime", example: "2024-01-15T09:00:00Z" }),
 	end_time: Str({ description: "ISO 8601 datetime", example: "2024-01-15T11:00:00Z" }),
 	status: BookingStatusSchema.default("pending"),
-	purpose: Str({ required: false, example: "Team meeting" }),
+	title: Str({ example: "Team Meeting" }),
+	description: Str({ required: false }),
 	created_at: Str({ required: false }),
 	updated_at: Str({ required: false }),
 });
 
 export const BookingCreateSchema = z.object({
 	room_id: Str({ example: "room-001" }),
+	title: Str({ example: "Team Meeting" }),
+	description: Str({ required: false }),
 	start_time: Str({ description: "ISO 8601 datetime" }),
 	end_time: Str({ description: "ISO 8601 datetime" }),
-	purpose: Str({ required: false }),
 });
 
 export const BookingUpdateSchema = z.object({

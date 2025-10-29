@@ -30,6 +30,7 @@ const ensureInitialized = async (db: D1Database) => {
 						description TEXT,
 						completed INTEGER NOT NULL DEFAULT 0,
 						due_date TEXT,
+						owner TEXT,
 						created_at TEXT DEFAULT CURRENT_TIMESTAMP,
 						updated_at TEXT DEFAULT CURRENT_TIMESTAMP
 					)

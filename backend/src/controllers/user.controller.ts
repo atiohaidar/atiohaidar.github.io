@@ -1,4 +1,4 @@
-import { Bool, Str, OpenAPIRoute } from "chanfana";
+import { Bool, Str } from "chanfana";
 import { z } from "zod";
 import { 
   listUsers, 
@@ -245,8 +245,42 @@ export class UserController {
 
   // Helper for data validation
   private static async validateData<T>(c: AppContext, schema: any): Promise<T> {
-    // @ts-ignore - getValidatedData is available on OpenAPIRoute instance
-    return await new OpenAPIRoute().getValidatedData({ schema });
+    const result: Record<string, unknown> = {};
+
+    if (schema.request?.query) {
+      const queryResult = schema.request.query.safeParse(c.req.query());
+      if (!queryResult.success) {
+        throw new Error(`Query validation failed: ${queryResult.error.message}`);
+      }
+      result.query = queryResult.data;
+    }
+
+    if (schema.request?.params) {
+      const paramsResult = schema.request.params.safeParse(c.req.param());
+      if (!paramsResult.success) {
+        throw new Error(`Params validation failed: ${paramsResult.error.message}`);
+      }
+      result.params = paramsResult.data;
+    }
+
+    if (schema.request?.body?.content?.["application/json"]?.schema) {
+      try {
+        const body = await c.req.json();
+        const bodySchema = schema.request.body.content["application/json"].schema;
+        const bodyResult = bodySchema.safeParse(body);
+        if (!bodyResult.success) {
+          throw new Error(`Body validation failed: ${bodyResult.error.message}`);
+        }
+        result.body = bodyResult.data;
+      } catch (error) {
+        if (error instanceof Error && error.message.includes("validation failed")) {
+          throw error;
+        }
+        throw new Error("Invalid JSON body");
+      }
+    }
+
+    return result as T;
   }
 
   // Handler methods
@@ -272,7 +306,7 @@ export class UserController {
       );
     }
 
-    const data = await this.validateData<{ 
+    const data = await UserController.validateData<{ 
       params: { username: string } 
     }>(c, UserController.getSchema);
     
@@ -298,7 +332,7 @@ export class UserController {
       );
     }
 
-    const data = await this.validateData<{ 
+    const data = await UserController.validateData<{ 
       body: { 
         username: string; 
         email: string; 
@@ -326,7 +360,7 @@ export class UserController {
       );
     }
 
-    const data = await this.validateData<{ 
+    const data = await UserController.validateData<{ 
       params: { username: string },
       body: { 
         email?: string; 
@@ -357,7 +391,7 @@ export class UserController {
       );
     }
 
-    const data = await this.validateData<{ 
+    const data = await UserController.validateData<{ 
       params: { username: string } 
     }>(c, UserController.deleteSchema);
     

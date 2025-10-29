@@ -1,4 +1,4 @@
-import { Bool, Num, OpenAPIRoute } from "chanfana";
+import { Bool, Num } from "chanfana";
 import { z } from "zod";
 import { 
   listTasks, 
@@ -202,8 +202,63 @@ export class TaskController {
 
   // Helper for data validation
   private static async validateData<T>(c: AppContext, schema: any): Promise<T> {
-    // @ts-ignore - getValidatedData is available on OpenAPIRoute instance
-    return await new OpenAPIRoute().getValidatedData({ schema });
+    // Manual validation since OpenAPIRoute instantiation fails
+    if (schema.request?.query) {
+      // Convert query string values to appropriate types before validation
+      const query = c.req.query();
+      const convertedQuery: any = {};
+      
+      if ('page' in query && query.page !== undefined) {
+        convertedQuery.page = parseInt(query.page, 10);
+        if (isNaN(convertedQuery.page)) {
+          throw new Error('Query validation failed: page must be a valid number');
+        }
+      }
+      
+      if ('is_completed' in query && query.is_completed !== undefined) {
+        convertedQuery.is_completed = query.is_completed === 'true';
+      }
+      
+      // Copy any other query parameters
+      Object.keys(query).forEach(key => {
+        if (!(key in convertedQuery)) {
+          convertedQuery[key] = query[key];
+        }
+      });
+      
+      const queryResult = schema.request.query.safeParse(convertedQuery);
+      if (!queryResult.success) {
+        throw new Error(`Query validation failed: ${queryResult.error.message}`);
+      }
+      return { query: queryResult.data } as T;
+    }
+    
+    if (schema.request?.params) {
+      const paramsResult = schema.request.params.safeParse(c.req.param());
+      if (!paramsResult.success) {
+        throw new Error(`Params validation failed: ${paramsResult.error.message}`);
+      }
+      return { params: paramsResult.data } as T;
+    }
+    
+    if (schema.request?.body?.content?.['application/json']?.schema) {
+      try {
+        const body = await c.req.json();
+        const bodySchema = schema.request.body.content['application/json'].schema;
+        const bodyResult = bodySchema.safeParse(body);
+        if (!bodyResult.success) {
+          throw new Error(`Body validation failed: ${bodyResult.error.message}`);
+        }
+        return { body: bodyResult.data } as T;
+      } catch (error) {
+        if (error instanceof Error && error.message.includes('validation failed')) {
+          throw error;
+        }
+        throw new Error('Invalid JSON body');
+      }
+    }
+    
+    return {} as T;
   }
 
   // Handler methods
@@ -213,16 +268,16 @@ export class TaskController {
       return c.json({ success: false, message: "Unauthorized" }, 401);
     }
 
-    const data = await this.validateData<{ 
-      query: { page: number; isCompleted?: boolean } 
+    const data = await TaskController.validateData<{ 
+      query: { page: number; is_completed?: boolean } 
     }>(c, TaskController.listSchema);
     
-    const { page, isCompleted } = data.query;
+    const { page, is_completed } = data.query;
     
     // Admin can see all tasks, members can only see their own
     const owner = payload.role === "admin" ? undefined : payload.sub;
     
-    const tasks = await listTasks(c.env.DB, { page, isCompleted, owner });
+    const tasks = await listTasks(c.env.DB, { page, isCompleted: is_completed, owner });
     return c.json({ success: true, tasks });
   }
 
@@ -232,7 +287,7 @@ export class TaskController {
       return c.json({ success: false, message: "Unauthorized" }, 401);
     }
 
-    const data = await this.validateData<{ 
+    const data = await TaskController.validateData<{ 
       params: { taskSlug: string } 
     }>(c, TaskController.getSchema);
     
@@ -263,8 +318,8 @@ export class TaskController {
       return c.json({ success: false, message: "Unauthorized" }, 401);
     }
 
-    const data = await this.validateData<{ 
-      body: { title: string; description?: string; isCompleted?: boolean } 
+    const data = await TaskController.validateData<{ 
+      body: { name: string; description?: string; completed?: boolean } 
     }>(c, TaskController.createSchema);
     
     try {
@@ -282,9 +337,9 @@ export class TaskController {
       return c.json({ success: false, message: "Unauthorized" }, 401);
     }
 
-    const data = await this.validateData<{ 
+    const data = await TaskController.validateData<{ 
       params: { taskSlug: string },
-      body: { title?: string; description?: string; isCompleted?: boolean }
+      body: { name?: string; description?: string; completed?: boolean }
     }>(c, TaskController.updateSchema);
     
     const { taskSlug } = data.params;
@@ -316,7 +371,7 @@ export class TaskController {
       return c.json({ success: false, message: "Unauthorized" }, 401);
     }
 
-    const data = await this.validateData<{ 
+    const data = await TaskController.validateData<{ 
       params: { taskSlug: string } 
     }>(c, TaskController.deleteSchema);
     

@@ -22,7 +22,10 @@ export class RoomList extends OpenAPIRoute {
 		summary: "List all rooms",
 		request: {
 			query: z.object({
-				available: z.string().optional().transform((val) => val === 'true'),
+				available: z.string().optional().transform((val) => {
+    if (val === undefined) return undefined;
+    return val === 'true';
+  }),
 			}),
 		},
 		responses: {
@@ -43,6 +46,19 @@ export class RoomList extends OpenAPIRoute {
 	async handle(c: AppContext) {
 		const data = await this.getValidatedData<typeof this.schema>();
 		const { available } = data.query;
+
+		// Debug logging
+		console.log('RoomList - available parameter:', available);
+		console.log('RoomList - raw query:', c.req.query());
+		console.log('RoomList - typeof available:', typeof available);
+
+		// Test database connection
+		try {
+			const testResult = await c.env.DB.prepare("SELECT COUNT(*) as count FROM rooms").first();
+			console.log('RoomList - DB test result:', testResult);
+		} catch (error) {
+			console.error('RoomList - DB connection error:', error);
+		}
 
 		const rooms = await listRooms(c.env.DB, { available: available as boolean | undefined });
 

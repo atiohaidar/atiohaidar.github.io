@@ -12,6 +12,7 @@ import {
 	getBooking,
 	createBooking,
 	updateBookingStatus,
+	updateBooking,
 	cancelBooking,
 } from "../services/bookings";
 import { ensureAdmin, getTokenPayloadFromRequest } from "../middlewares/auth";
@@ -53,14 +54,18 @@ export class BookingList extends OpenAPIRoute {
 
 		const data = await this.getValidatedData<typeof this.schema>();
 		const { roomId, status } = data.query;
+		const roomFilter = roomId as string | undefined;
+		const statusFilter = status as any;
 
-		// Admin can see all bookings, members can only see their own
-		const username = payload.role === "admin" ? undefined : payload.sub;
+		let username: string | undefined;
+		if (payload.role !== "admin" && !roomFilter) {
+			username = payload.sub;
+		}
 
-		const bookings = await listBookings(c.env.DB, { 
-			username, 
-			roomId: roomId as string | undefined, 
-			status: status as any
+		const bookings = await listBookings(c.env.DB, {
+			username,
+			roomId: roomFilter,
+			status: statusFilter,
 		});
 
 		return c.json({
@@ -251,6 +256,77 @@ export class BookingUpdateStatus extends OpenAPIRoute {
 		} catch (error) {
 			if (error instanceof Error && error.message.includes("tidak ditemukan")) {
 				return c.json({ success: false, message: error.message }, 404);
+			}
+			throw error;
+		}
+	}
+}
+
+// Update booking details (owner or admin)
+export class BookingUpdate extends OpenAPIRoute {
+	schema = {
+		tags: ["Bookings"],
+		summary: "Update booking details",
+		request: {
+			params: z.object({
+				bookingId: Str({ example: "booking-001" }),
+			}),
+			body: {
+				content: {
+					"application/json": {
+						schema: BookingCreateSchema,
+					},
+				},
+			},
+		},
+		responses: {
+			"200": {
+				description: "Booking updated successfully",
+				content: {
+					"application/json": {
+						schema: z.object({
+							success: Bool(),
+							data: Booking,
+						}),
+					},
+				},
+			},
+			"401": { description: "Unauthorized" },
+			"403": { description: "Forbidden" },
+			"404": { description: "Booking not found" },
+		},
+	};
+
+	async handle(c: AppContext) {
+		const payload = getTokenPayloadFromRequest(c);
+		if (!payload) {
+			return c.json({ success: false, message: "Unauthorized" }, 401);
+		}
+
+		const data = await this.getValidatedData<typeof this.schema>();
+		const { bookingId } = data.params;
+
+		try {
+			const booking = await updateBooking(
+				c.env.DB,
+				bookingId,
+				payload.sub,
+				data.body,
+				payload.role as "admin" | "member",
+			);
+			return c.json({
+				success: true,
+				data: booking,
+			});
+		} catch (error) {
+			if (error instanceof Error) {
+				if (error.message.includes("tidak ditemukan")) {
+					return c.json({ success: false, message: error.message }, 404);
+				}
+				if (error.message.includes("tidak memiliki izin")) {
+					return c.json({ success: false, message: error.message }, 403);
+				}
+				return c.json({ success: false, message: error.message }, 400);
 			}
 			throw error;
 		}

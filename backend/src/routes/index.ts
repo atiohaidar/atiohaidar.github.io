@@ -20,6 +20,7 @@ import {
 	BookingGet,
 	BookingCreate,
 	BookingUpdateStatus,
+	BookingUpdate,
 	BookingCancel,
 } from "../controllers/booking.controller";
 import { StatsGet } from "../controllers/stats.controller";
@@ -64,5 +65,6 @@ export const registerRoutes = (openapi: any) => {
 	openapi.post("/api/bookings", BookingCreate);
 	openapi.get("/api/bookings/:bookingId", BookingGet);
 	openapi.put("/api/bookings/:bookingId", BookingUpdateStatus);
+	openapi.put("/api/bookings/:bookingId/edit", BookingUpdate);
 	openapi.delete("/api/bookings/:bookingId", BookingCancel);
 };

@@ -31,6 +31,18 @@ const menuItems: MenuItem[] = [
         path: '/dashboard/tasks',
     },
     {
+        id: 'rooms',
+        label: 'Ruangan',
+        icon: '🏢',
+        path: '/dashboard/rooms',
+    },
+    {
+        id: 'bookings',
+        label: 'Booking',
+        icon: '📅',
+        path: '/dashboard/bookings',
+    },
+    {
         id: 'users',
         label: 'User Management',
         icon: '👥',

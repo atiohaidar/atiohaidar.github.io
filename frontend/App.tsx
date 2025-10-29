@@ -12,6 +12,12 @@ import DashboardPage from './pages/DashboardPage';
 import DashboardTasksPage from './pages/DashboardTasksPage';
 import DashboardUsersPage from './pages/DashboardUsersPage';
 import DashboardArticlesPage from './pages/DashboardArticlesPage';
+import DashboardRoomsPage from './pages/DashboardRoomsPage';
+import DashboardBookingsPage from './pages/DashboardBookingsPage';
+import DashboardRoomFormPage from './pages/DashboardRoomFormPage';
+import DashboardBookingFormPage from './pages/DashboardBookingFormPage';
+import DashboardBookingDetailPage from './pages/DashboardBookingDetailPage';
+import DashboardRoomDetailPage from './pages/DashboardRoomDetailPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 const queryClient = new QueryClient({
@@ -44,6 +50,41 @@ const App: React.FC = () => {
                                 } 
                             />
                             <Route path="articles" element={<DashboardArticlesPage />} />
+                            <Route 
+                                path="rooms" 
+                                element={
+                                    <ProtectedRoute>
+                                        <DashboardRoomsPage />
+                                    </ProtectedRoute>
+                                } 
+                            />
+                            <Route 
+                                path="rooms/:roomId" 
+                                element={
+                                    <ProtectedRoute>
+                                        <DashboardRoomDetailPage />
+                                    </ProtectedRoute>
+                                } 
+                            />
+                            <Route 
+                                path="rooms/new" 
+                                element={
+                                    <ProtectedRoute requireAdmin>
+                                        <DashboardRoomFormPage />
+                                    </ProtectedRoute>
+                                } 
+                            />
+                            <Route 
+                                path="rooms/:roomId/edit" 
+                                element={
+                                    <ProtectedRoute requireAdmin>
+                                        <DashboardRoomFormPage />
+                                    </ProtectedRoute>
+                                } 
+                            />
+                            <Route path="bookings" element={<DashboardBookingsPage />} />
+                            <Route path="bookings/new" element={<DashboardBookingFormPage />} />
+                            <Route path="bookings/:bookingId" element={<DashboardBookingDetailPage />} />
                         </Route>
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>

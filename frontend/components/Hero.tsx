@@ -60,9 +60,14 @@ const Hero: React.FC<HeroProps> = ({ greeting, name, tagline, bio, linkedinUrl }
                     {bio}
                 </p>
                 <div className={`pt-8 ${PRINT.HIDE}`} style={createAnimationStyle(1000)}>
-                    <a href="#portfolio" className={`bg-transparent ${COLORS.TEXT_ACCENT} border ${COLORS.BORDER_ACCENT} rounded px-8 py-4 font-medium ${COLORS.HOVER_ACCENT}/10 transition-colors duration-300`}>
-                        Lihat Portofolio Saya
-                    </a>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="#portfolio" className={`bg-transparent ${COLORS.TEXT_ACCENT} border ${COLORS.BORDER_ACCENT} rounded px-8 py-4 font-medium ${COLORS.HOVER_ACCENT}/10 transition-colors duration-300`}>
+                            Lihat Portofolio Saya
+                        </a>
+                        <a href="/articles" className={`bg-accent-blue text-white border border-accent-blue rounded px-8 py-4 font-medium hover:bg-blue-600 transition-colors duration-300`}>
+                            📰 Lihat Articles
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>

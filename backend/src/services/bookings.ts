@@ -56,7 +56,8 @@ const toBooking = (row: Record<string, unknown>): BookingRecord => {
 		start_time: row.start_time,
 		end_time: row.end_time,
 		status: row.status,
-		purpose: row.purpose ?? undefined,
+		title: row.purpose ?? 'Untitled Booking', // Map purpose to title
+		description: row.purpose ?? undefined, // Also use as description for now
 		created_at: row.created_at ?? undefined,
 		updated_at: row.updated_at ?? undefined,
 	};
@@ -210,7 +211,7 @@ export const createBooking = async (
 			.prepare(
 				"INSERT INTO bookings (id, room_id, user_username, start_time, end_time, status, purpose) VALUES (?, ?, ?, ?, ?, 'pending', ?)",
 			)
-			.bind(bookingId, data.room_id, username, data.start_time, data.end_time, data.purpose ?? null)
+			.bind(bookingId, data.room_id, username, data.start_time, data.end_time, data.title ?? 'Untitled Booking')
 			.run();
 	} catch (error) {
 		throw new Error("Gagal membuat peminjaman");
@@ -219,6 +220,73 @@ export const createBooking = async (
 	const booking = await getBooking(db, bookingId);
 	if (!booking) {
 		throw new Error("Gagal mengambil data peminjaman setelah membuat");
+	}
+
+	return booking;
+};
+
+export const updateBooking = async (
+	db: D1Database,
+	id: string,
+	username: string,
+	input: z.infer<typeof BookingCreateSchema>,
+	role: "admin" | "member",
+) => {
+	await ensureInitialized(db);
+	const updates = BookingCreateSchema.parse(input);
+
+	const existing = await getBooking(db, id);
+	if (!existing) {
+		throw new Error("Peminjaman tidak ditemukan");
+	}
+
+	if (role !== "admin" && existing.user_username !== username) {
+		throw new Error("Anda tidak memiliki izin untuk memperbarui booking ini");
+	}
+
+	const startTime = new Date(updates.start_time);
+	const endTime = new Date(updates.end_time);
+
+	if (startTime >= endTime) {
+		throw new Error("Waktu mulai harus sebelum waktu selesai");
+	}
+
+	if (startTime < new Date()) {
+		throw new Error("Waktu mulai tidak boleh di masa lalu");
+	}
+
+	const isAvailable = await checkRoomAvailability(
+		db,
+		updates.room_id,
+		updates.start_time,
+		updates.end_time,
+		id,
+	);
+
+	if (!isAvailable) {
+		throw new Error("Ruangan tidak tersedia untuk waktu yang dipilih");
+	}
+
+	const result = await db
+		.prepare(
+			"UPDATE bookings SET room_id = ?, start_time = ?, end_time = ?, purpose = ? WHERE id = ?",
+		)
+		.bind(
+			updates.room_id,
+			updates.start_time,
+			updates.end_time,
+			updates.title ?? existing.title ?? "Untitled Booking",
+			id,
+		)
+		.run();
+
+	if ((result.meta?.changes ?? 0) === 0) {
+		throw new Error("Peminjaman tidak ditemukan");
+	}
+
+	const booking = await getBooking(db, id);
+	if (!booking) {
+		throw new Error("Gagal mengambil data peminjaman setelah pembaruan");
 	}
 
 	return booking;
