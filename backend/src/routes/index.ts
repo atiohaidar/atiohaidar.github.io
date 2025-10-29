@@ -96,6 +96,23 @@ import {
 	PublicTicketCommentCreate,
 	PublicTicketCommentList,
 } from "../controllers/ticket.controller";
+import {
+	EventList,
+	EventGet,
+	EventCreate,
+	EventUpdate,
+	EventDelete,
+	EventAttendeeList,
+	EventAttendeeRegister,
+	EventAttendeeUpdateStatus,
+	EventAttendeeUnregister,
+	EventAdminList,
+	EventAdminAssign,
+	EventAdminRemove,
+	AttendanceScanCreate,
+	AttendeeWithScansGet,
+	EventScanHistoryList,
+} from "../controllers/event.controller";
 
 export const registerRoutes = (openapi: any) => {
 	// Public routes (no authentication required)
@@ -220,4 +237,27 @@ export const registerRoutes = (openapi: any) => {
 	openapi.post("/api/tickets/:ticketId/comments", TicketCommentCreate.handle);
 	openapi.get("/api/tickets/:ticketId/assignments", TicketAssignmentList.handle);
 	openapi.post("/api/tickets/:ticketId/assign", TicketAssign.handle);
+
+	// Event routes
+	openapi.get("/api/events", EventList);
+	openapi.post("/api/events", EventCreate);
+	openapi.get("/api/events/:eventId", EventGet);
+	openapi.put("/api/events/:eventId", EventUpdate);
+	openapi.delete("/api/events/:eventId", EventDelete);
+	
+	// Event attendee routes
+	openapi.get("/api/events/:eventId/attendees", EventAttendeeList);
+	openapi.post("/api/events/register", EventAttendeeRegister);
+	openapi.put("/api/events/:eventId/attendees/:attendeeId/status", EventAttendeeUpdateStatus);
+	openapi.delete("/api/events/:eventId/attendees/:attendeeId", EventAttendeeUnregister);
+	openapi.get("/api/events/:eventId/attendees/:attendeeId/scans", AttendeeWithScansGet);
+	
+	// Event admin routes
+	openapi.get("/api/events/:eventId/admins", EventAdminList);
+	openapi.post("/api/events/:eventId/admins", EventAdminAssign);
+	openapi.delete("/api/events/:eventId/admins/:username", EventAdminRemove);
+	
+	// Attendance scan routes
+	openapi.post("/api/events/:eventId/scan", AttendanceScanCreate);
+	openapi.get("/api/events/:eventId/scan-history", EventScanHistoryList);
 };

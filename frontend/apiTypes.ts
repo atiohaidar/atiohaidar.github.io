@@ -455,3 +455,91 @@ export interface TicketStats {
     solved: number;
 }
 
+// Event types
+export type AttendeeStatus = 'registered' | 'present' | 'absent';
+
+export interface Event {
+    id: string;
+    title: string;
+    description?: string;
+    event_date: string; // ISO 8601 datetime
+    location?: string;
+    created_by: string;
+    created_at?: string;
+    updated_at?: string;
+}
+
+export interface EventCreate {
+    title: string;
+    description?: string;
+    event_date: string; // ISO 8601 datetime
+    location?: string;
+}
+
+export interface EventUpdate {
+    title?: string;
+    description?: string;
+    event_date?: string;
+    location?: string;
+}
+
+export interface EventAttendee {
+    id: string;
+    event_id: string;
+    user_username: string;
+    attendance_token: string;
+    status: AttendeeStatus;
+    registered_at?: string;
+}
+
+export interface EventAttendeeRegister {
+    event_id: string;
+}
+
+export interface EventAttendeeUpdateStatus {
+    status: AttendeeStatus;
+}
+
+export interface EventAdmin {
+    id: string;
+    event_id: string;
+    user_username: string;
+    assigned_by: string;
+    assigned_at?: string;
+}
+
+export interface EventAdminAssign {
+    user_username: string;
+}
+
+export interface AttendanceScan {
+    id: string;
+    attendee_id: string;
+    scanned_by: string;
+    scanned_at?: string;
+    latitude?: number;
+    longitude?: number;
+}
+
+export interface AttendanceScanCreate {
+    attendance_token: string;
+    latitude?: number;
+    longitude?: number;
+}
+
+export interface AttendeeWithScans {
+    attendee: EventAttendee;
+    scans: AttendanceScan[];
+}
+
+export interface EventScanHistory {
+    id: string;
+    attendee_id: string;
+    attendee_username: string;
+    attendee_status: string;
+    scanned_by: string;
+    scanned_at: string;
+    latitude?: number;
+    longitude?: number;
+}
+

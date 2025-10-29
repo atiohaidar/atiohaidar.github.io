@@ -32,6 +32,11 @@ import DiscussionForumPage from './pages/DiscussionForumPage';
 import DiscussionDetailPage from './pages/DiscussionDetailPage';
 import DashboardTicketsPage from './pages/DashboardTicketsPage';
 import DashboardTicketDetailPage from './pages/DashboardTicketDetailPage';
+import DashboardEventsPage from './pages/DashboardEventsPage';
+import DashboardEventFormPage from './pages/DashboardEventFormPage';
+import DashboardEventDetailPage from './pages/DashboardEventDetailPage';
+import DashboardEventScanPage from './pages/DashboardEventScanPage';
+import DashboardEventScanHistoryPage from './pages/DashboardEventScanHistoryPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 const queryClient = new QueryClient({
@@ -116,6 +121,12 @@ const App: React.FC = () => {
                             <Route path="item-borrowings" element={<DashboardItemBorrowingsPage />} />
                             <Route path="tickets" element={<DashboardTicketsPage />} />
                             <Route path="tickets/:ticketId" element={<DashboardTicketDetailPage />} />
+                            <Route path="events" element={<DashboardEventsPage />} />
+                            <Route path="events/new" element={<DashboardEventFormPage />} />
+                            <Route path="events/:eventId" element={<DashboardEventDetailPage />} />
+                            <Route path="events/:eventId/edit" element={<DashboardEventFormPage />} />
+                            <Route path="events/:eventId/scan" element={<DashboardEventScanPage />} />
+                            <Route path="events/:eventId/history" element={<DashboardEventScanHistoryPage />} />
                         </Route>
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
