@@ -233,3 +233,249 @@ export interface PaginatedResponse<T> {
     total: number;
   };
 }
+
+// Form types
+export interface FormQuestion {
+  id: string;
+  form_id: string;
+  question_text: string;
+  question_order: number;
+  created_at?: string;
+}
+
+export interface Form {
+  id: string;
+  title: string;
+  description?: string;
+  token: string;
+  created_by: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface FormWithQuestions {
+  form: Form;
+  questions: FormQuestion[];
+}
+
+export interface FormCreate {
+  title: string;
+  description?: string;
+  questions: {
+    question_text: string;
+    question_order: number;
+  }[];
+}
+
+export interface FormUpdate {
+  title?: string;
+  description?: string;
+  questions?: {
+    id?: string;
+    question_text: string;
+    question_order: number;
+  }[];
+}
+
+export interface FormResponse {
+  id: string;
+  form_id: string;
+  respondent_name?: string;
+  submitted_at?: string;
+}
+
+export interface FormAnswer {
+  question_id: string;
+  question_text: string;
+  answer_text: string;
+}
+
+export interface FormResponseDetail {
+  response: FormResponse;
+  answers: FormAnswer[];
+}
+
+export interface FormResponseCreate {
+  respondent_name?: string;
+  answers: {
+    question_id: string;
+    answer_text: string;
+  }[];
+}
+
+// Item types
+export interface Item {
+  id: string;
+  name: string;
+  description?: string;
+  stock: number;
+  attachment_link?: string;
+  owner_username: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface ItemCreate {
+  name: string;
+  description?: string;
+  stock: number;
+  attachment_link?: string;
+}
+
+export interface ItemUpdate {
+  name?: string;
+  description?: string;
+  stock?: number;
+  attachment_link?: string;
+}
+
+// Item Borrowing types
+export type ItemBorrowingStatus = 'pending' | 'approved' | 'rejected' | 'returned' | 'damaged' | 'extended';
+
+export interface ItemBorrowing {
+  id: string;
+  item_id: string;
+  borrower_username: string;
+  quantity: number;
+  start_date: string;
+  end_date: string;
+  status: ItemBorrowingStatus;
+  notes?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface ItemBorrowingCreate {
+  item_id: string;
+  quantity: number;
+  start_date: string;
+  end_date: string;
+  notes?: string;
+}
+
+export interface ItemBorrowingUpdateStatus {
+  status: ItemBorrowingStatus;
+  notes?: string;
+}
+
+// Ticket Types
+export type TicketStatus = 'open' | 'in_progress' | 'waiting' | 'solved';
+export type TicketPriority = 'low' | 'medium' | 'high' | 'critical';
+export type CommenterType = 'guest' | 'user';
+
+export interface TicketCategory {
+  id: number;
+  name: string;
+  description?: string;
+  created_at?: string;
+}
+
+export interface Ticket {
+  id: number;
+  token: string;
+  title: string;
+  description: string;
+  category_id: number;
+  category_name?: string;
+  status: TicketStatus;
+  priority: TicketPriority;
+  submitter_name?: string;
+  submitter_email?: string;
+  reference_link?: string;
+  assigned_to?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface TicketCreate {
+  title: string;
+  description: string;
+  category_id: number;
+  priority?: TicketPriority;
+  submitter_name?: string;
+  submitter_email?: string;
+  reference_link?: string;
+}
+
+export interface TicketUpdate {
+  title?: string;
+  description?: string;
+  category_id?: number;
+  status?: TicketStatus;
+  priority?: TicketPriority;
+  assigned_to?: string;
+}
+
+export interface TicketComment {
+  id: number;
+  ticket_id: number;
+  commenter_type: CommenterType;
+  commenter_name: string;
+  comment_text: string;
+  is_internal: boolean;
+  created_at?: string;
+}
+
+export interface TicketCommentCreate {
+  comment_text: string;
+  is_internal?: boolean;
+}
+
+export interface TicketAssignment {
+  id: number;
+  ticket_id: number;
+  assigned_from?: string;
+  assigned_to: string;
+  assigned_by: string;
+  notes?: string;
+  created_at?: string;
+}
+
+export interface TicketAssign {
+  assigned_to: string;
+  notes?: string;
+}
+
+export interface TicketStats {
+  total: number;
+  open: number;
+  in_progress: number;
+  waiting: number;
+  solved: number;
+}
+
+// Discussion types
+export interface Discussion {
+  id: string;
+  title: string;
+  content: string;
+  creator_username?: string;
+  creator_name: string;
+  reply_count: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface DiscussionReply {
+  id: string;
+  discussion_id: string;
+  content: string;
+  creator_username?: string;
+  creator_name: string;
+  created_at?: string;
+}
+
+export interface DiscussionCreate {
+  title: string;
+  content: string;
+  creator_name?: string;
+}
+
+export interface DiscussionReplyCreate {
+  content: string;
+  creator_name?: string;
+}
+
+export interface DiscussionWithReplies extends Discussion {
+  replies: DiscussionReply[];
+}

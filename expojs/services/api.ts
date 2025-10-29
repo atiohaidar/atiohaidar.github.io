@@ -704,6 +704,531 @@ class ApiService {
       this.handleError(error);
     }
   }
+
+  // Form APIs
+  async listForms(): Promise<Types.Form[]> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.Form[]>>('/api/forms');
+      return this.extractResult<Types.Form[]>(response.data, 'data') ?? [];
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async getForm(formId: string): Promise<Types.FormWithQuestions> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.FormWithQuestions>>(
+        `/api/forms/${formId}`
+      );
+      const data = this.extractResult<Types.FormWithQuestions>(response.data, 'data');
+      if (data) {
+        return data;
+      }
+      throw new Error('Form not found');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async getFormByToken(token: string): Promise<Types.FormWithQuestions> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.FormWithQuestions>>(
+        `/api/forms/token/${token}`
+      );
+      const data = this.extractResult<Types.FormWithQuestions>(response.data, 'data');
+      if (data) {
+        return data;
+      }
+      throw new Error('Form not found');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async createForm(form: Types.FormCreate): Promise<Types.FormWithQuestions> {
+    try {
+      const response = await this.api.post<Types.ApiResponse<Types.FormWithQuestions>>(
+        '/api/forms',
+        form
+      );
+      const created = this.extractResult<Types.FormWithQuestions>(response.data, 'data');
+      if (created) {
+        return created;
+      }
+      throw new Error('Form creation failed');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async updateForm(formId: string, updates: Types.FormUpdate): Promise<Types.FormWithQuestions> {
+    try {
+      const response = await this.api.put<Types.ApiResponse<Types.FormWithQuestions>>(
+        `/api/forms/${formId}`,
+        updates
+      );
+      const updated = this.extractResult<Types.FormWithQuestions>(response.data, 'data');
+      if (updated) {
+        return updated;
+      }
+      throw new Error('Form update failed');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async deleteForm(formId: string): Promise<void> {
+    try {
+      await this.api.delete(`/api/forms/${formId}`);
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async submitFormResponse(token: string, response: Types.FormResponseCreate): Promise<void> {
+    try {
+      await this.api.post(`/api/forms/token/${token}/responses`, response);
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async getFormResponses(formId: string): Promise<Types.FormResponse[]> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.FormResponse[]>>(
+        `/api/forms/${formId}/responses`
+      );
+      return this.extractResult<Types.FormResponse[]>(response.data, 'data') ?? [];
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async getFormResponseDetail(formId: string, responseId: string): Promise<Types.FormResponseDetail> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.FormResponseDetail>>(
+        `/api/forms/${formId}/responses/${responseId}`
+      );
+      const data = this.extractResult<Types.FormResponseDetail>(response.data, 'data');
+      if (data) {
+        return data;
+      }
+      throw new Error('Response not found');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  // Ticket APIs
+  async listTicketCategories(): Promise<Types.TicketCategory[]> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.TicketCategory[]>>(
+        '/api/tickets/categories'
+      );
+      return this.extractResult<Types.TicketCategory[]>(response.data, 'categories') ?? [];
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async listTickets(params?: {
+    page?: number;
+    status?: Types.TicketStatus;
+    categoryId?: number;
+    assignedTo?: string;
+    searchQuery?: string;
+  }): Promise<Types.Ticket[]> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.Ticket[]>>('/api/tickets', {
+        params,
+      });
+      return this.extractResult<Types.Ticket[]>(response.data, 'tickets') ?? [];
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async getTicket(ticketId: number): Promise<Types.Ticket> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.Ticket>>(
+        `/api/tickets/${ticketId}`
+      );
+      const ticket = this.extractResult<Types.Ticket>(response.data, 'ticket');
+      if (ticket) {
+        return ticket;
+      }
+      throw new Error('Ticket not found');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async getTicketByToken(token: string): Promise<Types.Ticket> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.Ticket>>(
+        `/api/public/tickets/${token}`
+      );
+      const ticket = this.extractResult<Types.Ticket>(response.data, 'ticket');
+      if (ticket) {
+        return ticket;
+      }
+      throw new Error('Ticket not found');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async createTicket(ticket: Types.TicketCreate): Promise<Types.Ticket> {
+    try {
+      const response = await this.api.post<Types.ApiResponse<Types.Ticket>>(
+        '/api/public/tickets',
+        ticket
+      );
+      const created = this.extractResult<Types.Ticket>(response.data, 'ticket');
+      if (created) {
+        return created;
+      }
+      throw new Error('Ticket creation failed');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async updateTicket(ticketId: number, updates: Types.TicketUpdate): Promise<Types.Ticket> {
+    try {
+      const response = await this.api.put<Types.ApiResponse<Types.Ticket>>(
+        `/api/tickets/${ticketId}`,
+        updates
+      );
+      const updated = this.extractResult<Types.Ticket>(response.data, 'ticket');
+      if (updated) {
+        return updated;
+      }
+      throw new Error('Ticket update failed');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async deleteTicket(ticketId: number): Promise<void> {
+    try {
+      await this.api.delete(`/api/tickets/${ticketId}`);
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async listTicketComments(ticketId: number, includeInternal?: boolean): Promise<Types.TicketComment[]> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.TicketComment[]>>(
+        `/api/tickets/${ticketId}/comments`,
+        { params: { includeInternal } }
+      );
+      return this.extractResult<Types.TicketComment[]>(response.data, 'comments') ?? [];
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async listTicketCommentsByToken(token: string): Promise<Types.TicketComment[]> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.TicketComment[]>>(
+        `/api/public/tickets/${token}/comments`
+      );
+      return this.extractResult<Types.TicketComment[]>(response.data, 'comments') ?? [];
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async createTicketComment(
+    ticketId: number,
+    comment: Types.TicketCommentCreate
+  ): Promise<Types.TicketComment> {
+    try {
+      const response = await this.api.post<Types.ApiResponse<Types.TicketComment>>(
+        `/api/tickets/${ticketId}/comments`,
+        comment
+      );
+      const created = this.extractResult<Types.TicketComment>(response.data, 'comment');
+      if (created) {
+        return created;
+      }
+      throw new Error('Comment creation failed');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async createTicketCommentByToken(
+    token: string,
+    comment: { comment_text: string; commenter_name?: string }
+  ): Promise<Types.TicketComment> {
+    try {
+      const response = await this.api.post<Types.ApiResponse<Types.TicketComment>>(
+        `/api/public/tickets/${token}/comments`,
+        comment
+      );
+      const created = this.extractResult<Types.TicketComment>(response.data, 'comment');
+      if (created) {
+        return created;
+      }
+      throw new Error('Comment creation failed');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async listTicketAssignments(ticketId: number): Promise<Types.TicketAssignment[]> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.TicketAssignment[]>>(
+        `/api/tickets/${ticketId}/assignments`
+      );
+      return this.extractResult<Types.TicketAssignment[]>(response.data, 'assignments') ?? [];
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async assignTicket(ticketId: number, assignment: Types.TicketAssign): Promise<Types.TicketAssignment> {
+    try {
+      const response = await this.api.post<Types.ApiResponse<Types.TicketAssignment>>(
+        `/api/tickets/${ticketId}/assign`,
+        assignment
+      );
+      const created = this.extractResult<Types.TicketAssignment>(response.data, 'assignment');
+      if (created) {
+        return created;
+      }
+      throw new Error('Assignment failed');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async getTicketStats(assignedTo?: string): Promise<Types.TicketStats> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.TicketStats>>(
+        '/api/tickets/stats',
+        { params: { assignedTo } }
+      );
+      return this.extractResult<Types.TicketStats>(response.data, 'stats') ?? {
+        total: 0,
+        open: 0,
+        in_progress: 0,
+        waiting: 0,
+        solved: 0,
+      };
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  // Item APIs
+  async listItems(params?: { owner?: string }): Promise<Types.Item[]> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.Item[]>>('/api/items', {
+        params,
+      });
+      return this.extractResult<Types.Item[]>(response.data, 'data') ?? [];
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async getItem(itemId: string): Promise<Types.Item> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.Item>>(`/api/items/${itemId}`);
+      const item = this.extractResult<Types.Item>(response.data, 'data');
+      if (item) {
+        return item;
+      }
+      throw new Error('Item not found');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async createItem(item: Types.ItemCreate): Promise<Types.Item> {
+    try {
+      const response = await this.api.post<Types.ApiResponse<Types.Item>>('/api/items', item);
+      const created = this.extractResult<Types.Item>(response.data, 'data');
+      if (created) {
+        return created;
+      }
+      throw new Error('Item creation failed');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async updateItem(itemId: string, updates: Types.ItemUpdate): Promise<Types.Item> {
+    try {
+      const response = await this.api.put<Types.ApiResponse<Types.Item>>(
+        `/api/items/${itemId}`,
+        updates
+      );
+      const updated = this.extractResult<Types.Item>(response.data, 'data');
+      if (updated) {
+        return updated;
+      }
+      throw new Error('Item update failed');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async deleteItem(itemId: string): Promise<void> {
+    try {
+      await this.api.delete(`/api/items/${itemId}`);
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  // Item Borrowing APIs
+  async listItemBorrowings(params?: {
+    itemId?: string;
+    status?: Types.ItemBorrowingStatus;
+  }): Promise<Types.ItemBorrowing[]> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.ItemBorrowing[]>>(
+        '/api/item-borrowings',
+        { params }
+      );
+      return this.extractResult<Types.ItemBorrowing[]>(response.data, 'data') ?? [];
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async getItemBorrowing(borrowingId: string): Promise<Types.ItemBorrowing> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.ItemBorrowing>>(
+        `/api/item-borrowings/${borrowingId}`
+      );
+      const borrowing = this.extractResult<Types.ItemBorrowing>(response.data, 'data');
+      if (borrowing) {
+        return borrowing;
+      }
+      throw new Error('Borrowing not found');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async createItemBorrowing(borrowing: Types.ItemBorrowingCreate): Promise<Types.ItemBorrowing> {
+    try {
+      const response = await this.api.post<Types.ApiResponse<Types.ItemBorrowing>>(
+        '/api/item-borrowings',
+        borrowing
+      );
+      const created = this.extractResult<Types.ItemBorrowing>(response.data, 'data');
+      if (created) {
+        return created;
+      }
+      throw new Error('Borrowing creation failed');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async updateItemBorrowingStatus(
+    borrowingId: string,
+    updates: Types.ItemBorrowingUpdateStatus
+  ): Promise<Types.ItemBorrowing> {
+    try {
+      const response = await this.api.put<Types.ApiResponse<Types.ItemBorrowing>>(
+        `/api/item-borrowings/${borrowingId}`,
+        updates
+      );
+      const updated = this.extractResult<Types.ItemBorrowing>(response.data, 'data');
+      if (updated) {
+        return updated;
+      }
+      throw new Error('Borrowing update failed');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async cancelItemBorrowing(borrowingId: string): Promise<void> {
+    try {
+      await this.api.delete(`/api/item-borrowings/${borrowingId}`);
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  // Discussion APIs
+  async listDiscussions(): Promise<Types.Discussion[]> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.Discussion[]>>(
+        '/api/discussions'
+      );
+      return this.extractResult<Types.Discussion[]>(response.data, 'discussions') ?? [];
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async getDiscussion(discussionId: string): Promise<Types.DiscussionWithReplies> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.DiscussionWithReplies>>(
+        `/api/discussions/${discussionId}`
+      );
+      const discussion = this.extractResult<Types.DiscussionWithReplies>(response.data, 'discussion');
+      if (discussion) {
+        return discussion;
+      }
+      throw new Error('Discussion not found');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async createDiscussion(discussion: Types.DiscussionCreate): Promise<Types.DiscussionWithReplies> {
+    try {
+      const response = await this.api.post<Types.ApiResponse<Types.DiscussionWithReplies>>(
+        '/api/discussions',
+        discussion
+      );
+      const created = this.extractResult<Types.DiscussionWithReplies>(response.data, 'discussion');
+      if (created) {
+        return created;
+      }
+      throw new Error('Discussion creation failed');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async createDiscussionReply(
+    discussionId: string,
+    reply: Types.DiscussionReplyCreate
+  ): Promise<Types.DiscussionReply> {
+    try {
+      const response = await this.api.post<Types.ApiResponse<Types.DiscussionReply>>(
+        `/api/discussions/${discussionId}/replies`,
+        reply
+      );
+      const created = this.extractResult<Types.DiscussionReply>(response.data, 'reply');
+      if (created) {
+        return created;
+      }
+      throw new Error('Reply creation failed');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async deleteDiscussion(discussionId: string): Promise<void> {
+    try {
+      await this.api.delete(`/api/discussions/${discussionId}`);
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
 }
 
 // Export a singleton instance
