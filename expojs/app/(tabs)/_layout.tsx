@@ -125,6 +125,16 @@ export default function TabLayout() {
         }}
       />
       <Drawer.Screen
+        name="events"
+        options={{
+          title: 'Events',
+          drawerLabel: 'Events',
+          drawerIcon: ({ color, size }) => (
+            <IconButton icon="calendar-star" size={size} iconColor={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
         name="profile"
         options={{
           title: 'Profile',

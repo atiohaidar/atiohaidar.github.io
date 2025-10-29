@@ -1232,6 +1232,218 @@ class ApiService {
       this.handleError(error);
     }
   }
+
+  // ============================================================================
+  // Events API
+  // ============================================================================
+
+  async listEvents(): Promise<Types.Event[]> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.Event[]>>('/api/events');
+      const events = this.extractResult<Types.Event[]>(response.data, 'events');
+      return events || [];
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async getEvent(eventId: string): Promise<Types.Event> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.Event>>(
+        `/api/events/${eventId}`
+      );
+      const event = this.extractResult<Types.Event>(response.data, 'event');
+      if (event) {
+        return event;
+      }
+      throw new Error('Event not found');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async createEvent(event: Types.EventCreate): Promise<Types.Event> {
+    try {
+      const response = await this.api.post<Types.ApiResponse<Types.Event>>(
+        '/api/events',
+        event
+      );
+      const created = this.extractResult<Types.Event>(response.data, 'event');
+      if (created) {
+        return created;
+      }
+      throw new Error('Event creation failed');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async updateEvent(eventId: string, updates: Types.EventUpdate): Promise<Types.Event> {
+    try {
+      const response = await this.api.put<Types.ApiResponse<Types.Event>>(
+        `/api/events/${eventId}`,
+        updates
+      );
+      const updated = this.extractResult<Types.Event>(response.data, 'event');
+      if (updated) {
+        return updated;
+      }
+      throw new Error('Event update failed');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async deleteEvent(eventId: string): Promise<void> {
+    try {
+      await this.api.delete(`/api/events/${eventId}`);
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  // Event Attendees
+  async listEventAttendees(eventId: string): Promise<Types.EventAttendee[]> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.EventAttendee[]>>(
+        `/api/events/${eventId}/attendees`
+      );
+      const attendees = this.extractResult<Types.EventAttendee[]>(response.data, 'attendees');
+      return attendees || [];
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async registerForEvent(eventId: string): Promise<Types.EventAttendee> {
+    try {
+      const response = await this.api.post<Types.ApiResponse<Types.EventAttendee>>(
+        `/api/events/${eventId}/register`
+      );
+      const attendee = this.extractResult<Types.EventAttendee>(response.data, 'attendee');
+      if (attendee) {
+        return attendee;
+      }
+      throw new Error('Registration failed');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async unregisterFromEvent(eventId: string, attendeeId: string): Promise<void> {
+    try {
+      await this.api.delete(`/api/events/${eventId}/attendees/${attendeeId}`);
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async updateAttendeeStatus(
+    eventId: string,
+    attendeeId: string,
+    update: Types.EventAttendeeUpdateStatus
+  ): Promise<Types.EventAttendee> {
+    try {
+      const response = await this.api.patch<Types.ApiResponse<Types.EventAttendee>>(
+        `/api/events/${eventId}/attendees/${attendeeId}/status`,
+        update
+      );
+      const updated = this.extractResult<Types.EventAttendee>(response.data, 'attendee');
+      if (updated) {
+        return updated;
+      }
+      throw new Error('Status update failed');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  // Event Admins
+  async listEventAdmins(eventId: string): Promise<Types.EventAdmin[]> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.EventAdmin[]>>(
+        `/api/events/${eventId}/admins`
+      );
+      const admins = this.extractResult<Types.EventAdmin[]>(response.data, 'admins');
+      return admins || [];
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async assignEventAdmin(eventId: string, username: string): Promise<Types.EventAdmin> {
+    try {
+      const response = await this.api.post<Types.ApiResponse<Types.EventAdmin>>(
+        `/api/events/${eventId}/admins`,
+        { user_username: username }
+      );
+      const admin = this.extractResult<Types.EventAdmin>(response.data, 'admin');
+      if (admin) {
+        return admin;
+      }
+      throw new Error('Admin assignment failed');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async removeEventAdmin(eventId: string, username: string): Promise<void> {
+    try {
+      await this.api.delete(`/api/events/${eventId}/admins/${username}`);
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  // Event Attendance Scanning
+  async scanAttendance(
+    eventId: string,
+    scan: Types.AttendanceScanCreate
+  ): Promise<Types.ScanResponse> {
+    try {
+      const response = await this.api.post<Types.ApiResponse<Types.ScanResponse>>(
+        `/api/events/${eventId}/scan`,
+        scan
+      );
+      const result = this.extractResult<Types.ScanResponse>(response.data, 'result');
+      if (result) {
+        return result;
+      }
+      throw new Error('Scan failed');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async getEventScanHistory(eventId: string): Promise<Types.EventScanHistory[]> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.EventScanHistory[]>>(
+        `/api/events/${eventId}/scan-history`
+      );
+      const history = this.extractResult<Types.EventScanHistory[]>(response.data, 'history');
+      return history || [];
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async getAttendeeWithScans(
+    eventId: string,
+    attendeeId: string
+  ): Promise<Types.AttendeeWithScans> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.AttendeeWithScans>>(
+        `/api/events/${eventId}/attendees/${attendeeId}/scans`
+      );
+      const data = this.extractResult<Types.AttendeeWithScans>(response.data, 'data');
+      if (data) {
+        return data;
+      }
+      throw new Error('Failed to fetch attendee scans');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
 }
 
 // Export a singleton instance
