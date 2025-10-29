@@ -631,7 +631,7 @@ export class PublicTicketCommentCreate {
 		try {
 			const comment = await createTicketComment(
 				c.env.DB,
-				ticket.id,
+				ticket.id as number,
 				{ comment_text: body.comment_text, is_internal: false },
 				"guest",
 				body.commenter_name || ticket.submitter_name || "Guest"
@@ -677,7 +677,7 @@ export class PublicTicketCommentList {
 		}
 
 		// Only show non-internal comments to public
-		const comments = await listTicketComments(c.env.DB, ticket.id, false);
+		const comments = await listTicketComments(c.env.DB, ticket.id as number, false);
 		return c.json({ success: true, comments });
 	}
 }
