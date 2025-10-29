@@ -25,7 +25,7 @@ This document describes the implementation of TanStack Query (React Query), cent
 ```typescript
 // Query defaults
 - staleTime: 5 minutes
-- cacheTime: 10 minutes  
+- gcTime: 10 minutes (formerly cacheTime in v4)
 - retry: 2 attempts
 - refetchOnWindowFocus: false
 - refetchOnReconnect: true
@@ -241,9 +241,9 @@ Dashboard stat card colors:
 
 ```json
 {
-  "@tanstack/react-query": "latest",
-  "nativewind": "latest",
-  "tailwindcss": "latest"
+  "@tanstack/react-query": "^5.90.5",
+  "nativewind": "^4.2.1",
+  "tailwindcss": "^3.4.18"
 }
 ```
 
