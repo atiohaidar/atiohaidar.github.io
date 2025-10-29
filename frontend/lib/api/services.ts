@@ -97,8 +97,8 @@ export const taskService = {
         return response.tasks;
     },
 
-    get: async (slug: string): Promise<Task> => {
-        const response = await apiFetch<TaskResponse>(`/api/tasks/${slug}`);
+    get: async (id: number): Promise<Task> => {
+        const response = await apiFetch<TaskResponse>(`/api/tasks/${id}`);
         return response.task;
     },
 
@@ -110,8 +110,16 @@ export const taskService = {
         return response.task;
     },
 
-    delete: async (slug: string): Promise<Task> => {
-        const response = await apiFetch<TaskResponse>(`/api/tasks/${slug}`, {
+    update: async (id: number, updates: TaskUpdate): Promise<Task> => {
+        const response = await apiFetch<TaskResponse>(`/api/tasks/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(updates),
+        });
+        return response.task;
+    },
+
+    delete: async (id: number): Promise<Task> => {
+        const response = await apiFetch<TaskResponse>(`/api/tasks/${id}`, {
             method: 'DELETE',
         });
         return response.task;
@@ -269,6 +277,7 @@ export const deleteUser = userService.delete;
 export const listTasks = taskService.list;
 export const getTask = taskService.get;
 export const createTask = taskService.create;
+export const updateTask = taskService.update;
 export const deleteTask = taskService.delete;
 export const listArticles = articleService.list;
 export const getArticle = articleService.get;

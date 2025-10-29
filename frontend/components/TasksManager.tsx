@@ -17,7 +17,6 @@ const TasksManager: React.FC = () => {
 
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [newTask, setNewTask] = useState<TaskCreate>({
-        slug: '',
         name: '',
         description: '',
         completed: false,
@@ -27,17 +26,17 @@ const TasksManager: React.FC = () => {
         e.preventDefault();
         try {
             await createTaskMutation.mutateAsync(newTask);
-            setNewTask({ slug: '', name: '', description: '', completed: false });
+            setNewTask({ name: '', description: '', completed: false });
             setShowCreateForm(false);
         } catch (error) {
             // Error handled by mutation
         }
     };
 
-    const handleDeleteTask = async (slug: string) => {
-        if (window.confirm(`Are you sure you want to delete task "${slug}"?`)) {
+    const handleDeleteTask = async (taskId: number, taskName: string) => {
+        if (window.confirm(`Are you sure you want to delete task "${taskName}"?`)) {
             try {
-                await deleteTaskMutation.mutateAsync(slug);
+                await deleteTaskMutation.mutateAsync(taskId);
             } catch (error) {
                 // Error handled by mutation
             }
@@ -94,14 +93,6 @@ const TasksManager: React.FC = () => {
                     <div className="space-y-3">
                         <input
                             type="text"
-                            placeholder="Slug (unique identifier, e.g., 'clean-room')"
-                            value={newTask.slug}
-                            onChange={(e) => setNewTask({ ...newTask, slug: e.target.value })}
-                            className={`w-full px-4 py-2 rounded-lg ${palette.input}`}
-                            required
-                        />
-                        <input
-                            type="text"
                             placeholder="Task name"
                             value={newTask.name}
                             onChange={(e) => setNewTask({ ...newTask, name: e.target.value })}
@@ -147,7 +138,7 @@ const TasksManager: React.FC = () => {
                     </div>
                 ) : (
                     tasks?.map((task) => (
-                        <div key={task.slug} className={`${palette.panel.bg} ${palette.panel.border} ${palette.panel.text} p-4 rounded-lg`}>
+                        <div key={task.id} className={`${palette.panel.bg} ${palette.panel.border} ${palette.panel.text} p-4 rounded-lg`}>
                             <div className="flex justify-between items-start">
                                 <div className="flex-1">
                                     <div className="flex items-center gap-3 mb-2">
@@ -166,12 +157,12 @@ const TasksManager: React.FC = () => {
                                         <p className={`${palette.panel.textMuted} text-sm mb-2`}>{task.description}</p>
                                     )}
                                     <p className={`${palette.panel.textMuted} text-xs`}>
-                                        Slug: {task.slug}
-                                        {task.created_at && ` • Created: ${new Date(task.created_at).toLocaleDateString()}`}
+                                        {task.created_at && `Created: ${new Date(task.created_at).toLocaleDateString()}`}
+                                        {task.updated_at && ` • Updated: ${new Date(task.updated_at).toLocaleDateString()}`}
                                     </p>
                                 </div>
                                 <button
-                                    onClick={() => handleDeleteTask(task.slug)}
+                                    onClick={() => handleDeleteTask(task.id, task.name)}
                                     disabled={deleteTaskMutation.isPending}
                                     className={`px-3 py-1 text-sm rounded transition-colors ml-4 ${palette.buttons.danger} disabled:opacity-50 disabled:cursor-not-allowed`}
                                 >

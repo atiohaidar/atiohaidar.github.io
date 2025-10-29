@@ -13,6 +13,8 @@ import DashboardTasksPage from './pages/DashboardTasksPage';
 import DashboardChatPage from './pages/DashboardChatPage';
 import DashboardUsersPage from './pages/DashboardUsersPage';
 import DashboardArticlesPage from './pages/DashboardArticlesPage';
+import ArticleCreatePage from './pages/ArticleCreatePage';
+import ArticleEditPage from './pages/ArticleEditPage';
 import DashboardRoomsPage from './pages/DashboardRoomsPage';
 import DashboardBookingsPage from './pages/DashboardBookingsPage';
 import DashboardRoomFormPage from './pages/DashboardRoomFormPage';
@@ -51,7 +53,11 @@ const App: React.FC = () => {
                                     </ProtectedRoute>
                                 } 
                             />
-                            <Route path="articles" element={<DashboardArticlesPage />} />
+                            <Route path="articles">
+                                <Route index element={<DashboardArticlesPage />} />
+                                <Route path="new" element={<ArticleCreatePage />} />
+                                <Route path=":slug/edit" element={<ArticleEditPage />} />
+                            </Route>
                             <Route 
                                 path="rooms" 
                                 element={

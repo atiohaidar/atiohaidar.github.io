@@ -202,18 +202,23 @@ class ApiService {
   }
 
   // Task APIs
-  async listTasks(): Promise<Types.Task[]> {
+  async listTasks(params?: { page?: number; isCompleted?: boolean }): Promise<Types.Task[]> {
     try {
-      const response = await this.api.get<Types.ApiResponse<Types.Task[]>>('/api/tasks');
+      const response = await this.api.get<Types.ApiResponse<Types.Task[]>>('/api/tasks', {
+        params: {
+          page: params?.page ?? 0,
+          isCompleted: params?.isCompleted,
+        },
+      });
       return this.extractResult<Types.Task[]>(response.data, 'tasks') ?? [];
     } catch (error) {
       this.handleError(error);
     }
   }
 
-  async getTask(slug: string): Promise<Types.Task> {
+  async getTask(id: number): Promise<Types.Task> {
     try {
-      const response = await this.api.get<Types.ApiResponse<Types.Task>>(`/api/tasks/${slug}`);
+      const response = await this.api.get<Types.ApiResponse<Types.Task>>(`/api/tasks/${id}`);
       const task = this.extractResult<Types.Task>(response.data, 'task');
       if (task) {
         return task;
@@ -237,10 +242,10 @@ class ApiService {
     }
   }
 
-  async updateTask(slug: string, updates: Types.TaskUpdate): Promise<Types.Task> {
+  async updateTask(id: number, updates: Types.TaskUpdate): Promise<Types.Task> {
     try {
       const response = await this.api.put<Types.ApiResponse<Types.Task>>(
-        `/api/tasks/${slug}`,
+        `/api/tasks/${id}`,
         updates
       );
       const updated = this.extractResult<Types.Task>(response.data, 'task');
@@ -253,9 +258,9 @@ class ApiService {
     }
   }
 
-  async deleteTask(slug: string): Promise<void> {
+  async deleteTask(id: number): Promise<void> {
     try {
-      await this.api.delete(`/api/tasks/${slug}`);
+      await this.api.delete(`/api/tasks/${id}`);
     } catch (error) {
       this.handleError(error);
     }

@@ -33,7 +33,7 @@ export interface LoginResponse {
 }
 
 export interface Task {
-  slug: string;
+  id: number;
   name: string;
   description?: string;
   completed: boolean;
@@ -44,7 +44,6 @@ export interface Task {
 }
 
 export interface TaskCreate {
-  slug: string;
   name: string;
   description?: string;
   completed?: boolean;

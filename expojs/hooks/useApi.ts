@@ -125,18 +125,20 @@ export const useDeleteUser = () => {
 // Task Hooks
 // ============================================================================
 
-export const useTasks = () => {
+export const useTasks = (params?: { page?: number; isCompleted?: boolean }) => {
   return useQuery({
-    queryKey: queryKeys.tasks,
-    queryFn: () => ApiService.listTasks(),
+    queryKey: params ? [...queryKeys.tasks, params] : queryKeys.tasks,
+    queryFn: () => ApiService.listTasks(params),
   });
 };
 
-export const useTask = (slug: string) => {
+export const useTask = (id?: number) => {
+  const queryKey = id != null ? queryKeys.task(id) : [...queryKeys.tasks, 'detail', 'pending'] as const;
+
   return useQuery({
-    queryKey: queryKeys.task(slug),
-    queryFn: () => ApiService.getTask(slug),
-    enabled: !!slug,
+    queryKey,
+    queryFn: () => ApiService.getTask(id as number),
+    enabled: typeof id === 'number',
   });
 };
 
@@ -156,11 +158,11 @@ export const useUpdateTask = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: ({ slug, updates }: { slug: string; updates: Types.TaskUpdate }) =>
-      ApiService.updateTask(slug, updates),
+    mutationFn: ({ id, updates }: { id: number; updates: Types.TaskUpdate }) =>
+      ApiService.updateTask(id, updates),
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.tasks });
-      queryClient.invalidateQueries({ queryKey: queryKeys.task(variables.slug) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.task(variables.id) });
       queryClient.invalidateQueries({ queryKey: queryKeys.stats });
     },
   });
@@ -170,7 +172,7 @@ export const useDeleteTask = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: (slug: string) => ApiService.deleteTask(slug),
+    mutationFn: (id: number) => ApiService.deleteTask(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.tasks });
       queryClient.invalidateQueries({ queryKey: queryKeys.stats });

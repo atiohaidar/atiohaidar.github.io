@@ -1,34 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, StyleSheet, ScrollView, Alert } from 'react-native';
-import {
-  Card,
-  Text,
-  TextInput,
-  Button,
-  Avatar,
-  ActivityIndicator,
-  useTheme,
-  Divider,
-} from 'react-native-paper';
+import { Card, Text, Button, ActivityIndicator, Divider } from 'react-native-paper';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUpdateSelfProfile } from '@/hooks/useApi';
 import { AppColors } from '@/constants/colors';
+import { ProfileHeader } from './profile/components/ProfileHeader';
+import { ProfileInfoSection } from './profile/components/ProfileInfoSection';
+import { PasswordSection } from './profile/components/PasswordSection';
+import { ProfileFormData, ProfileFormErrors } from './profile/types';
 
 export default function ProfileScreen() {
   const { user, logout } = useAuth();
-  const theme = useTheme();
   const updateProfileMutation = useUpdateSelfProfile();
-  
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ProfileFormData>({
     name: user?.name || '',
     password: '',
     confirmPassword: '',
   });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<ProfileFormErrors>({});
+
+  const roleLabel = useMemo(() => {
+    if (!user) return '';
+    return user.role === 'admin' ? 'Administrator' : 'Member';
+  }, [user]);
+
+  const handleFormChange = (field: keyof ProfileFormData, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const validateForm = () => {
-    const newErrors: Record<string, string> = {};
+    const newErrors: ProfileFormErrors = {};
 
     if (!formData.name.trim()) {
       newErrors.name = 'Name is required';
@@ -52,11 +54,10 @@ export default function ProfileScreen() {
     }
 
     try {
-      const updates: any = {
+      const updates: { name: string; password?: string } = {
         name: formData.name,
       };
 
-      // Only include password if it was changed
       if (formData.password) {
         updates.password = formData.password;
       }
@@ -65,11 +66,11 @@ export default function ProfileScreen() {
 
       Alert.alert('Success', 'Profile updated successfully!');
       setIsEditing(false);
-      setFormData({
-        ...formData,
+      setFormData((prev) => ({
+        name: prev.name,
         password: '',
         confirmPassword: '',
-      });
+      }));
     } catch (error) {
       Alert.alert(
         'Error',
@@ -114,112 +115,28 @@ export default function ProfileScreen() {
     <ScrollView style={styles.container}>
       <Card style={styles.card} mode="elevated">
         <Card.Content>
-          {/* Avatar and Username Section */}
-          <View style={styles.avatarSection}>
-            <Avatar.Text
-              size={80}
-              label={user.name?.substring(0, 2).toUpperCase() || user.username.substring(0, 2).toUpperCase()}
-              style={{ backgroundColor: AppColors.primary }}
-            />
-            <Text variant="headlineSmall" style={styles.username}>
-              @{user.username}
-            </Text>
-            <Text
-              variant="bodyMedium"
-              style={{ color: theme.colors.onSurfaceVariant, marginTop: 4 }}
-            >
-              {user.role === 'admin' ? 'Administrator' : 'Member'}
-            </Text>
-          </View>
+          <ProfileHeader user={user} />
 
           <Divider style={styles.divider} />
 
-          {/* Profile Information */}
-          <View style={styles.section}>
-            <Text variant="titleMedium" style={styles.sectionTitle}>
-              Profile Information
-            </Text>
-
-            <TextInput
-              label="Full Name"
-              value={formData.name}
-              onChangeText={(text) => setFormData({ ...formData, name: text })}
-              disabled={!isEditing}
-              error={!!errors.name}
-              style={styles.input}
-              mode="outlined"
-            />
-            {errors.name && (
-              <Text variant="bodySmall" style={styles.errorText}>
-                {errors.name}
-              </Text>
-            )}
-
-            <TextInput
-              label="Username"
-              value={user.username}
-              disabled
-              style={styles.input}
-              mode="outlined"
-            />
-
-            <TextInput
-              label="Role"
-              value={user.role === 'admin' ? 'Administrator' : 'Member'}
-              disabled
-              style={styles.input}
-              mode="outlined"
-            />
-          </View>
+          <ProfileInfoSection
+            formData={formData}
+            errors={errors}
+            isEditing={isEditing}
+            username={user.username}
+            roleLabel={roleLabel}
+            onChange={handleFormChange}
+          />
 
           {isEditing && (
             <>
               <Divider style={styles.divider} />
 
-              {/* Change Password Section */}
-              <View style={styles.section}>
-                <Text variant="titleMedium" style={styles.sectionTitle}>
-                  Change Password (Optional)
-                </Text>
-                <Text
-                  variant="bodySmall"
-                  style={{ color: theme.colors.onSurfaceVariant, marginBottom: 12 }}
-                >
-                  Leave blank to keep current password
-                </Text>
-
-                <TextInput
-                  label="New Password"
-                  value={formData.password}
-                  onChangeText={(text) => setFormData({ ...formData, password: text })}
-                  secureTextEntry
-                  error={!!errors.password}
-                  style={styles.input}
-                  mode="outlined"
-                  autoCapitalize="none"
-                />
-                {errors.password && (
-                  <Text variant="bodySmall" style={styles.errorText}>
-                    {errors.password}
-                  </Text>
-                )}
-
-                <TextInput
-                  label="Confirm New Password"
-                  value={formData.confirmPassword}
-                  onChangeText={(text) => setFormData({ ...formData, confirmPassword: text })}
-                  secureTextEntry
-                  error={!!errors.confirmPassword}
-                  style={styles.input}
-                  mode="outlined"
-                  autoCapitalize="none"
-                />
-                {errors.confirmPassword && (
-                  <Text variant="bodySmall" style={styles.errorText}>
-                    {errors.confirmPassword}
-                  </Text>
-                )}
-              </View>
+              <PasswordSection
+                formData={formData}
+                errors={errors}
+                onChange={handleFormChange}
+              />
             </>
           )}
 
@@ -274,7 +191,6 @@ export default function ProfileScreen() {
         </Card.Content>
       </Card>
 
-      {/* Account Information Card */}
       <Card style={styles.card} mode="elevated">
         <Card.Content>
           <Text variant="titleMedium" style={styles.sectionTitle}>
@@ -316,31 +232,12 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     elevation: 2,
   },
-  avatarSection: {
-    alignItems: 'center',
-    paddingVertical: 16,
-  },
-  username: {
-    marginTop: 12,
-    fontWeight: 'bold',
-  },
   divider: {
     marginVertical: 16,
-  },
-  section: {
-    marginBottom: 8,
   },
   sectionTitle: {
     fontWeight: 'bold',
     marginBottom: 12,
-  },
-  input: {
-    marginBottom: 8,
-  },
-  errorText: {
-    color: AppColors.error,
-    marginBottom: 8,
-    marginLeft: 12,
   },
   buttonContainer: {
     gap: 12,

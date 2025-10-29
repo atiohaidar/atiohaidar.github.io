@@ -19,7 +19,7 @@ import { setAuthToken, setStoredUser, removeAuthToken, removeStoredUser } from '
 export const queryKeys = {
     users: ['users'] as const,
     tasks: ['tasks'] as const,
-    task: (slug: string) => ['tasks', slug] as const,
+    task: (id: number) => ['tasks', 'detail', id] as const,
 };
 
 // Auth hooks
@@ -92,11 +92,13 @@ export const useTasks = (params?: { page?: number; isCompleted?: boolean }): Use
     });
 };
 
-export const useTask = (slug: string): UseQueryResult<Task, Error> => {
+export const useTask = (id: number | null): UseQueryResult<Task, Error> => {
+    const queryKey = id != null ? queryKeys.task(id) : (['tasks', 'detail', 'pending'] as const);
+
     return useQuery({
-        queryKey: queryKeys.task(slug),
-        queryFn: () => api.getTask(slug),
-        enabled: !!slug,
+        queryKey,
+        queryFn: () => api.getTask(id as number),
+        enabled: typeof id === 'number',
     });
 };
 
@@ -111,7 +113,7 @@ export const useCreateTask = (): UseMutationResult<Task, Error, TaskCreate> => {
     });
 };
 
-export const useDeleteTask = (): UseMutationResult<Task, Error, string> => {
+export const useDeleteTask = (): UseMutationResult<Task, Error, number> => {
     const queryClient = useQueryClient();
     
     return useMutation({

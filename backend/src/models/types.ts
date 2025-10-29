@@ -1,4 +1,4 @@
-import { Bool, DateTime, Str } from "chanfana";
+import { Bool, DateTime, Num, Str } from "chanfana";
 import type { Context } from "hono";
 import { z } from "zod";
 
@@ -9,7 +9,7 @@ export type Bindings = {
 export type AppContext = Context<{ Bindings: Bindings }>;
 
 export const Task = z.object({
-	slug: Str({ description: "Unique identifier", example: "clean-room" }),
+	id: Num({ description: "Auto-incrementing identifier", example: 1 }),
 	name: Str({ example: "Clean my room" }),
 	description: Str({ required: false, example: "Tidy up before guests come" }),
 	completed: Bool({ default: false }),
@@ -20,7 +20,6 @@ export const Task = z.object({
 });
 
 export const TaskCreateSchema = z.object({
-	slug: Str({ example: "clean-room" }),
 	name: Str({ example: "Clean my room" }),
 	description: Str({ required: false }),
 	completed: Bool({ default: false }),

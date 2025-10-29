@@ -73,9 +73,9 @@ export const registerRoutes = (openapi: any) => {
 	// Task routes
 	openapi.get("/api/tasks", TaskController.list, { schema: TaskController.listSchema });
 	openapi.post("/api/tasks", TaskController.create, { schema: TaskController.createSchema });
-	openapi.get("/api/tasks/:taskSlug", TaskController.get, { schema: TaskController.getSchema });
-	openapi.put("/api/tasks/:taskSlug", TaskController.update, { schema: TaskController.updateSchema });
-	openapi.delete("/api/tasks/:taskSlug", TaskController.delete, { schema: TaskController.deleteSchema });
+	openapi.get("/api/tasks/:taskId", TaskController.get, { schema: TaskController.getSchema });
+	openapi.put("/api/tasks/:taskId", TaskController.update, { schema: TaskController.updateSchema });
+	openapi.delete("/api/tasks/:taskId", TaskController.delete, { schema: TaskController.deleteSchema });
 
 	// Article routes
 	openapi.get("/api/articles", ArticleList);

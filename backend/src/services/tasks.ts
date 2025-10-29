@@ -21,11 +21,10 @@ let initializedPromise: Promise<void> | undefined;
 const ensureInitialized = async (db: D1Database) => {
 	if (!initializedPromise) {
 		initializedPromise = (async () => {
-			// Use batch for multiple statements
 			await db.batch([
 				db.prepare(`
 					CREATE TABLE IF NOT EXISTS tasks (
-						slug TEXT PRIMARY KEY,
+						id INTEGER PRIMARY KEY AUTOINCREMENT,
 						name TEXT NOT NULL,
 						description TEXT,
 						completed INTEGER NOT NULL DEFAULT 0,
@@ -35,14 +34,9 @@ const ensureInitialized = async (db: D1Database) => {
 						updated_at TEXT DEFAULT CURRENT_TIMESTAMP
 					)
 				`),
-				db.prepare(`
-					CREATE TRIGGER IF NOT EXISTS tasks_updated_at
-					AFTER UPDATE ON tasks
-					FOR EACH ROW
-					BEGIN
-						UPDATE tasks SET updated_at = CURRENT_TIMESTAMP WHERE slug = OLD.slug;
-					END
-				`)
+				db.prepare(
+					"CREATE INDEX IF NOT EXISTS idx_tasks_owner ON tasks(owner)",
+				),
 			]);
 		})();
 	}
@@ -52,7 +46,7 @@ const ensureInitialized = async (db: D1Database) => {
 
 const toTask = (row: Record<string, unknown>) => {
 	const normalized: Record<string, unknown> = {
-		slug: row.slug,
+		id: row.id,
 		name: row.name,
 		description: row.description ?? undefined,
 		completed: Boolean(row.completed),
@@ -80,7 +74,8 @@ export const listTasks = async (
 	const pageSize = 20;
 	const offset = Math.max(page, 0) * pageSize;
 
-	let query = "SELECT slug, name, description, completed, due_date, owner, created_at, updated_at FROM tasks";
+	let query =
+		"SELECT id, name, description, completed, due_date, owner, created_at, updated_at FROM tasks";
 	const bindings: unknown[] = [];
 	const conditions: string[] = [];
 
@@ -106,33 +101,32 @@ export const listTasks = async (
 	return (results ?? []).map((row) => toTask(row as Record<string, unknown>));
 };
 
-export const getTask = async (db: D1Database, slug: string) => {
+export const getTask = async (db: D1Database, id: number) => {
 	await ensureInitialized(db);
 	const row = await db
 		.prepare(
-			"SELECT slug, name, description, completed, due_date, owner, created_at, updated_at FROM tasks WHERE slug = ?",
+			"SELECT id, name, description, completed, due_date, owner, created_at, updated_at FROM tasks WHERE id = ?",
 		)
-		.bind(slug)
+		.bind(id)
 		.first();
 
 	return row ? toTask(row as Record<string, unknown>) : undefined;
 };
 
 export const createTask = async (
-	db: D1Database, 
+	db: D1Database,
 	input: z.infer<typeof TaskCreateSchema>,
-	owner?: string
+	owner?: string,
 ) => {
 	await ensureInitialized(db);
 	const data = TaskCreateSchema.parse(input);
 
 	try {
-		await db
+		const result = await db
 			.prepare(
-				"INSERT INTO tasks (slug, name, description, completed, due_date, owner) VALUES (?, ?, ?, ?, ?, ?)",
+				"INSERT INTO tasks (name, description, completed, due_date, owner) VALUES (?, ?, ?, ?, ?)",
 			)
 			.bind(
-				data.slug,
 				data.name,
 				data.description ?? null,
 				data.completed ? 1 : 0,
@@ -140,25 +134,26 @@ export const createTask = async (
 				owner ?? null,
 			)
 			.run();
-	} catch (error) {
-		if (error instanceof Error && error.message.includes("UNIQUE")) {
-			throw new Error("Slug task sudah digunakan");
+
+		const insertedId = result.meta?.last_row_id;
+		if (typeof insertedId !== "number") {
+			throw new Error("Gagal mendapatkan ID task yang baru dibuat");
 		}
 
+		const task = await getTask(db, insertedId);
+		if (!task) {
+			throw new Error("Gagal mengambil task setelah membuat data");
+		}
+
+		return task;
+	} catch (error) {
 		throw error;
 	}
-
-	const task = await getTask(db, data.slug);
-	if (!task) {
-		throw new Error("Gagal mengambil task setelah membuat data");
-	}
-
-	return task;
 };
 
 export const updateTask = async (
 	db: D1Database,
-	slug: string,
+	id: number,
 	input: z.infer<typeof TaskUpdateSchema>,
 ) => {
 	await ensureInitialized(db);
@@ -191,15 +186,15 @@ export const updateTask = async (
 		throw new Error("Minimal satu field harus diisi");
 	}
 
-	values.push(slug);
-	const statement = `UPDATE tasks SET ${setFragments.join(", ")} WHERE slug = ?`;
+	values.push(id);
+	const statement = `UPDATE tasks SET ${setFragments.join(", ")}, updated_at = CURRENT_TIMESTAMP WHERE id = ?`;
 	const result = await db.prepare(statement).bind(...values).run();
 
 	if ((result.meta?.changes ?? 0) === 0) {
 		throw new Error("Task tidak ditemukan");
 	}
 
-	const task = await getTask(db, slug);
+	const task = await getTask(db, id);
 	if (!task) {
 		throw new Error("Gagal mengambil task setelah pembaruan");
 	}
@@ -207,13 +202,13 @@ export const updateTask = async (
 	return task;
 };
 
-export const deleteTask = async (db: D1Database, slug: string) => {
+export const deleteTask = async (db: D1Database, id: number) => {
 	await ensureInitialized(db);
-	const existing = await getTask(db, slug);
+	const existing = await getTask(db, id);
 	if (!existing) {
 		throw new Error("Task tidak ditemukan");
 	}
 
-	await db.prepare("DELETE FROM tasks WHERE slug = ?").bind(slug).run();
+	await db.prepare("DELETE FROM tasks WHERE id = ?").bind(id).run();
 	return existing;
 };

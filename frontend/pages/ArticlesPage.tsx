@@ -1,15 +1,92 @@
 import React, { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
+import type { Components } from 'react-markdown';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { listArticles } from '../apiService';
+import { listArticles, getArticle } from '../apiService';
 import { getAuthToken, getStoredUser, clearAuth } from '../apiClient';
 import { COLORS, LAYOUT, SPACING } from '../utils/styles';
 import type { Article } from '../apiTypes';
 import type { Profile } from '../types';
 import { getProfile } from '../api';
+
+const EXCERPT_MAX_CHARS = 400;
+const EXCERPT_MAX_BLOCKS = 3;
+
+const buildArticleExcerpt = (content: string): string => {
+    const normalized = content.replace(/\r\n/g, '\n').trim();
+    if (!normalized) {
+        return '';
+    }
+
+    const blocks = normalized.split('\n\n').filter((block) => block.trim().length > 0);
+    const selectedBlocks: string[] = [];
+    let charCount = 0;
+
+    for (const block of blocks) {
+        selectedBlocks.push(block);
+        charCount += block.length;
+
+        if (selectedBlocks.length >= EXCERPT_MAX_BLOCKS || charCount >= EXCERPT_MAX_CHARS) {
+            break;
+        }
+    }
+
+    let excerpt = selectedBlocks.join('\n\n').trim();
+
+    if (blocks.length > selectedBlocks.length || charCount < normalized.length) {
+        excerpt = `${excerpt}\n\n…`;
+    }
+
+    return excerpt;
+};
+
+const renderCodeBlock = (props: any) => {
+    const { className, children, inline = false, ...rest } = props ?? {};
+    return (
+        <code
+            className={`${className ?? ''} ${inline ? 'bg-gray-100 dark:bg-light-navy px-1 py-0.5 rounded' : ''}`.trim()}
+            {...rest}
+        >
+            {children}
+        </code>
+    );
+};
+
+const detailComponents: Components = {
+    a: ({ node, ...props }) => (
+        <a className="text-light-accent dark:text-accent-blue hover:underline" {...props} />
+    ),
+    code: renderCodeBlock,
+};
+
+const listComponents: Components = {
+    h1: ({ node, ...props }) => (
+        <h3 className="text-xl font-semibold text-light-text dark:text-white" {...props} />
+    ),
+    h2: ({ node, ...props }) => (
+        <h4 className="text-lg font-semibold text-light-text dark:text-white" {...props} />
+    ),
+    h3: ({ node, ...props }) => (
+        <h5 className="text-base font-semibold text-light-text dark:text-white" {...props} />
+    ),
+    p: ({ node, ...props }) => (
+        <p className="text-sm text-light-text dark:text-light-slate" {...props} />
+    ),
+    a: ({ node, ...props }) => (
+        <a className="text-light-accent dark:text-accent-blue hover:underline" {...props} />
+    ),
+    code: renderCodeBlock,
+    ul: ({ node, ...props }) => (
+        <ul className="list-disc pl-5 text-sm text-light-text dark:text-light-slate" {...props} />
+    ),
+    ol: ({ node, ...props }) => (
+        <ol className="list-decimal pl-5 text-sm text-light-text dark:text-light-slate" {...props} />
+    ),
+};
 
 const ArticlesPage: React.FC = () => {
     const navigate = useNavigate();
@@ -19,6 +96,8 @@ const ArticlesPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [loggedInUser, setLoggedInUser] = useState<string | null>(null);
     const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+    const [detailLoading, setDetailLoading] = useState(false);
+    const [detailError, setDetailError] = useState<string | null>(null);
 
     useEffect(() => {
         const token = getAuthToken();
@@ -61,6 +140,25 @@ const ArticlesPage: React.FC = () => {
             month: 'long',
             day: 'numeric',
         });
+    };
+
+    const handleSelectArticle = async (article: Article) => {
+        setDetailLoading(true);
+        setDetailError(null);
+        try {
+            const detail = await getArticle(article.slug);
+            setSelectedArticle(detail);
+        } catch (err) {
+            console.error(err);
+            setDetailError('Gagal memuat detail artikel.');
+        } finally {
+            setDetailLoading(false);
+        }
+    };
+
+    const handleBackToList = () => {
+        setSelectedArticle(null);
+        setDetailError(null);
     };
 
     if (loading) {
@@ -116,12 +214,21 @@ const ArticlesPage: React.FC = () => {
                         /* Article Detail View */
                         <div className="max-w-4xl mx-auto">
                             <button
-                                onClick={() => setSelectedArticle(null)}
+                                onClick={handleBackToList}
                                 className="flex items-center gap-2 text-light-accent dark:text-accent-blue hover:text-light-accent/80 dark:hover:text-accent-blue/80 mb-6 transition-colors"
                             >
                                 ← Kembali ke daftar artikel
                             </button>
 
+                            {detailLoading ? (
+                                <div className="bg-white dark:bg-light-navy rounded-xl p-8 border border-gray-300 dark:border-light-slate/20 text-center">
+                                    <p className="text-light-muted dark:text-light-slate">Memuat artikel…</p>
+                                </div>
+                            ) : detailError ? (
+                                <div className="bg-status-danger-muted border border-status-danger/40 text-status-danger-dark rounded-xl p-6">
+                                    {detailError}
+                                </div>
+                            ) : (
                             <article className="bg-white dark:bg-light-navy rounded-xl p-8 md:p-12 border border-gray-300 dark:border-light-slate/20">
                                 <h1 className="text-3xl md:text-4xl font-bold text-light-text dark:text-white mb-4">
                                     {selectedArticle.title}
@@ -136,24 +243,14 @@ const ArticlesPage: React.FC = () => {
                                 <div className="prose dark:prose-invert prose-lg max-w-none text-light-text dark:text-light-slate">
                                     <ReactMarkdown
                                         remarkPlugins={[remarkGfm]}
-                                        components={{
-                                            a: ({ node, ...props }) => (
-                                                <a className="text-light-accent dark:text-accent-blue hover:underline" {...props} />
-                                            ),
-                                            code: ({ node, inline, className, children, ...props }) => (
-                                                <code
-                                                    className={`${className ?? ''} ${inline ? 'bg-gray-100 dark:bg-light-navy px-1 py-0.5 rounded' : ''}`.trim()}
-                                                    {...props}
-                                                >
-                                                    {children}
-                                                </code>
-                                            ),
-                                        }}
+                                        rehypePlugins={[rehypeRaw]}
+                                        components={detailComponents}
                                     >
                                         {selectedArticle.content}
                                     </ReactMarkdown>
                                 </div>
                             </article>
+                            )}
                         </div>
                     ) : (
                         /* Articles Grid */
@@ -162,7 +259,7 @@ const ArticlesPage: React.FC = () => {
                                 <div
                                     key={article.slug}
                                     className="bg-white dark:bg-light-navy rounded-xl p-6 border border-gray-300 dark:border-light-slate/20 hover:border-light-accent dark:hover:border-accent-blue/50 transition-all duration-300 cursor-pointer group"
-                                    onClick={() => setSelectedArticle(article)}
+                                    onClick={() => handleSelectArticle(article)}
                                 >
                                     <h2 className="text-2xl font-bold text-light-text dark:text-white mb-3 group-hover:text-light-accent dark:group-hover:text-accent-blue transition-colors">
                                         {article.title}
@@ -172,10 +269,16 @@ const ArticlesPage: React.FC = () => {
                                         📅 {formatDate(article.created_at)}
                                     </p>
 
-                                    <p className="text-light-text dark:text-light-slate line-clamp-3 mb-4">
-                                        {article.content.substring(0, 200)}
-                                        {article.content.length > 200 ? '...' : ''}
-                                    </p>
+                                    <div className="mb-4 overflow-hidden">
+                                        <ReactMarkdown
+                                            remarkPlugins={[remarkGfm]}
+                                            rehypePlugins={[rehypeRaw]}
+                                            className="prose prose-sm dark:prose-invert max-w-none text-light-text dark:text-light-slate line-clamp-4"
+                                            components={listComponents}
+                                        >
+                                            {buildArticleExcerpt(article.content)}
+                                        </ReactMarkdown>
+                                    </div>
 
                                     <div className="flex items-center text-light-accent dark:text-accent-blue text-sm font-medium group-hover:gap-2 transition-all">
                                         <span>Baca selengkapnya</span>
