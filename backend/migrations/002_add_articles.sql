@@ -8,9 +8,3 @@ CREATE TABLE IF NOT EXISTS articles (
   updated_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TRIGGER IF NOT EXISTS articles_updated_at
-AFTER UPDATE ON articles
-FOR EACH ROW
-BEGIN
-  UPDATE articles SET updated_at = CURRENT_TIMESTAMP WHERE slug = OLD.slug;
-END;

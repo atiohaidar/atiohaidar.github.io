@@ -9,14 +9,6 @@ CREATE TABLE IF NOT EXISTS rooms (
   updated_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create trigger for rooms updated_at
-CREATE TRIGGER IF NOT EXISTS rooms_updated_at
-AFTER UPDATE ON rooms
-FOR EACH ROW
-BEGIN
-  UPDATE rooms SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
-END;
-
 -- Create bookings table
 CREATE TABLE IF NOT EXISTS bookings (
   id TEXT PRIMARY KEY,
@@ -32,13 +24,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   FOREIGN KEY (user_username) REFERENCES users(username) ON DELETE CASCADE
 );
 
--- Create trigger for bookings updated_at
-CREATE TRIGGER IF NOT EXISTS bookings_updated_at
-AFTER UPDATE ON bookings
-FOR EACH ROW
-BEGIN
-  UPDATE bookings SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
-END;
+
 
 -- Create indexes for better query performance
 CREATE INDEX IF NOT EXISTS idx_bookings_room ON bookings(room_id);

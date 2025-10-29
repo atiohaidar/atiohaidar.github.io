@@ -64,18 +64,3 @@ CREATE INDEX IF NOT EXISTS idx_messages_group ON messages(group_id);
 CREATE INDEX IF NOT EXISTS idx_messages_created_at ON messages(created_at);
 CREATE INDEX IF NOT EXISTS idx_group_members_user ON group_members(user_username);
 CREATE INDEX IF NOT EXISTS idx_anonymous_messages_created_at ON anonymous_messages(created_at);
-
--- Triggers for updated_at
-CREATE TRIGGER IF NOT EXISTS conversations_updated_at
-AFTER UPDATE ON conversations
-FOR EACH ROW
-BEGIN
-  UPDATE conversations SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
-END;
-
-CREATE TRIGGER IF NOT EXISTS group_chats_updated_at
-AFTER UPDATE ON group_chats
-FOR EACH ROW
-BEGIN
-  UPDATE group_chats SET updated_at = CURRENT_TIMESTAMP WHERE id = OLD.id;
-END;
