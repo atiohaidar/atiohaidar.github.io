@@ -3,8 +3,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Types from '@/types/api';
 
 // Configure the base URL for your API
-// You can change this to your actual backend URL
-const API_BASE_URL = 'http://localhost:8787'; // Update this with your actual API URL
+// You can override this via EXPO_PUBLIC_API_BASE_URL for physical devices/other hosts
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL ?? 'https://backend.atiohaidar.workers.dev';
 
 class ApiService {
   private api: AxiosInstance;
@@ -78,7 +78,16 @@ class ApiService {
         '/api/auth/login',
         credentials
       );
-      const payload = this.extractResult<Types.LoginResponse>(response.data, 'token');
+      let payload = this.extractResult<Types.LoginResponse>(response.data, 'data');
+
+      if (!payload?.token || !payload?.user) {
+        const raw = response.data as unknown as Record<string, unknown>;
+        const token = raw.token as string | undefined;
+        const user = raw.user as Types.User | undefined;
+        if (token && user) {
+          payload = { token, user };
+        }
+      }
 
       if (payload?.token && payload?.user) {
         this.token = payload.token;
@@ -271,10 +280,10 @@ class ApiService {
     }
   }
 
-  async getArticle(slug: string): Promise<Types.Article> {
+  async getPublicArticle(slug: string): Promise<Types.Article> {
     try {
       const response = await this.api.get<Types.ApiResponse<Types.Article>>(
-        `/api/articles/${slug}`
+        `/api/public/articles/${slug}`
       );
       const article = this.extractResult<Types.Article>(response.data, 'article');
       if (article) {
@@ -286,10 +295,10 @@ class ApiService {
     }
   }
 
-  async getPublicArticle(slug: string): Promise<Types.Article> {
+  async getArticle(slug: string): Promise<Types.Article> {
     try {
       const response = await this.api.get<Types.ApiResponse<Types.Article>>(
-        `/api/public/articles/${slug}`
+        `/api/articles/${slug}`
       );
       const article = this.extractResult<Types.Article>(response.data, 'article');
       if (article) {

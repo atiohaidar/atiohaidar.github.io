@@ -14,12 +14,14 @@ import {
   TextInput,
   Checkbox,
 } from 'react-native-paper';
+import { useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 import ApiService from '@/services/api';
 import { Article, ArticleCreate, ArticleUpdate } from '@/types/api';
 
 export default function ArticlesScreen() {
-  const [articles, setArticles] = useState<Article[]>([]);
+  const [ownArticles, setOwnArticles] = useState<Article[]>([]);
+  const [publicArticles, setPublicArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -34,6 +36,9 @@ export default function ArticlesScreen() {
 
   const { user, isAdmin } = useAuth();
   const theme = useTheme();
+  const router = useRouter();
+
+  const canEdit = (article: Article) => isAdmin || article.owner === user?.username;
 
   useEffect(() => {
     loadArticles();
@@ -41,8 +46,16 @@ export default function ArticlesScreen() {
 
   const loadArticles = async () => {
     try {
-      const data = await ApiService.listArticles();
-      setArticles(data);
+      const [managed, published] = await Promise.all([
+        ApiService.listArticles(),
+        ApiService.listPublicArticles(),
+      ]);
+
+      const ownedList = managed ?? [];
+      const publicList = (published ?? []).filter((article) => !canEdit(article));
+
+      setOwnArticles(ownedList);
+      setPublicArticles(publicList);
     } catch (error) {
       console.error('Failed to load articles:', error);
     } finally {
@@ -63,7 +76,8 @@ export default function ArticlesScreen() {
 
     try {
       await ApiService.deleteArticle(article.slug);
-      setArticles(articles.filter((a) => a.slug !== article.slug));
+      setOwnArticles((prev) => prev.filter((a) => a.slug !== article.slug));
+      setPublicArticles((prev) => prev.filter((a) => a.slug !== article.slug));
     } catch (error: any) {
       console.error('Failed to delete article:', error);
       alert(error.message || 'Failed to delete article');
@@ -108,7 +122,14 @@ export default function ArticlesScreen() {
           published: formData.published,
         };
         const updated = await ApiService.updateArticle(editingArticle.slug, updates);
-        setArticles(articles.map((a) => (a.slug === editingArticle.slug ? updated : a)));
+        setOwnArticles((prev) => prev.map((a) => (a.slug === editingArticle.slug ? updated : a)));
+        setPublicArticles((prev) => {
+          const withoutCurrent = prev.filter((a) => a.slug !== editingArticle.slug);
+          if (!canEdit(updated) && updated.published) {
+            return [updated, ...withoutCurrent];
+          }
+          return withoutCurrent;
+        });
       } else {
         if (!formData.slug) {
           alert('Please enter an article slug');
@@ -122,7 +143,7 @@ export default function ArticlesScreen() {
           published: formData.published,
         };
         const created = await ApiService.createArticle(newArticle);
-        setArticles([created, ...articles]);
+        setOwnArticles((prev) => [created, ...prev]);
       }
       setDialogVisible(false);
     } catch (error: any) {
@@ -141,8 +162,6 @@ export default function ArticlesScreen() {
     );
   }
 
-  const canEdit = (article: Article) => isAdmin || article.owner === user?.username;
-
   return (
     <View style={styles.container}>
       <ScrollView
@@ -153,7 +172,11 @@ export default function ArticlesScreen() {
           Articles
         </Text>
 
-        {articles.length === 0 ? (
+        <Text variant="titleMedium" style={styles.sectionTitle}>
+          Your Articles
+        </Text>
+
+        {ownArticles.length === 0 ? (
           <Card style={styles.emptyCard}>
             <Card.Content>
               <Text variant="bodyLarge" style={styles.emptyText}>
@@ -162,8 +185,18 @@ export default function ArticlesScreen() {
             </Card.Content>
           </Card>
         ) : (
-          articles.map((article) => (
-            <Card key={article.slug} style={styles.articleCard} mode="elevated">
+          ownArticles.map((article) => (
+            <Card
+              key={article.slug}
+              style={styles.articleCard}
+              mode="elevated"
+              onPress={() =>
+                router.push({
+                  pathname: '/article/[slug]',
+                  params: { slug: article.slug, scope: 'private' },
+                })
+              }
+            >
               <Card.Content>
                 <View style={styles.articleHeader}>
                   <View style={styles.articleInfo}>
@@ -214,6 +247,61 @@ export default function ArticlesScreen() {
                       />
                     </View>
                   )}
+                </View>
+              </Card.Content>
+            </Card>
+          ))
+        )}
+
+        <Text variant="titleMedium" style={[styles.sectionTitle, styles.sectionSpacing]}>
+          Published Articles
+        </Text>
+
+        {publicArticles.length === 0 ? (
+          <Card style={styles.emptyCard}>
+            <Card.Content>
+              <Text variant="bodyLarge" style={styles.emptyText}>
+                No additional published articles available.
+              </Text>
+            </Card.Content>
+          </Card>
+        ) : (
+          publicArticles.map((article) => (
+            <Card
+              key={article.slug}
+              style={styles.articleCard}
+              mode="elevated"
+              onPress={() =>
+                router.push({
+                  pathname: '/article/[slug]',
+                  params: { slug: article.slug, scope: 'public' },
+                })
+              }
+            >
+              <Card.Content>
+                <View style={styles.articleInfo}>
+                  <Text variant="titleLarge" style={styles.articleTitle}>
+                    {article.title}
+                  </Text>
+                  <Text
+                    variant="bodyMedium"
+                    style={{ color: theme.colors.onSurfaceVariant }}
+                    numberOfLines={3}
+                  >
+                    {article.content}
+                  </Text>
+                  <View style={styles.articleMeta}>
+                    {article.owner && (
+                      <Chip icon="account" compact style={styles.chip}>
+                        {article.owner}
+                      </Chip>
+                    )}
+                    {article.created_at && (
+                      <Chip icon="calendar" compact style={styles.chip}>
+                        {new Date(article.created_at).toLocaleDateString()}
+                      </Chip>
+                    )}
+                  </View>
                 </View>
               </Card.Content>
             </Card>
@@ -302,6 +390,13 @@ const styles = StyleSheet.create({
   title: {
     fontWeight: 'bold',
     marginBottom: 16,
+  },
+  sectionTitle: {
+    fontWeight: '600',
+    marginBottom: 12,
+  },
+  sectionSpacing: {
+    marginTop: 24,
   },
   emptyCard: {
     marginTop: 20,

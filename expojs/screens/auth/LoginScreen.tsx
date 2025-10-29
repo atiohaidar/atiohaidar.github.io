@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
-import { TextInput, Button, Text, Card, useTheme, HelperText } from 'react-native-paper';
+import { TextInput, Button, Text, Card, useTheme, HelperText, Checkbox, IconButton } from 'react-native-paper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
+import type { LoginRequest } from '@/types/api';
+
+const SAVED_ACCOUNTS_KEY = 'savedLoginAccounts';
 
 export default function LoginScreen() {
   const [username, setUsername] = useState('');
@@ -10,13 +14,50 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [savedAccounts, setSavedAccounts] = useState<LoginRequest[]>([]);
 
   const { login } = useAuth();
   const router = useRouter();
   const theme = useTheme();
 
-  const handleLogin = async () => {
-    if (!username || !password) {
+  useEffect(() => {
+    const loadAccounts = async () => {
+      try {
+        const stored = await AsyncStorage.getItem(SAVED_ACCOUNTS_KEY);
+        if (stored) {
+          const parsed: LoginRequest[] = JSON.parse(stored);
+          setSavedAccounts(parsed);
+        }
+      } catch (storageError) {
+        console.error('Failed to load saved accounts:', storageError);
+      }
+    };
+
+    loadAccounts();
+  }, []);
+
+  const persistAccounts = async (accounts: LoginRequest[]) => {
+    try {
+      setSavedAccounts(accounts);
+      await AsyncStorage.setItem(SAVED_ACCOUNTS_KEY, JSON.stringify(accounts));
+    } catch (storageError) {
+      console.error('Failed to persist saved accounts:', storageError);
+    }
+  };
+
+  const saveAccountIfNeeded = async (account: LoginRequest, force = false) => {
+    if (!rememberMe && !force) {
+      return;
+    }
+
+    const existing = savedAccounts.filter((item) => item.username !== account.username);
+    await persistAccounts([{ username: account.username, password: account.password }, ...existing]);
+  };
+
+  const handleLogin = async (override?: LoginRequest) => {
+    const credentials = override ?? { username, password };
+    if (!credentials.username || !credentials.password) {
       setError('Please enter username and password');
       return;
     }
@@ -25,13 +66,27 @@ export default function LoginScreen() {
     setError('');
 
     try {
-      await login({ username, password });
+      await login(credentials);
+      await saveAccountIfNeeded(credentials, Boolean(override));
       router.replace('/(tabs)');
     } catch (err: any) {
       setError(err.message || 'Login failed. Please check your credentials.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleQuickLogin = (account: LoginRequest) => {
+    if (loading) return;
+    setUsername(account.username);
+    setPassword(account.password);
+    setRememberMe(true);
+    handleLogin(account);
+  };
+
+  const handleRemoveAccount = async (accountUsername: string) => {
+    const filtered = savedAccounts.filter((account) => account.username !== accountUsername);
+    await persistAccounts(filtered);
   };
 
   return (
@@ -83,6 +138,17 @@ export default function LoginScreen() {
                   disabled={loading}
                 />
 
+                <View style={styles.rememberRow}>
+                  <Checkbox
+                    status={rememberMe ? 'checked' : 'unchecked'}
+                    onPress={() => setRememberMe(!rememberMe)}
+                    disabled={loading}
+                  />
+                  <Text variant="bodyMedium" style={styles.rememberLabel}>
+                    Remember this login
+                  </Text>
+                </View>
+
                 {error ? (
                   <HelperText type="error" visible={!!error} style={styles.error}>
                     {error}
@@ -91,7 +157,7 @@ export default function LoginScreen() {
 
                 <Button
                   mode="contained"
-                  onPress={handleLogin}
+                  onPress={() => handleLogin()}
                   loading={loading}
                   disabled={loading}
                   style={styles.button}
@@ -111,6 +177,34 @@ export default function LoginScreen() {
                     User: user / user123
                   </Text>
                 </View>
+
+                {savedAccounts.length > 0 && (
+                  <View style={styles.savedAccountsContainer}>
+                    <Text variant="titleSmall" style={styles.savedAccountsTitle}>
+                      Quick login
+                    </Text>
+                    {savedAccounts.map((account) => (
+                      <View key={account.username} style={styles.savedAccountRow}>
+                        <Button
+                          mode="outlined"
+                          onPress={() => handleQuickLogin(account)}
+                          disabled={loading}
+                          style={styles.savedAccountButton}
+                          contentStyle={styles.savedAccountContent}
+                        >
+                          {account.username}
+                        </Button>
+                        <IconButton
+                          icon="delete"
+                          size={20}
+                          onPress={() => handleRemoveAccount(account.username)}
+                          disabled={loading}
+                          accessibilityLabel={`Remove ${account.username}`}
+                        />
+                      </View>
+                    ))}
+                  </View>
+                )}
               </View>
             </Card.Content>
           </Card>
@@ -151,6 +245,14 @@ const styles = StyleSheet.create({
   input: {
     marginBottom: 12,
   },
+  rememberRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  rememberLabel: {
+    marginLeft: 4,
+  },
   button: {
     marginTop: 8,
     marginBottom: 16,
@@ -166,5 +268,27 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.05)',
     borderRadius: 8,
     marginTop: 8,
+  },
+  savedAccountsContainer: {
+    marginTop: 24,
+    borderRadius: 12,
+    padding: 12,
+    backgroundColor: 'rgba(0, 0, 0, 0.03)',
+    gap: 8,
+  },
+  savedAccountsTitle: {
+    fontWeight: '600',
+  },
+  savedAccountRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  savedAccountButton: {
+    flex: 1,
+    marginRight: 8,
+  },
+  savedAccountContent: {
+    paddingVertical: 4,
   },
 });

@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, Platform } from 'react-native';
-import { Text, useTheme, Drawer, Appbar, FAB } from 'react-native-paper';
+import { View, StyleSheet, ScrollView, Platform, Pressable } from 'react-native';
+import { Text, useTheme, Appbar, FAB } from 'react-native-paper';
 import { useRouter, usePathname } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/contexts/AuthContext';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 interface AuthenticatedSidebarLayoutProps {
   children: React.ReactNode;
@@ -99,14 +100,40 @@ export default function AuthenticatedSidebarLayout({
                 </Text>
               </View>
               {menuItems.map((item) => (
-                <Drawer.Item
+                <Pressable
                   key={item.route}
-                  label={item.label}
-                  icon={item.icon}
-                  active={item.active}
+                  accessibilityRole="button"
                   onPress={() => router.push(item.route as any)}
-                  style={styles.drawerItem}
-                />
+                  style={({ pressed }) => [
+                    styles.drawerItem,
+                    {
+                      backgroundColor: item.active
+                        ? theme.colors.secondaryContainer
+                        : 'transparent',
+                      opacity: pressed ? 0.85 : 1,
+                    },
+                  ]}
+                >
+                  <MaterialCommunityIcons
+                    name={item.icon as any}
+                    size={22}
+                    color={item.active
+                      ? theme.colors.onSecondaryContainer
+                      : theme.colors.onSurfaceVariant}
+                  />
+                  <Text
+                    style={[
+                      styles.drawerItemLabel,
+                      {
+                        color: item.active
+                          ? theme.colors.onSecondaryContainer
+                          : theme.colors.onSurface,
+                      },
+                    ]}
+                  >
+                    {item.label}
+                  </Text>
+                </Pressable>
               ))}
             </ScrollView>
           </View>
@@ -157,8 +184,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   drawerItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 12,
     marginHorizontal: 8,
     marginVertical: 2,
+    gap: 12,
+  },
+  drawerItemLabel: {
+    fontSize: 16,
   },
   mainContent: {
     flex: 1,

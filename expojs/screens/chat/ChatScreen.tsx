@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, RefreshControl, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, StyleSheet, ScrollView, RefreshControl, KeyboardAvoidingView, Platform } from 'react-native';
 import {
   Card,
   Text,
   FAB,
-  List,
   useTheme,
   ActivityIndicator,
   Avatar,
@@ -13,9 +12,10 @@ import {
   Dialog,
   Button,
   TextInput,
-  Divider,
   SegmentedButtons,
+  IconButton,
 } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '@/contexts/AuthContext';
 import ApiService from '@/services/api';
 import { Conversation, GroupChat, Message, User } from '@/types/api';
@@ -29,7 +29,6 @@ export default function ChatScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [dialogVisible, setDialogVisible] = useState(false);
-  const [chatDialogVisible, setChatDialogVisible] = useState(false);
   const [selectedChat, setSelectedChat] = useState<{
     type: 'conversation' | 'group';
     id: string;
@@ -40,11 +39,15 @@ export default function ChatScreen() {
   const [groupName, setGroupName] = useState('');
   const [groupDesc, setGroupDesc] = useState('');
   const [formLoading, setFormLoading] = useState(false);
+  const [messagesLoading, setMessagesLoading] = useState(false);
 
   const { user } = useAuth();
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
+  const messagesRef = useRef<ScrollView | null>(null);
 
   useEffect(() => {
+    setLoading(true);
     loadData();
   }, [mode]);
 
@@ -71,6 +74,7 @@ export default function ChatScreen() {
   };
 
   const loadMessages = async (type: 'conversation' | 'group', id: string) => {
+    setMessagesLoading(true);
     try {
       const data =
         type === 'conversation'
@@ -79,13 +83,16 @@ export default function ChatScreen() {
       setMessages(data);
     } catch (error) {
       console.error('Failed to load messages:', error);
+    } finally {
+      setMessagesLoading(false);
     }
   };
 
   const openChat = (type: 'conversation' | 'group', id: string, name: string) => {
     setSelectedChat({ type, id, name });
+    setMessages([]);
+    setMessageText('');
     loadMessages(type, id);
-    setChatDialogVisible(true);
   };
 
   const handleSendMessage = async () => {
@@ -100,10 +107,26 @@ export default function ChatScreen() {
       const newMessage = await ApiService.sendMessage(messageData);
       setMessages([...messages, newMessage]);
       setMessageText('');
+      setTimeout(() => {
+        messagesRef.current?.scrollToEnd({ animated: true });
+      }, 100);
     } catch (error: any) {
       console.error('Failed to send message:', error);
       alert(error.message || 'Failed to send message');
     }
+  };
+
+  const handleReloadMessages = () => {
+    if (selectedChat) {
+      loadMessages(selectedChat.type, selectedChat.id);
+    }
+  };
+
+  const handleBackToList = () => {
+    setSelectedChat(null);
+    setMessages([]);
+    setMessageText('');
+    setMessagesLoading(false);
   };
 
   const handleCreateGroup = async () => {
@@ -113,12 +136,14 @@ export default function ChatScreen() {
     }
 
     setFormLoading(true);
+
     try {
-      const newGroup = await ApiService.createGroup({
-        name: groupName,
-        description: groupDesc || undefined,
+      const created = await ApiService.createGroup({
+        name: groupName.trim(),
+        description: groupDesc.trim() || undefined,
       });
-      setGroups([newGroup, ...groups]);
+
+      setGroups((prev) => [created, ...prev]);
       setDialogVisible(false);
       setGroupName('');
       setGroupDesc('');
@@ -129,6 +154,14 @@ export default function ChatScreen() {
       setFormLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (selectedChat) {
+      setTimeout(() => {
+        messagesRef.current?.scrollToEnd({ animated: false });
+      }, 100);
+    }
+  }, [selectedChat, messages]);
 
   if (loading) {
     return (
@@ -143,6 +176,94 @@ export default function ChatScreen() {
       ? conv.user2_username
       : conv.user1_username;
   };
+
+  const renderMessageBubble = (msg: Message) => (
+    <View
+      key={msg.id}
+      style={[
+        styles.messageItem,
+        msg.sender_username === user?.username ? styles.myMessage : styles.otherMessage,
+      ]}
+    >
+      <Text variant="labelSmall" style={styles.messageSender}>
+        {msg.sender_username}
+      </Text>
+      <Text variant="bodyMedium" style={styles.messageText}>
+        {msg.content}
+      </Text>
+      <Text variant="labelSmall" style={styles.messageTime}>
+        {msg.created_at ? new Date(msg.created_at).toLocaleString() : ''}
+      </Text>
+    </View>
+  );
+
+  if (selectedChat) {
+    const chatSubtitle = selectedChat.type === 'group' ? 'Group chat' : 'Direct message';
+    const avatarLabel = selectedChat.name.substring(0, 2).toUpperCase();
+
+    return (
+      <KeyboardAvoidingView
+        style={[styles.chatContainer, { paddingTop: insets.top, backgroundColor: theme.colors.background }]}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <View style={[styles.chatHeader, { borderBottomColor: theme.colors.outlineVariant, backgroundColor: theme.colors.surface }]}> 
+          <IconButton icon="arrow-left" onPress={handleBackToList} accessibilityLabel="Back to chats" />
+          <View style={styles.chatHeaderInfo}>
+            <Avatar.Text size={40} label={avatarLabel} />
+            <View style={styles.chatHeaderText}>
+              <Text variant="titleMedium" style={styles.chatName}>
+                {selectedChat.name}
+              </Text>
+              <Text variant="bodySmall" style={[styles.chatSubtitle, { color: theme.colors.onSurfaceVariant }] }>
+                {chatSubtitle}
+              </Text>
+            </View>
+          </View>
+          <IconButton
+            icon="refresh"
+            onPress={handleReloadMessages}
+            disabled={messagesLoading}
+            accessibilityLabel="Reload messages"
+          />
+        </View>
+
+        <View style={[styles.chatContainerContent, { backgroundColor: theme.colors.surfaceVariant }] }>
+          {messagesLoading ? (
+            <View style={styles.messagesLoading}>
+              <ActivityIndicator size="small" />
+              <Text style={styles.loadingText}>Refreshing messages…</Text>
+            </View>
+          ) : messages.length === 0 ? (
+            <View style={styles.chatPlaceholder}>
+              <Text style={styles.placeholderText}>No messages yet. Say hello!</Text>
+            </View>
+          ) : (
+            <ScrollView
+              ref={messagesRef}
+              style={styles.messagesList}
+              contentContainerStyle={styles.messagesContent}
+              refreshControl={<RefreshControl refreshing={messagesLoading} onRefresh={handleReloadMessages} />}
+            >
+              {messages.map((msg) => renderMessageBubble(msg))}
+            </ScrollView>
+          )}
+        </View>
+
+        <View style={[styles.inputBar, { paddingBottom: Math.max(insets.bottom, 12), borderTopColor: theme.colors.outline }]}>
+          <TextInput
+            value={messageText}
+            onChangeText={setMessageText}
+            placeholder="Type a message"
+            mode="outlined"
+            style={styles.messageInput}
+            disabled={messagesLoading}
+            right={<TextInput.Icon icon="send" onPress={handleSendMessage} disabled={messagesLoading} />}
+            onSubmitEditing={handleSendMessage}
+          />
+        </View>
+      </KeyboardAvoidingView>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -307,65 +428,15 @@ export default function ChatScreen() {
         </Dialog>
       </Portal>
 
-      {/* Chat Dialog */}
-      <Portal>
-        <Dialog
-          visible={chatDialogVisible}
-          onDismiss={() => setChatDialogVisible(false)}
-          style={styles.chatDialog}
-        >
-          <Dialog.Title>{selectedChat?.name}</Dialog.Title>
-          <Dialog.ScrollArea>
-            <ScrollView style={styles.messagesContainer}>
-              {messages.length === 0 ? (
-                <Text style={styles.emptyText}>No messages yet. Start the conversation!</Text>
-              ) : (
-                messages.map((msg) => (
-                  <View
-                    key={msg.id}
-                    style={[
-                      styles.messageItem,
-                      msg.sender_username === user?.username
-                        ? styles.myMessage
-                        : styles.otherMessage,
-                    ]}
-                  >
-                    <Text variant="labelSmall" style={styles.messageSender}>
-                      {msg.sender_username}
-                    </Text>
-                    <Text variant="bodyMedium">{msg.content}</Text>
-                    <Text variant="labelSmall" style={styles.messageTime}>
-                      {msg.created_at
-                        ? new Date(msg.created_at).toLocaleString()
-                        : ''}
-                    </Text>
-                  </View>
-                ))
-              )}
-            </ScrollView>
-          </Dialog.ScrollArea>
-          <Divider />
-          <View style={styles.inputContainer}>
-            <TextInput
-              value={messageText}
-              onChangeText={setMessageText}
-              placeholder="Type a message..."
-              mode="outlined"
-              style={styles.messageInput}
-              right={
-                <TextInput.Icon icon="send" onPress={handleSendMessage} />
-              }
-              onSubmitEditing={handleSendMessage}
-            />
-          </View>
-        </Dialog>
-      </Portal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  chatContainer: {
     flex: 1,
   },
   centerContainer: {
@@ -416,12 +487,58 @@ const styles = StyleSheet.create({
   input: {
     marginBottom: 12,
   },
-  chatDialog: {
-    maxHeight: '80%',
+  chatHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
-  messagesContainer: {
-    maxHeight: 400,
-    padding: 8,
+  chatHeaderInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    marginLeft: 4,
+  },
+  chatHeaderText: {
+    marginLeft: 8,
+  },
+  chatName: {
+    fontWeight: '600',
+  },
+  chatSubtitle: {
+    color: '#6c6c6c',
+  },
+  chatContainerContent: {
+    flex: 1,
+  },
+  messagesList: {
+    flex: 1,
+    paddingHorizontal: 12,
+    backgroundColor: 'transparent',
+  },
+  messagesContent: {
+    paddingVertical: 12,
+    gap: 8,
+  },
+  messagesLoading: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  loadingText: {
+    marginTop: 8,
+    color: '#6c6c6c',
+  },
+  chatPlaceholder: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  placeholderText: {
+    color: '#6c6c6c',
   },
   messageItem: {
     padding: 12,
@@ -431,24 +548,36 @@ const styles = StyleSheet.create({
   },
   myMessage: {
     alignSelf: 'flex-end',
-    backgroundColor: '#6200ee',
+    backgroundColor: '#1266f1',
   },
   otherMessage: {
     alignSelf: 'flex-start',
-    backgroundColor: '#e0e0e0',
+    backgroundColor: '#2f3640',
+    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: '#4b4e57',
   },
   messageSender: {
     fontWeight: 'bold',
     marginBottom: 4,
+    color: '#ffffff',
+  },
+  messageText: {
+    lineHeight: 20,
+    color: '#ffffff',
   },
   messageTime: {
     marginTop: 4,
-    opacity: 0.7,
-  },
-  inputContainer: {
-    padding: 8,
+    opacity: 0.85,
+    fontSize: 11,
+    color: '#f0f0f0',
   },
   messageInput: {
     flex: 1,
+  },
+  inputBar: {
+    paddingHorizontal: 12,
+    paddingTop: 12,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    backgroundColor: '#ffffff',
   },
 });

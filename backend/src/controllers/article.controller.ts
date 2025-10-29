@@ -22,12 +22,11 @@ export class ArticleList extends OpenAPIRoute {
     summary: "Daftar artikel",
     request: {
       query: z.object({
-        page: Num({
-          description: "Nomor halaman",
-          required: false,
-        })
-          .optional()
-          .transform((val) => (typeof val === "number" ? val : 0)),
+        page: z
+          .coerce
+          .number({ description: "Nomor halaman" })
+          .min(0)
+          .default(0),
         published: Bool({
           description: "Filter berdasarkan status publikasi",
           required: false,
