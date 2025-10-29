@@ -218,9 +218,9 @@ const ChatPage: React.FC<ChatPageProps> = () => {
     };
 
     return (
-        <div className={`h-full flex flex-col md:flex-row ${palette.surface} rounded-lg shadow-lg`}>
+        <div className={`flex-1 min-h-0 h-full flex flex-col md:flex-row ${palette.surface} rounded-lg shadow-lg`}>
             {/* Chat List Sidebar */}
-            <div className={`${isMobileChatListOpen ? 'flex' : 'hidden'} md:flex w-full md:w-80 ${palette.sidebar.bg} ${palette.sidebar.border} flex-col`}>
+            <div className={`${isMobileChatListOpen ? 'flex' : 'hidden'} md:flex w-full md:w-80 ${palette.sidebar.bg} ${palette.sidebar.border} flex-col min-h-0`}>
                 {/* Tabs */}
                 <div className={`flex ${palette.sidebar.border}`}>
                     <button
@@ -344,11 +344,11 @@ const ChatPage: React.FC<ChatPageProps> = () => {
             </div>
 
             {/* Chat Area */}
-            <div className={`${!isMobileChatListOpen || !selectedChat ? 'flex' : 'hidden'} md:flex flex-1 flex-col`}>
+            <div className={`${!isMobileChatListOpen || !selectedChat ? 'flex' : 'hidden'} md:flex flex-1 min-h-0 flex-col overflow-hidden`}>
                 {selectedChat && chatType ? (
                     <>
                         {/* Chat Header */}
-                        <div className={`p-3 ${palette.sidebar.border} flex justify-between items-center ${theme === 'dark' ? 'bg-[#1f2c34]' : 'bg-[#f0f2f5]'}`}>
+                        <div className={`flex-shrink-0 p-3 ${palette.sidebar.border} flex justify-between items-center ${theme === 'dark' ? 'bg-[#1f2c34]' : 'bg-[#f0f2f5]'}`}>
                             <div className="flex items-center gap-3 flex-1 min-w-0">
                                 <button
                                     onClick={() => setIsMobileChatListOpen(true)}
@@ -428,7 +428,7 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                         </div>
 
                         {/* Message Input */}
-                        <div className={`p-3 ${palette.sidebar.border}`} style={{ backgroundColor: theme === 'dark' ? '#1f2c34' : '#f0f2f5' }}>
+                        <div className={`flex-shrink-0 p-3 ${palette.sidebar.border}`} style={{ backgroundColor: theme === 'dark' ? '#1f2c34' : '#f0f2f5' }}>
                             {replyTo && (
                                 <div className={`mb-2 p-2 rounded-lg ${theme === 'dark' ? 'bg-[#2a3942]' : 'bg-white'} flex justify-between items-start border-l-4 border-[#00a884]`}>
                                     <div className="flex-1">
