@@ -59,6 +59,13 @@ import {
 	FormResponseList,
 	FormResponseGet,
 } from "../controllers/form.controller";
+import {
+	DiscussionList,
+	DiscussionGet,
+	DiscussionCreate,
+	DiscussionReplyCreate,
+	DiscussionDelete,
+} from "../controllers/discussion.controller";
 
 export const registerRoutes = (openapi: any) => {
 	// Public routes (no authentication required)
@@ -144,4 +151,11 @@ export const registerRoutes = (openapi: any) => {
 	// Public form routes (no authentication required)
 	openapi.get("/api/public/forms/:token", FormGetByToken);
 	openapi.post("/api/public/forms/:token/submit", FormResponseSubmit);
+
+	// Discussion forum routes (public access, authentication optional)
+	openapi.get("/api/discussions", DiscussionList);
+	openapi.post("/api/discussions", DiscussionCreate);
+	openapi.get("/api/discussions/:discussionId", DiscussionGet);
+	openapi.post("/api/discussions/:discussionId/replies", DiscussionReplyCreate);
+	openapi.delete("/api/discussions/:discussionId", DiscussionDelete);
 };

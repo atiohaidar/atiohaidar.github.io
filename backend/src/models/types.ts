@@ -297,3 +297,37 @@ export const FormResponseCreateSchema = z.object({
 		answer_text: Str({ example: "My answer" }),
 	})),
 });
+
+// Discussion forum schemas
+export const Discussion = z.object({
+	id: Str({ description: "Unique identifier", example: "disc-001" }),
+	title: Str({ example: "How to learn TypeScript?" }),
+	content: Str({ example: "I'm new to TypeScript. Any tips?" }),
+	creator_username: Str({ required: false, example: "user123" }),
+	creator_name: Str({ example: "John Doe" }),
+	is_anonymous: z.boolean().default(false),
+	created_at: Str({ required: false }),
+	updated_at: Str({ required: false }),
+	reply_count: z.number().int().optional(),
+});
+
+export const DiscussionCreateSchema = z.object({
+	title: Str({ example: "How to learn TypeScript?" }),
+	content: Str({ example: "I'm new to TypeScript. Any tips?" }),
+	creator_name: Str({ required: false, example: "John Doe" }),
+});
+
+export const DiscussionReply = z.object({
+	id: Str({ description: "Unique identifier", example: "reply-001" }),
+	discussion_id: Str({ example: "disc-001" }),
+	content: Str({ example: "Great question! Start with the official docs." }),
+	creator_username: Str({ required: false, example: "user123" }),
+	creator_name: Str({ example: "Jane Smith" }),
+	is_anonymous: z.boolean().default(false),
+	created_at: Str({ required: false }),
+});
+
+export const DiscussionReplyCreateSchema = z.object({
+	content: Str({ example: "Great question! Start with the official docs." }),
+	creator_name: Str({ required: false, example: "Jane Smith" }),
+});
