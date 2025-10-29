@@ -14,7 +14,7 @@ import { TextInput, Button } from 'react-native-paper';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import apiService from '@/services/api';
-import { EventCreate, EventUpdate } from '@/types/api';
+import { Event, EventCreate, EventUpdate } from '@/types/api';
 
 export default function EventFormScreen() {
   const router = useRouter();
@@ -55,7 +55,7 @@ export default function EventFormScreen() {
   // Create mutation
   const createMutation = useMutation({
     mutationFn: apiService.createEvent.bind(apiService),
-    onSuccess: (data) => {
+    onSuccess: (data: Event) => {
       queryClient.invalidateQueries({ queryKey: ['events'] });
       Alert.alert('Berhasil', 'Acara telah dibuat');
       router.replace(`/events/${data.id}`);
@@ -68,7 +68,7 @@ export default function EventFormScreen() {
   // Update mutation
   const updateMutation = useMutation({
     mutationFn: (data: EventUpdate) => apiService.updateEvent(eventId!, data),
-    onSuccess: (data) => {
+    onSuccess: (data: Event) => {
       queryClient.invalidateQueries({ queryKey: ['events'] });
       queryClient.invalidateQueries({ queryKey: ['event', eventId] });
       Alert.alert('Berhasil', 'Acara telah diperbarui');
