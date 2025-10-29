@@ -44,6 +44,15 @@ import type {
     FormResponseCreate,
     FormResponsesResponse,
     FormResponseDetailResponse,
+    Ticket,
+    TicketCreate,
+    TicketUpdate,
+    TicketCategory,
+    TicketComment,
+    TicketCommentCreate,
+    TicketAssignment,
+    TicketAssign,
+    TicketStats,
 } from './types';
 
 // ============================================================================
@@ -475,3 +484,128 @@ export const getItemBorrowing = itemBorrowingService.get;
 export const createItemBorrowing = itemBorrowingService.create;
 export const updateItemBorrowingStatus = itemBorrowingService.updateStatus;
 export const cancelItemBorrowing = itemBorrowingService.cancel;
+
+// ============================================================================
+// Ticket API
+// ============================================================================
+
+export const ticketService = {
+    // Public endpoints (no auth required)
+    submitTicket: async (ticketData: TicketCreate): Promise<{ success: boolean; ticket: Ticket; message: string }> => {
+        return apiFetch<{ success: boolean; ticket: Ticket; message: string }>('/api/public/tickets', {
+            method: 'POST',
+            body: JSON.stringify(ticketData),
+        });
+    },
+
+    getByToken: async (token: string): Promise<Ticket> => {
+        const response = await apiFetch<{ success: boolean; ticket: Ticket }>(`/api/public/tickets/${token}`);
+        return response.ticket;
+    },
+
+    getCommentsByToken: async (token: string): Promise<TicketComment[]> => {
+        const response = await apiFetch<{ success: boolean; comments: TicketComment[] }>(`/api/public/tickets/${token}/comments`);
+        return response.comments;
+    },
+
+    addCommentByToken: async (token: string, commentText: string, commenterName?: string): Promise<TicketComment> => {
+        const response = await apiFetch<{ success: boolean; comment: TicketComment }>(`/api/public/tickets/${token}/comments`, {
+            method: 'POST',
+            body: JSON.stringify({ comment_text: commentText, commenter_name: commenterName }),
+        });
+        return response.comment;
+    },
+
+    // Authenticated endpoints
+    listCategories: async (): Promise<TicketCategory[]> => {
+        const response = await apiFetch<{ success: boolean; categories: TicketCategory[] }>('/api/tickets/categories');
+        return response.categories;
+    },
+
+    list: async (params?: {
+        page?: number;
+        status?: string;
+        categoryId?: number;
+        assignedTo?: string;
+        searchQuery?: string;
+    }): Promise<Ticket[]> => {
+        const query = new URLSearchParams();
+        if (params?.page !== undefined) query.append('page', params.page.toString());
+        if (params?.status) query.append('status', params.status);
+        if (params?.categoryId) query.append('categoryId', params.categoryId.toString());
+        if (params?.assignedTo) query.append('assignedTo', params.assignedTo);
+        if (params?.searchQuery) query.append('searchQuery', params.searchQuery);
+
+        const url = `/api/tickets${query.toString() ? `?${query.toString()}` : ''}`;
+        const response = await apiFetch<{ success: boolean; tickets: Ticket[] }>(url);
+        return response.tickets;
+    },
+
+    get: async (ticketId: number): Promise<Ticket> => {
+        const response = await apiFetch<{ success: boolean; ticket: Ticket }>(`/api/tickets/${ticketId}`);
+        return response.ticket;
+    },
+
+    update: async (ticketId: number, data: TicketUpdate): Promise<Ticket> => {
+        const response = await apiFetch<{ success: boolean; ticket: Ticket }>(`/api/tickets/${ticketId}`, {
+            method: 'PUT',
+            body: JSON.stringify(data),
+        });
+        return response.ticket;
+    },
+
+    delete: async (ticketId: number): Promise<void> => {
+        await apiFetch(`/api/tickets/${ticketId}`, {
+            method: 'DELETE',
+        });
+    },
+
+    getComments: async (ticketId: number, includeInternal = false): Promise<TicketComment[]> => {
+        const url = `/api/tickets/${ticketId}/comments${includeInternal ? '?includeInternal=true' : ''}`;
+        const response = await apiFetch<{ success: boolean; comments: TicketComment[] }>(url);
+        return response.comments;
+    },
+
+    addComment: async (ticketId: number, data: TicketCommentCreate): Promise<TicketComment> => {
+        const response = await apiFetch<{ success: boolean; comment: TicketComment }>(`/api/tickets/${ticketId}/comments`, {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+        return response.comment;
+    },
+
+    getAssignments: async (ticketId: number): Promise<TicketAssignment[]> => {
+        const response = await apiFetch<{ success: boolean; assignments: TicketAssignment[] }>(`/api/tickets/${ticketId}/assignments`);
+        return response.assignments;
+    },
+
+    assign: async (ticketId: number, data: TicketAssign): Promise<TicketAssignment> => {
+        const response = await apiFetch<{ success: boolean; assignment: TicketAssignment }>(`/api/tickets/${ticketId}/assign`, {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+        return response.assignment;
+    },
+
+    getStats: async (assignedTo?: string): Promise<TicketStats> => {
+        const url = `/api/tickets/stats${assignedTo ? `?assignedTo=${assignedTo}` : ''}`;
+        const response = await apiFetch<{ success: boolean; stats: TicketStats }>(url);
+        return response.stats;
+    },
+};
+
+export const submitTicket = ticketService.submitTicket;
+export const getTicketByToken = ticketService.getByToken;
+export const getTicketCommentsByToken = ticketService.getCommentsByToken;
+export const addTicketCommentByToken = ticketService.addCommentByToken;
+export const listTicketCategories = ticketService.listCategories;
+export const listTickets = ticketService.list;
+export const getTicket = ticketService.get;
+export const updateTicket = ticketService.update;
+export const deleteTicket = ticketService.delete;
+export const getTicketComments = ticketService.getComments;
+export const addTicketComment = ticketService.addComment;
+export const getTicketAssignments = ticketService.getAssignments;
+export const assignTicket = ticketService.assign;
+export const getTicketStats = ticketService.getStats;
+

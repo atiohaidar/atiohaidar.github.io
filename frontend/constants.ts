@@ -22,4 +22,5 @@ export const NAV_LINKS: NavLink[] = [
     { name: 'Pengalaman', href: '#experience' },
     { name: 'Backend', href: '#backend' },
     { name: 'Kontak', href: '#contact' },
+    { name: 'Diskusi', href: '/discussions' },
 ];

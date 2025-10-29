@@ -28,6 +28,10 @@ import DashboardFormResponseDetailPage from './pages/DashboardFormResponseDetail
 import DashboardItemsPage from './pages/DashboardItemsPage';
 import DashboardItemBorrowingsPage from './pages/DashboardItemBorrowingsPage';
 import FormFillPage from './pages/FormFillPage';
+import DiscussionForumPage from './pages/DiscussionForumPage';
+import DiscussionDetailPage from './pages/DiscussionDetailPage';
+import DashboardTicketsPage from './pages/DashboardTicketsPage';
+import DashboardTicketDetailPage from './pages/DashboardTicketDetailPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 const queryClient = new QueryClient({
@@ -49,6 +53,8 @@ const App: React.FC = () => {
                         <Route path="/articles" element={<ArticlesPage />} />
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/form/:token" element={<FormFillPage />} />
+                        <Route path="/discussions" element={<DiscussionForumPage />} />
+                        <Route path="/discussions/:discussionId" element={<DiscussionDetailPage />} />
                         <Route path="/dashboard" element={<DashboardPage />}>
                             <Route index element={<Navigate to="/dashboard/tasks" replace />} />
                             <Route path="tasks" element={<DashboardTasksPage />} />
@@ -108,6 +114,8 @@ const App: React.FC = () => {
                             <Route path="forms/:formId/responses/:responseId" element={<DashboardFormResponseDetailPage />} />
                             <Route path="items" element={<DashboardItemsPage />} />
                             <Route path="item-borrowings" element={<DashboardItemBorrowingsPage />} />
+                            <Route path="tickets" element={<DashboardTicketsPage />} />
+                            <Route path="tickets/:ticketId" element={<DashboardTicketDetailPage />} />
                         </Route>
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>

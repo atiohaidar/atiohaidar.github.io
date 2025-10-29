@@ -368,3 +368,90 @@ export interface ItemBorrowingResponse {
     success: boolean;
     data: ItemBorrowing;
 }
+
+// Ticket Types
+export type TicketStatus = 'open' | 'in_progress' | 'waiting' | 'solved';
+export type TicketPriority = 'low' | 'medium' | 'high' | 'critical';
+export type CommenterType = 'guest' | 'user';
+
+export interface TicketCategory {
+    id: number;
+    name: string;
+    description?: string;
+    created_at?: string;
+}
+
+export interface Ticket {
+    id: number;
+    token: string;
+    title: string;
+    description: string;
+    category_id: number;
+    category_name?: string;
+    status: TicketStatus;
+    priority: TicketPriority;
+    submitter_name?: string;
+    submitter_email?: string;
+    reference_link?: string;
+    assigned_to?: string;
+    created_at?: string;
+    updated_at?: string;
+}
+
+export interface TicketCreate {
+    title: string;
+    description: string;
+    category_id: number;
+    priority?: TicketPriority;
+    submitter_name?: string;
+    submitter_email?: string;
+    reference_link?: string;
+}
+
+export interface TicketUpdate {
+    title?: string;
+    description?: string;
+    category_id?: number;
+    status?: TicketStatus;
+    priority?: TicketPriority;
+    assigned_to?: string;
+}
+
+export interface TicketComment {
+    id: number;
+    ticket_id: number;
+    commenter_type: CommenterType;
+    commenter_name: string;
+    comment_text: string;
+    is_internal: boolean;
+    created_at?: string;
+}
+
+export interface TicketCommentCreate {
+    comment_text: string;
+    is_internal?: boolean;
+}
+
+export interface TicketAssignment {
+    id: number;
+    ticket_id: number;
+    assigned_from?: string;
+    assigned_to: string;
+    assigned_by: string;
+    notes?: string;
+    created_at?: string;
+}
+
+export interface TicketAssign {
+    assigned_to: string;
+    notes?: string;
+}
+
+export interface TicketStats {
+    total: number;
+    open: number;
+    in_progress: number;
+    waiting: number;
+    solved: number;
+}
+

@@ -367,3 +367,112 @@ export const ItemBorrowingUpdateStatusSchema = z.object({
 	status: ItemBorrowingStatusSchema,
 	notes: Str({ required: false }),
 });
+
+// Discussion forum schemas
+export const Discussion = z.object({
+	id: Str({ description: "Unique identifier", example: "disc-001" }),
+	title: Str({ example: "How to learn TypeScript?" }),
+	content: Str({ example: "I'm new to TypeScript. Any tips?" }),
+	creator_username: Str({ required: false, example: "user123" }),
+	creator_name: Str({ example: "John Doe" }),
+	is_anonymous: z.boolean().default(false),
+	created_at: Str({ required: false }),
+	updated_at: Str({ required: false }),
+	reply_count: z.number().int().optional(),
+});
+
+export const DiscussionCreateSchema = z.object({
+	title: Str({ example: "How to learn TypeScript?" }),
+	content: Str({ example: "I'm new to TypeScript. Any tips?" }),
+	creator_name: Str({ required: false, example: "John Doe" }),
+});
+
+export const DiscussionReply = z.object({
+	id: Str({ description: "Unique identifier", example: "reply-001" }),
+	discussion_id: Str({ example: "disc-001" }),
+	content: Str({ example: "Great question! Start with the official docs." }),
+	creator_username: Str({ required: false, example: "user123" }),
+	creator_name: Str({ example: "Jane Smith" }),
+	is_anonymous: z.boolean().default(false),
+	created_at: Str({ required: false }),
+});
+
+export const DiscussionReplyCreateSchema = z.object({
+	content: Str({ example: "Great question! Start with the official docs." }),
+	creator_name: Str({ required: false, example: "Jane Smith" }),
+});
+
+// Ticket schemas
+export const TicketCategory = z.object({
+	id: Num({ description: "Category ID", example: 1 }),
+	name: Str({ example: "Technical" }),
+	description: Str({ required: false, example: "Technical issues and bugs" }),
+	created_at: Str({ required: false }),
+});
+
+export const Ticket = z.object({
+	id: Num({ description: "Ticket ID", example: 1 }),
+	token: Str({ description: "Access token for tracking", example: "TKT-ABC123" }),
+	title: Str({ example: "Cannot login to dashboard" }),
+	description: Str({ example: "Detailed description of the issue" }),
+	category_id: Num({ example: 1 }),
+	status: z.enum(["open", "in_progress", "waiting", "solved"]),
+	priority: z.enum(["low", "medium", "high", "critical"]),
+	submitter_name: Str({ required: false, example: "John Doe" }),
+	submitter_email: Str({ required: false, example: "john@example.com" }),
+	reference_link: Str({ required: false, example: "https://example.com/screenshot" }),
+	assigned_to: Str({ required: false, example: "admin" }),
+	created_at: Str({ required: false }),
+	updated_at: Str({ required: false }),
+});
+
+export const TicketCreateSchema = z.object({
+	title: Str({ example: "Cannot login to dashboard" }),
+	description: Str({ example: "Detailed description of the issue" }),
+	category_id: Num({ example: 1 }),
+	priority: z.enum(["low", "medium", "high", "critical"]).default("medium"),
+	submitter_name: Str({ required: false, example: "John Doe" }),
+	submitter_email: Str({ required: false, example: "john@example.com" }),
+	reference_link: Str({ required: false, example: "https://example.com/screenshot" }),
+});
+
+export const TicketUpdateSchema = z.object({
+	title: Str({ required: false }),
+	description: Str({ required: false }),
+	category_id: Num({ required: false }),
+	status: z.enum(["open", "in_progress", "waiting", "solved"]).optional(),
+	priority: z.enum(["low", "medium", "high", "critical"]).optional(),
+	assigned_to: Str({ required: false }),
+}).refine((data) => Object.keys(data).length > 0, {
+	message: "Minimal satu field harus diisi",
+});
+
+export const TicketComment = z.object({
+	id: Num({ description: "Comment ID", example: 1 }),
+	ticket_id: Num({ example: 1 }),
+	commenter_type: z.enum(["guest", "user"]),
+	commenter_name: Str({ example: "John Doe" }),
+	comment_text: Str({ example: "This is a comment" }),
+	is_internal: Bool({ default: false }),
+	created_at: Str({ required: false }),
+});
+
+export const TicketCommentCreateSchema = z.object({
+	comment_text: Str({ example: "This is a comment" }),
+	is_internal: Bool({ default: false }),
+});
+
+export const TicketAssignment = z.object({
+	id: Num({ description: "Assignment ID", example: 1 }),
+	ticket_id: Num({ example: 1 }),
+	assigned_from: Str({ required: false, example: "admin" }),
+	assigned_to: Str({ example: "user1" }),
+	assigned_by: Str({ example: "admin" }),
+	notes: Str({ required: false, example: "Assigning to specialist" }),
+	created_at: Str({ required: false }),
+});
+
+export const TicketAssignSchema = z.object({
+	assigned_to: Str({ example: "user1" }),
+	notes: Str({ required: false, example: "Assigning to specialist" }),
+});

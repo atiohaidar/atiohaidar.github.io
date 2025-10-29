@@ -68,6 +68,12 @@ const menuItems: MenuItem[] = [
         path: '/dashboard/item-borrowings',
     },
     {
+        id: 'tickets',
+        label: 'Tiket',
+        icon: '🎫',
+        path: '/dashboard/tickets',
+    },
+    {
         id: 'users',
         label: 'User Management',
         icon: '👥',

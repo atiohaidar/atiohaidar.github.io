@@ -73,6 +73,29 @@ import {
 	ItemBorrowingUpdateStatus,
 	ItemBorrowingCancel,
 } from "../controllers/itemBorrowing.controller";
+import {
+	DiscussionList,
+	DiscussionGet,
+	DiscussionCreate,
+	DiscussionReplyCreate,
+	DiscussionDelete,
+} from "../controllers/discussion.controller";
+import {
+	CategoryList,
+	TicketList,
+	TicketGet,
+	TicketUpdate,
+	TicketDelete,
+	TicketCommentList,
+	TicketCommentCreate,
+	TicketAssignmentList,
+	TicketAssign,
+	TicketStatsGet,
+	PublicTicketCreate,
+	PublicTicketGetByToken,
+	PublicTicketCommentCreate,
+	PublicTicketCommentList,
+} from "../controllers/ticket.controller";
 
 export const registerRoutes = (openapi: any) => {
 	// Public routes (no authentication required)
@@ -172,4 +195,29 @@ export const registerRoutes = (openapi: any) => {
 	openapi.get("/api/item-borrowings/:borrowingId", ItemBorrowingGet);
 	openapi.put("/api/item-borrowings/:borrowingId/status", ItemBorrowingUpdateStatus);
 	openapi.delete("/api/item-borrowings/:borrowingId", ItemBorrowingCancel);
+
+	// Discussion forum routes (public access, authentication optional)
+	openapi.get("/api/discussions", DiscussionList);
+	openapi.post("/api/discussions", DiscussionCreate);
+	openapi.get("/api/discussions/:discussionId", DiscussionGet);
+	openapi.post("/api/discussions/:discussionId/replies", DiscussionReplyCreate);
+	openapi.delete("/api/discussions/:discussionId", DiscussionDelete);
+
+	// Public ticket routes (no authentication required)
+	openapi.post("/api/public/tickets", PublicTicketCreate.handle);
+	openapi.get("/api/public/tickets/:token", PublicTicketGetByToken.handle);
+	openapi.get("/api/public/tickets/:token/comments", PublicTicketCommentList.handle);
+	openapi.post("/api/public/tickets/:token/comments", PublicTicketCommentCreate.handle);
+
+	// Ticket routes (authenticated)
+	openapi.get("/api/tickets/categories", CategoryList.handle);
+	openapi.get("/api/tickets", TicketList.handle);
+	openapi.get("/api/tickets/stats", TicketStatsGet.handle);
+	openapi.get("/api/tickets/:ticketId", TicketGet.handle);
+	openapi.put("/api/tickets/:ticketId", TicketUpdate.handle);
+	openapi.delete("/api/tickets/:ticketId", TicketDelete.handle);
+	openapi.get("/api/tickets/:ticketId/comments", TicketCommentList.handle);
+	openapi.post("/api/tickets/:ticketId/comments", TicketCommentCreate.handle);
+	openapi.get("/api/tickets/:ticketId/assignments", TicketAssignmentList.handle);
+	openapi.post("/api/tickets/:ticketId/assign", TicketAssign.handle);
 };
