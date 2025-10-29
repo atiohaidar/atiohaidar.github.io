@@ -26,6 +26,8 @@ import DashboardFormEditorPage from './pages/DashboardFormEditorPage';
 import DashboardFormResponsesPage from './pages/DashboardFormResponsesPage';
 import DashboardFormResponseDetailPage from './pages/DashboardFormResponseDetailPage';
 import FormFillPage from './pages/FormFillPage';
+import DiscussionForumPage from './pages/DiscussionForumPage';
+import DiscussionDetailPage from './pages/DiscussionDetailPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 const queryClient = new QueryClient({
@@ -47,6 +49,8 @@ const App: React.FC = () => {
                         <Route path="/articles" element={<ArticlesPage />} />
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/form/:token" element={<FormFillPage />} />
+                        <Route path="/discussions" element={<DiscussionForumPage />} />
+                        <Route path="/discussions/:discussionId" element={<DiscussionDetailPage />} />
                         <Route path="/dashboard" element={<DashboardPage />}>
                             <Route index element={<Navigate to="/dashboard/tasks" replace />} />
                             <Route path="tasks" element={<DashboardTasksPage />} />
