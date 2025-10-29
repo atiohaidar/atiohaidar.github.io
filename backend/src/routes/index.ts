@@ -111,6 +111,7 @@ import {
 	EventAdminRemove,
 	AttendanceScanCreate,
 	AttendeeWithScansGet,
+	EventScanHistoryList,
 } from "../controllers/event.controller";
 
 export const registerRoutes = (openapi: any) => {
@@ -258,4 +259,5 @@ export const registerRoutes = (openapi: any) => {
 	
 	// Attendance scan routes
 	openapi.post("/api/events/:eventId/scan", AttendanceScanCreate);
+	openapi.get("/api/events/:eventId/scan-history", EventScanHistoryList);
 };

@@ -64,6 +64,7 @@ import type {
     AttendanceScan,
     AttendanceScanCreate,
     AttendeeWithScans,
+    EventScanHistory,
 } from './types';
 
 // ============================================================================
@@ -729,6 +730,14 @@ export const eventService = {
         });
         return response.data;
     },
+
+    // Get scan history for an event
+    getScanHistory: async (eventId: string): Promise<EventScanHistory[]> => {
+        const response = await apiFetch<{ success: boolean; data: EventScanHistory[] }>(
+            `/api/events/${eventId}/scan-history`
+        );
+        return response.data;
+    },
 };
 
 export const listEvents = eventService.list;
@@ -745,4 +754,5 @@ export const listEventAdmins = eventService.listAdmins;
 export const assignEventAdmin = eventService.assignAdmin;
 export const removeEventAdmin = eventService.removeAdmin;
 export const scanAttendance = eventService.scanAttendance;
+export const getEventScanHistory = eventService.getScanHistory;
 

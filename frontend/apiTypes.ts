@@ -532,3 +532,14 @@ export interface AttendeeWithScans {
     scans: AttendanceScan[];
 }
 
+export interface EventScanHistory {
+    id: string;
+    attendee_id: string;
+    attendee_username: string;
+    attendee_status: string;
+    scanned_by: string;
+    scanned_at: string;
+    latitude?: number;
+    longitude?: number;
+}
+

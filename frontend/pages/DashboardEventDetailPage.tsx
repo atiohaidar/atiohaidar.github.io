@@ -272,6 +272,12 @@ const DashboardEventDetailPage: React.FC = () => {
                                     >
                                         Scan QR
                                     </Link>
+                                    <Link
+                                        to={`/dashboard/events/${eventId}/history`}
+                                        className={`px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors`}
+                                    >
+                                        Riwayat Scan
+                                    </Link>
                                 </>
                             )}
                             {(isCreator || isAdmin) && (

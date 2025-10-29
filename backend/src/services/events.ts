@@ -348,3 +348,29 @@ export async function getAttendeeWithScans(
 
 	return { attendee, scans };
 }
+
+// Get all scans for an event with attendee information
+export async function listAllEventScans(db: D1Database, eventId: string): Promise<Array<AttendanceScan & { 
+	attendee_username: string;
+	attendee_status: string;
+}>> {
+	const result = await db
+		.prepare(`
+			SELECT 
+				s.id,
+				s.attendee_id,
+				s.scanned_by,
+				s.scanned_at,
+				s.latitude,
+				s.longitude,
+				a.user_username as attendee_username,
+				a.status as attendee_status
+			FROM attendance_scans s
+			JOIN event_attendees a ON s.attendee_id = a.id
+			WHERE a.event_id = ?
+			ORDER BY s.scanned_at ASC
+		`)
+		.bind(eventId)
+		.all();
+	return result.results as unknown as Array<AttendanceScan & { attendee_username: string; attendee_status: string }>;
+}

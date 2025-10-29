@@ -31,6 +31,7 @@ import {
 	recordAttendanceScan,
 	listAttendanceScans,
 	getAttendeeWithScans,
+	listAllEventScans,
 } from "../services/events";
 import { getTokenPayloadFromRequest } from "../middlewares/auth";
 
@@ -898,6 +899,61 @@ export class AttendeeWithScansGet extends OpenAPIRoute {
 		return c.json({
 			success: true,
 			data: result,
+		});
+	}
+}
+
+// Get all scans for an event
+export class EventScanHistoryList extends OpenAPIRoute {
+	schema = {
+		tags: ["Events"],
+		summary: "Get all scan history for an event",
+		request: {
+			params: z.object({
+				eventId: Str({ example: "event-001" }),
+			}),
+		},
+		responses: {
+			"200": {
+				description: "List of all scans for the event",
+				content: {
+					"application/json": {
+						schema: z.object({
+							success: Bool(),
+							data: z.array(z.object({
+								id: Str(),
+								attendee_id: Str(),
+								attendee_username: Str(),
+								attendee_status: Str(),
+								scanned_by: Str(),
+								scanned_at: Str(),
+								latitude: z.number().optional(),
+								longitude: z.number().optional(),
+							})),
+						}),
+					},
+				},
+			},
+			"401": {
+				description: "Unauthorized",
+			},
+		},
+	};
+
+	async handle(c: AppContext) {
+		const payload = getTokenPayloadFromRequest(c);
+		if (!payload) {
+			return c.json({ success: false, message: "Unauthorized" }, 401);
+		}
+
+		const data = await this.getValidatedData<typeof this.schema>();
+		const { eventId } = data.params;
+
+		const scans = await listAllEventScans(c.env.DB, eventId);
+
+		return c.json({
+			success: true,
+			data: scans,
 		});
 	}
 }
