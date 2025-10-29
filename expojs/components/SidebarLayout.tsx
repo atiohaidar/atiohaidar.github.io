@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, Pressable, Platform } from 'react-native';
+import { View, StyleSheet, ScrollView, Platform } from 'react-native';
 import { Text, useTheme, Drawer, Appbar } from 'react-native-paper';
 import { useRouter, usePathname } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -102,10 +102,9 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     ...Platform.select({
       web: {
-        position: 'sticky',
+        position: 'sticky' as const,
         top: 0,
-        height: '100vh',
-      },
+      } as any,
     }),
   },
   sidebarHeader: {

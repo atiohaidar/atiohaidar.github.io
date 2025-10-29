@@ -25,7 +25,7 @@ export default function AuthenticatedSidebarLayout({
   const theme = useTheme();
   const router = useRouter();
   const pathname = usePathname();
-  const { logout, isAdmin } = useAuth();
+  const { logout } = useAuth();
   const [sidebarVisible, setSidebarVisible] = React.useState(true);
 
   const menuItems = [
@@ -144,10 +144,9 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     ...Platform.select({
       web: {
-        position: 'sticky',
+        position: 'sticky' as const,
         top: 0,
-        height: '100vh',
-      },
+      } as any,
     }),
   },
   sidebarHeader: {
