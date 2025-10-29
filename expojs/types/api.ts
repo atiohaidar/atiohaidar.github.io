@@ -219,6 +219,8 @@ export interface DashboardStats {
 export interface ApiResponse<T> {
   success: boolean;
   result?: T;
+  data?: T;
+  message?: string;
   error?: string;
   errors?: Array<{ message: string }>;
 }

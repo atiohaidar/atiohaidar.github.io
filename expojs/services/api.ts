@@ -4,7 +4,7 @@ import * as Types from '@/types/api';
 
 // Configure the base URL for your API
 // You can change this to your actual backend URL
-const API_BASE_URL = 'https://api.atiohaidar.workers.dev'; // Update this with your actual API URL
+const API_BASE_URL = 'http://localhost:8787'; // Update this with your actual API URL
 
 class ApiService {
   private api: AxiosInstance;
@@ -45,6 +45,21 @@ class ApiService {
     );
   }
 
+  private extractResult<T>(response: Types.ApiResponse<T> | Record<string, unknown>, ...fallbackKeys: string[]): T {
+    const candidate = (response as Types.ApiResponse<T>).result ?? (response as Types.ApiResponse<T>).data;
+    if (candidate !== undefined) {
+      return candidate;
+    }
+
+    for (const key of fallbackKeys) {
+      if (key in response) {
+        return (response as Record<string, unknown>)[key] as T;
+      }
+    }
+
+    return undefined as unknown as T;
+  }
+
   // Helper method to handle API errors
   private handleError(error: any): never {
     if (error.response?.data?.error) {
@@ -63,12 +78,25 @@ class ApiService {
         '/api/auth/login',
         credentials
       );
-      if (response.data.result) {
-        this.token = response.data.result.token;
+      const basePayload = response.data.result ?? response.data.data;
+      const fallbackPayload = (response.data as unknown as Types.LoginResponse | undefined) ??
+        ((response.data as unknown as Record<string, unknown>)?.token &&
+        (response.data as unknown as Record<string, unknown>)?.user
+          ? {
+              token: (response.data as unknown as Record<string, unknown>).token as string,
+              user: (response.data as unknown as Record<string, unknown>).user as Types.User,
+            }
+          : undefined);
+
+      const payload = basePayload ?? fallbackPayload;
+
+      if (payload?.token && payload?.user) {
+        this.token = payload.token;
         await AsyncStorage.setItem('authToken', this.token);
-        await AsyncStorage.setItem('currentUser', JSON.stringify(response.data.result.user));
-        return response.data.result;
+        await AsyncStorage.setItem('currentUser', JSON.stringify(payload.user));
+        return payload;
       }
+
       throw new Error('Login failed');
     } catch (error) {
       this.handleError(error);
@@ -90,7 +118,8 @@ class ApiService {
   async getStats(): Promise<Types.DashboardStats> {
     try {
       const response = await this.api.get<Types.ApiResponse<Types.DashboardStats>>('/api/stats');
-      return response.data.result || {};
+      const stats = response.data.result ?? response.data.data ?? (response.data as any)?.stats;
+      return stats || {};
     } catch (error) {
       this.handleError(error);
     }
