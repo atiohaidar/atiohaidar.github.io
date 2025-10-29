@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DASHBOARD_THEME } from '../utils/styles';
 import { useTheme } from '../contexts/ThemeContext';
 import { getStoredUser } from '../apiClient';
+import GroupManagementModal from '../components/GroupManagementModal';
 import {
     getConversations,
     getGroups,
@@ -30,6 +31,7 @@ const ChatPage: React.FC<ChatPageProps> = () => {
     const [replyTo, setReplyTo] = useState<Message | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [isGroupManagementOpen, setIsGroupManagementOpen] = useState(false);
 
     useEffect(() => {
         loadChats();
@@ -162,7 +164,7 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                 </div>
 
                 {/* Refresh Button */}
-                <div className="p-3">
+                <div className="p-3 space-y-2">
                     <button
                         onClick={loadChats}
                         disabled={loading}
@@ -170,6 +172,14 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                     >
                         {loading ? '⟳ Refreshing...' : '🔄 Refresh'}
                     </button>
+                    {activeTab === 'group' && (
+                        <button
+                            onClick={() => setIsGroupManagementOpen(true)}
+                            className={`w-full py-2 px-4 rounded ${palette.button.secondary} hover:opacity-90 transition-opacity`}
+                        >
+                            ⚙️ Manage Groups
+                        </button>
+                    )}
                 </div>
 
                 {/* Chat List */}
@@ -345,6 +355,15 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                     </div>
                 )}
             </div>
+
+            {/* Group Management Modal */}
+            <GroupManagementModal
+                isOpen={isGroupManagementOpen}
+                onClose={() => setIsGroupManagementOpen(false)}
+                onGroupCreated={() => {
+                    loadChats();
+                }}
+            />
         </div>
     );
 };
