@@ -5,7 +5,7 @@
 /* Mobile-friendly touch targets */
 @layer base {
   /* Ensure minimum touch target size on mobile devices */
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     button, a {
       min-height: 44px;
       min-width: 44px;
