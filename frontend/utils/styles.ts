@@ -93,11 +93,17 @@ export interface DashboardThemeConfig {
   badges: {
     success: string;
     danger: string;
+    warning: string;
+    info: string;
   };
   buttons: {
     primary: string;
     secondary: string;
     ghost: string;
+    success: string;
+    danger: string;
+    warning: string;
+    info: string;
   };
   surface: string;
   input: string;
@@ -148,13 +154,19 @@ export const DASHBOARD_THEME: Record<DashboardThemeMode, DashboardThemeConfig> =
       divider: 'border-[#E1E8F5]',
     },
     badges: {
-      success: 'bg-[#1AAE6F]/15 text-[#0F8A4B]',
-      danger: 'bg-[#FF6B6B]/15 text-[#C44545]',
+      success: 'bg-status-success-muted text-status-success-dark',
+      danger: 'bg-status-danger-muted text-status-danger-dark',
+      warning: 'bg-status-warning-muted text-status-warning-dark',
+      info: 'bg-status-info-muted text-status-info',
     },
     buttons: {
       primary: 'bg-accent-blue text-white hover:bg-accent-blue/90',
       secondary: 'bg-[#EEF2FA] text-[#1A2136] hover:bg-[#E3E8F6]',
       ghost: 'border border-[#CBD5E1] text-[#5B6887] hover:border-accent-blue hover:text-accent-blue',
+      success: 'bg-status-success text-white hover:bg-status-success-dark',
+      danger: 'bg-status-danger text-white hover:bg-status-danger-dark',
+      warning: 'bg-status-warning text-white hover:bg-status-warning-dark',
+      info: 'bg-status-info text-white hover:bg-status-info/90',
     },
     surface: 'bg-white text-[#1A2136]',
     input: 'bg-white border border-[#CBD5E1] text-[#1A2136] focus:border-[#1F6FEB] focus:ring-[#1F6FEB]/15',
@@ -203,13 +215,19 @@ export const DASHBOARD_THEME: Record<DashboardThemeMode, DashboardThemeConfig> =
       divider: 'border-[#2F3542]',
     },
     badges: {
-      success: 'bg-[#1AAE6F]/20 text-[#61DE9B]',
-      danger: 'bg-[#FF6B6B]/20 text-[#FF9A9A]',
+      success: 'bg-status-success/20 text-status-success-bright',
+      danger: 'bg-status-danger/20 text-status-danger-bright',
+      warning: 'bg-status-warning/20 text-status-warning-muted',
+      info: 'bg-status-info/20 text-status-info',
     },
     buttons: {
       primary: 'bg-accent-blue text-white hover:bg-accent-blue/90',
       secondary: 'bg-[#1F2633] text-[#CED7EA] hover:bg-[#252E3D]',
       ghost: 'border border-[#2F3542] text-[#8E9CB3] hover:border-accent-blue hover:text-accent-blue',
+      success: 'bg-status-success text-white hover:bg-status-success-dark',
+      danger: 'bg-status-danger text-white hover:bg-status-danger-dark',
+      warning: 'bg-status-warning text-white hover:bg-status-warning-dark',
+      info: 'bg-status-info text-white hover:bg-status-info/90',
     },
     surface: 'bg-[#1A2230] text-white',
     input: 'bg-[#1F2633] border border-[#2F3542] text-white focus:border-accent-blue focus:ring-accent-blue/20',

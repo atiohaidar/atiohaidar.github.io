@@ -3,7 +3,8 @@
  */
 import React, { useState } from 'react';
 import { useTasks, useCreateTask, useDeleteTask } from '../hooks/useApi';
-import { COLORS } from '../utils/styles';
+import { COLORS, DASHBOARD_THEME } from '../utils/styles';
+import { useTheme } from '../contexts/ThemeContext';
 import type { TaskCreate } from '../apiTypes';
 
 const TasksManager: React.FC = () => {
@@ -11,6 +12,8 @@ const TasksManager: React.FC = () => {
     const { data: tasks, isLoading, error } = useTasks({ isCompleted: filter });
     const createTaskMutation = useCreateTask();
     const deleteTaskMutation = useDeleteTask();
+    const { theme } = useTheme();
+    const palette = DASHBOARD_THEME[theme];
 
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [newTask, setNewTask] = useState<TaskCreate>({
@@ -42,13 +45,13 @@ const TasksManager: React.FC = () => {
     };
 
     if (isLoading) {
-        return <div className="text-center py-8 text-light-slate">Loading tasks...</div>;
+        return <div className={`text-center py-8 ${palette.panel.textMuted}`}>Loading tasks...</div>;
     }
 
     if (error) {
         return (
-            <div className="p-4 bg-red-900/20 border border-red-500/50 rounded-lg">
-                <p className="text-red-400">{error.message}</p>
+            <div className="p-4 rounded-lg border border-status-danger/40 bg-status-danger-muted">
+                <p className="text-status-danger-dark">{error.message}</p>
             </div>
         );
     }
@@ -56,7 +59,7 @@ const TasksManager: React.FC = () => {
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center flex-wrap gap-4">
-                <h3 className={`text-xl font-bold ${COLORS.TEXT_ACCENT}`}>Tasks Management</h3>
+                <h3 className={`text-xl font-bold ${palette.panel.text}`}>Tasks Management</h3>
                 
                 <div className="flex gap-2 items-center flex-wrap">
                     <select
@@ -65,7 +68,7 @@ const TasksManager: React.FC = () => {
                             const val = e.target.value;
                             setFilter(val === 'all' ? undefined : val === 'completed');
                         }}
-                        className="px-3 py-2 bg-light-navy border border-soft-gray/30 rounded-lg text-light-slate text-sm focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                        className={`px-3 py-2 rounded-lg text-sm ${palette.input}`}
                     >
                         <option value="all">All Tasks</option>
                         <option value="completed">Completed</option>
@@ -74,7 +77,7 @@ const TasksManager: React.FC = () => {
                     
                     <button
                         onClick={() => setShowCreateForm(!showCreateForm)}
-                        className={`px-4 py-2 ${COLORS.BG_ACCENT} text-deep-navy font-semibold rounded-lg hover:opacity-90 transition-opacity`}
+                        className={`px-4 py-2 rounded-lg font-semibold transition-colors ${palette.buttons.info}`}
                     >
                         {showCreateForm ? 'Cancel' : 'Create Task'}
                     </button>
@@ -82,8 +85,11 @@ const TasksManager: React.FC = () => {
             </div>
 
             {showCreateForm && (
-                <form onSubmit={handleCreateTask} className="bg-light-navy p-6 rounded-lg space-y-4">
-                    <h4 className="text-lg font-semibold text-light-slate">Create New Task</h4>
+                <form
+                    onSubmit={handleCreateTask}
+                    className={`${palette.panel.bg} ${palette.panel.border} ${palette.panel.text} p-6 rounded-lg space-y-4`}
+                >
+                    <h4 className={`text-lg font-semibold ${palette.panel.text}`}>Create New Task</h4>
                     
                     <div className="space-y-3">
                         <input
@@ -91,7 +97,7 @@ const TasksManager: React.FC = () => {
                             placeholder="Slug (unique identifier, e.g., 'clean-room')"
                             value={newTask.slug}
                             onChange={(e) => setNewTask({ ...newTask, slug: e.target.value })}
-                            className="w-full px-4 py-2 bg-deep-navy border border-soft-gray/30 rounded-lg text-light-slate focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                            className={`w-full px-4 py-2 rounded-lg ${palette.input}`}
                             required
                         />
                         <input
@@ -99,14 +105,14 @@ const TasksManager: React.FC = () => {
                             placeholder="Task name"
                             value={newTask.name}
                             onChange={(e) => setNewTask({ ...newTask, name: e.target.value })}
-                            className="w-full px-4 py-2 bg-deep-navy border border-soft-gray/30 rounded-lg text-light-slate focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                            className={`w-full px-4 py-2 rounded-lg ${palette.input}`}
                             required
                         />
                         <textarea
                             placeholder="Description (optional)"
                             value={newTask.description}
                             onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
-                            className="w-full px-4 py-2 bg-deep-navy border border-soft-gray/30 rounded-lg text-light-slate focus:outline-none focus:ring-2 focus:ring-accent-blue resize-none"
+                            className={`w-full px-4 py-2 rounded-lg ${palette.input} resize-none`}
                             rows={3}
                         />
                         <label className="flex items-center gap-2 text-light-slate">
@@ -114,7 +120,7 @@ const TasksManager: React.FC = () => {
                                 type="checkbox"
                                 checked={newTask.completed}
                                 onChange={(e) => setNewTask({ ...newTask, completed: e.target.checked })}
-                                className="w-4 h-4 bg-deep-navy border border-soft-gray/30 rounded"
+                                className="w-4 h-4 rounded border border-status-info/40 bg-transparent text-accent-blue focus:ring-status-info"
                             />
                             <span>Mark as completed</span>
                         </label>
@@ -123,43 +129,43 @@ const TasksManager: React.FC = () => {
                     <button
                         type="submit"
                         disabled={createTaskMutation.isPending}
-                        className={`px-6 py-2 ${COLORS.BG_ACCENT} text-deep-navy font-semibold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50`}
+                        className={`px-6 py-2 rounded-lg font-semibold transition-colors ${palette.buttons.success} disabled:opacity-50 disabled:cursor-not-allowed`}
                     >
                         {createTaskMutation.isPending ? 'Creating...' : 'Create Task'}
                     </button>
 
                     {createTaskMutation.isError && (
-                        <p className="text-red-400 text-sm">{createTaskMutation.error?.message}</p>
+                        <p className="text-sm text-status-danger-dark">{createTaskMutation.error?.message}</p>
                     )}
                 </form>
             )}
 
             <div className="space-y-3">
                 {tasks && tasks.length === 0 ? (
-                    <div className="text-center py-8 text-soft-gray">
+                    <div className={`text-center py-8 ${palette.panel.textMuted}`}>
                         No tasks found. Create one to get started!
                     </div>
                 ) : (
                     tasks?.map((task) => (
-                        <div key={task.slug} className="bg-light-navy p-4 rounded-lg">
+                        <div key={task.slug} className={`${palette.panel.bg} ${palette.panel.border} ${palette.panel.text} p-4 rounded-lg`}>
                             <div className="flex justify-between items-start">
                                 <div className="flex-1">
                                     <div className="flex items-center gap-3 mb-2">
-                                        <h4 className="text-light-slate font-semibold">{task.name}</h4>
+                                        <h4 className={`font-semibold ${palette.panel.text}`}>{task.name}</h4>
                                         {task.completed ? (
-                                            <span className="px-2 py-1 bg-green-600/20 text-green-400 text-xs rounded-full">
+                                            <span className={`px-2 py-1 text-xs rounded-full ${palette.badges.success}`}>
                                                 ✓ Completed
                                             </span>
                                         ) : (
-                                            <span className="px-2 py-1 bg-yellow-600/20 text-yellow-400 text-xs rounded-full">
+                                            <span className={`px-2 py-1 text-xs rounded-full ${palette.badges.warning}`}>
                                                 ○ Pending
                                             </span>
                                         )}
                                     </div>
                                     {task.description && (
-                                        <p className="text-soft-gray text-sm mb-2">{task.description}</p>
+                                        <p className={`${palette.panel.textMuted} text-sm mb-2`}>{task.description}</p>
                                     )}
-                                    <p className="text-soft-gray text-xs">
+                                    <p className={`${palette.panel.textMuted} text-xs`}>
                                         Slug: {task.slug}
                                         {task.created_at && ` • Created: ${new Date(task.created_at).toLocaleDateString()}`}
                                     </p>
@@ -167,7 +173,7 @@ const TasksManager: React.FC = () => {
                                 <button
                                     onClick={() => handleDeleteTask(task.slug)}
                                     disabled={deleteTaskMutation.isPending}
-                                    className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors disabled:opacity-50 ml-4"
+                                    className={`px-3 py-1 text-sm rounded transition-colors ml-4 ${palette.buttons.danger} disabled:opacity-50 disabled:cursor-not-allowed`}
                                 >
                                     Delete
                                 </button>

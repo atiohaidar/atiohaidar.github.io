@@ -3,7 +3,8 @@
  */
 import React, { useState } from 'react';
 import { useUsers, useCreateUser, useUpdateUser, useDeleteUser } from '../hooks/useApi';
-import { COLORS } from '../utils/styles';
+import { COLORS, DASHBOARD_THEME } from '../utils/styles';
+import { useTheme } from '../contexts/ThemeContext';
 import type { UserCreate, UserUpdate } from '../apiTypes';
 
 const UsersManager: React.FC = () => {
@@ -11,6 +12,8 @@ const UsersManager: React.FC = () => {
     const createUserMutation = useCreateUser();
     const updateUserMutation = useUpdateUser();
     const deleteUserMutation = useDeleteUser();
+    const { theme } = useTheme();
+    const palette = DASHBOARD_THEME[theme];
 
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [editingUser, setEditingUser] = useState<string | null>(null);
@@ -59,13 +62,13 @@ const UsersManager: React.FC = () => {
     };
 
     if (isLoading) {
-        return <div className="text-center py-8 text-light-slate">Loading users...</div>;
+        return <div className={`text-center py-8 ${palette.panel.textMuted}`}>Loading users...</div>;
     }
 
     if (error) {
         return (
-            <div className="p-4 bg-red-900/20 border border-red-500/50 rounded-lg">
-                <p className="text-red-400">{error.message}</p>
+            <div className="p-4 rounded-lg border border-status-danger/40 bg-status-danger-muted">
+                <p className="text-status-danger-dark">{error.message}</p>
             </div>
         );
     }
@@ -73,18 +76,21 @@ const UsersManager: React.FC = () => {
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <h3 className={`text-xl font-bold ${COLORS.TEXT_ACCENT}`}>Users Management</h3>
+                <h3 className={`text-xl font-bold ${palette.panel.text}`}>Users Management</h3>
                 <button
                     onClick={() => setShowCreateForm(!showCreateForm)}
-                    className={`px-4 py-2 ${COLORS.BG_ACCENT} text-deep-navy font-semibold rounded-lg hover:opacity-90 transition-opacity`}
+                    className={`px-4 py-2 rounded-lg font-semibold transition-colors ${palette.buttons.info}`}
                 >
                     {showCreateForm ? 'Cancel' : 'Create User'}
                 </button>
             </div>
 
             {showCreateForm && (
-                <form onSubmit={handleCreateUser} className="bg-light-navy p-6 rounded-lg space-y-4">
-                    <h4 className="text-lg font-semibold text-light-slate">Create New User</h4>
+                <form
+                    onSubmit={handleCreateUser}
+                    className={`${palette.panel.bg} ${palette.panel.border} ${palette.panel.text} p-6 rounded-lg space-y-4`}
+                >
+                    <h4 className={`text-lg font-semibold ${palette.panel.text}`}>Create New User</h4>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <input
@@ -92,7 +98,7 @@ const UsersManager: React.FC = () => {
                             placeholder="Username"
                             value={newUser.username}
                             onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
-                            className="px-4 py-2 bg-deep-navy border border-soft-gray/30 rounded-lg text-light-slate focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                            className={`px-4 py-2 rounded-lg ${palette.input}`}
                             required
                         />
                         <input
@@ -100,7 +106,7 @@ const UsersManager: React.FC = () => {
                             placeholder="Name"
                             value={newUser.name}
                             onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-                            className="px-4 py-2 bg-deep-navy border border-soft-gray/30 rounded-lg text-light-slate focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                            className={`px-4 py-2 rounded-lg ${palette.input}`}
                             required
                         />
                         <input
@@ -108,13 +114,13 @@ const UsersManager: React.FC = () => {
                             placeholder="Password"
                             value={newUser.password}
                             onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-                            className="px-4 py-2 bg-deep-navy border border-soft-gray/30 rounded-lg text-light-slate focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                            className={`px-4 py-2 rounded-lg ${palette.input}`}
                             required
                         />
                         <select
                             value={newUser.role}
                             onChange={(e) => setNewUser({ ...newUser, role: e.target.value as 'admin' | 'member' })}
-                            className="px-4 py-2 bg-deep-navy border border-soft-gray/30 rounded-lg text-light-slate focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                            className={`px-4 py-2 rounded-lg ${palette.input}`}
                         >
                             <option value="member">Member</option>
                             <option value="admin">Admin</option>
@@ -124,20 +130,23 @@ const UsersManager: React.FC = () => {
                     <button
                         type="submit"
                         disabled={createUserMutation.isPending}
-                        className={`px-6 py-2 ${COLORS.BG_ACCENT} text-deep-navy font-semibold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50`}
+                        className={`px-6 py-2 rounded-lg font-semibold transition-colors ${palette.buttons.success} disabled:opacity-50 disabled:cursor-not-allowed`}
                     >
                         {createUserMutation.isPending ? 'Creating...' : 'Create User'}
                     </button>
 
                     {createUserMutation.isError && (
-                        <p className="text-red-400 text-sm">{createUserMutation.error?.message}</p>
+                        <p className="text-sm text-status-danger-dark">{createUserMutation.error?.message}</p>
                     )}
                 </form>
             )}
 
             <div className="space-y-3">
                 {users?.map((user) => (
-                    <div key={user.username} className="bg-light-navy p-4 rounded-lg">
+                    <div
+                        key={user.username}
+                        className={`${palette.panel.bg} ${palette.panel.border} ${palette.panel.text} p-4 rounded-lg`}
+                    >
                         {editingUser === user.username ? (
                             <div className="space-y-3">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -146,21 +155,21 @@ const UsersManager: React.FC = () => {
                                         placeholder="New name"
                                         value={updateData.name}
                                         onChange={(e) => setUpdateData({ ...updateData, name: e.target.value })}
-                                        className="px-3 py-2 bg-deep-navy border border-soft-gray/30 rounded text-light-slate focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                                        className={`px-3 py-2 rounded ${palette.input}`}
                                     />
                                     <input
                                         type="password"
                                         placeholder="New password"
                                         value={updateData.password}
                                         onChange={(e) => setUpdateData({ ...updateData, password: e.target.value })}
-                                        className="px-3 py-2 bg-deep-navy border border-soft-gray/30 rounded text-light-slate focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                                        className={`px-3 py-2 rounded ${palette.input}`}
                                     />
                                 </div>
                                 <div className="flex gap-2">
                                     <button
                                         onClick={() => handleUpdateUser(user.username)}
                                         disabled={updateUserMutation.isPending}
-                                        className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors disabled:opacity-50"
+                                        className={`px-4 py-2 rounded transition-colors ${palette.buttons.success} disabled:opacity-50 disabled:cursor-not-allowed`}
                                     >
                                         Save
                                     </button>
@@ -169,7 +178,7 @@ const UsersManager: React.FC = () => {
                                             setEditingUser(null);
                                             setUpdateData({ name: '', password: '' });
                                         }}
-                                        className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+                                        className={`px-4 py-2 rounded transition-colors ${palette.buttons.secondary}`}
                                     >
                                         Cancel
                                     </button>
@@ -178,22 +187,22 @@ const UsersManager: React.FC = () => {
                         ) : (
                             <div className="flex justify-between items-center">
                                 <div>
-                                    <h4 className="text-light-slate font-semibold">{user.name}</h4>
-                                    <p className="text-soft-gray text-sm">
+                                    <h4 className={`font-semibold ${palette.panel.text}`}>{user.name}</h4>
+                                    <p className={`text-sm ${palette.panel.textMuted}`}>
                                         @{user.username} • {user.role}
                                     </p>
                                 </div>
                                 <div className="flex gap-2">
                                     <button
                                         onClick={() => setEditingUser(user.username)}
-                                        className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
+                                        className={`px-3 py-1 text-sm rounded transition-colors ${palette.buttons.info}`}
                                     >
                                         Edit
                                     </button>
                                     <button
                                         onClick={() => handleDeleteUser(user.username)}
                                         disabled={deleteUserMutation.isPending}
-                                        className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors disabled:opacity-50"
+                                        className={`px-3 py-1 text-sm rounded transition-colors ${palette.buttons.danger} disabled:opacity-50 disabled:cursor-not-allowed`}
                                     >
                                         Delete
                                     </button>
