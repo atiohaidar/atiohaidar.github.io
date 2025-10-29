@@ -17,7 +17,7 @@ const ApiDemo: React.FC = () => {
     }, []);
 
     return (
-        <Section id="api-demo" number="05" title="API Demo" className="bg-gray-50 dark:bg-deep-navy transition-colors duration-300">
+        <Section id="api-demo" number="05" title="API Demo" className="bg-light-bg dark:bg-deep-navy transition-colors duration-300">
             <div className="max-w-4xl mx-auto text-center space-y-6">
                 <p className="text-light-muted dark:text-light-slate">
                     Dashboard API demo sekarang berada pada halaman terpisah. Kamu bisa mencoba autentikasi, mengelola todo list,
