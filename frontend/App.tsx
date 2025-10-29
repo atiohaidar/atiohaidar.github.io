@@ -10,6 +10,7 @@ import ArticlesPage from './pages/ArticlesPage';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import DashboardTasksPage from './pages/DashboardTasksPage';
+import DashboardChatPage from './pages/DashboardChatPage';
 import DashboardUsersPage from './pages/DashboardUsersPage';
 import DashboardArticlesPage from './pages/DashboardArticlesPage';
 import DashboardRoomsPage from './pages/DashboardRoomsPage';
@@ -41,6 +42,7 @@ const App: React.FC = () => {
                         <Route path="/dashboard" element={<DashboardPage />}>
                             <Route index element={<Navigate to="/dashboard/tasks" replace />} />
                             <Route path="tasks" element={<DashboardTasksPage />} />
+                            <Route path="chat" element={<DashboardChatPage />} />
                             <Route 
                                 path="users" 
                                 element={

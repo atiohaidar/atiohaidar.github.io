@@ -10,6 +10,7 @@ import ApiDemo from '../components/ApiDemo';
 import Contact from '../components/Contact';
 import Footer from '../components/Footer';
 import PrintButton from '../components/PrintButton';
+import AnonymousChatModal from '../components/AnonymousChatModal';
 import { getProfile, getAbout, getProjects, getResearch, getExperiences, getEducation } from '../api';
 import { getAuthToken, getStoredUser, clearAuth } from '../apiClient';
 import { COLORS, LAYOUT, PRINT } from '../utils/styles';
@@ -33,6 +34,7 @@ const LandingPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [loggedInUser, setLoggedInUser] = useState<string | null>(null);
+    const [isAnonymousChatOpen, setIsAnonymousChatOpen] = useState(false);
 
     useEffect(() => {
         const token = getAuthToken();
@@ -124,6 +126,21 @@ const LandingPage: React.FC = () => {
             </main>
             <Footer socials={profile.socials} copyright={profile.copyright} />
             <PrintButton />
+            
+            {/* Anonymous Chat Button */}
+            <button
+                onClick={() => setIsAnonymousChatOpen(true)}
+                className={`fixed bottom-6 right-6 ${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ACCENT} p-4 rounded-full shadow-lg hover:opacity-90 transition-opacity z-40`}
+                title="Open Anonymous Chat"
+            >
+                <span className="text-2xl">💬</span>
+            </button>
+
+            {/* Anonymous Chat Modal */}
+            <AnonymousChatModal
+                isOpen={isAnonymousChatOpen}
+                onClose={() => setIsAnonymousChatOpen(false)}
+            />
         </div>
     );
 };

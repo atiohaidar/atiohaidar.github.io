@@ -32,6 +32,12 @@ const menuItems: MenuItem[] = [
         path: '/dashboard/tasks',
     },
     {
+        id: 'chat',
+        label: 'Chat',
+        icon: '💬',
+        path: '/dashboard/chat',
+    },
+    {
         id: 'rooms',
         label: 'Ruangan',
         icon: '🏢',
