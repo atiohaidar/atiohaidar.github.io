@@ -68,10 +68,10 @@ const Hero: React.FC<HeroProps> = ({ greeting, name, tagline, bio, linkedinUrl }
                             Lihat Portofolio Saya
                         </a>
                         <a
-                            href="/articles"
+                            href="#backend"
                             className={`px-8 py-4 rounded font-medium transition-colors duration-300 ${COLORS.BUTTON_PRIMARY} text-white border border-light-accent dark:border-accent-blue hover:opacity-90`}
                         >
-                            📰 Lihat Articles
+                            �️ Coba Backend
                         </a>
                     </div>
                 </div>

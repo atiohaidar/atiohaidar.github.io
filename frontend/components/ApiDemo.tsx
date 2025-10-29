@@ -1,5 +1,5 @@
 /**
- * @file Ajakan untuk mencoba dashboard API demo pada route terpisah
+ * @file Ajakan untuk mencoba dashboard Backend pada route terpisah
  */
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -17,10 +17,10 @@ const ApiDemo: React.FC = () => {
     }, []);
 
     return (
-        <Section id="api-demo" number="05" title="API Demo" className="bg-light-bg dark:bg-deep-navy transition-colors duration-300">
+        <Section id="backend" number="05" title="Backend" className="bg-light-bg dark:bg-deep-navy transition-colors duration-300">
             <div className="max-w-4xl mx-auto text-center space-y-6">
                 <p className="text-light-muted dark:text-light-slate">
-                    Dashboard API demo sekarang berada pada halaman terpisah. Kamu bisa mencoba autentikasi, mengelola todo list,
+                    Dashboard Backend sekarang berada pada halaman terpisah. Kamu bisa mencoba autentikasi, mengelola todo list,
                     serta—jika login sebagai admin—mengatur data pengguna secara real-time dari backend Worker.
                 </p>
 
@@ -50,7 +50,9 @@ const ApiDemo: React.FC = () => {
                     >
                         {isAuthenticated ? 'Buka Dashboard' : 'Coba Dashboard Sekarang'}
                     </Link>
+                    
                 </div>
+               
             </div>
         </Section>
     );

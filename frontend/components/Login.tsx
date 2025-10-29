@@ -26,7 +26,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
 
     return (
         <div className="max-w-md mx-auto bg-white dark:bg-light-navy p-8 rounded-lg shadow-lg">
-            <h2 className={`text-2xl font-bold mb-6 ${COLORS.TEXT_ACCENT}`}>Login to API Demo</h2>
+            <h2 className={`text-2xl font-bold mb-6 ${COLORS.TEXT_ACCENT}`}>Login to Backend</h2>
             
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>

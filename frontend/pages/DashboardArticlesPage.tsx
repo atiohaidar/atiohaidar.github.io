@@ -1,6 +1,6 @@
 import React from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { deleteArticle, listArticles, updateArticle } from '../apiService';
 import type { Article, ArticleUpdate } from '../apiTypes';
 import { useTheme } from '../contexts/ThemeContext';
@@ -50,6 +50,7 @@ const DashboardArticlesPage: React.FC = () => {
 
     return (
         <div className="max-w-6xl mx-auto space-y-6">
+          
             <ArticlesHeader palette={palette} />
 
             <ArticleList
@@ -64,6 +65,7 @@ const DashboardArticlesPage: React.FC = () => {
                 updatePending={updateMutation.isPending}
                 deletePending={deleteMutation.isPending}
             />
+            
         </div>
     );
 };

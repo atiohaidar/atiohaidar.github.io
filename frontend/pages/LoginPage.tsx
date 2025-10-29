@@ -25,7 +25,7 @@ const LoginPage: React.FC = () => {
                 <Link to="/" className="text-light-accent dark:text-accent-blue font-semibold">
                     &larr; Kembali ke Landing Page
                 </Link>
-                <span className="text-sm text-light-muted dark:text-soft-gray">Dashboard API Demo</span>
+                <span className="text-sm text-light-muted dark:text-soft-gray">Dashboard Backend</span>
             </header>
             <main className="max-w-5xl mx-auto px-6 py-12 flex flex-col lg:flex-row gap-12 items-center">
                 <div className="flex-1 space-y-4">

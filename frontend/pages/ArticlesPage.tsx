@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import type { Components } from 'react-markdown';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { listArticles, getArticle } from '../apiService';
@@ -183,16 +183,12 @@ const ArticlesPage: React.FC = () => {
 
     return (
         <div className={`relative ${COLORS.BG_PRIMARY} transition-colors duration-300`}>
-            <Navbar
-                logoSrc={profile.logoSrc}
-                socials={profile.socials}
-                loggedInUser={loggedInUser}
-                onLogout={handleLogout}
-            />
+          
 
             <main className="mx-auto pt-20 md:pt-24 pb-16">
                 <div className={`container mx-auto ${SPACING.CONTAINER_PADDING}`}>
                     {/* Header */}
+                    <Link to="/dashboard/articles" className={`px-4 py-2 rounded-lg transition-colors ${COLORS.BG_ACCENT} ${COLORS.TEXT_PRIMARY}`}> <span className="text-light-accent dark:text-accent-blue">📰</span> Dashboard Articles</Link>
                     <div className="max-w-4xl mx-auto mb-8 md:mb-12 text-center">
                         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-light-text dark:text-white mb-3 md:mb-4">
                             <span className="text-light-accent dark:text-accent-blue">📰</span> Articles

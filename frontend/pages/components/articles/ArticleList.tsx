@@ -2,6 +2,7 @@ import React from 'react';
 import type { Article } from '../../../apiTypes';
 import type { DashboardPalette } from './types';
 import { ArticleCard } from './ArticleCard';
+import { Link } from 'react-router-dom';
 
 interface ArticleListProps {
     articles: Article[];
@@ -32,6 +33,7 @@ export function ArticleList({
         <div className={`${palette.panel.bg} ${palette.panel.border} rounded-lg p-6 space-y-6`}>
             <div className="flex justify-between items-center">
                 <h3 className={`text-lg font-semibold ${palette.panel.text}`}>Daftar Articles</h3>
+               <Link to="/articles" className={`px-4 py-2 rounded-lg transition-colors ${palette.buttons.secondary}`}>Lihat Artikel Dari Backend</Link>
                 <button
                     onClick={onCreateClick}
                     type="button"
