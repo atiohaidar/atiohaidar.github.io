@@ -11,6 +11,7 @@ import Contact from '../components/Contact';
 import Footer from '../components/Footer';
 import PrintButton from '../components/PrintButton';
 import AnonymousChatModal from '../components/AnonymousChatModal';
+import FormTokenSection from '../components/FormTokenSection';
 import { getProfile, getAbout, getProjects, getResearch, getExperiences, getEducation } from '../api';
 import { getAuthToken, getStoredUser, clearAuth } from '../apiClient';
 import { COLORS, LAYOUT, PRINT } from '../utils/styles';
@@ -119,6 +120,7 @@ const LandingPage: React.FC = () => {
                 <Portfolio projects={projects} />
                 <ExperienceComponent experiences={experiences} education={education} />
                 <ApiDemo />
+                <FormTokenSection />
                 <Contact
                     pitch={profile.contactPitch}
                     linkedinUrl={profile.socials.linkedin}

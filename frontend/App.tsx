@@ -21,6 +21,11 @@ import DashboardRoomFormPage from './pages/DashboardRoomFormPage';
 import DashboardBookingFormPage from './pages/DashboardBookingFormPage';
 import DashboardBookingDetailPage from './pages/DashboardBookingDetailPage';
 import DashboardRoomDetailPage from './pages/DashboardRoomDetailPage';
+import DashboardFormsPage from './pages/DashboardFormsPage';
+import DashboardFormEditorPage from './pages/DashboardFormEditorPage';
+import DashboardFormResponsesPage from './pages/DashboardFormResponsesPage';
+import DashboardFormResponseDetailPage from './pages/DashboardFormResponseDetailPage';
+import FormFillPage from './pages/FormFillPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 const queryClient = new QueryClient({
@@ -41,6 +46,7 @@ const App: React.FC = () => {
                         <Route path="/" element={<LandingPage />} />
                         <Route path="/articles" element={<ArticlesPage />} />
                         <Route path="/login" element={<LoginPage />} />
+                        <Route path="/form/:token" element={<FormFillPage />} />
                         <Route path="/dashboard" element={<DashboardPage />}>
                             <Route index element={<Navigate to="/dashboard/tasks" replace />} />
                             <Route path="tasks" element={<DashboardTasksPage />} />
@@ -93,6 +99,11 @@ const App: React.FC = () => {
                             <Route path="bookings" element={<DashboardBookingsPage />} />
                             <Route path="bookings/new" element={<DashboardBookingFormPage />} />
                             <Route path="bookings/:bookingId" element={<DashboardBookingDetailPage />} />
+                            <Route path="forms" element={<DashboardFormsPage />} />
+                            <Route path="forms/new" element={<DashboardFormEditorPage />} />
+                            <Route path="forms/:formId/edit" element={<DashboardFormEditorPage />} />
+                            <Route path="forms/:formId/responses" element={<DashboardFormResponsesPage />} />
+                            <Route path="forms/:formId/responses/:responseId" element={<DashboardFormResponseDetailPage />} />
                         </Route>
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>

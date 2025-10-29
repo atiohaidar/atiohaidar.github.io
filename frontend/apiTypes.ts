@@ -204,3 +204,92 @@ export interface StatsResponse {
     success: boolean;
     data: DashboardStats;
 }
+
+// Form types
+export interface FormQuestion {
+    id: string;
+    form_id: string;
+    question_text: string;
+    question_order: number;
+    created_at?: string;
+}
+
+export interface Form {
+    id: string;
+    title: string;
+    description?: string;
+    token: string;
+    created_by: string;
+    created_at?: string;
+    updated_at?: string;
+}
+
+export interface FormWithQuestions {
+    form: Form;
+    questions: FormQuestion[];
+}
+
+export interface FormCreate {
+    title: string;
+    description?: string;
+    questions: {
+        question_text: string;
+        question_order: number;
+    }[];
+}
+
+export interface FormUpdate {
+    title?: string;
+    description?: string;
+    questions?: {
+        id?: string;
+        question_text: string;
+        question_order: number;
+    }[];
+}
+
+export interface FormResponse {
+    id: string;
+    form_id: string;
+    respondent_name?: string;
+    submitted_at?: string;
+}
+
+export interface FormAnswer {
+    question_id: string;
+    question_text: string;
+    answer_text: string;
+}
+
+export interface FormResponseDetail {
+    response: FormResponse;
+    answers: FormAnswer[];
+}
+
+export interface FormResponseCreate {
+    respondent_name?: string;
+    answers: {
+        question_id: string;
+        answer_text: string;
+    }[];
+}
+
+export interface FormsResponse {
+    success: boolean;
+    data: Form[];
+}
+
+export interface FormResponse_API {
+    success: boolean;
+    data: FormWithQuestions;
+}
+
+export interface FormResponsesResponse {
+    success: boolean;
+    data: FormResponse[];
+}
+
+export interface FormResponseDetailResponse {
+    success: boolean;
+    data: FormResponseDetail;
+}

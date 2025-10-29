@@ -50,6 +50,12 @@ const menuItems: MenuItem[] = [
         path: '/dashboard/bookings',
     },
     {
+        id: 'forms',
+        label: 'Formulir',
+        icon: '📋',
+        path: '/dashboard/forms',
+    },
+    {
         id: 'users',
         label: 'User Management',
         icon: '👥',

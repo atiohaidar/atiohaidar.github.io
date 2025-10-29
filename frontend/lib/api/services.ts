@@ -34,6 +34,16 @@ import type {
     DashboardStats,
     StatsResponse,
     BookingStatus,
+    Form,
+    FormCreate,
+    FormUpdate,
+    FormWithQuestions,
+    FormsResponse,
+    FormResponse_API,
+    FormResponse,
+    FormResponseCreate,
+    FormResponsesResponse,
+    FormResponseDetailResponse,
 } from './types';
 
 // ============================================================================
@@ -295,3 +305,72 @@ export const createBooking = bookingService.create;
 export const updateBookingStatus = bookingService.updateStatus;
 export const cancelBooking = bookingService.cancel;
 export const getStats = statsService.get;
+
+// ============================================================================
+// Forms API
+// ============================================================================
+export const formService = {
+    list: async (): Promise<Form[]> => {
+        const response = await apiFetch<FormsResponse>('/api/forms');
+        return response.data;
+    },
+
+    get: async (formId: string): Promise<FormWithQuestions> => {
+        const response = await apiFetch<FormResponse_API>(`/api/forms/${formId}`);
+        return response.data;
+    },
+
+    getByToken: async (token: string): Promise<FormWithQuestions> => {
+        const response = await apiFetch<FormResponse_API>(`/api/public/forms/${token}`);
+        return response.data;
+    },
+
+    create: async (form: FormCreate): Promise<FormWithQuestions> => {
+        const response = await apiFetch<FormResponse_API>('/api/forms', {
+            method: 'POST',
+            body: JSON.stringify(form),
+        });
+        return response.data;
+    },
+
+    update: async (formId: string, updates: FormUpdate): Promise<FormWithQuestions> => {
+        const response = await apiFetch<FormResponse_API>(`/api/forms/${formId}`, {
+            method: 'PUT',
+            body: JSON.stringify(updates),
+        });
+        return response.data;
+    },
+
+    delete: async (formId: string): Promise<void> => {
+        await apiFetch<{ success: boolean; message: string }>(`/api/forms/${formId}`, {
+            method: 'DELETE',
+        });
+    },
+
+    getResponses: async (formId: string): Promise<FormResponse[]> => {
+        const response = await apiFetch<FormResponsesResponse>(`/api/forms/${formId}/responses`);
+        return response.data;
+    },
+
+    getResponseDetail: async (formId: string, responseId: string) => {
+        const response = await apiFetch<FormResponseDetailResponse>(`/api/forms/${formId}/responses/${responseId}`);
+        return response.data;
+    },
+
+    submitResponse: async (token: string, responseData: FormResponseCreate): Promise<{ success: boolean; message: string }> => {
+        return apiFetch<{ success: boolean; message: string }>(`/api/public/forms/${token}/submit`, {
+            method: 'POST',
+            body: JSON.stringify(responseData),
+        });
+    },
+};
+
+export const listForms = formService.list;
+export const getForm = formService.get;
+export const getFormByToken = formService.getByToken;
+export const createForm = formService.create;
+export const updateForm = formService.update;
+export const deleteForm = formService.delete;
+export const getFormResponses = formService.getResponses;
+export const getFormResponseDetail = formService.getResponseDetail;
+export const submitFormResponse = formService.submitResponse;
