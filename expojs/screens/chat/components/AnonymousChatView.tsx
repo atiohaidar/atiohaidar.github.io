@@ -64,7 +64,9 @@ export function AnonymousChatView() {
         setMessages(data);
         setLoading(false);
         // Scroll to bottom after loading
-        setTimeout(() => scrollToBottom(false), 100);
+        setTimeout(() => {
+          flatListRef.current?.scrollToEnd({ animated: false });
+        }, 100);
       } catch (error) {
         console.error('Failed to load messages:', error);
         Alert.alert('Error', 'Failed to load messages');
@@ -112,6 +114,7 @@ export function AnonymousChatView() {
     return () => {
       webSocketService.offMessage(handleWebSocketMessage);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Cleanup on unmount
@@ -159,7 +162,9 @@ export function AnonymousChatView() {
           reply_to_id: replyTo?.id,
         });
         setMessages((prev) => [...prev, newMessage]);
-        setTimeout(() => scrollToBottom(true), 100);
+        setTimeout(() => {
+          flatListRef.current?.scrollToEnd({ animated: true });
+        }, 100);
       }
 
       // Clear input and reply

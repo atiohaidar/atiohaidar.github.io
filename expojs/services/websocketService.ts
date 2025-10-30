@@ -38,9 +38,7 @@ export class WebSocketService {
   private lastActivity = Date.now();
   private readonly IDLE_TIMEOUT = 5 * 60 * 1000; // 5 minutes idle timeout
 
-  constructor() {
-    // Don't auto-connect, connect when needed
-  }
+  // No constructor needed - connect when ensureConnected is called
 
   private connect(): void {
     if (this.isConnecting || this.socket?.readyState === WebSocket.CONNECTING) {

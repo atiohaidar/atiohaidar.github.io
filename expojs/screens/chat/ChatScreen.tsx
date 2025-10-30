@@ -39,6 +39,7 @@ export default function ChatScreen() {
   useEffect(() => {
     setLoading(true);
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode]);
 
   const loadData = async () => {
@@ -164,12 +165,6 @@ export default function ChatScreen() {
       </View>
     );
   }
-
-  const getOtherUsername = (conv: Conversation) => {
-    return conv.user1_username === user?.username
-      ? conv.user2_username
-      : conv.user1_username;
-  };
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}> 

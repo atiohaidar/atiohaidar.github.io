@@ -194,7 +194,9 @@ export interface AnonymousMessage {
   sender_id: string;
   content: string;
   reply_to_id?: string;
-  created_at?: string;
+  created_at: string;
+  reply_content?: string;
+  reply_sender_id?: string;
 }
 
 export interface AnonymousMessageCreate {
