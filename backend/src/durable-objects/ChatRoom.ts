@@ -61,6 +61,17 @@ export class ChatRoom implements DurableObject {
 		};
 		webSocket.send(JSON.stringify(welcomeMsg));
 
+		// Notify all clients about updated connections count on new connection
+		const connectUpdateMsg = {
+			type: 'connections_update',
+			connections: this.connections.size
+		};
+		for (const conn of this.connections) {
+			if (conn.readyState === WebSocket.OPEN) {
+				conn.send(JSON.stringify(connectUpdateMsg));
+			}
+		}
+
 		webSocket.addEventListener('message', async (event) => {
 			try {
 				const data = JSON.parse(event.data.toString());

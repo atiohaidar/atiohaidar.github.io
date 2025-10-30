@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { COLORS } from '../utils/styles';
 import {
     getAnonymousMessages,
@@ -41,34 +42,34 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
     }, []);
 
     // Handle WebSocket messages
-    const handleWebSocketMessage = useCallback((data: any) => {
-        if (data.type === 'new_message') {
-            setMessages(prev => {
-                // Check if message already exists to avoid duplicates
-                const exists = prev.some(msg => msg.id === data.message.id);
-                if (exists) return prev;
+    // const handleWebSocketMessage = useCallback((data: any) => {
+    //     if (data.type === 'new_message') {
+    //         setMessages(prev => {
+    //             // Check if message already exists to avoid duplicates
+    //             const exists = prev.some(msg => msg.id === data.message.id);
+    //             if (exists) return prev;
 
-                const newMessages = [...prev, data.message];
-                const isAtBottom = checkIfAtBottom();
+    //             const newMessages = [...prev, data.message];
+    //             const isAtBottom = checkIfAtBottom();
 
-                // Auto-scroll if user is at bottom, otherwise increment unread count
-                if (isAtBottom) {
-                    setTimeout(() => scrollToBottom(), 100);
-                } else {
-                    setUnreadCount(prev => prev + 1);
-                }
+    //             // Auto-scroll if user is at bottom, otherwise increment unread count
+    //             if (isAtBottom) {
+    //                 setTimeout(() => scrollToBottom(), 100);
+    //             } else {
+    //                 setUnreadCount(prev => prev + 1);
+    //             }
 
-                return newMessages;
-            });
-        } else if (data.type === 'welcome') {
-            setIsConnected(true);
-            console.log(`Connected to chat room. ${data.connections} users online.`);
-        } else if (data.type === 'connections_update') {
-            console.log(`${data.connections} users online.`);
-        } else if (data.type === 'error') {
-            setError(data.message);
-        }
-    }, []);
+    //             return newMessages;
+    //         });
+    //     } else if (data.type === 'welcome') {
+    //         setIsConnected(true);
+    //         console.log(`Connected to chat room. ${data.connections} users online.`);
+    //     } else if (data.type === 'connections_update') {
+    //         console.log(`${data.connections} users online.`);
+    //     } else if (data.type === 'error') {
+    //         setError(data.message);
+    //     }
+    // }, []);
 
     // Check if user is at bottom of messages
     const checkIfAtBottom = useCallback(() => {
@@ -108,6 +109,23 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
         setTimeout(() => {
             isUserScrollingRef.current = false;
         }, 150);
+    }, []);
+
+    // WebSocket message handler
+    const handleWebSocketMessage = useCallback((data: any) => {
+        // Any message from server implies the socket is alive
+        setIsConnected(true);
+
+        if (data.type === 'new_message') {
+            setMessages(prev => {
+                const exists = prev.some(msg => msg.id === data.message.id);
+                if (exists) return prev;
+                return [...prev, data.message];
+            });
+            setTimeout(() => scrollToBottom(), 100);
+        } else if (data.type === 'clear_messages') {
+            setMessages([]);
+        }
     }, []);
 
     useEffect(() => {
@@ -302,6 +320,17 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
+                        <Link
+                            to="/fullscreen-chat"
+                            className="p-2 rounded-full text-white hover:bg-white/10 transition-colors"
+                            title="Buka fullscreen chat"
+                            onClick={() => {
+                                webSocketService.disconnect(); // Disconnect before closing modal
+                                onClose(); // Close modal when going fullscreen
+                            }}
+                        >
+                            ⛶
+                        </Link>
                         <button
                             onClick={() => setShowResetConfirm(true)}
                             disabled={loading || messages.length === 0}
