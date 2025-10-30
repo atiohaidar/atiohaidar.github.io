@@ -194,13 +194,15 @@ Konfigurasi Durable Object:
     "migrations": [
         {
             "tag": "v1",
-            "new_classes": [
+            "new_sqlite_classes": [  // Gunakan new_sqlite_classes untuk free plan
                 "ChatRoom"
             ]
         }
     ]
 }
 ```
+
+> **⚠️ Important:** Untuk free plan Cloudflare, gunakan `new_sqlite_classes` bukan `new_classes` di migrations.
 
 #### File: `backend/src/index.ts`
 
@@ -471,7 +473,6 @@ const handleWebSocketMessage = useCallback((data: any) => {
 
 ```typescript
 export default defineConfig({
-    // ... other config
     server: {
         proxy: {
             '/api': {
@@ -480,12 +481,30 @@ export default defineConfig({
             },
             '/chat': {
                 target: 'http://localhost:8787',
-                ws: true,
+                ws: true,  // Enable WebSocket proxy
                 changeOrigin: true,
             },
         },
     },
 });
+```
+
+### 4. Environment-based WebSocket Connection
+
+#### File: `frontend/services/websocketService.ts`
+
+```typescript
+// Development: ws://localhost:3000/chat (proxied to ws://localhost:8787/chat)
+// Production: wss://backend.atiohaidar.workers.dev/chat
+
+if (import.meta.env.DEV) {
+    // Development: use same host (proxied by Vite)
+    socketUrl = `${protocol}//${window.location.host}/chat`;
+} else {
+    // Production: connect directly to backend worker
+    const backendUrl = 'https://backend.atiohaidar.workers.dev';
+    socketUrl = `wss://${backendUrl.replace('https://', '')}/chat`;
+}
 ```
 
 ---
@@ -577,17 +596,33 @@ export default defineConfig({
 
 ### Common Issues:
 
-1. **WebSocket Connection Timeout:**
+1. **Free Plan Durable Objects Error:**
+   ```
+   In order to use Durable Objects with a free plan, you must create a namespace using a new_sqlite_classes migration.
+   ```
+   
+   **Solution:** Update `wrangler.jsonc` migrations to use `new_sqlite_classes` instead of `new_classes`:
+   
+   ```jsonc
+   "migrations": [
+       {
+           "tag": "v1",
+           "new_sqlite_classes": ["ChatRoom"]  // Not new_classes
+       }
+   ]
+   ```
+
+2. **WebSocket Connection Timeout:**
    - Check if backend is running on correct port
    - Verify Vite proxy configuration
    - Check CORS settings
 
-2. **Messages Not Appearing:**
+3. **Messages Not Appearing:**
    - Verify Durable Object is properly configured
    - Check database connectivity
    - Review message parsing logic
 
-3. **Auto-scroll Not Working:**
+4. **Auto-scroll Not Working:**
    - Check scroll event listeners
    - Verify ref assignments
    - Test scroll detection logic
