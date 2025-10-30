@@ -495,3 +495,93 @@ export const useSendAnonymousMessage = () => {
     },
   });
 };
+
+// ============================================================================
+// Habit Tracker Hooks
+// ============================================================================
+
+export const useHabits = (page: number = 0) => {
+  return useQuery({
+    queryKey: ['habits', page],
+    queryFn: () => ApiService.listHabits(page),
+  });
+};
+
+export const useHabit = (habitId: string) => {
+  return useQuery({
+    queryKey: ['habits', habitId],
+    queryFn: () => ApiService.getHabit(habitId),
+    enabled: !!habitId,
+  });
+};
+
+export const useCreateHabit = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (habit: Types.HabitCreate) => ApiService.createHabit(habit),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['habits'] });
+    },
+  });
+};
+
+export const useUpdateHabit = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ habitId, updates }: { habitId: string; updates: Types.HabitUpdate }) =>
+      ApiService.updateHabit(habitId, updates),
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['habits'] });
+      queryClient.invalidateQueries({ queryKey: ['habits', variables.habitId] });
+    },
+  });
+};
+
+export const useDeleteHabit = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (habitId: string) => ApiService.deleteHabit(habitId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['habits'] });
+    },
+  });
+};
+
+export const useHabitCompletions = (habitId: string, startDate?: string, endDate?: string) => {
+  return useQuery({
+    queryKey: ['habits', habitId, 'completions', startDate, endDate],
+    queryFn: () => ApiService.getHabitCompletions(habitId, startDate, endDate),
+    enabled: !!habitId,
+  });
+};
+
+export const useMarkHabitComplete = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ habitId, date }: { habitId: string; date: string }) =>
+      ApiService.markHabitComplete(habitId, date),
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['habits'] });
+      queryClient.invalidateQueries({ queryKey: ['habits', variables.habitId] });
+      queryClient.invalidateQueries({ queryKey: ['habits', variables.habitId, 'completions'] });
+    },
+  });
+};
+
+export const useUnmarkHabitComplete = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ habitId, date }: { habitId: string; date: string }) =>
+      ApiService.unmarkHabitComplete(habitId, date),
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['habits'] });
+      queryClient.invalidateQueries({ queryKey: ['habits', variables.habitId] });
+      queryClient.invalidateQueries({ queryKey: ['habits', variables.habitId, 'completions'] });
+    },
+  });
+};

@@ -80,6 +80,12 @@ const menuItems: MenuItem[] = [
         path: '/dashboard/events',
     },
     {
+        id: 'habits',
+        label: 'Habit Tracker',
+        icon: '✅',
+        path: '/dashboard/habits',
+    },
+    {
         id: 'users',
         label: 'User Management',
         icon: '👥',

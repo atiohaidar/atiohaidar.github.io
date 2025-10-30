@@ -559,3 +559,70 @@ export const AttendanceScanCreateSchema = z.object({
 	latitude: z.number().optional(),
 	longitude: z.number().optional(),
 });
+
+// Habit schemas
+export const HabitPeriodTypeSchema = z.enum(["daily", "weekly", "monthly", "custom"], {
+	description: "Tipe periode habit",
+});
+
+export type HabitPeriodType = z.infer<typeof HabitPeriodTypeSchema>;
+
+export const Habit = z.object({
+	id: Str({ description: "Unique identifier", example: "habit-001" }),
+	user_username: Str({ example: "user" }),
+	name: Str({ example: "Morning Exercise" }),
+	description: Str({ required: false, example: "30 minutes cardio workout" }),
+	period_type: HabitPeriodTypeSchema,
+	period_days: z.number().int().positive().default(1),
+	created_at: Str({ required: false }),
+	updated_at: Str({ required: false }),
+});
+
+export const HabitCreateSchema = z.object({
+	name: Str({ example: "Morning Exercise" }),
+	description: Str({ required: false }),
+	period_type: HabitPeriodTypeSchema.default("daily"),
+	period_days: z.number().int().positive().default(1),
+});
+
+export const HabitUpdateSchema = z
+	.object({
+		name: Str({ required: false }),
+		description: Str({ required: false }),
+		period_type: HabitPeriodTypeSchema.optional(),
+		period_days: z.number().int().positive().optional(),
+	})
+	.refine((data) => Object.keys(data).length > 0, {
+		message: "Minimal satu field harus diisi",
+	});
+
+// Habit completion schemas
+export const HabitCompletion = z.object({
+	id: Str({ description: "Unique identifier", example: "comp-001" }),
+	habit_id: Str({ example: "habit-001" }),
+	user_username: Str({ example: "user" }),
+	completion_date: Str({ description: "ISO 8601 date", example: "2024-01-15" }),
+	created_at: Str({ required: false }),
+});
+
+export const HabitCompletionCreateSchema = z.object({
+	habit_id: Str({ example: "habit-001" }),
+	completion_date: Str({ description: "ISO 8601 date", example: "2024-01-15" }),
+});
+
+// Habit with stats schema
+export const HabitWithStats = z.object({
+	id: Str({ description: "Unique identifier", example: "habit-001" }),
+	user_username: Str({ example: "user" }),
+	name: Str({ example: "Morning Exercise" }),
+	description: Str({ required: false }),
+	period_type: HabitPeriodTypeSchema,
+	period_days: z.number().int().positive(),
+	created_at: Str({ required: false }),
+	updated_at: Str({ required: false }),
+	total_completions: z.number().int().nonnegative(),
+	total_periods: z.number().int().nonnegative(),
+	completion_percentage: z.number().nonnegative(),
+	current_streak: z.number().int().nonnegative(),
+	is_completed_today: z.boolean(),
+});

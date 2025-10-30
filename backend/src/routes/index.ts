@@ -113,6 +113,16 @@ import {
 	AttendeeWithScansGet,
 	EventScanHistoryList,
 } from "../controllers/event.controller";
+import {
+	HabitList,
+	HabitGet,
+	HabitCreate,
+	HabitUpdate,
+	HabitDelete,
+	HabitCompletionList,
+	HabitCompletionCreate,
+	HabitCompletionDelete,
+} from "../controllers/habit.controller";
 
 export const registerRoutes = (openapi: any) => {
 	// Public routes (no authentication required)
@@ -260,4 +270,16 @@ export const registerRoutes = (openapi: any) => {
 	// Attendance scan routes
 	openapi.post("/api/events/:eventId/scan", AttendanceScanCreate);
 	openapi.get("/api/events/:eventId/scan-history", EventScanHistoryList);
+
+	// Habit routes
+	openapi.get("/api/habits", HabitList.handle, { schema: HabitList.schema });
+	openapi.post("/api/habits", HabitCreate.handle, { schema: HabitCreate.schema });
+	openapi.get("/api/habits/:habitId", HabitGet.handle, { schema: HabitGet.schema });
+	openapi.put("/api/habits/:habitId", HabitUpdate.handle, { schema: HabitUpdate.schema });
+	openapi.delete("/api/habits/:habitId", HabitDelete.handle, { schema: HabitDelete.schema });
+
+	// Habit completion routes
+	openapi.get("/api/habits/:habitId/completions", HabitCompletionList.handle, { schema: HabitCompletionList.schema });
+	openapi.post("/api/habits/completions", HabitCompletionCreate.handle, { schema: HabitCompletionCreate.schema });
+	openapi.delete("/api/habits/:habitId/completions", HabitCompletionDelete.handle, { schema: HabitCompletionDelete.schema });
 };

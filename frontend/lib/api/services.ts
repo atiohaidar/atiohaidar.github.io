@@ -66,6 +66,13 @@ import type {
     AttendeeWithScans,
     EventScanHistory,
 } from './types';
+import type {
+    HabitWithStats,
+    HabitCreateInput,
+    HabitUpdateInput,
+    HabitCompletion,
+    Habit,
+} from '../types/habit';
 
 // ============================================================================
 // Authentication API
@@ -755,4 +762,77 @@ export const assignEventAdmin = eventService.assignAdmin;
 export const removeEventAdmin = eventService.removeAdmin;
 export const scanAttendance = eventService.scanAttendance;
 export const getEventScanHistory = eventService.getScanHistory;
+
+// ============================================================================
+// Habits API
+// ============================================================================
+export const habitService = {
+    list: async (page: number = 0): Promise<HabitWithStats[]> => {
+        const response = await apiFetch<{ success: boolean; habits: HabitWithStats[] }>(`/api/habits?page=${page}`);
+        return response.habits;
+    },
+
+    get: async (habitId: string): Promise<HabitWithStats> => {
+        const response = await apiFetch<{ success: boolean; habit: HabitWithStats }>(`/api/habits/${habitId}`);
+        return response.habit;
+    },
+
+    create: async (habit: HabitCreateInput): Promise<Habit> => {
+        const response = await apiFetch<{ success: boolean; habit: Habit }>('/api/habits', {
+            method: 'POST',
+            body: JSON.stringify(habit),
+        });
+        return response.habit;
+    },
+
+    update: async (habitId: string, updates: HabitUpdateInput): Promise<Habit> => {
+        const response = await apiFetch<{ success: boolean; habit: Habit }>(`/api/habits/${habitId}`, {
+            method: 'PUT',
+            body: JSON.stringify(updates),
+        });
+        return response.habit;
+    },
+
+    delete: async (habitId: string): Promise<Habit> => {
+        const response = await apiFetch<{ success: boolean; habit: Habit }>(`/api/habits/${habitId}`, {
+            method: 'DELETE',
+        });
+        return response.habit;
+    },
+
+    getCompletions: async (habitId: string, startDate?: string, endDate?: string): Promise<HabitCompletion[]> => {
+        let url = `/api/habits/${habitId}/completions`;
+        const params = new URLSearchParams();
+        if (startDate) params.append('startDate', startDate);
+        if (endDate) params.append('endDate', endDate);
+        if (params.toString()) url += `?${params.toString()}`;
+        
+        const response = await apiFetch<{ success: boolean; completions: HabitCompletion[] }>(url);
+        return response.completions;
+    },
+
+    markComplete: async (habitId: string, date: string): Promise<HabitCompletion> => {
+        const response = await apiFetch<{ success: boolean; completion: HabitCompletion }>('/api/habits/completions', {
+            method: 'POST',
+            body: JSON.stringify({ habit_id: habitId, completion_date: date }),
+        });
+        return response.completion;
+    },
+
+    unmarkComplete: async (habitId: string, date: string): Promise<void> => {
+        await apiFetch<{ success: boolean }>(`/api/habits/${habitId}/completions?date=${date}`, {
+            method: 'DELETE',
+        });
+    },
+};
+
+// Export habit service functions
+export const listHabits = habitService.list;
+export const getHabit = habitService.get;
+export const createHabit = habitService.create;
+export const updateHabit = habitService.update;
+export const deleteHabit = habitService.delete;
+export const getHabitCompletions = habitService.getCompletions;
+export const markHabitComplete = habitService.markComplete;
+export const unmarkHabitComplete = habitService.unmarkComplete;
 
