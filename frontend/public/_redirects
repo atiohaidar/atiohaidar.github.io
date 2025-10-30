@@ -6,5 +6,5 @@
 /api/*           /api/:splat  200
 
 # WebSocket
-/chat-ws        200
-/whiteboard-ws   200
+/chat-ws/*       200
+/whiteboard-ws/* 200

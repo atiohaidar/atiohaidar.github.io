@@ -116,26 +116,47 @@ const WhiteboardPage: React.FC = () => {
         loadWhiteboard();
     }, [whiteboardId, navigate]);
 
-    // Initialize WebSocket
+    const [joined, setJoined] = useState(false);
+    
+    // Initialize WebSocket setelah user join
     useEffect(() => {
-        if (!whiteboardId || !username || loading) return;
+        if (!joined || !whiteboardId || !username) return;
 
+        console.log('Initializing WebSocket connection for joined user...');
+        
         const service = new WhiteboardWebSocketService(
             whiteboardId,
             userId,
-            username,
+            username.trim(),
             selectedColor
         );
-
-        service.onMessage((msg) => {
+        
+        // Handler untuk pesan WebSocket
+        const handleMessage = (msg: any) => {
+            console.log('Received WebSocket message:', msg);
+            
+            // Validasi pesan
+            if (!msg || typeof msg !== 'object') {
+                console.warn('Invalid WebSocket message received:', msg);
+                return;
+            }
+            
+            if (!msg.type) {
+                console.warn('WebSocket message missing type property:', msg);
+                return;
+            }
+            
             switch (msg.type) {
                 case 'welcome':
+                    console.log('Welcome message received:', msg.users);
                     setUsers(msg.users || []);
                     break;
                 case 'user_joined':
+                    console.log('User joined:', msg.users);
                     setUsers(msg.users || []);
                     break;
                 case 'user_left':
+                    console.log('User left:', msg.userId);
                     setUsers(msg.users || []);
                     setCursors(prev => {
                         const newCursors = new Map(prev);
@@ -144,45 +165,69 @@ const WhiteboardPage: React.FC = () => {
                     });
                     break;
                 case 'draw':
+                    console.log('Draw message received:', msg.stroke);
                     if (msg.stroke && msg.userId !== userId) {
+                        console.log('Adding stroke to canvas from:', msg.username);
                         setStrokes(prev => [...prev, {
                             ...msg.stroke,
                             userId: msg.userId || '',
-                            username: msg.username
+                            username: msg.username || 'Anonymous',
                         }]);
+                    } else {
+                        console.log('Ignoring own stroke or invalid stroke');
                     }
                     break;
                 case 'cursor':
-                    if (msg.userId !== userId && msg.x !== undefined && msg.y !== undefined) {
+                    if (msg.userId !== userId) {
                         setCursors(prev => {
                             const newCursors = new Map(prev);
                             newCursors.set(msg.userId || '', {
                                 x: msg.x,
                                 y: msg.y,
-                                color: msg.color || '#000',
-                                username: msg.username || 'Anonymous'
+                                color: msg.color || '#000000',
+                                username: msg.username || 'Anonymous',
                             });
                             return newCursors;
                         });
                     }
                     break;
                 case 'clear':
+                    console.log('Clear message received');
                     setStrokes([]);
                     break;
                 case 'undo':
                     if (msg.strokeId) {
+                        console.log('Undo message received:', msg.strokeId);
                         setStrokes(prev => prev.filter(s => s.id !== msg.strokeId));
                     }
                     break;
             }
-        });
-
+        };
+        
+        // Simpan service ke state
         setWsService(service);
-
+        
+        // Daftarkan handler pesan
+        service.onMessage(handleMessage);
+        
+        console.log('WebSocket service initialized and handler registered');
+        
+        // Cleanup function
         return () => {
+            console.log('Cleaning up WebSocket connection');
+            service.offMessage(handleMessage);
             service.disconnect();
         };
-    }, [whiteboardId, userId, username, selectedColor, loading]);
+    }, [joined, whiteboardId, userId, username, selectedColor]);
+
+    const handleUsernameSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!username.trim()) return;
+        
+        console.log('Joining whiteboard as:', username);
+        setJoined(true);
+        setShowUsernameModal(false);
+    };
 
     // Redraw canvas
     const redrawCanvas = useCallback(() => {
@@ -299,13 +344,6 @@ const WhiteboardPage: React.FC = () => {
         
         if (wsService && lastStroke.userId === userId) {
             wsService.sendUndo(lastStroke.id);
-        }
-    };
-
-    const handleUsernameSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (username.trim()) {
-            setShowUsernameModal(false);
         }
     };
 

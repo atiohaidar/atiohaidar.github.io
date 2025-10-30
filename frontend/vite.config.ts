@@ -48,15 +48,18 @@ export default defineConfig(({ mode }) => {
             target: 'http://localhost:3000',
             changeOrigin: true,
           },
-          // WebSocket untuk whiteboard
-          '/whiteboard-ws': {
+          // WebSocket untuk whiteboard dengan path yang lebih spesifik
+          '^/whiteboard-ws/(.+)': {
             target: 'ws://localhost:8787',
             ws: true,
             changeOrigin: true,
-            rewrite: (path) => path.replace(/^\/whiteboard-ws/, '/whiteboard'),
+            rewrite: (path) => path.replace(/^\/whiteboard-ws\//, '/whiteboard/'),
             configure: (proxy, options) => {
               proxy.on('error', (err, req, res) => {
-                console.log('Whiteboard WebSocket proxy error', err);
+                console.error('Whiteboard WebSocket proxy error:', err);
+              });
+              proxy.on('proxyReqWs', (proxyReq, req, socket, options, head) => {
+                console.log('Whiteboard WebSocket connection established');
               });
             },
           },

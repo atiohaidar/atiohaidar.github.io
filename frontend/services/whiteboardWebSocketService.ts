@@ -43,7 +43,8 @@ export class WhiteboardWebSocketService {
         this.isConnecting = true;
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         const host = window.location.host;
-        const socketUrl = `${protocol}//${host}/whiteboard/${this.whiteboardId}?userId=${this.userId}&username=${encodeURIComponent(this.username)}&color=${encodeURIComponent(this.userColor)}`;
+        // Menggunakan path /whiteboard-ws/ untuk menghindari konflik dengan rute halaman
+        const socketUrl = `${protocol}//${host}/whiteboard-ws/${this.whiteboardId}?userId=${this.userId}&username=${encodeURIComponent(this.username)}&color=${encodeURIComponent(this.userColor)}`;
 
         console.log('Attempting WhiteboardWebSocket connection to:', socketUrl);
 
@@ -71,10 +72,33 @@ export class WhiteboardWebSocketService {
 
             this.socket.onmessage = (event) => {
                 try {
+                    if (!event.data || typeof event.data !== 'string') {
+                        console.warn('Invalid WebSocket event data:', event.data);
+                        return;
+                    }
+                    
                     const data: WhiteboardMessage = JSON.parse(event.data);
-                    this.messageHandlers.forEach(handler => handler(data));
+                    
+                    // Validasi data yang diterima
+                    if (!data || typeof data !== 'object') {
+                        console.warn('Invalid parsed WebSocket message:', data);
+                        return;
+                    }
+                    
+                    if (!data.type) {
+                        console.warn('WebSocket message missing type property:', data);
+                        return;
+                    }
+                    
+                    this.messageHandlers.forEach(handler => {
+                        try {
+                            handler(data);
+                        } catch (handlerError) {
+                            console.error('Error in WebSocket message handler:', handlerError);
+                        }
+                    });
                 } catch (error) {
-                    console.error('Failed to parse WhiteboardWebSocket message:', error);
+                    console.error('Failed to parse WebSocket message:', error, 'Raw data:', event.data);
                 }
             };
 

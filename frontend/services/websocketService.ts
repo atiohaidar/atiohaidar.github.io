@@ -18,15 +18,17 @@ interface MessageHandler {
 	(msg: WebSocketMessage): void;
 }
 
-export class WebSocketService {
+class WebSocketService {
+	private static instance: WebSocketService;
 	private socket: WebSocket | null = null;
 	private messageHandlers: MessageHandler[] = [];
 	private reconnectAttempts = 0;
 	private maxReconnectAttempts = 5;
-	private reconnectInterval = 1000; // Start with 1 second
+	private reconnectInterval = 1000;
 	private isConnecting = false;
 	private connectionTimeout: NodeJS.Timeout | null = null;
 	private connectionPromise: Promise<void> | null = null;
+	private isInitialized = false;
 
 	// Message batching properties
 	private messageQueue: any[] = [];
@@ -39,12 +41,34 @@ export class WebSocketService {
 	private lastActivity = Date.now();
 	private readonly IDLE_TIMEOUT = 5 * 60 * 1000; // 5 minutes idle timeout
 
-	constructor() {
-		// Remove auto-connect from constructor
+	private constructor() {}
+
+	public static getInstance(): WebSocketService {
+		if (!WebSocketService.instance) {
+			WebSocketService.instance = new WebSocketService();
+		}
+		return WebSocketService.instance;
+	}
+
+	public ensureConnected() {
+		if (!this.isInitialized) {
+			this.initialize();
+		} else if (!this.isConnected && !this.isConnecting) {
+			this.connect();
+		}
+	}
+
+	private initialize() {
+		if (this.isInitialized) return;
+		this.isInitialized = true;
+		this.connect();
 	}
 
 	private connect(): void {
-		if (this.isConnecting || this.socket?.readyState === WebSocket.CONNECTING) {
+		// Jika sudah terhubung atau sedang mencoba terhubung, jangan buat koneksi baru
+		if (this.isConnecting || 
+			this.socket?.readyState === WebSocket.CONNECTING || 
+			this.socket?.readyState === WebSocket.OPEN) {
 			return;
 		}
 
@@ -143,65 +167,61 @@ export class WebSocketService {
 		this.reconnectInterval = Math.min(this.reconnectInterval * 2, 30000);
 	}
 
-	onMessage(handler: MessageHandler): void {
+	onMessage(handler: (msg: WebSocketMessage) => void): () => void {
 		this.messageHandlers.push(handler);
+		// Return unsubscribe function
+		return () => {
+			this.offMessage(handler);
+		};
 	}
 
-	ensureConnected(): void {
-		if (!this.isConnected && !this.isConnecting) {
-			this.connect();
-		}
-	}
-
-	offMessage(handler: MessageHandler): void {
+	offMessage(handler: (msg: WebSocketMessage) => void): void {
 		this.messageHandlers = this.messageHandlers.filter(h => h !== handler);
 	}
 
-	sendMessage(message: {
-		type: string;
-		sender_id: string;
-		content: string;
-		reply_to_id?: string;
-	}): void {
-		this.resetIdleTimeout(); // Reset idle on send
-
-		// Add to queue
-		this.messageQueue.push(message);
-
-		// If queue is full, flush immediately
-		if (this.messageQueue.length >= this.MAX_BATCH_SIZE) {
-			this.flushBatch();
+	sendMessage(message: any): void {
+		if (!this.isConnected) {
+			console.warn('WebSocket not connected. Message not sent:', message);
 			return;
 		}
 
-		// If no timeout set, create one
-		if (!this.batchTimeout) {
+		// Reset idle on send
+		this.resetIdleTimeout();
+
+		// Add to batch queue
+		this.messageQueue.push(message);
+
+		// If we've reached max batch size, send immediately
+		if (this.messageQueue.length >= this.MAX_BATCH_SIZE) {
+			this.flushMessageQueue();
+		}
+		// Otherwise, set a timeout to send the batch
+		else if (!this.batchTimeout) {
 			this.batchTimeout = setTimeout(() => {
-				this.flushBatch();
+				this.flushMessageQueue();
 			}, this.BATCH_DELAY);
 		}
 	}
 
-	private flushBatch(): void {
-		if (this.messageQueue.length === 0) return;
-
-		const messages = [...this.messageQueue];
-		this.messageQueue = [];
-
-		// Clear timeout
+	private flushMessageQueue(): void {
 		if (this.batchTimeout) {
 			clearTimeout(this.batchTimeout);
 			this.batchTimeout = null;
 		}
 
-		// Send batch if connected
-		if (this.socket?.readyState === WebSocket.OPEN) {
-			this.socket.send(JSON.stringify({
-				type: 'batch_messages',
-				messages: messages
-			}));
-		} else {
-			console.warn('WebSocket is not connected. Batch not sent.');
+		if (this.messageQueue.length === 0 || !this.isConnected) {
+			return;
+		}
+
+		const messagesToSend = [...this.messageQueue];
+		this.messageQueue = [];
+
+		try {
+			this.socket?.send(JSON.stringify(messagesToSend));
+		} catch (error) {
+			console.error('Failed to send WebSocket message:', error);
+			// Requeue messages on failure
+			this.messageQueue.unshift(...messagesToSend);
 		}
 	}
 
@@ -210,7 +230,7 @@ export class WebSocketService {
 		this.clearIdleTimeout();
 
 		// Flush any pending messages before disconnecting
-		this.flushBatch();
+		this.flushMessageQueue();
 
 		if (this.socket) {
 			this.socket.close();
@@ -247,4 +267,5 @@ export class WebSocketService {
 	}
 }
 
-export const webSocketService = new WebSocketService();
+// Ekspor instance tunggal
+export const webSocketService = WebSocketService.getInstance();
