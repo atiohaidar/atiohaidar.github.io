@@ -30,6 +30,99 @@ Frontend (React) <---WebSocket---> Cloudflare Workers (Durable Objects)
 
 ---
 
+## 🔄 Handling 404 on Page Reload (SPA Routing)
+
+### Masalah
+Saat menggunakan client-side routing di SPA (contoh: React Router), me-refresh halaman akan mengirim request ke server untuk path tersebut. Jika server tidak dikonfigurasi dengan benar, akan muncul error 404.
+
+### Solusi
+
+#### 1. Konfigurasi Vite Dev Server
+Di `vite.config.ts`:
+
+```typescript
+// frontend/vite.config.ts
+export default defineConfig({
+  server: {
+    port: 3000,
+    // Tambahkan ini untuk handle client-side routing
+    historyApiFallback: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8787',
+        changeOrigin: true,
+      },
+      // Handle WebSocket
+      '/whiteboard-ws': {
+        target: 'ws://localhost:8787',
+        ws: true,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/whiteboard-ws/, '/whiteboard')
+      },
+      // Handle client-side routes
+      '^/whiteboard/\\.*': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+    }
+  }
+});
+```
+
+#### 2. File _redirects untuk Produksi
+Buat file `public/_redirects` di frontend:
+
+```
+# Handle client-side routing
+/whiteboard/*    /index.html   200
+/whiteboards     /index.html   200
+
+# API routes
+/api/*           /api/:splat  200
+
+# WebSocket
+/chat           200
+/whiteboard-ws   200
+```
+
+#### 3. Error Handling di Komponen
+Gunakan mekanisme retry dengan exponential backoff:
+
+```typescript
+// Contoh di WhiteboardListPage.tsx
+const loadWhiteboards = async (isRetry = false) => {
+  try {
+    if (!isRetry) {
+      setLoading(true);
+      setError(null);
+    }
+    
+    const response = await fetch('/api/whiteboards');
+    if (!response.ok) throw new Error('Gagal memuat whiteboard');
+    
+    // Handle success
+    setRetryCount(0);
+  } catch (err) {
+    if (retryCount < 3) {
+      const delay = Math.min(1000 * Math.pow(2, retryCount), 10000);
+      setTimeout(() => loadWhiteboards(true), delay);
+      setRetryCount(c => c + 1);
+    }
+    // Tampilkan error ke user
+  } finally {
+    if (!isRetry) setLoading(false);
+  }
+};
+```
+
+### Catatan Penting
+1. Pastikan route frontend dan backend tidak bentrok
+2. Gunakan prefix yang konsisten untuk API (contoh: `/api/...`)
+3. Handle WebSocket di path yang terpisah dari static assets
+4. Selalu sediakan fallback ke `index.html` untuk client-side routing
+
+---
+
 ## 📁 File Structure
 
 ```

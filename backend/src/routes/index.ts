@@ -114,6 +114,15 @@ import {
 	AttendeeWithScansGet,
 	EventScanHistoryList,
 } from "../controllers/event.controller";
+import {
+	ListWhiteboards,
+	GetWhiteboard,
+	CreateWhiteboard,
+	UpdateWhiteboard,
+	DeleteWhiteboard,
+	GetWhiteboardStrokes,
+	ClearWhiteboard,
+} from "../controllers/WhiteboardsController";
 
 export const registerRoutes = (openapi: any) => {
 	// Public routes (no authentication required)
@@ -262,4 +271,13 @@ export const registerRoutes = (openapi: any) => {
 	// Attendance scan routes
 	openapi.post("/api/events/:eventId/scan", AttendanceScanCreate);
 	openapi.get("/api/events/:eventId/scan-history", EventScanHistoryList);
+
+	// Whiteboard routes
+	openapi.get("/api/whiteboards", ListWhiteboards);
+	openapi.post("/api/whiteboards", CreateWhiteboard);
+	openapi.get("/api/whiteboards/:id", GetWhiteboard);
+	openapi.put("/api/whiteboards/:id", UpdateWhiteboard);
+	openapi.delete("/api/whiteboards/:id", DeleteWhiteboard);
+	openapi.get("/api/whiteboards/:id/strokes", GetWhiteboardStrokes);
+	openapi.post("/api/whiteboards/:id/clear", ClearWhiteboard);
 };

@@ -179,6 +179,32 @@ const LandingPage: React.FC = () => {
                     bio={profile.heroBio}
                     linkedinUrl={profile.socials.linkedin}
                 />
+                
+                {/* Whiteboard Feature Banner */}
+                <section className={`py-12 px-4 md:px-8 ${COLORS.BG_PRIMARY}`}>
+                    <div className="max-w-4xl mx-auto">
+                        <div className={`${COLORS.BG_SECONDARY} rounded-2xl p-8 border ${COLORS.BORDER} shadow-lg`}>
+                            <div className="flex flex-col md:flex-row items-center gap-6">
+                                <div className="text-6xl">🎨</div>
+                                <div className="flex-1 text-center md:text-left">
+                                    <h2 className={`text-2xl md:text-3xl font-bold ${COLORS.TEXT_PRIMARY} mb-2`}>
+                                        Collaborative Whiteboard
+                                    </h2>
+                                    <p className={`${COLORS.TEXT_SECONDARY} mb-4`}>
+                                        Brainstorm and collaborate in real-time with others. Draw, sketch, and share ideas together on an interactive whiteboard.
+                                    </p>
+                                    <button
+                                        onClick={() => navigate('/whiteboards')}
+                                        className={`px-6 py-3 rounded-lg ${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ON_ACCENT} font-semibold hover:opacity-90 transition-opacity inline-flex items-center gap-2`}
+                                    >
+                                        <span>🚀 Start Collaborating</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <About data={about} />
                 <Research research={research} />
                 <Portfolio projects={projects} />
