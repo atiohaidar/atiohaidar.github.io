@@ -3,6 +3,7 @@ import { COLORS } from '../utils/styles';
 import {
     getAnonymousMessages,
     sendAnonymousMessage,
+    deleteAllAnonymousMessages,
     type AnonymousMessage,
 } from '../services/chatService';
 import { webSocketService } from '../services/websocketService';
@@ -22,6 +23,7 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
     const [isConnected, setIsConnected] = useState(false);
     const [showScrollToBottom, setShowScrollToBottom] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
+    const [showResetConfirm, setShowResetConfirm] = useState(false);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -129,6 +131,7 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
             loadInitialMessages();
 
             // Setup WebSocket connection
+            webSocketService.ensureConnected();
             webSocketService.onMessage(handleWebSocketMessage);
             setIsConnected(webSocketService.isConnected);
 
@@ -145,6 +148,7 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
             // Cleanup function
             return () => {
                 webSocketService.offMessage(handleWebSocketMessage);
+                webSocketService.disconnect(); // Disconnect when modal closes
                 if (container) {
                     container.removeEventListener('scroll', handleScroll);
                     container.removeEventListener('touchstart', handleUserScrollStart);
@@ -217,6 +221,66 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
         setReplyTo(null);
     };
 
+    // Group messages by date
+    const groupMessagesByDate = useCallback((messages: AnonymousMessage[]) => {
+        const groups: { [date: string]: AnonymousMessage[] } = {};
+        
+        messages.forEach(msg => {
+            const date = new Date(msg.created_at);
+            const dateKey = date.toISOString().split('T')[0]; // YYYY-MM-DD format
+            
+            if (!groups[dateKey]) {
+                groups[dateKey] = [];
+            }
+            groups[dateKey].push(msg);
+        });
+        
+        return groups;
+    }, []);
+
+    // Format date header
+    const formatDateHeader = useCallback((dateString: string) => {
+        const date = new Date(dateString + 'T00:00:00');
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        
+        if (date.toDateString() === today.toDateString()) {
+            return 'Hari Ini';
+        } else if (date.toDateString() === yesterday.toDateString()) {
+            return 'Kemarin';
+        } else {
+            return date.toLocaleDateString('id-ID', { 
+                weekday: 'long', 
+                day: 'numeric', 
+                month: 'long',
+                year: date.getFullYear() !== today.getFullYear() ? 'numeric' : undefined
+            });
+        }
+    }, []);
+
+    const handleDeleteAllMessages = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            await deleteAllAnonymousMessages();
+            setMessages([]);
+            setShowResetConfirm(false);
+            // Optionally broadcast to other users that messages were cleared
+            if (webSocketService.isConnected) {
+                webSocketService.sendMessage({
+                    type: 'clear_messages',
+                    sender_id: senderId,
+                    content: 'All messages have been cleared'
+                });
+            }
+        } catch (err: any) {
+            setError(err.message || 'Failed to delete messages');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     if (!isOpen) return null;
 
     return (
@@ -238,6 +302,14 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => setShowResetConfirm(true)}
+                            disabled={loading || messages.length === 0}
+                            className={`p-2 rounded-full text-white hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
+                            title="Hapus semua pesan"
+                        >
+                            🗑️
+                        </button>
                         <button
                             onClick={loadMessages}
                             disabled={loading}
@@ -271,48 +343,64 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
                             Belum ada pesan. Jadilah yang pertama untuk mengatakan sesuatu!
                         </div>
                     )}
-                    {messages.map((msg) => (
-                        <div
-                            key={msg.id}
-                            className={`flex ${msg.sender_id === senderId ? 'justify-end' : 'justify-start'} mb-1`}
-                        >
-                            <div className="flex flex-col max-w-[70%]">
+                    {messages.length > 0 && Object.entries(groupMessagesByDate(messages))
+                        .sort(([dateA], [dateB]) => dateA.localeCompare(dateB)) // Sort by date ascending
+                        .map(([dateKey, dateMessages]) => (
+                        <div key={dateKey}>
+                            {/* Date Header */}
+                            <div className="flex items-center justify-center my-4">
+                                <div className="bg-[#1f2c34] text-gray-300 text-xs px-3 py-1 rounded-full border border-[#2a3942]">
+                                    {formatDateHeader(dateKey)}
+                                </div>
+                            </div>
+                            
+                            {/* Messages for this date */}
+                            {dateMessages
+                                .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+                                .map((msg) => (
                                 <div
-                                    className={`relative p-2 px-3 shadow-sm ${
-                                        msg.sender_id === senderId
-                                            ? 'bg-[#005c4b] text-white rounded-tl-lg rounded-tr-lg rounded-bl-lg'
-                                            : 'bg-[#1f2c34] text-gray-100 rounded-tl-lg rounded-tr-lg rounded-br-lg'
-                                    }`}
+                                    key={msg.id}
+                                    className={`flex ${msg.sender_id === senderId ? 'justify-end' : 'justify-start'} mb-1`}
                                 >
-                                    <div className="text-xs mb-1 opacity-70">
-                                        {msg.sender_id === senderId ? 'Anda' : `Anonim-${msg.sender_id.slice(-6)}`}
-                                    </div>
-                                    {msg.reply_to_id && msg.reply_content && (
-                                        <div className={`text-xs p-2 mb-2 rounded border-l-4 ${msg.sender_id === senderId ? 'bg-[#004a3d] border-[#00a884]' : 'bg-[#182229] border-[#00a884]'}`}>
-                                            <div className="font-medium text-[#00a884]">
-                                                {msg.reply_sender_id === senderId ? 'Anda' : `Anonim-${msg.reply_sender_id?.slice(-6)}`}
+                                    <div className="flex flex-col max-w-[70%]">
+                                        <div
+                                            className={`relative p-2 px-3 shadow-sm ${
+                                                msg.sender_id === senderId
+                                                    ? 'bg-[#005c4b] text-white rounded-tl-lg rounded-tr-lg rounded-bl-lg'
+                                                    : 'bg-[#1f2c34] text-gray-100 rounded-tl-lg rounded-tr-lg rounded-br-lg'
+                                            }`}
+                                        >
+                                            <div className="text-xs mb-1 opacity-70">
+                                                {msg.sender_id === senderId ? 'Anda' : `Anonim-${msg.sender_id.slice(-6)}`}
                                             </div>
-                                            <div className="truncate opacity-80">{msg.reply_content}</div>
+                                            {msg.reply_to_id && msg.reply_content && (
+                                                <div className={`text-xs p-2 mb-2 rounded border-l-4 ${msg.sender_id === senderId ? 'bg-[#004a3d] border-[#00a884]' : 'bg-[#182229] border-[#00a884]'}`}>
+                                                    <div className="font-medium text-[#00a884]">
+                                                        {msg.reply_sender_id === senderId ? 'Anda' : `Anonim-${msg.reply_sender_id?.slice(-6)}`}
+                                                    </div>
+                                                    <div className="truncate opacity-80">{msg.reply_content}</div>
+                                                </div>
+                                            )}
+                                            <div className="break-words">
+                                                {msg.content}
+                                            </div>
+                                            <div className="flex items-center justify-end gap-1 mt-1">
+                                                <span className="text-[10px] opacity-60">
+                                                    {new Date(msg.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                                                </span>
+                                            </div>
                                         </div>
-                                    )}
-                                    <div className="break-words">
-                                        {msg.content}
-                                    </div>
-                                    <div className="flex items-center justify-end gap-1 mt-1">
-                                        <span className="text-[10px] opacity-60">
-                                            {new Date(msg.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
-                                        </span>
+                                        {msg.sender_id !== senderId && (
+                                            <button
+                                                onClick={() => handleReply(msg)}
+                                                className="text-[10px] mt-1 ml-3 text-gray-400 hover:underline"
+                                            >
+                                                Balas
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
-                                {msg.sender_id !== senderId && (
-                                    <button
-                                        onClick={() => handleReply(msg)}
-                                        className="text-[10px] mt-1 ml-3 text-gray-400 hover:underline"
-                                    >
-                                        Balas
-                                    </button>
-                                )}
-                            </div>
+                            ))}
                         </div>
                     ))}
                     {/* Invisible element to scroll to */}
@@ -387,6 +475,46 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
                     </div>
                 </div>
             </div>
+
+            {/* Reset Confirmation Modal */}
+            {showResetConfirm && (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+                    <div className={`${COLORS.BG_SECONDARY} ${COLORS.BORDER} relative w-full max-w-md rounded-xl border p-6 shadow-2xl`}>
+                        <button
+                            type="button"
+                            onClick={() => setShowResetConfirm(false)}
+                            className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
+                            aria-label="Tutup konfirmasi"
+                        >
+                            ✕
+                        </button>
+                        <h2 className={`text-xl font-semibold mb-4 ${COLORS.TEXT_PRIMARY}`}>
+                            Hapus Semua Pesan?
+                        </h2>
+                        <p className={`${COLORS.TEXT_SECONDARY} mb-6`}>
+                            Tindakan ini akan menghapus semua pesan anonim secara permanen. 
+                            Pesan yang sudah terkirim tidak dapat dikembalikan.
+                        </p>
+                        <div className="flex flex-col gap-3 sm:flex-row">
+                            <button
+                                type="button"
+                                onClick={() => setShowResetConfirm(false)}
+                                className={`flex-1 px-4 py-3 rounded-lg font-semibold border ${COLORS.BORDER} ${COLORS.TEXT_PRIMARY} hover:bg-black/5 dark:hover:bg-white/10 transition-colors`}
+                            >
+                                Batal
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleDeleteAllMessages}
+                                disabled={loading}
+                                className={`flex-1 px-4 py-3 rounded-lg font-semibold bg-red-500 text-white hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
+                            >
+                                {loading ? 'Menghapus...' : 'Ya, Hapus Semua'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

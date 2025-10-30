@@ -65,7 +65,10 @@ export class ChatRoom implements DurableObject {
 			try {
 				const data = JSON.parse(event.data.toString());
 
-				if (data.type === 'send_message') {
+				if (data.type === 'batch_messages') {
+					// Handle batched messages
+					await this.handleBatchMessages(data.messages);
+				} else if (data.type === 'send_message') {
 					const chatService = new AnonymousChatService(this.env);
 
 					// Save message to database
@@ -116,5 +119,38 @@ export class ChatRoom implements DurableObject {
 			console.error('WebSocket error:', error);
 			this.connections.delete(webSocket);
 		});
+	}
+
+	private async handleBatchMessages(messages: any[]): Promise<void> {
+		const chatService = new AnonymousChatService(this.env);
+		const savedMessages: any[] = [];
+
+		// Process all messages in batch
+		for (const message of messages) {
+			try {
+				const savedMessage = await chatService.sendMessage(
+					message.sender_id,
+					message.content,
+					message.reply_to_id
+				);
+				savedMessages.push(savedMessage);
+			} catch (error) {
+				console.error('Error saving batched message:', error);
+			}
+		}
+
+		// Broadcast all saved messages
+		for (const savedMessage of savedMessages) {
+			const broadcastMsg = {
+				type: 'new_message',
+				message: savedMessage
+			};
+
+			for (const conn of this.connections) {
+				if (conn.readyState === WebSocket.OPEN) {
+					conn.send(JSON.stringify(broadcastMsg));
+				}
+			}
+		}
 	}
 }

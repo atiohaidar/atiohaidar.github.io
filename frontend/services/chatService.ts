@@ -174,3 +174,9 @@ export const sendAnonymousMessage = async (data: {
     });
     return response.message;
 };
+
+export const deleteAllAnonymousMessages = async (): Promise<void> => {
+    await apiFetch<void>('/api/anonymous/messages', {
+        method: 'DELETE',
+    });
+};

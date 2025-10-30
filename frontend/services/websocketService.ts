@@ -28,8 +28,19 @@ export class WebSocketService {
 	private connectionTimeout: NodeJS.Timeout | null = null;
 	private connectionPromise: Promise<void> | null = null;
 
+	// Message batching properties
+	private messageQueue: any[] = [];
+	private batchTimeout: NodeJS.Timeout | null = null;
+	private readonly BATCH_DELAY = 100; // 100ms delay
+	private readonly MAX_BATCH_SIZE = 5; // Max 5 messages per batch
+
+	// Idle timeout properties
+	private idleTimeout: NodeJS.Timeout | null = null;
+	private lastActivity = Date.now();
+	private readonly IDLE_TIMEOUT = 5 * 60 * 1000; // 5 minutes idle timeout
+
 	constructor() {
-		this.connect();
+		// Remove auto-connect from constructor
 	}
 
 	private connect(): void {
@@ -77,11 +88,13 @@ export class WebSocketService {
 				this.isConnecting = false;
 				this.reconnectAttempts = 0;
 				this.reconnectInterval = 1000;
+				this.startIdleTimeout();
 			};
 
 			this.socket.onmessage = (event) => {
 				try {
 					const data: WebSocketMessage = JSON.parse(event.data);
+					this.resetIdleTimeout(); // Reset idle on any message
 					this.messageHandlers.forEach(handler => handler(data));
 				} catch (error) {
 					console.error('Failed to parse WebSocket message:', error);
@@ -134,6 +147,12 @@ export class WebSocketService {
 		this.messageHandlers.push(handler);
 	}
 
+	ensureConnected(): void {
+		if (!this.isConnected && !this.isConnecting) {
+			this.connect();
+		}
+	}
+
 	offMessage(handler: MessageHandler): void {
 		this.messageHandlers = this.messageHandlers.filter(h => h !== handler);
 	}
@@ -144,23 +163,83 @@ export class WebSocketService {
 		content: string;
 		reply_to_id?: string;
 	}): void {
+		this.resetIdleTimeout(); // Reset idle on send
+
+		// Add to queue
+		this.messageQueue.push(message);
+
+		// If queue is full, flush immediately
+		if (this.messageQueue.length >= this.MAX_BATCH_SIZE) {
+			this.flushBatch();
+			return;
+		}
+
+		// If no timeout set, create one
+		if (!this.batchTimeout) {
+			this.batchTimeout = setTimeout(() => {
+				this.flushBatch();
+			}, this.BATCH_DELAY);
+		}
+	}
+
+	private flushBatch(): void {
+		if (this.messageQueue.length === 0) return;
+
+		const messages = [...this.messageQueue];
+		this.messageQueue = [];
+
+		// Clear timeout
+		if (this.batchTimeout) {
+			clearTimeout(this.batchTimeout);
+			this.batchTimeout = null;
+		}
+
+		// Send batch if connected
 		if (this.socket?.readyState === WebSocket.OPEN) {
 			this.socket.send(JSON.stringify({
-				type: 'send_message',
-				...message
+				type: 'batch_messages',
+				messages: messages
 			}));
 		} else {
-			console.warn('WebSocket is not connected. Message not sent.');
+			console.warn('WebSocket is not connected. Batch not sent.');
 		}
 	}
 
 	disconnect(): void {
+		// Clear idle timeout
+		this.clearIdleTimeout();
+
+		// Flush any pending messages before disconnecting
+		this.flushBatch();
+
 		if (this.socket) {
 			this.socket.close();
 			this.socket = null;
 		}
 		this.messageHandlers = [];
 		this.reconnectAttempts = this.maxReconnectAttempts; // Prevent further reconnections
+	}
+
+	private startIdleTimeout(): void {
+		this.clearIdleTimeout();
+		this.idleTimeout = setTimeout(() => {
+			console.log('WebSocket idle timeout reached, disconnecting...');
+			this.disconnect();
+		}, this.IDLE_TIMEOUT);
+	}
+
+	private resetIdleTimeout(): void {
+		this.lastActivity = Date.now();
+		if (this.idleTimeout) {
+			this.startIdleTimeout(); // Restart timeout
+		}
+	}
+
+	private clearIdleTimeout(): void {
+		if (this.idleTimeout) {
+			clearTimeout(this.idleTimeout);
+			this.idleTimeout = null;
+		}
 	}
 
 	get isConnected(): boolean {

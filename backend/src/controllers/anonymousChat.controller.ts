@@ -77,3 +77,34 @@ export class AnonymousMessageSend extends OpenAPIRoute {
 		});
 	}
 }
+
+// Delete all anonymous messages
+export class AnonymousMessageDeleteAll extends OpenAPIRoute {
+	schema = {
+		tags: ["Anonymous Chat"],
+		summary: "Delete all anonymous messages",
+		responses: {
+			"200": {
+				description: "All messages deleted",
+				content: {
+					"application/json": {
+						schema: z.object({
+							success: z.boolean(),
+							message: z.string(),
+						}),
+					},
+				},
+			},
+		},
+	};
+
+	async handle(c: AppContext) {
+		const chatService = new AnonymousChatService(c.env);
+		await chatService.deleteAllMessages();
+
+		return c.json({
+			success: true,
+			message: "All messages deleted successfully",
+		});
+	}
+}

@@ -43,6 +43,7 @@ import {
 import {
 	AnonymousMessageList,
 	AnonymousMessageSend,
+	AnonymousMessageDeleteAll,
 } from "../controllers/anonymousChat.controller";
 import {
 	PublicArticleList,
@@ -185,6 +186,7 @@ export const registerRoutes = (openapi: any) => {
 	// Anonymous chat routes
 	openapi.get("/api/anonymous/messages", AnonymousMessageList);
 	openapi.post("/api/anonymous/messages", AnonymousMessageSend);
+	openapi.delete("/api/anonymous/messages", AnonymousMessageDeleteAll);
 
 	// Form routes
 	openapi.get("/api/forms", FormList);

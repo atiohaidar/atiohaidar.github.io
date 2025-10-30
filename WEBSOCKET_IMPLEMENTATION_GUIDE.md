@@ -660,9 +660,10 @@ curl -I -N -H "Connection: Upgrade" -H "Upgrade: websocket" -H "Sec-WebSocket-Ke
 ### Optimization Tips:
 
 1. **Message Batching:** Group multiple messages in single broadcast
-2. **Connection Cleanup:** Properly handle disconnected clients
-3. **Rate Limiting:** Implement message rate limits
-4. **Compression:** Enable WebSocket compression for large messages
+2. **Connection Cleanup:** Properly handle disconnected clients  
+3. **Idle Timeout:** Auto-disconnect after 5 minutes of inactivity to save costs
+4. **Rate Limiting:** Implement message rate limits
+5. **Compression:** Enable WebSocket compression for large messages
 
 ---
 
@@ -683,10 +684,12 @@ curl -I -N -H "Connection: Upgrade" -H "Upgrade: websocket" -H "Sec-WebSocket-Ke
 - [x] Auto-scroll dan scroll-to-bottom UI
 - [x] REST API fallback
 - [x] Error handling dan logging
+- [x] Idle timeout optimization (5 menit auto-disconnect)
+- [x] Message batching untuk efisiensi
 - [x] Vite proxy untuk development
 - [x] CORS configuration
 - [x] TypeScript types
 - [x] Testing instructions
 - [x] Deployment guide
 
-**🎉 Implementasi WebSocket lengkap dan siap digunakan!**
+**🎉 Implementasi WebSocket lengkap dan teroptimasi!**

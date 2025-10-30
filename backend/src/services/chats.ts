@@ -393,4 +393,9 @@ export class AnonymousChatService {
 
 		return messages.results || [];
 	}
+
+	async deleteAllMessages(): Promise<void> {
+		const db = this.env.DB;
+		await db.prepare("DELETE FROM anonymous_messages").run();
+	}
 }
