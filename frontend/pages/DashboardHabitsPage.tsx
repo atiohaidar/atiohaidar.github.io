@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { habitService } from '../lib/api/services';
 import type { HabitWithStats, HabitCreateInput, HabitUpdateInput, HabitPeriodType } from '../types/habit';
 
 const DashboardHabitsPage: React.FC = () => {
+    const navigate = useNavigate();
     const [habits, setHabits] = useState<HabitWithStats[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -247,6 +249,12 @@ const DashboardHabitsPage: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="flex gap-2">
+                                    <button
+                                        onClick={() => navigate(`/dashboard/habits/${habit.id}/history`)}
+                                        className="px-3 py-1 text-sm text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded"
+                                    >
+                                        View History
+                                    </button>
                                     <button
                                         onClick={() => handleDeleteHabit(habit.id)}
                                         className="px-3 py-1 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
