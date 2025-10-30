@@ -37,6 +37,7 @@ import DashboardEventFormPage from './pages/DashboardEventFormPage';
 import DashboardEventDetailPage from './pages/DashboardEventDetailPage';
 import DashboardEventScanPage from './pages/DashboardEventScanPage';
 import DashboardEventScanHistoryPage from './pages/DashboardEventScanHistoryPage';
+import DashboardHabitsPage from './pages/DashboardHabitsPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 const queryClient = new QueryClient({
@@ -127,6 +128,7 @@ const App: React.FC = () => {
                             <Route path="events/:eventId/edit" element={<DashboardEventFormPage />} />
                             <Route path="events/:eventId/scan" element={<DashboardEventScanPage />} />
                             <Route path="events/:eventId/history" element={<DashboardEventScanHistoryPage />} />
+                            <Route path="habits" element={<DashboardHabitsPage />} />
                         </Route>
                         <Route path="*" element={<Navigate to="/" replace />} />
                     </Routes>
