@@ -1318,7 +1318,10 @@ class ApiService {
   async registerForEvent(eventId: string): Promise<Types.EventAttendee> {
     try {
       const response = await this.api.post<Types.ApiResponse<Types.EventAttendee>>(
-        `/api/events/${eventId}/register`
+        `/api/events/register`,
+        {
+          "event_id": eventId
+        }
       );
       const attendee = this.extractResult<Types.EventAttendee>(response.data, 'attendee');
       if (attendee) {
