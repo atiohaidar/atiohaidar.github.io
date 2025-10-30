@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { habitService } from '../lib/api/services';
-import type { HabitWithStats, HabitCreateInput } from '../types/habit';
+import type { HabitWithStats, HabitCreateInput, HabitUpdateInput, HabitPeriodType } from '../types/habit';
 
 const DashboardHabitsPage: React.FC = () => {
     const [habits, setHabits] = useState<HabitWithStats[]>([]);
@@ -49,7 +49,7 @@ const DashboardHabitsPage: React.FC = () => {
         }
     };
 
-    const handleUpdateHabit = async (habitId: string, updates: any) => {
+    const handleUpdateHabit = async (habitId: string, updates: HabitUpdateInput) => {
         try {
             await habitService.update(habitId, updates);
             setEditingHabitId(null);
@@ -150,7 +150,7 @@ const DashboardHabitsPage: React.FC = () => {
                             </label>
                             <select
                                 value={formData.period_type}
-                                onChange={(e) => setFormData({ ...formData, period_type: e.target.value as any })}
+                                onChange={(e) => setFormData({ ...formData, period_type: e.target.value as HabitPeriodType })}
                                 className="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                             >
                                 <option value="daily">Daily</option>
