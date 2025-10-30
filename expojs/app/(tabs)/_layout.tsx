@@ -1,5 +1,6 @@
 import { Drawer } from 'expo-router/drawer';
 import React from 'react';
+import { TouchableOpacity } from 'react-native';
 import { IconButton } from 'react-native-paper';
 
 import { Colors } from '@/constants/theme';
@@ -23,14 +24,18 @@ export default function TabLayout() {
           title: 'Home',
           drawerLabel: 'Home',
           drawerIcon: ({ color, size }) => (
-            <IconButton icon="home" size={size} iconColor={color} />
+            <TouchableOpacity style={{ padding: 4 }}>
+              <IconButton icon="home" size={size} iconColor={color} />
+            </TouchableOpacity>
           ),
           headerRight: () => (
-            <IconButton
-              icon="logout"
-              size={24}
-              onPress={logout}
-            />
+            <TouchableOpacity onPress={logout} style={{ padding: 8 }}>
+              <IconButton
+                icon="logout"
+                size={24}
+                iconColor={Colors[colorScheme ?? 'light'].tint}
+              />
+            </TouchableOpacity>
           ),
         }}
       />
@@ -40,7 +45,9 @@ export default function TabLayout() {
           title: 'Tasks',
           drawerLabel: 'Tasks',
           drawerIcon: ({ color, size }) => (
-            <IconButton icon="checkbox-marked-circle" size={size} iconColor={color} />
+            <TouchableOpacity style={{ padding: 4 }}>
+              <IconButton icon="checkbox-marked-circle" size={size} iconColor={color} />
+            </TouchableOpacity>
           ),
         }}
       />
@@ -50,7 +57,9 @@ export default function TabLayout() {
           title: 'Articles',
           drawerLabel: 'Articles',
           drawerIcon: ({ color, size }) => (
-            <IconButton icon="newspaper" size={size} iconColor={color} />
+            <TouchableOpacity style={{ padding: 4 }}>
+              <IconButton icon="newspaper" size={size} iconColor={color} />
+            </TouchableOpacity>
           ),
         }}
       />
@@ -60,7 +69,9 @@ export default function TabLayout() {
           title: 'Bookings',
           drawerLabel: 'Bookings',
           drawerIcon: ({ color, size }) => (
-            <IconButton icon="calendar" size={size} iconColor={color} />
+            <TouchableOpacity style={{ padding: 4 }}>
+              <IconButton icon="calendar" size={size} iconColor={color} />
+            </TouchableOpacity>
           ),
         }}
       />
@@ -70,7 +81,21 @@ export default function TabLayout() {
           title: 'Chat',
           drawerLabel: 'Chat',
           drawerIcon: ({ color, size }) => (
-            <IconButton icon="chat" size={size} iconColor={color} />
+            <TouchableOpacity style={{ padding: 4 }}>
+              <IconButton icon="chat" size={size} iconColor={color} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="anonymous-chat"
+        options={{
+          title: 'Anonymous Chat',
+          drawerLabel: 'Anonymous Chat',
+          drawerIcon: ({ color, size }) => (
+            <TouchableOpacity style={{ padding: 4 }}>
+              <IconButton icon="chat-outline" size={size} iconColor={color} />
+            </TouchableOpacity>
           ),
         }}
       />
@@ -80,7 +105,9 @@ export default function TabLayout() {
           title: 'Tickets',
           drawerLabel: 'Tickets',
           drawerIcon: ({ color, size }) => (
-            <IconButton icon="ticket" size={size} iconColor={color} />
+            <TouchableOpacity style={{ padding: 4 }}>
+              <IconButton icon="ticket" size={size} iconColor={color} />
+            </TouchableOpacity>
           ),
         }}
       />
@@ -90,7 +117,9 @@ export default function TabLayout() {
           title: 'Forms',
           drawerLabel: 'Forms',
           drawerIcon: ({ color, size }) => (
-            <IconButton icon="form-select" size={size} iconColor={color} />
+            <TouchableOpacity style={{ padding: 4 }}>
+              <IconButton icon="form-select" size={size} iconColor={color} />
+            </TouchableOpacity>
           ),
         }}
       />
@@ -100,7 +129,9 @@ export default function TabLayout() {
           title: 'Items',
           drawerLabel: 'Items',
           drawerIcon: ({ color, size }) => (
-            <IconButton icon="package-variant" size={size} iconColor={color} />
+            <TouchableOpacity style={{ padding: 4 }}>
+              <IconButton icon="package-variant" size={size} iconColor={color} />
+            </TouchableOpacity>
           ),
         }}
       />
@@ -110,7 +141,9 @@ export default function TabLayout() {
           title: 'Borrowings',
           drawerLabel: 'Borrowings',
           drawerIcon: ({ color, size }) => (
-            <IconButton icon="clipboard-list" size={size} iconColor={color} />
+            <TouchableOpacity style={{ padding: 4 }}>
+              <IconButton icon="clipboard-list" size={size} iconColor={color} />
+            </TouchableOpacity>
           ),
         }}
       />
@@ -120,7 +153,9 @@ export default function TabLayout() {
           title: 'Discussions',
           drawerLabel: 'Discussions',
           drawerIcon: ({ color, size }) => (
-            <IconButton icon="forum" size={size} iconColor={color} />
+            <TouchableOpacity style={{ padding: 4 }}>
+              <IconButton icon="forum" size={size} iconColor={color} />
+            </TouchableOpacity>
           ),
         }}
       />
@@ -130,7 +165,9 @@ export default function TabLayout() {
           title: 'Events',
           drawerLabel: 'Events',
           drawerIcon: ({ color, size }) => (
-            <IconButton icon="calendar-star" size={size} iconColor={color} />
+            <TouchableOpacity style={{ padding: 4 }}>
+              <IconButton icon="calendar-star" size={size} iconColor={color} />
+            </TouchableOpacity>
           ),
         }}
       />
@@ -140,7 +177,9 @@ export default function TabLayout() {
           title: 'Profile',
           drawerLabel: 'Profile',
           drawerIcon: ({ color, size }) => (
-            <IconButton icon="account" size={size} iconColor={color} />
+            <TouchableOpacity style={{ padding: 4 }}>
+              <IconButton icon="account" size={size} iconColor={color} />
+            </TouchableOpacity>
           ),
         }}
       />

@@ -185,7 +185,7 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
         try {
             // Try WebSocket first
             if (webSocketService.isConnected) {
-                webSocketService.sendMessage({
+                webSocketService.sendChatMessage({
                     type: 'send_message',
                     sender_id: senderId,
                     content: messageContent.trim(),
@@ -286,7 +286,7 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
             setShowResetConfirm(false);
             // Optionally broadcast to other users that messages were cleared
             if (webSocketService.isConnected) {
-                webSocketService.sendMessage({
+                webSocketService.sendChatMessage({
                     type: 'clear_messages',
                     sender_id: senderId,
                     content: 'All messages have been cleared'

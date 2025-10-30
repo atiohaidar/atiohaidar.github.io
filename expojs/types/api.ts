@@ -577,3 +577,25 @@ export interface ScanResponse {
   attendee: EventAttendee;
   isFirstScan: boolean;
 }
+
+// Anonymous Chat Types
+export interface AnonymousMessage {
+  id: string;
+  sender_id: string;
+  content: string;
+  reply_to_id?: string;
+  created_at: string;
+  reply_content?: string;
+  reply_sender_id?: string;
+}
+
+export interface SendAnonymousMessageRequest {
+  content: string;
+  reply_to_id?: string;
+}
+
+export interface WebSocketMessage {
+  type: string;
+  message?: any;
+  connections?: number;
+}

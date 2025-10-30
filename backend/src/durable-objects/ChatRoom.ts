@@ -100,6 +100,34 @@ export class ChatRoom implements DurableObject {
 							conn.send(JSON.stringify(broadcastMsg));
 						}
 					}
+				} else if (data.type === 'whiteboard_draw') {
+					// Broadcast drawing data to all clients
+					for (const conn of this.connections) {
+						if (conn !== webSocket && conn.readyState === WebSocket.OPEN) {
+							conn.send(JSON.stringify(data));
+						}
+					}
+				} else if (data.type === 'whiteboard_cursor') {
+					// Broadcast cursor position to all clients
+					for (const conn of this.connections) {
+						if (conn !== webSocket && conn.readyState === WebSocket.OPEN) {
+							conn.send(JSON.stringify(data));
+						}
+					}
+				} else if (data.type === 'whiteboard_clear_page') {
+					// Broadcast page clear to all clients
+					for (const conn of this.connections) {
+						if (conn.readyState === WebSocket.OPEN) {
+							conn.send(JSON.stringify(data));
+						}
+					}
+				} else if (data.type === 'whiteboard_reset') {
+					// Broadcast reset to all clients
+					for (const conn of this.connections) {
+						if (conn.readyState === WebSocket.OPEN) {
+							conn.send(JSON.stringify(data));
+						}
+					}
 				}
 			} catch (error) {
 				console.error('WebSocket message error:', error);

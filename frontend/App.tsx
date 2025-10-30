@@ -38,6 +38,7 @@ import DashboardEventDetailPage from './pages/DashboardEventDetailPage';
 import DashboardEventScanPage from './pages/DashboardEventScanPage';
 import DashboardEventScanHistoryPage from './pages/DashboardEventScanHistoryPage';
 import FullscreenAnonymousChatPage from './pages/FullscreenAnonymousChatPage';
+import AnonymousWhiteboardPage from './pages/AnonymousWhiteboardPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
 const queryClient = new QueryClient({
@@ -62,6 +63,7 @@ const App: React.FC = () => {
                         <Route path="/discussions" element={<DiscussionForumPage />} />
                         <Route path="/discussions/:discussionId" element={<DiscussionDetailPage />} />
                         <Route path="/fullscreen-chat" element={<FullscreenAnonymousChatPage />} />
+                        <Route path="/whiteboard" element={<AnonymousWhiteboardPage />} />
                         <Route path="/dashboard" element={<DashboardPage />}>
                             <Route index element={<Navigate to="/dashboard/tasks" replace />} />
                             <Route path="tasks" element={<DashboardTasksPage />} />

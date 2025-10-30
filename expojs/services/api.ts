@@ -7,7 +7,9 @@ import { tokenStorage } from './tokenStorage';
 
 // Configure the base URL for your API
 // You can override this via EXPO_PUBLIC_API_BASE_URL for physical devices/other hosts
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL ?? 'https://backend.atiohaidar.workers.dev';
+const isDevelopment = __DEV__ || process.env.NODE_ENV === 'development';
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL ?? 
+  (isDevelopment ? 'http://localhost:8787' : 'https://backend.atiohaidar.workers.dev');
 
 // Default empty ticket stats
 const EMPTY_TICKET_STATS: Types.TicketStats = {
@@ -1443,6 +1445,48 @@ class ApiService {
         return data;
       }
       throw new Error('Failed to fetch attendee scans');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  // Anonymous Chat Methods
+  async getAnonymousMessages(): Promise<Types.AnonymousMessage[]> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.AnonymousMessage[]>>(
+        '/api/anonymous/messages'
+      );
+      return this.extractResult<Types.AnonymousMessage[]>(response.data, 'messages') || [];
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async sendAnonymousMessage(
+    message: Types.SendAnonymousMessageRequest
+  ): Promise<Types.AnonymousMessage> {
+    try {
+      const response = await this.api.post<Types.ApiResponse<Types.AnonymousMessage>>(
+        '/api/anonymous/messages',
+        message
+      );
+      const result = this.extractResult<Types.AnonymousMessage>(response.data, 'message');
+      if (result) {
+        return result;
+      }
+      throw new Error('Failed to send message');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async deleteAllAnonymousMessages(): Promise<{ success: boolean; message: string }> {
+    try {
+      const response = await this.api.delete<Types.ApiResponse<{ success: boolean; message: string }>>(
+        '/api/anonymous/messages'
+      );
+      const result = this.extractResult<{ success: boolean; message: string }>(response.data, 'result');
+      return result || { success: false, message: 'Unknown error' };
     } catch (error) {
       this.handleError(error);
     }

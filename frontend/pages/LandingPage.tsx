@@ -207,6 +207,15 @@ const LandingPage: React.FC = () => {
                 <span className="text-xl md:text-2xl">💬</span>
             </button>
 
+            {/* Anonymous Whiteboard Button */}
+            <button
+                onClick={() => navigate('/whiteboard')}
+                className={`fixed bottom-4 right-20 md:bottom-6 md:right-24 ${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ON_ACCENT} p-3 md:p-4 rounded-full shadow-lg hover:opacity-90 transition-opacity z-[60]`}
+                title="Open Anonymous Whiteboard"
+            >
+                <span className="text-xl md:text-2xl">🎨</span>
+            </button>
+
             {/* Anonymous Chat Modal */}
             <AnonymousChatModal
                 isOpen={isAnonymousChatOpen}

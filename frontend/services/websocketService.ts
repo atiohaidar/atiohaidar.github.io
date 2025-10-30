@@ -157,7 +157,7 @@ export class WebSocketService {
 		this.messageHandlers = this.messageHandlers.filter(h => h !== handler);
 	}
 
-	sendMessage(message: {
+	sendChatMessage(message: {
 		type: string;
 		sender_id: string;
 		content: string;
@@ -179,6 +179,17 @@ export class WebSocketService {
 			this.batchTimeout = setTimeout(() => {
 				this.flushBatch();
 			}, this.BATCH_DELAY);
+		}
+	}
+
+	sendMessage(message: any): void {
+		this.resetIdleTimeout(); // Reset idle on send
+
+		// Send immediately if connected (no batching for whiteboard)
+		if (this.socket?.readyState === WebSocket.OPEN) {
+			this.socket.send(JSON.stringify(message));
+		} else {
+			console.warn('WebSocket is not connected. Message not sent.');
 		}
 	}
 

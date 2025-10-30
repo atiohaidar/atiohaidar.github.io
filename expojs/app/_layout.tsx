@@ -9,6 +9,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import { WebSocketProvider } from '@/contexts/WebSocketContext';
 import { lightTheme, darkTheme } from '@/constants/paperTheme';
 import { queryClient } from '@/services/queryClient';
 import GlobalFeedback from '@/components/GlobalFeedback';
@@ -60,9 +61,11 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <SafeAreaProvider>
-          <RootLayoutNav />
-        </SafeAreaProvider>
+        <WebSocketProvider>
+          <SafeAreaProvider>
+            <RootLayoutNav />
+          </SafeAreaProvider>
+        </WebSocketProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
