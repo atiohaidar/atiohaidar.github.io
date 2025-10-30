@@ -64,12 +64,13 @@ jobs:
         with:
           node-version: '18'
       - name: Install Expo CLI
-        run: npm install -g @expo/cli
+        run: npm install @expo/cli
+        working-directory: expojs
       - name: Install dependencies
         run: npm ci
         working-directory: expojs
       - name: Build Android APK
-        run: expo build:android --type apk --no-publish
+        run: npx expo build:android --type apk --no-publish
         working-directory: expojs
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
