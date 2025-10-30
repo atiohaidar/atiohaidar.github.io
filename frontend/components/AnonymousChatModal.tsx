@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { COLORS } from '../utils/styles';
 import {
     getAnonymousMessages,
     sendAnonymousMessage,
     type AnonymousMessage,
 } from '../services/chatService';
+import { webSocketService } from '../services/websocketService';
 
 interface AnonymousChatModalProps {
     isOpen: boolean;
@@ -18,6 +19,14 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
     const [senderId, setSenderId] = useState<string>('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [isConnected, setIsConnected] = useState(false);
+    const [showScrollToBottom, setShowScrollToBottom] = useState(false);
+    const [unreadCount, setUnreadCount] = useState(0);
+
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const messagesContainerRef = useRef<HTMLDivElement>(null);
+    const isUserScrollingRef = useRef(false);
+    const lastMessageCountRef = useRef(0);
 
     useEffect(() => {
         // Generate or retrieve anonymous sender ID
@@ -29,46 +38,174 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
         setSenderId(storedId);
     }, []);
 
+    // Handle WebSocket messages
+    const handleWebSocketMessage = useCallback((data: any) => {
+        if (data.type === 'new_message') {
+            setMessages(prev => {
+                // Check if message already exists to avoid duplicates
+                const exists = prev.some(msg => msg.id === data.message.id);
+                if (exists) return prev;
+
+                const newMessages = [...prev, data.message];
+                const isAtBottom = checkIfAtBottom();
+
+                // Auto-scroll if user is at bottom, otherwise increment unread count
+                if (isAtBottom) {
+                    setTimeout(() => scrollToBottom(), 100);
+                } else {
+                    setUnreadCount(prev => prev + 1);
+                }
+
+                return newMessages;
+            });
+        } else if (data.type === 'welcome') {
+            setIsConnected(true);
+            console.log(`Connected to chat room. ${data.connections} users online.`);
+        } else if (data.type === 'connections_update') {
+            console.log(`${data.connections} users online.`);
+        } else if (data.type === 'error') {
+            setError(data.message);
+        }
+    }, []);
+
+    // Check if user is at bottom of messages
+    const checkIfAtBottom = useCallback(() => {
+        const container = messagesContainerRef.current;
+        if (!container) return true;
+
+        const threshold = 100; // pixels from bottom
+        return container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
+    }, []);
+
+    // Scroll to bottom
+    const scrollToBottom = useCallback(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        setShowScrollToBottom(false);
+        setUnreadCount(0);
+    }, []);
+
+    // Handle scroll events
+    const handleScroll = useCallback(() => {
+        if (!isUserScrollingRef.current) return;
+
+        const isAtBottom = checkIfAtBottom();
+        setShowScrollToBottom(!isAtBottom);
+
+        if (isAtBottom) {
+            setUnreadCount(0);
+        }
+    }, [checkIfAtBottom]);
+
+    // Handle user scroll start
+    const handleUserScrollStart = useCallback(() => {
+        isUserScrollingRef.current = true;
+    }, []);
+
+    // Handle user scroll end
+    const handleUserScrollEnd = useCallback(() => {
+        setTimeout(() => {
+            isUserScrollingRef.current = false;
+        }, 150);
+    }, []);
+
     useEffect(() => {
         if (isOpen) {
-            loadMessages();
-        }
-    }, [isOpen]);
+            // Load initial messages
+            const loadInitialMessages = async () => {
+                setLoading(true);
+                setError(null);
+                try {
+                    const data = await getAnonymousMessages();
+                    // Reverse to show oldest first, newest at bottom
+                    setMessages(data);
+                    // Scroll to bottom after messages load
+                    setTimeout(() => scrollToBottom(), 100);
+                } catch (err: any) {
+                    setError(err.message || 'Failed to load messages');
+                } finally {
+                    setLoading(false);
+                }
+            };
+            loadInitialMessages();
 
-    const loadMessages = async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const data = await getAnonymousMessages();
-            // Reverse to show newest at bottom
-            setMessages(data.reverse());
-        } catch (err: any) {
-            setError(err.message || 'Failed to load messages');
-        } finally {
-            setLoading(false);
+            // Setup WebSocket connection
+            webSocketService.onMessage(handleWebSocketMessage);
+            setIsConnected(webSocketService.isConnected);
+
+            // Setup scroll event listeners
+            const container = messagesContainerRef.current;
+            if (container) {
+                container.addEventListener('scroll', handleScroll);
+                container.addEventListener('touchstart', handleUserScrollStart);
+                container.addEventListener('touchend', handleUserScrollEnd);
+                container.addEventListener('mousedown', handleUserScrollStart);
+                container.addEventListener('mouseup', handleUserScrollEnd);
+            }
+
+            // Cleanup function
+            return () => {
+                webSocketService.offMessage(handleWebSocketMessage);
+                if (container) {
+                    container.removeEventListener('scroll', handleScroll);
+                    container.removeEventListener('touchstart', handleUserScrollStart);
+                    container.removeEventListener('touchend', handleUserScrollEnd);
+                    container.removeEventListener('mousedown', handleUserScrollStart);
+                    container.removeEventListener('mouseup', handleUserScrollEnd);
+                }
+            };
         }
-    };
+    }, [isOpen, handleWebSocketMessage, handleScroll, handleUserScrollStart, handleUserScrollEnd, scrollToBottom]);
 
     const handleSendMessage = async () => {
         if (!messageContent.trim() || !senderId) return;
 
         setError(null);
         try {
-            const data: any = {
-                sender_id: senderId,
-                content: messageContent.trim(),
-            };
+            // Try WebSocket first
+            if (webSocketService.isConnected) {
+                webSocketService.sendMessage({
+                    type: 'send_message',
+                    sender_id: senderId,
+                    content: messageContent.trim(),
+                    reply_to_id: replyTo?.id
+                });
 
-            if (replyTo) {
-                data.reply_to_id = replyTo.id;
+                setMessageContent('');
+                setReplyTo(null);
+            } else {
+                // Fallback to REST API
+                console.log('WebSocket not connected, using REST API fallback');
+                const data: any = {
+                    sender_id: senderId,
+                    content: messageContent.trim(),
+                };
+
+                if (replyTo) {
+                    data.reply_to_id = replyTo.id;
+                }
+
+                await sendAnonymousMessage(data);
+                setMessageContent('');
+                setReplyTo(null);
+                await loadMessages();
             }
-
-            await sendAnonymousMessage(data);
-            setMessageContent('');
-            setReplyTo(null);
-            await loadMessages();
         } catch (err: any) {
             setError(err.message || 'Failed to send message');
+        }
+    };
+
+    const loadMessages = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const data = await getAnonymousMessages();
+            setMessages(data);
+            // Scroll to bottom after loading messages
+            setTimeout(() => scrollToBottom(), 100);
+        } catch (err: any) {
+            setError(err.message || 'Failed to load messages');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -86,14 +223,18 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
             <div className={`${COLORS.BG_SECONDARY} rounded-lg shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden`}>
                 {/* Header */}
-                <div className={`p-3 ${COLORS.BORDER_PRIMARY} flex justify-between items-center bg-[#00a884]`}>
+                <div className={`p-3 ${COLORS.BORDER_ACCENT} flex justify-between items-center bg-[#00a884]`}>
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-xl">
                             💬
                         </div>
                         <div>
                             <h2 className={`text-base font-medium text-white`}>Chat Anonim</h2>
-                            <p className="text-xs text-white/80">Ruang chat publik</p>
+                            <p className="text-xs text-white/80 flex items-center gap-2">
+                                Ruang chat publik
+                                <span className={`inline-block w-2 h-2 rounded-full ${isConnected ? 'bg-green-400' : 'bg-red-400'}`}></span>
+                                {isConnected ? 'Terhubung' : 'Mencoba menghubungkan...'}
+                            </p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -116,7 +257,10 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
                 </div>
 
                 {/* Messages */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-[#0a1014]">
+                <div 
+                    ref={messagesContainerRef}
+                    className="flex-1 overflow-y-auto p-4 space-y-2 bg-[#0a1014] relative"
+                >
                     {error && (
                         <div className="bg-red-500 text-white p-3 rounded-lg">
                             {error}
@@ -171,10 +315,32 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
                             </div>
                         </div>
                     ))}
+                    {/* Invisible element to scroll to */}
+                    <div ref={messagesEndRef} />
+                    
+                    {/* Scroll to bottom button */}
+                    {showScrollToBottom && (
+                        <button
+                            onClick={scrollToBottom}
+                            className="fixed bottom-24 right-6 bg-[#00a884] hover:bg-[#008069] text-white rounded-full p-3 shadow-lg transition-all duration-200 z-10"
+                            title="Lihat pesan terbaru"
+                        >
+                            <div className="relative">
+                                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M7 14l5-5 5 5z"/>
+                                </svg>
+                                {unreadCount > 0 && (
+                                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full min-w-[20px] h-5 flex items-center justify-center px-1">
+                                        {unreadCount > 99 ? '99+' : unreadCount}
+                                    </span>
+                                )}
+                            </div>
+                        </button>
+                    )}
                 </div>
 
                 {/* Message Input */}
-                <div className={`p-3 ${COLORS.BORDER_PRIMARY} bg-[#1f2c34]`}>
+                <div className={`p-3 ${COLORS.BORDER_ACCENT} bg-[#1f2c34]`}>
                     {replyTo && (
                         <div className={`mb-2 p-2 rounded-lg bg-[#2a3942] flex justify-between items-start border-l-4 border-[#00a884]`}>
                             <div className="flex-1">

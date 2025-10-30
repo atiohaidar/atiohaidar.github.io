@@ -373,4 +373,24 @@ export class AnonymousChatService {
 
 		return messages.results || [];
 	}
+
+	async getRecentMessages(limit = 50): Promise<any[]> {
+		const db = this.env.DB;
+
+		const messages = await db
+			.prepare(`
+				SELECT
+					m.*,
+					rm.content as reply_content,
+					rm.sender_id as reply_sender_id
+				FROM anonymous_messages m
+				LEFT JOIN anonymous_messages rm ON rm.id = m.reply_to_id
+				ORDER BY m.created_at ASC
+				LIMIT ?
+			`)
+			.bind(limit)
+			.all();
+
+		return messages.results || [];
+	}
 }

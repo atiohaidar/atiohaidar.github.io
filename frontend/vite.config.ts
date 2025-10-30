@@ -18,7 +18,29 @@ export default defineConfig(({ mode }) => {
       },
       server: {
         host: true,
-        port: 3000
+        port: 3000,
+        proxy: {
+          '/api': {
+            target: 'http://localhost:8787',
+            changeOrigin: true,
+          },
+          '/chat': {
+            target: 'http://localhost:8787',
+            ws: true,
+            changeOrigin: true,
+            configure: (proxy, options) => {
+              proxy.on('error', (err, req, res) => {
+                console.log('WebSocket proxy error', err);
+              });
+              proxy.on('proxyReq', (proxyReq, req, res) => {
+                console.log('WebSocket proxy request:', req.method, req.url);
+              });
+              proxy.on('proxyRes', (proxyRes, req, res) => {
+                console.log('WebSocket proxy response:', proxyRes.statusCode, req.url);
+              });
+            },
+          },
+        },
       }
     };
 });

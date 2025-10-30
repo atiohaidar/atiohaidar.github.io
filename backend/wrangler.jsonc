@@ -16,7 +16,23 @@
 			"database_name": "backend",
 			"database_id": "4fbe504b-d5eb-4929-9a3a-0b8148d86f12"
 		}
-	]
+	],
+	"durable_objects": {
+		"bindings": [
+			{
+				"name": "CHAT_ROOM",
+				"class_name": "ChatRoom"
+			}
+		]
+	},
+	"migrations": [
+		{
+			"tag": "v1",
+			"new_classes": [
+				"ChatRoom"
+			]
+		}
+	],
 	/**
 	 * Smart Placement
 	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
