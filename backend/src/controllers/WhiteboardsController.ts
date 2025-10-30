@@ -1,6 +1,6 @@
 import { OpenAPIRoute, OpenAPIRouteSchema } from 'chanfana';
 import { z } from 'zod';
-import { WhiteboardService } from '../services/whiteboards';
+import * as whiteboardService from '../services/whiteboards';
 import type { Bindings } from '../models/types';
 
 // Schema definitions
@@ -54,9 +54,8 @@ export class ListWhiteboards extends OpenAPIRoute {
         }
     };
 
-    async handle(request: Request, env: Bindings, ctx: any, data: any) {
-        const service = new WhiteboardService(env);
-        const whiteboards = await service.getWhiteboards();
+    async handle(c: import('../models/types').AppContext) {
+        const whiteboards = await whiteboardService.getWhiteboards(c.env.DB);
 
         return {
             whiteboards
@@ -89,9 +88,9 @@ export class GetWhiteboard extends OpenAPIRoute {
         }
     };
 
-    async handle(request: Request, env: Bindings, ctx: any, data: any) {
-        const service = new WhiteboardService(env);
-        const whiteboard = await service.getWhiteboard(data.params.id);
+    async handle(c: import('../models/types').AppContext) {
+        const data = await this.getValidatedData<typeof this.schema>();
+        const whiteboard = await whiteboardService.getWhiteboard(c.env.DB, data.params.id);
 
         if (!whiteboard) {
             return Response.json({ error: 'Whiteboard not found' }, { status: 404 });
@@ -127,10 +126,10 @@ export class CreateWhiteboard extends OpenAPIRoute {
         }
     };
 
-    async handle(request: Request, env: Bindings, ctx: any, data: any) {
-        const service = new WhiteboardService(env);
+    async handle(c: import('../models/types').AppContext) {
+        const data = await this.getValidatedData<typeof this.schema>();
         const { title, created_by } = data.body;
-        const whiteboard = await service.createWhiteboard(title, created_by);
+        const whiteboard = await whiteboardService.createWhiteboard(c.env.DB, title, created_by);
 
         return Response.json(whiteboard, { status: 201 });
     }
@@ -167,9 +166,9 @@ export class UpdateWhiteboard extends OpenAPIRoute {
         }
     };
 
-    async handle(request: Request, env: Bindings, ctx: any, data: any) {
-        const service = new WhiteboardService(env);
-        await service.updateWhiteboard(data.params.id, data.body.title);
+    async handle(c: import('../models/types').AppContext) {
+        const data = await this.getValidatedData<typeof this.schema>();
+        await whiteboardService.updateWhiteboard(c.env.DB, data.params.id, data.body.title);
 
         return {
             message: 'Whiteboard updated successfully'
@@ -201,9 +200,9 @@ export class DeleteWhiteboard extends OpenAPIRoute {
         }
     };
 
-    async handle(request: Request, env: Bindings, ctx: any, data: any) {
-        const service = new WhiteboardService(env);
-        await service.deleteWhiteboard(data.params.id);
+    async handle(c: import('../models/types').AppContext) {
+        const data = await this.getValidatedData<typeof this.schema>();
+        await whiteboardService.deleteWhiteboard(c.env.DB, data.params.id);
 
         return {
             message: 'Whiteboard deleted successfully'
@@ -235,9 +234,9 @@ export class GetWhiteboardStrokes extends OpenAPIRoute {
         }
     };
 
-    async handle(request: Request, env: Bindings, ctx: any, data: any) {
-        const service = new WhiteboardService(env);
-        const strokes = await service.getStrokes(data.params.id);
+    async handle(c: import('../models/types').AppContext) {
+        const data = await this.getValidatedData<typeof this.schema>();
+        const strokes = await whiteboardService.getStrokes(c.env.DB, data.params.id);
 
         return {
             strokes
@@ -269,9 +268,9 @@ export class ClearWhiteboard extends OpenAPIRoute {
         }
     };
 
-    async handle(request: Request, env: Bindings, ctx: any, data: any) {
-        const service = new WhiteboardService(env);
-        await service.clearStrokes(data.params.id);
+    async handle(c: import('../models/types').AppContext) {
+        const data = await this.getValidatedData<typeof this.schema>();
+        await whiteboardService.clearStrokes(c.env.DB, data.params.id);
 
         return {
             message: 'Whiteboard cleared successfully'
