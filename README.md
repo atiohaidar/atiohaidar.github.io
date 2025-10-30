@@ -1,6 +1,8 @@
-# Atiohaidar Portfolio Application
+# Atiohaidar Portfolio Application APLIKASI MODAL PENASARAN KWKWKWK. ini full bisa berapa bulan dikerjain? coba cek git history nya update fiturnya berapa menit sekali
 
 A full-stack portfolio and management application with web and mobile support.
+
+
 
 ## 🚀 Quick Start
 
