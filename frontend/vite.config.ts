@@ -19,36 +19,51 @@ export default defineConfig(({ mode }) => {
       server: {
         host: true,
         port: 3000,
+        historyApiFallback: true,
         proxy: {
           '/api': {
             target: 'http://localhost:8787',
             changeOrigin: true,
           },
-          '/chat': {
-            target: 'http://localhost:8787',
+          // WebSocket untuk chat dengan suffix -ws
+          '/chat-ws': {
+            target: 'ws://localhost:8787',
             ws: true,
             changeOrigin: true,
+            rewrite: (path) => path.replace(/^\/chat-ws/, '/chat'),
             configure: (proxy, options) => {
               proxy.on('error', (err, req, res) => {
-                console.log('WebSocket proxy error', err);
+                console.log('Chat WebSocket proxy error', err);
               });
               proxy.on('proxyReq', (proxyReq, req, res) => {
-                console.log('WebSocket proxy request:', req.method, req.url);
+                console.log('Chat WebSocket request:', req.method, req.url);
               });
               proxy.on('proxyRes', (proxyRes, req, res) => {
-                console.log('WebSocket proxy response:', proxyRes.statusCode, req.url);
+                console.log('Chat WebSocket response:', proxyRes?.statusCode, req.url);
               });
             },
           },
-          '/whiteboard': {
-            target: 'http://localhost:8787',
+          // Handle client-side routing untuk chat
+          '^/chat/\\.*': {
+            target: 'http://localhost:3000',
+            changeOrigin: true,
+          },
+          // WebSocket untuk whiteboard
+          '/whiteboard-ws': {
+            target: 'ws://localhost:8787',
             ws: true,
             changeOrigin: true,
+            rewrite: (path) => path.replace(/^\/whiteboard-ws/, '/whiteboard'),
             configure: (proxy, options) => {
               proxy.on('error', (err, req, res) => {
                 console.log('Whiteboard WebSocket proxy error', err);
               });
             },
+          },
+          // Handle client-side routing untuk whiteboard
+          '^/whiteboard/\\.*': {
+            target: 'http://localhost:3000',
+            changeOrigin: true,
           },
         },
       }

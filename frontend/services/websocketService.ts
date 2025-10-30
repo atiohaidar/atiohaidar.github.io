@@ -57,13 +57,13 @@ export class WebSocketService {
 		if (import.meta.env.DEV) {
 			// Development: use same host (proxied by Vite)
 			const host = window.location.host;
-			socketUrl = `${protocol}//${host}/chat`;
+			socketUrl = `${protocol}//${host}/chat-ws`;
 		} else {
 			// Production: connect directly to backend worker
 			const backendUrl = import.meta.env.VITE_API_URL || 'https://backend.atiohaidar.workers.dev';
 			const backendProtocol = backendUrl.startsWith('https') ? 'wss:' : 'ws:';
 			const backendHost = backendUrl.replace(/^https?:\/\//, '');
-			socketUrl = `${backendProtocol}//${backendHost}/chat`;
+			socketUrl = `${backendProtocol}//${backendHost}/chat-ws`;
 		}
 
 		console.log('Attempting WebSocket connection to:', socketUrl);

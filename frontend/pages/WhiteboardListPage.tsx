@@ -15,7 +15,8 @@ const WhiteboardListPage: React.FC = () => {
     const navigate = useNavigate();
     const [whiteboards, setWhiteboards] = useState<Whiteboard[]>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const [error, setError] = useState<{ message: string; canRetry: boolean } | null>(null);
+    const [retryCount, setRetryCount] = useState(0);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [newWhiteboardTitle, setNewWhiteboardTitle] = useState('');
     const [creating, setCreating] = useState(false);
@@ -24,23 +25,45 @@ const WhiteboardListPage: React.FC = () => {
         loadWhiteboards();
     }, []);
 
-    const loadWhiteboards = async () => {
+    const loadWhiteboards = async (isRetry = false) => {
         try {
-            setLoading(true);
+            if (!isRetry) {
+                setLoading(true);
+                setError(null);
+            }
+            
             const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8787';
             const response = await fetch(`${apiUrl}/api/whiteboards`);
             
             if (!response.ok) {
-                throw new Error('Failed to load whiteboards');
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || 'Failed to load whiteboards');
             }
             
             const data = await response.json();
             setWhiteboards(data.whiteboards || []);
-        } catch (err) {
-            setError('Failed to load whiteboards. Please try again.');
-            console.error(err);
+            setRetryCount(0);
+        } catch (err: any) {
+            const errorMessage = err.message || 'Failed to load whiteboards. Please try again.';
+            setError({ 
+                message: errorMessage, 
+                canRetry: retryCount < 3 
+            });
+            
+            if (retryCount < 3) {
+                // Auto-retry with exponential backoff
+                const delay = Math.min(1000 * Math.pow(2, retryCount), 10000);
+                setTimeout(() => {
+                    setRetryCount(prev => prev + 1);
+                    loadWhiteboards(true);
+                }, delay);
+            }
+            
+            console.error('Error loading whiteboards:', err);
         } finally {
-            setLoading(false);
+            if (!isRetry) {
+                setLoading(false);
+            }
         }
     };
 
@@ -141,7 +164,6 @@ const WhiteboardListPage: React.FC = () => {
 
                 {error && (
                     <div className="mb-6 p-4 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg">
-                        {error}
                     </div>
                 )}
 
