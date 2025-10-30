@@ -35,8 +35,10 @@ export class ListWhiteboards extends OpenAPIRoute {
     schema: OpenAPIRouteSchema = {
         tags: ['Whiteboards'],
         summary: 'List all active whiteboards',
-        parameters: {
-            user_id: z.string().optional().description('Filter by user ID')
+        request: {
+            query: z.object({
+                user_id: z.string().optional()
+            }).optional()
         },
         responses: {
             '200': {
@@ -54,8 +56,7 @@ export class ListWhiteboards extends OpenAPIRoute {
 
     async handle(request: Request, env: Bindings, ctx: any, data: any) {
         const service = new WhiteboardService(env);
-        const userId = data.query?.user_id;
-        const whiteboards = await service.getWhiteboards(userId);
+        const whiteboards = await service.getWhiteboards();
 
         return {
             whiteboards
@@ -68,8 +69,10 @@ export class GetWhiteboard extends OpenAPIRoute {
     schema: OpenAPIRouteSchema = {
         tags: ['Whiteboards'],
         summary: 'Get a specific whiteboard',
-        parameters: {
-            id: z.string().description('Whiteboard ID')
+        request: {
+            params: z.object({
+                id: z.string()
+            })
         },
         responses: {
             '200': {
@@ -103,7 +106,15 @@ export class CreateWhiteboard extends OpenAPIRoute {
     schema: OpenAPIRouteSchema = {
         tags: ['Whiteboards'],
         summary: 'Create a new whiteboard',
-        requestBody: CreateWhiteboardSchema,
+        request: {
+            body: {
+                content: {
+                    'application/json': {
+                        schema: CreateWhiteboardSchema
+                    }
+                }
+            }
+        },
         responses: {
             '201': {
                 description: 'Whiteboard created',
@@ -130,10 +141,18 @@ export class UpdateWhiteboard extends OpenAPIRoute {
     schema: OpenAPIRouteSchema = {
         tags: ['Whiteboards'],
         summary: 'Update a whiteboard',
-        parameters: {
-            id: z.string().description('Whiteboard ID')
+        request: {
+            params: z.object({
+                id: z.string()
+            }),
+            body: {
+                content: {
+                    'application/json': {
+                        schema: UpdateWhiteboardSchema
+                    }
+                }
+            }
         },
-        requestBody: UpdateWhiteboardSchema,
         responses: {
             '200': {
                 description: 'Whiteboard updated',
@@ -163,8 +182,10 @@ export class DeleteWhiteboard extends OpenAPIRoute {
     schema: OpenAPIRouteSchema = {
         tags: ['Whiteboards'],
         summary: 'Delete a whiteboard',
-        parameters: {
-            id: z.string().description('Whiteboard ID')
+        request: {
+            params: z.object({
+                id: z.string()
+            })
         },
         responses: {
             '200': {
@@ -195,8 +216,10 @@ export class GetWhiteboardStrokes extends OpenAPIRoute {
     schema: OpenAPIRouteSchema = {
         tags: ['Whiteboards'],
         summary: 'Get all strokes for a whiteboard',
-        parameters: {
-            id: z.string().description('Whiteboard ID')
+        request: {
+            params: z.object({
+                id: z.string()
+            })
         },
         responses: {
             '200': {
@@ -227,8 +250,10 @@ export class ClearWhiteboard extends OpenAPIRoute {
     schema: OpenAPIRouteSchema = {
         tags: ['Whiteboards'],
         summary: 'Clear all strokes from a whiteboard',
-        parameters: {
-            id: z.string().description('Whiteboard ID')
+        request: {
+            params: z.object({
+                id: z.string()
+            })
         },
         responses: {
             '200': {
