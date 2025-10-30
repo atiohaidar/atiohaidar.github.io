@@ -1447,6 +1447,121 @@ class ApiService {
       this.handleError(error);
     }
   }
+
+  // ============================================================================
+  // Habit Tracker API
+  // ============================================================================
+
+  async listHabits(page: number = 0): Promise<Types.HabitWithStats[]> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.HabitWithStats[]>>(
+        `/api/habits?page=${page}`
+      );
+      const habits = this.extractResult<Types.HabitWithStats[]>(response.data, 'habits');
+      return habits || [];
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async getHabit(habitId: string): Promise<Types.HabitWithStats> {
+    try {
+      const response = await this.api.get<Types.ApiResponse<Types.HabitWithStats>>(
+        `/api/habits/${habitId}`
+      );
+      const habit = this.extractResult<Types.HabitWithStats>(response.data, 'habit');
+      if (habit) {
+        return habit;
+      }
+      throw new Error('Habit not found');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async createHabit(habit: Types.HabitCreate): Promise<Types.Habit> {
+    try {
+      const response = await this.api.post<Types.ApiResponse<Types.Habit>>(
+        '/api/habits',
+        habit
+      );
+      const created = this.extractResult<Types.Habit>(response.data, 'habit');
+      if (created) {
+        return created;
+      }
+      throw new Error('Failed to create habit');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async updateHabit(habitId: string, updates: Types.HabitUpdate): Promise<Types.Habit> {
+    try {
+      const response = await this.api.put<Types.ApiResponse<Types.Habit>>(
+        `/api/habits/${habitId}`,
+        updates
+      );
+      const updated = this.extractResult<Types.Habit>(response.data, 'habit');
+      if (updated) {
+        return updated;
+      }
+      throw new Error('Failed to update habit');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async deleteHabit(habitId: string): Promise<void> {
+    try {
+      await this.api.delete(`/api/habits/${habitId}`);
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async getHabitCompletions(
+    habitId: string,
+    startDate?: string,
+    endDate?: string
+  ): Promise<Types.HabitCompletion[]> {
+    try {
+      let url = `/api/habits/${habitId}/completions`;
+      const params = new URLSearchParams();
+      if (startDate) params.append('startDate', startDate);
+      if (endDate) params.append('endDate', endDate);
+      if (params.toString()) url += `?${params.toString()}`;
+
+      const response = await this.api.get<Types.ApiResponse<Types.HabitCompletion[]>>(url);
+      const completions = this.extractResult<Types.HabitCompletion[]>(response.data, 'completions');
+      return completions || [];
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async markHabitComplete(habitId: string, date: string): Promise<Types.HabitCompletion> {
+    try {
+      const response = await this.api.post<Types.ApiResponse<Types.HabitCompletion>>(
+        '/api/habits/completions',
+        { habit_id: habitId, completion_date: date }
+      );
+      const completion = this.extractResult<Types.HabitCompletion>(response.data, 'completion');
+      if (completion) {
+        return completion;
+      }
+      throw new Error('Failed to mark habit as complete');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async unmarkHabitComplete(habitId: string, date: string): Promise<void> {
+    try {
+      await this.api.delete(`/api/habits/${habitId}/completions?date=${date}`);
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
 }
 
 // Export a singleton instance

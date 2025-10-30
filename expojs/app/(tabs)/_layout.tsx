@@ -135,6 +135,16 @@ export default function TabLayout() {
         }}
       />
       <Drawer.Screen
+        name="habits"
+        options={{
+          title: 'Habit Tracker',
+          drawerLabel: 'Habit Tracker',
+          drawerIcon: ({ color, size }) => (
+            <IconButton icon="checkbox-multiple-marked" size={size} iconColor={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
         name="profile"
         options={{
           title: 'Profile',
