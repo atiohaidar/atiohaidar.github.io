@@ -70,7 +70,7 @@ jobs:
         run: npm ci
         working-directory: expojs
       - name: Install EAS CLI
-        run: npm install -g @expo/eas-cli
+        run: npm install -g eas-cli
         working-directory: expojs
       - name: Build Android APK
         run: eas build -p android --type apk --no-publish
