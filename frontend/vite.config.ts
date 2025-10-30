@@ -40,6 +40,16 @@ export default defineConfig(({ mode }) => {
               });
             },
           },
+          '/whiteboard': {
+            target: 'http://localhost:8787',
+            ws: true,
+            changeOrigin: true,
+            configure: (proxy, options) => {
+              proxy.on('error', (err, req, res) => {
+                console.log('Whiteboard WebSocket proxy error', err);
+              });
+            },
+          },
         },
       }
     };
