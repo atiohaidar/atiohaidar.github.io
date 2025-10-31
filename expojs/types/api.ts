@@ -136,8 +136,11 @@ export interface Message {
   conversation_id?: string;
   group_id?: string;
   sender_username: string;
+  sender_id?: string; // For anonymous chat
   content: string;
   reply_to_id?: string;
+  reply_content?: string;
+  reply_sender_name?: string;
   created_at?: string;
 }
 

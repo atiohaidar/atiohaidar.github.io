@@ -259,6 +259,7 @@ export default function ChatDetailScreen() {
           loading={messagesLoading}
           onReload={handleReloadMessages}
           currentUsername={user?.username}
+          currentSenderId={senderId}
           scrollRef={messagesRef}
         />
       </View>
