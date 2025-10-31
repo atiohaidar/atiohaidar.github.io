@@ -9,12 +9,11 @@ import { Conversation, GroupChat, User } from '@/types/api';
 import { ChatListHeader } from './components/ChatListHeader';
 import { ConversationList } from './components/ConversationList';
 import { GroupList } from './components/GroupList';
-import { AnonymousChatView } from './components/AnonymousChatView';
 import { CreateGroupDialog } from './components/CreateGroupDialog';
 import CreateDirectMessageDialog from './components/CreateDirectMessageDialog';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-type ChatMode = 'conversations' | 'groups' | 'anonymous';
+type ChatMode = 'conversations' | 'groups';
 
 export default function ChatScreen() {
   const [mode, setMode] = useState<ChatMode>('conversations');
@@ -39,7 +38,6 @@ export default function ChatScreen() {
   useEffect(() => {
     setLoading(true);
     loadData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode]);
 
   const loadData = async () => {
@@ -47,11 +45,19 @@ export default function ChatScreen() {
       if (mode === 'conversations') {
         const data = await ApiService.listConversations();
         setConversations(data);
-      } else if (mode === 'groups') {
+      } else {
         const data = await ApiService.listGroups();
-        setGroups(data);
+        // Add anonymous chat as a special group at the top
+        const anonymousGroup: GroupChat = {
+          id: 'anonymous',
+          name: 'Anonymous Chat',
+          description: 'Public anonymous chat for everyone',
+          created_by: 'System',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        };
+        setGroups([anonymousGroup, ...data]);
       }
-      // Anonymous chat doesn't need to load list data
     } catch (error) {
       console.error('Failed to load data:', error);
     } finally {
@@ -78,7 +84,7 @@ export default function ChatScreen() {
     }
   };
 
-  const openChat = (type: 'conversation' | 'group', id: string, name: string) => {
+  const openChat = (type: 'conversation' | 'group' | 'anonymous', id: string, name: string) => {
     const href = {
       pathname: '/chat/[type]/[id]' as const,
       params: { type, id, name },
@@ -166,6 +172,12 @@ export default function ChatScreen() {
     );
   }
 
+  const getOtherUsername = (conv: Conversation) => {
+    return conv.user1_username === user?.username
+      ? conv.user2_username
+      : conv.user1_username;
+  };
+
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}> 
       <ScrollView
@@ -173,15 +185,7 @@ export default function ChatScreen() {
         contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
-        <ChatListHeader 
-          mode={mode} 
-          onModeChange={setMode}
-          options={[
-            { value: 'conversations' as const, label: 'Direct', icon: 'account' },
-            { value: 'groups' as const, label: 'Groups', icon: 'account-group' },
-            { value: 'anonymous' as const, label: 'Anonymous', icon: 'incognito' },
-          ]}
-        />
+        <ChatListHeader mode={mode} onModeChange={setMode} />
 
         {mode === 'conversations' ? (
           <ConversationList
@@ -189,13 +193,18 @@ export default function ChatScreen() {
             currentUsername={user?.username}
             onSelect={(conv, displayName) => openChat('conversation', conv.id, displayName)}
           />
-        ) : mode === 'groups' ? (
+        ) : (
           <GroupList
             groups={groups}
-            onSelect={(group) => openChat('group', group.id, group.name)}
+            onSelect={(group) => {
+              // Handle anonymous chat specially
+              if (group.id === 'anonymous') {
+                openChat('anonymous', 'anonymous', group.name);
+              } else {
+                openChat('group', group.id, group.name);
+              }
+            }}
           />
-        ) : (
-          <AnonymousChatView />
         )}
       </ScrollView>
 
@@ -207,14 +216,14 @@ export default function ChatScreen() {
           label={creatingConversation ? 'Starting…' : 'New Chat'}
           disabled={creatingConversation}
         />
-      ) : mode === 'groups' ? (
+      ) : (
         <FAB
           icon="plus"
           style={[styles.fab, { bottom: insets.bottom + 16 }]}
           onPress={() => setDialogVisible(true)}
           label="New Group"
         />
-      ) : null}
+      )}
 
       <CreateGroupDialog
         visible={dialogVisible}
