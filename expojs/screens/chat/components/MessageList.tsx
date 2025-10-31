@@ -10,12 +10,22 @@ interface MessageListProps {
   loading: boolean;
   onReload: () => void;
   currentUsername?: string;
+  currentSenderId?: string; // For anonymous chat
   scrollRef?: RefObject<ScrollView | null>;
 }
 
-export function MessageList({ messages, loading, onReload, currentUsername, scrollRef }: MessageListProps) {
+export function MessageList({ messages, loading, onReload, currentUsername, currentSenderId, scrollRef }: MessageListProps) {
   const fallbackRef = useRef<ScrollView | null>(null);
   const ref = useMemo(() => scrollRef ?? fallbackRef, [scrollRef]);
+
+  // Sort messages so newest is at the bottom
+  const sortedMessages = useMemo(() => {
+    return [...messages].sort((a, b) => {
+      const timeA = a.created_at ? new Date(a.created_at).getTime() : 0;
+      const timeB = b.created_at ? new Date(b.created_at).getTime() : 0;
+      return timeA - timeB; // Ascending order (oldest first, newest last)
+    });
+  }, [messages]);
 
   useEffect(() => {
     if (loading) {
@@ -36,7 +46,7 @@ export function MessageList({ messages, loading, onReload, currentUsername, scro
           <ActivityIndicator size="small" />
           <Text style={styles.loadingText}>Refreshing messages…</Text>
         </View>
-      ) : messages.length === 0 ? (
+      ) : sortedMessages.length === 0 ? (
         <View style={styles.placeholder}>
           <Text style={styles.placeholderText}>No messages yet. Say hello!</Text>
         </View>
@@ -47,13 +57,21 @@ export function MessageList({ messages, loading, onReload, currentUsername, scro
           contentContainerStyle={styles.contentContainer}
           refreshControl={<RefreshControl refreshing={loading} onRefresh={onReload} />}
         >
-          {messages.map((msg) => (
-            <MessageBubble
-              key={msg.id}
-              message={msg}
-              isOwn={msg.sender_username === currentUsername}
-            />
-          ))}
+          {sortedMessages.map((msg) => {
+            // Check if message is from current user
+            // For anonymous chat, use sender_id; for regular chat, use sender_username
+            const isOwn = msg.sender_id 
+              ? msg.sender_id === currentSenderId
+              : msg.sender_username === currentUsername;
+            
+            return (
+              <MessageBubble
+                key={msg.id}
+                message={msg}
+                isOwn={isOwn}
+              />
+            );
+          })}
         </ScrollView>
       )}
     </View>

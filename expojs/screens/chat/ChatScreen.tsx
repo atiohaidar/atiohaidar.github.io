@@ -47,7 +47,16 @@ export default function ChatScreen() {
         setConversations(data);
       } else {
         const data = await ApiService.listGroups();
-        setGroups(data);
+        // Add anonymous chat as a special group at the top
+        const anonymousGroup: GroupChat = {
+          id: 'anonymous',
+          name: 'Anonymous Chat',
+          description: 'Public anonymous chat for everyone',
+          created_by: 'System',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        };
+        setGroups([anonymousGroup, ...data]);
       }
     } catch (error) {
       console.error('Failed to load data:', error);
@@ -75,7 +84,7 @@ export default function ChatScreen() {
     }
   };
 
-  const openChat = (type: 'conversation' | 'group', id: string, name: string) => {
+  const openChat = (type: 'conversation' | 'group' | 'anonymous', id: string, name: string) => {
     const href = {
       pathname: '/chat/[type]/[id]' as const,
       params: { type, id, name },
@@ -187,7 +196,14 @@ export default function ChatScreen() {
         ) : (
           <GroupList
             groups={groups}
-            onSelect={(group) => openChat('group', group.id, group.name)}
+            onSelect={(group) => {
+              // Handle anonymous chat specially
+              if (group.id === 'anonymous') {
+                openChat('anonymous', 'anonymous', group.name);
+              } else {
+                openChat('group', group.id, group.name);
+              }
+            }}
           />
         )}
       </ScrollView>

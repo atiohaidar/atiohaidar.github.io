@@ -25,38 +25,51 @@ export function GroupList({ groups, onSelect }: GroupListProps) {
 
   return (
     <View>
-      {groups.map((group) => (
-        <Card
-          key={group.id}
-          style={styles.chatCard}
-          mode="elevated"
-          onPress={() => onSelect(group)}
-        >
-          <Card.Content>
-            <View style={styles.chatItem}>
-              <Avatar.Text
-                size={48}
-                label={group.name.substring(0, 2).toUpperCase()}
-              />
-              <View style={styles.chatInfo}>
-                <Text variant="titleMedium">{group.name}</Text>
-                {group.description && (
-                  <Text
-                    variant="bodySmall"
-                    style={{ color: theme.colors.onSurfaceVariant }}
-                    numberOfLines={1}
-                  >
-                    {group.description}
-                  </Text>
-                )}
-                <Chip icon="account" compact style={styles.chip}>
-                  Created by {group.created_by}
-                </Chip>
+      {groups.map((group) => {
+        const isAnonymous = group.id === 'anonymous';
+        return (
+          <Card
+            key={group.id}
+            style={styles.chatCard}
+            mode="elevated"
+            onPress={() => onSelect(group)}
+          >
+            <Card.Content>
+              <View style={styles.chatItem}>
+                <Avatar.Text
+                  size={48}
+                  label={group.name.substring(0, 2).toUpperCase()}
+                  style={isAnonymous ? { backgroundColor: '#9C27B0' } : undefined}
+                />
+                <View style={styles.chatInfo}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Text variant="titleMedium">{group.name}</Text>
+                    {isAnonymous && (
+                      <Chip icon="incognito" compact style={styles.anonymousChip}>
+                        Public
+                      </Chip>
+                    )}
+                  </View>
+                  {group.description && (
+                    <Text
+                      variant="bodySmall"
+                      style={{ color: theme.colors.onSurfaceVariant }}
+                      numberOfLines={1}
+                    >
+                      {group.description}
+                    </Text>
+                  )}
+                  {!isAnonymous && (
+                    <Chip icon="account" compact style={styles.chip}>
+                      Created by {group.created_by}
+                    </Chip>
+                  )}
+                </View>
               </View>
-            </View>
-          </Card.Content>
-        </Card>
-      ))}
+            </Card.Content>
+          </Card>
+        );
+      })}
     </View>
   );
 }
@@ -85,5 +98,10 @@ const styles = StyleSheet.create({
     height: 24,
     marginTop: 4,
     alignSelf: 'flex-start',
+  },
+  anonymousChip: {
+    height: 24,
+    marginLeft: 8,
+    backgroundColor: '#9C27B0',
   },
 });

@@ -136,8 +136,11 @@ export interface Message {
   conversation_id?: string;
   group_id?: string;
   sender_username: string;
+  sender_id?: string; // For anonymous chat
   content: string;
   reply_to_id?: string;
+  reply_content?: string;
+  reply_sender_name?: string;
   created_at?: string;
 }
 
@@ -194,7 +197,9 @@ export interface AnonymousMessage {
   sender_id: string;
   content: string;
   reply_to_id?: string;
-  created_at?: string;
+  created_at: string;
+  reply_content?: string;
+  reply_sender_id?: string;
 }
 
 export interface AnonymousMessageCreate {
