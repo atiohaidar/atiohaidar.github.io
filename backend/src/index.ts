@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { registerRoutes } from "./routes";
 import { ChatRoom } from "./durable-objects/ChatRoom";
+import { WhiteboardRoom } from "./durable-objects/WhiteboardRoom";
 
 // Start a Hono app
 const app = new Hono<{ Bindings: Env }>();
@@ -36,10 +37,18 @@ export default {
 			return obj.fetch(request);
 		}
 
+		// Handle Whiteboard WebSocket connections
+		if (url.pathname.startsWith('/whiteboard/')) {
+			const whiteboardId = url.pathname.split('/')[2];
+			const id = env.WHITEBOARD_ROOM.idFromName(`whiteboard-${whiteboardId}`);
+			const obj = env.WHITEBOARD_ROOM.get(id);
+			return obj.fetch(request);
+		}
+
 		// Handle regular HTTP requests with Hono
 		return app.fetch(request, env);
 	},
 };
 
 // Export Durable Objects
-export { ChatRoom };
+export { ChatRoom, WhiteboardRoom };

@@ -5,6 +5,7 @@ import { z } from "zod";
 export type Bindings = {
 	DB: D1Database;
 	CHAT_ROOM: DurableObjectNamespace;
+	WHITEBOARD_ROOM: DurableObjectNamespace;
 };
 
 export type AppContext = Context<{ Bindings: Bindings }>;
