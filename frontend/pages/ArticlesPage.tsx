@@ -8,7 +8,8 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { listArticles, getArticle } from '../apiService';
 import { getAuthToken, getStoredUser, clearAuth } from '../apiClient';
-import { COLORS, LAYOUT, SPACING } from '../utils/styles';
+import { DASHBOARD_THEME } from '../utils/styles';
+import { useTheme } from '../contexts/ThemeContext';
 import type { Article } from '../apiTypes';
 import type { Profile } from '../types';
 import { getProfile } from '../api';
@@ -90,6 +91,8 @@ const listComponents: Components = {
 
 const ArticlesPage: React.FC = () => {
     const navigate = useNavigate();
+    const { theme } = useTheme();
+    const palette = DASHBOARD_THEME[theme];
     const [articles, setArticles] = useState<Article[]>([]);
     const [profile, setProfile] = useState<Profile | null>(null);
     const [loading, setLoading] = useState(true);
@@ -163,7 +166,7 @@ const ArticlesPage: React.FC = () => {
 
     if (loading) {
         return (
-            <div className={`min-h-screen ${LAYOUT.FLEX_CENTER} ${COLORS.BG_PRIMARY} ${COLORS.TEXT_ACCENT} text-xl font-poppins`}>
+            <div className={`min-h-screen ${LAYOUT.FLEX_CENTER} ${palette.appBg} ${palette.panel.text} text-xl font-poppins`}>
                 Memuat Artikel...
             </div>
         );
@@ -171,7 +174,7 @@ const ArticlesPage: React.FC = () => {
 
     if (error) {
         return (
-            <div className={`min-h-screen ${LAYOUT.FLEX_CENTER} ${COLORS.BG_PRIMARY} text-red-500 text-xl font-poppins`}>
+            <div className={`min-h-screen ${LAYOUT.FLEX_CENTER} ${palette.appBg} ${palette.badges.danger} text-xl font-poppins`}>
                 {error}
             </div>
         );

@@ -3,6 +3,8 @@
  * Standardizes loading states
  */
 import React from 'react';
+import { DASHBOARD_THEME } from '../../utils/styles';
+import { useTheme } from '../../contexts/ThemeContext';
 
 export interface LoadingProps {
   size?: 'sm' | 'md' | 'lg';
@@ -16,10 +18,14 @@ const sizeStyles = {
 };
 
 export const Loading: React.FC<LoadingProps> = ({ size = 'md', text }) => {
+  const { theme } = useTheme();
+  const palette = DASHBOARD_THEME[theme];
+  
   return (
     <div className="flex flex-col items-center justify-center py-8">
       <svg
-        className={`animate-spin ${sizeStyles[size]} text-blue-600`}
+        className={`animate-spin ${sizeStyles[size]}`}
+        style={{ color: theme === 'light' ? '#9333EA' : '#A78BFA' }}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
@@ -38,7 +44,7 @@ export const Loading: React.FC<LoadingProps> = ({ size = 'md', text }) => {
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
         ></path>
       </svg>
-      {text && <p className="mt-2 text-sm text-gray-600">{text}</p>}
+      {text && <p className={`mt-2 text-sm ${palette.panel.textMuted}`}>{text}</p>}
     </div>
   );
 };

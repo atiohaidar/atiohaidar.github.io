@@ -163,9 +163,9 @@ const LandingPage: React.FC = () => {
     }
 
     return (
-        <div className={`relative ${PRINT.PRESERVE_COLORS} bg-light-bg dark:bg-deep-navy transition-colors duration-300`}>
-            <Navbar 
-                logoSrc={profile.logoSrc} 
+        <div className={`relative ${PRINT.PRESERVE_COLORS} bg-gradient-to-br from-light-bg via-accent-blue/10 to-light-card dark:from-deep-navy dark:via-accent-blue/20 dark:to-light-navy transition-colors duration-300`}>
+            <Navbar
+                logoSrc={profile.logoSrc}
                 socials={profile.socials}
                 loggedInUser={loggedInUser}
                 onLogout={handleLogout}
@@ -185,7 +185,7 @@ const LandingPage: React.FC = () => {
                 <ExperienceComponent experiences={experiences} education={education} />
                 <ApiDemo />
                 <TicketSubmissionSection />
-                <TicketTrackingSection 
+                <TicketTrackingSection
                     prefillToken={prefilledTicketToken}
                     onPrefillConsumed={() => setPrefilledTicketToken(null)}
                 />
@@ -197,7 +197,7 @@ const LandingPage: React.FC = () => {
             </main>
             <Footer socials={profile.socials} copyright={profile.copyright} />
             <PrintButton />
-            
+
             {/* Anonymous Chat Button */}
             <button
                 onClick={() => setIsAnonymousChatOpen(true)}

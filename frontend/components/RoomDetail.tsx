@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { roomService } from '../services/roomService';
 import { bookingService } from '../services/bookingService';
-import { getStoredUser } from '../apiClient';
+import { getStoredUser } from '../lib/api';
 import type { Room } from '../types/room';
 import type { Booking } from '../types/booking';
 import { useTheme } from '../contexts/ThemeContext';

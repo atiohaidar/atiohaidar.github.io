@@ -231,7 +231,7 @@ const GroupManagementModal: React.FC<GroupManagementModalProps> = ({ isOpen, onC
                 {/* Content */}
                 <div className="flex-1 overflow-y-auto p-4">
                     {error && (
-                        <div className="bg-red-500 text-white p-3 rounded mb-4">
+                        <div className={`${palette.badges.danger} p-3 rounded mb-4`}>
                             {error}
                         </div>
                     )}

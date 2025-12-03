@@ -3,6 +3,8 @@
  * Standardizes card styling across the application
  */
 import React from 'react';
+import { DASHBOARD_THEME } from '../../utils/styles';
+import { useTheme } from '../../contexts/ThemeContext';
 
 export interface CardProps {
   children: React.ReactNode;
@@ -23,10 +25,13 @@ export const Card: React.FC<CardProps> = ({
   padding = 'md',
   hover = false,
 }) => {
+  const { theme } = useTheme();
+  const palette = DASHBOARD_THEME[theme];
+  
   const hoverStyle = hover ? 'hover:shadow-lg transition-shadow' : '';
   
   return (
-    <div className={`bg-white rounded-lg shadow ${paddingStyles[padding]} ${hoverStyle} ${className}`}>
+    <div className={`${palette.panel.bg} rounded-lg shadow ${paddingStyles[padding]} ${hoverStyle} ${className}`}>
       {children}
     </div>
   );

@@ -3,6 +3,8 @@
  * Standardizes form input styling
  */
 import React from 'react';
+import { DASHBOARD_THEME } from '../../utils/styles';
+import { useTheme } from '../../contexts/ThemeContext';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -17,14 +19,17 @@ export const Input: React.FC<InputProps> = ({
   className = '',
   ...props
 }) => {
+  const { theme } = useTheme();
+  const palette = DASHBOARD_THEME[theme];
+  
   const inputStyles = error
     ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
-    : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500';
+    : palette.input;
 
   return (
     <div className="w-full">
       {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className={`block text-sm font-medium ${palette.panel.text} mb-1`}>
           {label}
         </label>
       )}
@@ -36,7 +41,7 @@ export const Input: React.FC<InputProps> = ({
         <p className="mt-1 text-sm text-red-600">{error}</p>
       )}
       {helperText && !error && (
-        <p className="mt-1 text-sm text-gray-500">{helperText}</p>
+        <p className={`mt-1 text-sm ${palette.panel.textMuted}`}>{helperText}</p>
       )}
     </div>
   );
