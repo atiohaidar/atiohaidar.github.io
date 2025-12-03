@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Login from '../components/Login';
-import { getAuthToken, getStoredUser } from '../apiClient';
+import { getAuthToken, getStoredUser } from '../lib/api';
 import { COLORS } from '../utils/styles';
 
 const LoginPage: React.FC = () => {

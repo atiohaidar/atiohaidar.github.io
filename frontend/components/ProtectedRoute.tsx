@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { getStoredUser } from '../apiClient';
+import { getStoredUser } from '../lib/api';
 import { COLORS } from '../utils/styles';
 
 interface ProtectedRouteProps {

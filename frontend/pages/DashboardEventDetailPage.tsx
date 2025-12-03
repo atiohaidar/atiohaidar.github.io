@@ -13,7 +13,7 @@ import {
     assignEventAdmin,
     removeEventAdmin,
 } from '../lib/api/services';
-import { getStoredUser } from '../apiClient';
+import { getStoredUser } from '../lib/api';
 import { COLORS } from '../utils/styles';
 import type { EventAttendee, EventAdmin, AttendeeStatus } from '../apiTypes';
 

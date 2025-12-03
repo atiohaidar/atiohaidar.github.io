@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DASHBOARD_THEME } from '../utils/styles';
 import { useTheme } from '../contexts/ThemeContext';
-import { getStoredUser } from '../apiClient';
+import { getStoredUser } from '../lib/api';
 import {
     getDiscussion,
     createReply,

@@ -1,4 +1,4 @@
-import { apiFetch } from '../apiClient';
+import { apiFetch } from '../lib/api';
 import type { Booking, BookingCreate, BookingUpdate, BookingListResponse, BookingResponse } from '../types/booking';
 
 export const bookingService = {

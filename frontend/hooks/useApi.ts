@@ -3,7 +3,7 @@
  */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { UseMutationResult, UseQueryResult } from '@tanstack/react-query';
-import * as api from '../apiService';
+import * as api from '../lib/api';
 import type {
     LoginRequest,
     LoginResponse,
@@ -13,7 +13,7 @@ import type {
     Task,
     TaskCreate,
 } from '../apiTypes';
-import { setAuthToken, setStoredUser, removeAuthToken, removeStoredUser } from '../apiClient';
+import { setAuthToken, setStoredUser, removeAuthToken, removeStoredUser } from '../lib/api';
 
 // Query keys
 export const queryKeys = {

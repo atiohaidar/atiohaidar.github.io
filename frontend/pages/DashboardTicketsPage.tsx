@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { listTickets, listTicketCategories, getTicketStats } from '../lib/api/services';
 import type { Ticket, TicketCategory, TicketStats } from '../apiTypes';
 import { COLORS } from '../utils/styles';
-import { getStoredUser } from '../apiClient';
+import { getStoredUser } from '../lib/api';
 
 const DashboardTicketsPage: React.FC = () => {
     const navigate = useNavigate();

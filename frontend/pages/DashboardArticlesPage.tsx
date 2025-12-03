@@ -1,7 +1,7 @@
 import React from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
-import { deleteArticle, listArticles, updateArticle } from '../apiService';
+import { deleteArticle, listArticles, updateArticle } from '../lib/api';
 import type { Article, ArticleUpdate } from '../apiTypes';
 import { useTheme } from '../contexts/ThemeContext';
 import { DASHBOARD_THEME } from '../utils/styles';

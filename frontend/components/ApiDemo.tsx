@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Section from './Section';
 import { COLORS } from '../utils/styles';
-import { getAuthToken, getStoredUser } from '../apiClient';
+import { getAuthToken, getStoredUser } from '../lib/api';
 
 const ApiDemo: React.FC = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import RoomList from '../components/RoomList';
-import { getStoredUser } from '../apiClient';
+import { getStoredUser } from '../lib/api';
 import { useTheme } from '../contexts/ThemeContext';
 import { DASHBOARD_THEME } from '../utils/styles';
 

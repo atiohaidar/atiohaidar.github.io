@@ -12,7 +12,7 @@ import {
 } from '../lib/api/services';
 import type { Ticket, TicketComment, TicketAssignment, User, TicketCategory } from '../apiTypes';
 import { COLORS } from '../utils/styles';
-import { getStoredUser } from '../apiClient';
+import { getStoredUser } from '../lib/api';
 
 const DashboardTicketDetailPage: React.FC = () => {
     const { ticketId } = useParams<{ ticketId: string }>();

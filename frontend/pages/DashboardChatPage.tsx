@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { DASHBOARD_THEME } from '../utils/styles';
 import { useTheme } from '../contexts/ThemeContext';
-import { getStoredUser } from '../apiClient';
+import { getStoredUser } from '../lib/api';
 import GroupManagementModal from '../components/GroupManagementModal';
 import {
     getConversations,

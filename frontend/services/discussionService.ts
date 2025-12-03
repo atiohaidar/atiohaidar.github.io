@@ -1,4 +1,4 @@
-import { apiFetch } from '../apiClient';
+import { apiFetch } from '../lib/api';
 
 export interface Discussion {
     id: string;

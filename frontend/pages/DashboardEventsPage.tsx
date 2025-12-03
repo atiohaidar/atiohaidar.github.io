@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import { listEvents } from '../lib/api/services';
-import { getStoredUser } from '../apiClient';
+import { getStoredUser } from '../lib/api';
 import { COLORS } from '../utils/styles';
 import type { Event } from '../apiTypes';
 

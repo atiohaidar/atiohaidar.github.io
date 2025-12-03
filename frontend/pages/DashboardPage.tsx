@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, Outlet, useNavigate } from 'react-router-dom';
 import DashboardLayout from '../components/DashboardLayout';
-import { getAuthToken, getStoredUser } from '../apiClient';
+import { getAuthToken, getStoredUser } from '../lib/api';
 import { COLORS } from '../utils/styles';
 
 interface StoredUser {

@@ -1,4 +1,4 @@
-import { apiFetch } from '../apiClient';
+import { apiFetch } from '../lib/api';
 import type { Room, RoomCreate, RoomUpdate, RoomListResponse, RoomResponse } from '../types/room';
 
 export const roomService = {

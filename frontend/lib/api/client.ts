@@ -37,8 +37,8 @@ export const auth = {
     removeUser: (): void => localStorage.removeItem(USER_DATA_KEY),
     
     clear: (): void => {
-        auth.removeToken();
-        auth.removeUser();
+        localStorage.removeItem(AUTH_TOKEN_KEY);
+        localStorage.removeItem(USER_DATA_KEY);
     },
 };
 

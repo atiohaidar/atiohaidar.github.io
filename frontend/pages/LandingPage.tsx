@@ -15,7 +15,7 @@ import FormTokenSection from '../components/FormTokenSection';
 import TicketSubmissionSection from '../components/TicketSubmissionSection';
 import TicketTrackingSection from '../components/TicketTrackingSection';
 import { getProfile, getAbout, getProjects, getResearch, getExperiences, getEducation } from '../api';
-import { getAuthToken, getStoredUser, clearAuth } from '../apiClient';
+import { getAuthToken, getStoredUser, clearAuth } from '../lib/api';
 import { COLORS, LAYOUT, PRINT } from '../utils/styles';
 import type { NavAction } from '../constants';
 import type {
