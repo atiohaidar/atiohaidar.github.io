@@ -240,43 +240,12 @@ class _DiscussionsScreenState extends State<DiscussionsScreen> {
             child: const Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () async {
-              if (titleController.text.isEmpty || contentController.text.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Please fill in title and content'),
-                    backgroundColor: AppColors.error,
-                  ),
-                );
-                return;
-              }
-
-              final discussionsProvider = context.read<DiscussionsProvider>();
-              final data = DiscussionCreate(
-                title: titleController.text,
-                content: contentController.text,
-                creatorName: nameController.text.isEmpty ? null : nameController.text,
-              );
-
-              Navigator.of(dialogContext).pop();
-
-              final success = await discussionsProvider.createDiscussion(data);
-              if (success && context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Discussion created successfully'),
-                    backgroundColor: AppColors.success,
-                  ),
-                );
-              } else if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(discussionsProvider.error ?? 'Failed to create discussion'),
-                    backgroundColor: AppColors.error,
-                  ),
-                );
-              }
-            },
+            onPressed: () => _submitDiscussion(
+              dialogContext,
+              titleController,
+              contentController,
+              nameController,
+            ),
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryBlue,
             ),
@@ -285,5 +254,52 @@ class _DiscussionsScreenState extends State<DiscussionsScreen> {
         ],
       ),
     );
+  }
+
+  bool _validateDiscussionInput(String title, String content) {
+    return title.isNotEmpty && content.isNotEmpty;
+  }
+
+  Future<void> _submitDiscussion(
+    BuildContext dialogContext,
+    TextEditingController titleController,
+    TextEditingController contentController,
+    TextEditingController nameController,
+  ) async {
+    if (!_validateDiscussionInput(titleController.text, contentController.text)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please fill in title and content'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+      return;
+    }
+
+    final discussionsProvider = context.read<DiscussionsProvider>();
+    final data = DiscussionCreate(
+      title: titleController.text,
+      content: contentController.text,
+      creatorName: nameController.text.isEmpty ? null : nameController.text,
+    );
+
+    Navigator.of(dialogContext).pop();
+
+    final success = await discussionsProvider.createDiscussion(data);
+    if (success && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Discussion created successfully'),
+          backgroundColor: AppColors.success,
+        ),
+      );
+    } else if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(discussionsProvider.error ?? 'Failed to create discussion'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    }
   }
 }

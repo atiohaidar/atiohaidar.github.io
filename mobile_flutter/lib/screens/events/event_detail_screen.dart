@@ -68,17 +68,16 @@ class _EventDetailScreenState extends State<EventDetailScreen>
       // Check if current user is registered
       final authProvider = context.read<AuthProvider>();
       if (authProvider.isAuthenticated && authProvider.user != null) {
-        _currentUserAttendee = _attendees.firstWhere(
-          (a) => a.userUsername == authProvider.user!.username,
-          orElse: () => EventAttendee(
-            id: '',
-            eventId: '',
-            userUsername: '',
-            attendanceToken: '',
-            status: AttendeeStatus.registered,
-          ),
-        );
-        _isRegistered = _currentUserAttendee!.id.isNotEmpty;
+        try {
+          _currentUserAttendee = _attendees.firstWhere(
+            (a) => a.userUsername == authProvider.user!.username,
+          );
+          _isRegistered = true;
+        } catch (e) {
+          // User is not registered
+          _currentUserAttendee = null;
+          _isRegistered = false;
+        }
       }
 
       setState(() {
