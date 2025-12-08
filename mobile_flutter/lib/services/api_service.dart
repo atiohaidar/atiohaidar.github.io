@@ -672,7 +672,11 @@ class ApiService {
 
   static Future<ChatMessage> sendMessage(MessageCreate data) async {
     try {
-      // Note: Backend expects /api/messages (not /api/chat/messages)
+      // Note: Backend API structure for messaging:
+      // - Individual messages: POST /api/messages (handles both conversation and group via body)
+      // - Fetch conversation messages: GET /api/conversations/:id/messages
+      // - Fetch group messages: GET /api/groups/:groupId/messages
+      // The MessageCreate model includes conversationId or groupId to route correctly
       final response =
           await ApiClient.post('/messages', data: data.toJson());
       return ChatMessage.fromJson(response.data['data']);
