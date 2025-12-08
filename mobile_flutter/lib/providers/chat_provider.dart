@@ -6,7 +6,7 @@ class ChatProvider extends ChangeNotifier {
   final WebSocketService _wsService = WebSocketService();
   bool _isLoading = false;
   String? _error;
-  
+
   List<ChatConversation> _conversations = [];
   List<ChatMessage> _messages = [];
   String? _currentConversationId;
@@ -31,7 +31,7 @@ class ChatProvider extends ChangeNotifier {
     // Check if message is a chat message
     if (message is Map<String, dynamic> && message['type'] == 'chat_message') {
       final chatMsg = ChatMessage.fromJson(message['data']);
-      
+
       // If belongs to current conversation, add it
       if (chatMsg.conversationId == _currentConversationId) {
         _messages.add(chatMsg);
@@ -39,12 +39,9 @@ class ChatProvider extends ChangeNotifier {
       }
 
       // Update last message in conversation list
-      final index = _conversations.indexWhere((c) => c.id == chatMsg.conversationId);
+      final index =
+          _conversations.indexWhere((c) => c.id == chatMsg.conversationId);
       if (index != -1) {
-        // Create new conversation object with updated last message
-        // Since ChatConversation fields are final, we can't just set them. 
-        // We'll rely on reloading or partial updates if we add copyWith to model.
-        // For simplicity now, let's just trigger a reload of conversations or ignoring list update for now.
         // Ideally we should reload list or have mutable fields (but immutable is better).
         loadConversations(silent: true);
       }
@@ -63,8 +60,10 @@ class ChatProvider extends ChangeNotifier {
     } catch (e) {
       _error = e.toString();
     } finally {
-      _isLoading = false;
-      notifyListeners();
+      if (!silent) {
+        _isLoading = false;
+        notifyListeners();
+      }
     }
   }
 
@@ -88,21 +87,15 @@ class ChatProvider extends ChangeNotifier {
   Future<void> sendMessage(String content, {String? replyToId}) async {
     if (_currentConversationId == null || content.trim().isEmpty) return;
 
-    final tempId = DateTime.now().toIso8601String(); // Temp ID for optimistic UI
-    // Optimistic update could happen here, but for now we wait for API
-    
     try {
-       final msg = await ApiService.sendMessage(MessageCreate(
+      final msg = await ApiService.sendMessage(MessageCreate(
         conversationId: _currentConversationId,
         content: content,
         replyToId: replyToId,
       ));
-      
+
       _messages.add(msg);
       notifyListeners();
-      
-      // Also send via WebSocket if needed, but normally REST response is enough
-      // Depending on backend implementation.
     } catch (e) {
       _error = e.toString();
       notifyListeners();

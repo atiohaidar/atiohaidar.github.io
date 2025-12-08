@@ -14,7 +14,8 @@ class RoomsScreen extends StatefulWidget {
   State<RoomsScreen> createState() => _RoomsScreenState();
 }
 
-class _RoomsScreenState extends State<RoomsScreen> with SingleTickerProviderStateMixin {
+class _RoomsScreenState extends State<RoomsScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -38,7 +39,8 @@ class _RoomsScreenState extends State<RoomsScreen> with SingleTickerProviderStat
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: Colors.transparent, // Background handled by parent GradientBackground
+      backgroundColor:
+          Colors.transparent, // Background handled by parent GradientBackground
       appBar: AppBar(
         title: const Text('Rooms & Bookings'),
         backgroundColor: Colors.transparent, // Transparent to show gradient
@@ -47,7 +49,8 @@ class _RoomsScreenState extends State<RoomsScreen> with SingleTickerProviderStat
         bottom: TabBar(
           controller: _tabController,
           labelColor: AppColors.primaryBlue,
-          unselectedLabelColor: isDark ? AppColors.textMuted : Colors.grey.shade600,
+          unselectedLabelColor:
+              isDark ? AppColors.textMuted : Colors.grey.shade600,
           indicatorColor: AppColors.primaryBlue,
           tabs: const [
             Tab(text: 'Rooms'),
@@ -104,7 +107,8 @@ class _RoomsScreenState extends State<RoomsScreen> with SingleTickerProviderStat
               height: 150,
               decoration: BoxDecoration(
                 color: isDark ? Colors.black26 : Colors.grey.shade200,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(16)),
               ),
               child: Icon(
                 Icons.meeting_room,
@@ -117,14 +121,127 @@ class _RoomsScreenState extends State<RoomsScreen> with SingleTickerProviderStat
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-// ... (text of file omitted for brevity, matching existing struct)
-          final roomName = provider.rooms.isNotEmpty 
-              ? provider.rooms.firstWhere(
-                  (r) => r.id == booking.roomId, 
-                  orElse: () => const Room(id: '', name: 'Unknown Room', capacity: 0, available: false),
-                ).name
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          room.name,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: isDark
+                                ? AppColors.textPrimary
+                                : AppColors.lightText,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: room.available
+                              ? AppColors.success.withOpacity(0.1)
+                              : AppColors.error.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          room.available ? 'Available' : 'Unavailable',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: room.available
+                                ? AppColors.success
+                                : AppColors.error,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Capacity: ${room.capacity} people',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color:
+                          isDark ? AppColors.textMuted : Colors.grey.shade600,
+                    ),
+                  ),
+                  if (room.description != null) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      room.description!,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: isDark
+                            ? AppColors.textSecondary
+                            : AppColors.lightTextSecondary,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: room.available
+                          ? () {
+                              // TODO: Implement booking flow
+                            }
+                          : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryBlue,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                      ),
+                      child: const Text('Book Room'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBookingsList(RoomsProvider provider, bool isDark) {
+    if (provider.isLoading && provider.bookings.isEmpty) {
+      return const LoadingIndicator(message: 'Loading bookings...');
+    }
+
+    if (provider.bookings.isEmpty) {
+      return const EmptyState(
+        icon: Icons.bookmark_border,
+        title: 'No bookings',
+        subtitle: 'Your bookings will appear here',
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: () => provider.loadBookings(),
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: provider.bookings.length,
+        itemBuilder: (context, index) {
+          final booking = provider.bookings[index];
+          // Find the room name if possible
+          final roomName = provider.rooms.isNotEmpty
+              ? provider.rooms
+                  .firstWhere(
+                    (r) => r.id == booking.roomId,
+                    orElse: () => const Room(
+                        id: '',
+                        name: 'Unknown Room',
+                        capacity: 0,
+                        available: false),
+                  )
+                  .name
               : 'Loading...';
-          
+
           return _buildBookingCard(booking, roomName, isDark);
         },
       ),
@@ -166,7 +283,9 @@ class _RoomsScreenState extends State<RoomsScreen> with SingleTickerProviderStat
                   '${DateFormat('MMM d, y').format(DateTime.parse(booking.startTime))} - ${DateFormat('HH:mm').format(DateTime.parse(booking.startTime))}',
                   style: TextStyle(
                     fontSize: 14,
-                    color: isDark ? AppColors.textSecondary : AppColors.lightTextSecondary,
+                    color: isDark
+                        ? AppColors.textSecondary
+                        : AppColors.lightTextSecondary,
                   ),
                 ),
               ],

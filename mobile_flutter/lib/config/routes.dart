@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/providers.dart';
+import '../models/models.dart';
 import '../screens/screens.dart';
 import '../widgets/widgets.dart';
-
+import '../models/models.dart';
 
 /// App router configuration
 class AppRouter {
@@ -19,8 +20,8 @@ class AppRouter {
       redirect: (context, state) {
         final isAuthenticated = authProvider.isAuthenticated;
         final isLoggingIn = state.matchedLocation == '/login';
-        final isInitializing = authProvider.state == AuthState.initial || 
-                               authProvider.state == AuthState.loading;
+        final isInitializing = authProvider.state == AuthState.initial ||
+            authProvider.state == AuthState.loading;
 
         // Wait for initialization
         if (isInitializing) {
@@ -53,27 +54,49 @@ class AppRouter {
         GoRoute(
           path: '/rooms',
           name: 'rooms',
-          builder: (context, state) => GradientBackground(child: const RoomsScreen()),
+          builder: (context, state) =>
+              GradientBackground(child: const RoomsScreen()),
         ),
         GoRoute(
           path: '/articles',
           name: 'articles',
-          builder: (context, state) => GradientBackground(child: const ArticlesScreen()),
+          builder: (context, state) =>
+              GradientBackground(child: const ArticlesScreen()),
         ),
         GoRoute(
           path: '/forms',
           name: 'forms',
-          builder: (context, state) => GradientBackground(child: const FormsScreen()),
+          builder: (context, state) =>
+              GradientBackground(child: const FormsScreen()),
         ),
         GoRoute(
           path: '/items',
           name: 'items',
-          builder: (context, state) => GradientBackground(child: const ItemsScreen()),
+          builder: (context, state) =>
+              GradientBackground(child: const ItemsScreen()),
         ),
         GoRoute(
           path: '/users',
           name: 'users',
-          builder: (context, state) => GradientBackground(child: const UsersScreen()),
+          builder: (context, state) =>
+              GradientBackground(child: const UsersScreen()),
+        ),
+        GoRoute(
+          path: '/chat',
+          name: 'chat',
+          builder: (context, state) =>
+              GradientBackground(child: const ChatListScreen()),
+        ),
+        GoRoute(
+          path: '/chat/:id',
+          name: 'chat_detail',
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            final conversation = state.extra as ChatConversation?;
+            return GradientBackground(
+                child:
+                    ChatScreen(conversationId: id, conversation: conversation));
+          },
         ),
       ],
       errorPageBuilder: (context, state) => MaterialPage(

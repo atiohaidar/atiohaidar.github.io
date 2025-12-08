@@ -1,9 +1,6 @@
 // Models barrel file - export all models
 export 'user.dart';
 export 'task.dart';
-// Models barrel file - export all models
-export 'user.dart';
-export 'task.dart';
 export 'article.dart';
 export 'room.dart';
 export 'booking.dart';

@@ -10,6 +10,5 @@ export 'articles/articles_screen.dart';
 export 'forms/forms_screen.dart';
 export 'items/items_screen.dart';
 export 'users/users_screen.dart';
-
-
-
+export 'chat/chat_list_screen.dart';
+export 'chat/chat_screen.dart';
