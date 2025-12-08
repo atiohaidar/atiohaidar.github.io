@@ -672,6 +672,7 @@ class ApiService {
 
   static Future<ChatMessage> sendMessage(MessageCreate data) async {
     try {
+      // Note: Backend expects /api/messages (not /api/chat/messages)
       final response =
           await ApiClient.post('/messages', data: data.toJson());
       return ChatMessage.fromJson(response.data['data']);

@@ -256,17 +256,14 @@ class _DiscussionsScreenState extends State<DiscussionsScreen> {
     );
   }
 
-  bool _validateDiscussionInput(String title, String content) {
-    return title.isNotEmpty && content.isNotEmpty;
-  }
-
   Future<void> _submitDiscussion(
     BuildContext dialogContext,
     TextEditingController titleController,
     TextEditingController contentController,
     TextEditingController nameController,
   ) async {
-    if (!_validateDiscussionInput(titleController.text, contentController.text)) {
+    // Validate input fields
+    if (titleController.text.trim().isEmpty || contentController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please fill in title and content'),
