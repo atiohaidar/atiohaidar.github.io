@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' hide FormData;
 import '../models/models.dart';
 import 'api_client.dart';
 
@@ -393,6 +393,47 @@ class ApiService {
     try {
       final response = await ApiClient.post('/item-borrowings', data: data.toJson());
       return ItemBorrowing.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  // Forms
+  static Future<List<FormData>> getForms() async {
+    try {
+      final response = await ApiClient.get('/forms');
+      final forms = (response.data['data'] as List)
+          .map((json) => FormData.fromJson(json))
+          .toList();
+      return forms;
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<FormWithQuestions> getForm(String id) async {
+    try {
+      final response = await ApiClient.get('/forms/$id');
+      return FormWithQuestions.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<FormData> createForm(FormCreate data) async {
+    try {
+      final response = await ApiClient.post('/forms', data: data.toJson());
+      // The API returns the created form data, maybe without questions in the root or wrapped
+      // Adjusting based on standard response pattern
+      return FormData.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<void> deleteForm(String id) async {
+    try {
+      await ApiClient.delete('/forms/$id');
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
     }

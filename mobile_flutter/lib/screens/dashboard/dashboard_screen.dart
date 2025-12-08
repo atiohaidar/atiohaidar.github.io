@@ -4,6 +4,10 @@ import '../../config/theme.dart';
 import '../../providers/providers.dart';
 import '../../widgets/widgets.dart';
 import 'overview_screen.dart';
+import '../tasks/tasks_screen.dart';
+import '../tickets/tickets_screen.dart';
+import '../events/events_screen.dart';
+
 
 /// Main dashboard screen with bottom navigation
 class DashboardScreen extends StatefulWidget {
@@ -38,9 +42,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           index: _currentIndex,
           children: [
             const DashboardOverviewScreen(),
-            _buildPlaceholderScreen('Tasks', Icons.task),
-            _buildPlaceholderScreen('Tickets', Icons.confirmation_number),
-            _buildPlaceholderScreen('Events', Icons.event),
+            const TasksScreen(),
+            const TicketsScreen(),
+            const EventsScreen(),
             _buildMoreScreen(authProvider, isDark),
           ],
         ),
@@ -240,25 +244,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
         icon: Icons.meeting_room_outlined,
         title: 'Rooms',
         subtitle: 'Manage rooms and bookings',
-        onTap: () {},
+        onTap: () => context.push('/rooms'),
       ),
       _MenuItem(
         icon: Icons.article_outlined,
         title: 'Articles',
         subtitle: 'Manage articles and content',
-        onTap: () {},
+        onTap: () => context.push('/articles'),
       ),
       _MenuItem(
         icon: Icons.inventory_2_outlined,
         title: 'Items',
         subtitle: 'Manage items and borrowings',
-        onTap: () {},
+        onTap: () => context.push('/items'),
       ),
       _MenuItem(
         icon: Icons.dynamic_form_outlined,
         title: 'Forms',
         subtitle: 'Create and manage forms',
-        onTap: () {},
+        onTap: () => context.push('/forms'),
       ),
       _MenuItem(
         icon: Icons.chat_outlined,
@@ -271,7 +275,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           icon: Icons.people_outline,
           title: 'Users',
           subtitle: 'Manage system users',
-          onTap: () {},
+          onTap: () => context.push('/users'),
         ),
     ];
 

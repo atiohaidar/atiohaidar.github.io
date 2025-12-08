@@ -2,7 +2,7 @@
 class ApiConfig {
   // Base URL for the backend API
   // Change this to your production URL when deploying
-  static const String baseUrl = 'https://atiohaidar-backend.haidarprograming.workers.dev';
+  static const String baseUrl = 'https://backend.atiohaidar.workers.dev';
   
   // Alternative development URL (uncomment if needed)
   // static const String baseUrl = 'http://localhost:8787';

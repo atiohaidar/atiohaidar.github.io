@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/providers.dart';
 import '../screens/screens.dart';
+import '../widgets/widgets.dart';
+
 
 /// App router configuration
 class AppRouter {
@@ -47,6 +49,31 @@ class AppRouter {
           path: '/',
           name: 'dashboard',
           builder: (context, state) => const DashboardScreen(),
+        ),
+        GoRoute(
+          path: '/rooms',
+          name: 'rooms',
+          builder: (context, state) => GradientBackground(child: const RoomsScreen()),
+        ),
+        GoRoute(
+          path: '/articles',
+          name: 'articles',
+          builder: (context, state) => GradientBackground(child: const ArticlesScreen()),
+        ),
+        GoRoute(
+          path: '/forms',
+          name: 'forms',
+          builder: (context, state) => GradientBackground(child: const FormsScreen()),
+        ),
+        GoRoute(
+          path: '/items',
+          name: 'items',
+          builder: (context, state) => GradientBackground(child: const ItemsScreen()),
+        ),
+        GoRoute(
+          path: '/users',
+          name: 'users',
+          builder: (context, state) => GradientBackground(child: const UsersScreen()),
         ),
       ],
       errorPageBuilder: (context, state) => MaterialPage(
