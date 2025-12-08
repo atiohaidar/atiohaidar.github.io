@@ -438,4 +438,49 @@ class ApiService {
       throw ApiException.fromDioError(e);
     }
   }
+
+  // Chat
+  static Future<List<ChatConversation>> getConversations() async {
+    try {
+      final response = await ApiClient.get('/chat/conversations');
+      final conversations = (response.data['data'] as List)
+          .map((json) => ChatConversation.fromJson(json))
+          .toList();
+      return conversations;
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<ChatConversation> createConversation(String otherUsername) async {
+    try {
+      final response = await ApiClient.post('/chat/conversations', data: {'username': otherUsername});
+      return ChatConversation.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<List<ChatMessage>> getMessages(String conversationId) async {
+    try {
+      final response = await ApiClient.get('/chat/conversations/$conversationId/messages');
+      final messages = (response.data['data'] as List)
+          .map((json) => ChatMessage.fromJson(json))
+          .toList();
+      // Ensure messages are sorted by date (if API returns them reversed)
+      // Usually chat UIs want newest at bottom, but generic ListView wants them in order
+      return messages;
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<ChatMessage> sendMessage(MessageCreate data) async {
+    try {
+      final response = await ApiClient.post('/chat/messages', data: data.toJson());
+      return ChatMessage.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
 }

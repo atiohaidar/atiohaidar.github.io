@@ -87,20 +87,6 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (article.thumbnail != null)
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-              child: Image.network(
-                article.thumbnail!,
-                height: 160,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Container(
-                  height: 160,
-                  color: isDark ? Colors.black26 : Colors.grey.shade200,
-                  child: Icon(Icons.image_not_supported, color: isDark ? Colors.white24 : Colors.grey),
-                ),
-              ),
-            ),
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -115,9 +101,9 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
                         color: AppColors.primaryBlue.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Text(
-                        article.category ?? 'Uncategorized',
-                        style: const TextStyle(
+                      child: const Text(
+                        'Article',
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                           color: AppColors.primaryBlue,
@@ -141,7 +127,7 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  article.excerpt ?? '',
+                  article.content, // Using content as excerpt for now since no explicit excerpt field
                   style: TextStyle(
                     fontSize: 14,
                     color: isDark ? AppColors.textSecondary : AppColors.lightTextSecondary,
@@ -157,28 +143,27 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
                       radius: 12,
                       backgroundColor: Colors.grey.shade300,
                       child: Text(
-                        article.author.name[0].toUpperCase(),
+                        (article.owner ?? 'U')[0].toUpperCase(),
                         style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                       ),
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      article.author.name,
+                      article.owner ?? 'Unknown',
                       style: TextStyle(
                         fontSize: 12,
                         color: isDark ? AppColors.textMuted : Colors.grey.shade600,
                       ),
                     ),
                     const Spacer(),
-                    Text(
-                      article.createdAt != null 
-                          ? DateFormat('MMM d, y').format(DateTime.parse(article.createdAt!))
-                          : '',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: isDark ? AppColors.textMuted : Colors.grey.shade600,
+                    if (article.createdAt != null)
+                      Text(
+                        DateFormat('MMM d, y').format(DateTime.parse(article.createdAt!)),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isDark ? AppColors.textMuted : Colors.grey.shade600,
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ],

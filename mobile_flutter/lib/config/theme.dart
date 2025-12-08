@@ -11,6 +11,7 @@ class AppColors {
   static const Color primaryBlue = Color(0xFF3B82F6);
   static const Color accentCyan = Color(0xFF22D3EE);
   static const Color accentIndigo = Color(0xFF6366F1);
+  static const Color purple = Color(0xFF8B5CF6); // Added for admin badge
   
   // Gradient colors
   static const Color gradientBlue = Color(0xFF3B82F6);

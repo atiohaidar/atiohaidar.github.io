@@ -9,3 +9,4 @@ export 'items_provider.dart';
 export 'users_provider.dart';
 export 'articles_provider.dart';
 export 'forms_provider.dart';
+export 'chat_provider.dart';
