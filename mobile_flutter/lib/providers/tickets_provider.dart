@@ -6,6 +6,7 @@ import '../services/services.dart';
 class TicketsProvider extends ChangeNotifier {
   List<Ticket> _tickets = [];
   List<TicketCategory> _categories = [];
+  List<TicketComment> _comments = [];
   TicketStats? _stats;
   Ticket? _selectedTicket;
   bool _isLoading = false;
@@ -13,6 +14,7 @@ class TicketsProvider extends ChangeNotifier {
 
   List<Ticket> get tickets => _tickets;
   List<TicketCategory> get categories => _categories;
+  List<TicketComment> get comments => _comments;
   TicketStats? get stats => _stats;
   Ticket? get selectedTicket => _selectedTicket;
   bool get isLoading => _isLoading;
@@ -118,5 +120,36 @@ class TicketsProvider extends ChangeNotifier {
   void clearError() {
     _error = null;
     notifyListeners();
+  }
+
+  /// Load ticket comments
+  Future<void> loadComments(int ticketId) async {
+    _isLoading = true;
+    _error = null; // Don't clear main error, maybe? Or yes.
+    notifyListeners();
+
+    try {
+      _comments = await ApiService.getTicketComments(ticketId);
+      _isLoading = false;
+      notifyListeners();
+    } on ApiException catch (e) {
+      _error = e.message;
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Add a comment
+  Future<bool> addComment(int ticketId, String comment) async {
+    try {
+      final newComment = await ApiService.addTicketComment(ticketId, comment);
+      _comments.add(newComment);
+      notifyListeners();
+      return true;
+    } on ApiException catch (e) {
+      _error = e.message;
+      notifyListeners();
+      return false;
+    }
   }
 }

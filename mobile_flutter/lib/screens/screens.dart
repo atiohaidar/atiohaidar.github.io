@@ -4,6 +4,7 @@ export 'dashboard/dashboard_screen.dart';
 export 'dashboard/overview_screen.dart';
 export 'tasks/tasks_screen.dart';
 export 'tickets/tickets_screen.dart';
+export 'tickets/ticket_detail_screen.dart';
 export 'events/events_screen.dart';
 export 'rooms/rooms_screen.dart';
 export 'articles/articles_screen.dart';

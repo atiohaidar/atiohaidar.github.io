@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../providers/providers.dart';
 import '../models/models.dart';
 import '../screens/screens.dart';
+import '../screens/tickets/ticket_detail_screen.dart'; // Add this import
 import '../widgets/widgets.dart';
 
 /// App router configuration
@@ -108,6 +109,17 @@ class AppRouter {
           name: 'notifications',
           builder: (context, state) =>
               GradientBackground(child: const NotificationsScreen()),
+        ),
+        GoRoute(
+          path: '/tickets/:id',
+          name: 'ticket_detail',
+          builder: (context, state) {
+            final idString = state.pathParameters['id']!;
+            final id = int.tryParse(idString) ?? 0;
+            final ticket = state.extra as Ticket?;
+            return GradientBackground(
+                child: TicketDetailScreen(ticketId: id, ticket: ticket));
+          },
         ),
       ],
       errorPageBuilder: (context, state) => MaterialPage(

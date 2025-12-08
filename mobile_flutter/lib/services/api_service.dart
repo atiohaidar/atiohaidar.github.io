@@ -298,6 +298,31 @@ class ApiService {
     }
   }
 
+  static Future<List<TicketComment>> getTicketComments(int ticketId) async {
+    try {
+      final response = await ApiClient.get('/tickets/$ticketId/comments');
+      final comments = (response.data['data'] as List)
+          .map((json) => TicketComment.fromJson(json))
+          .toList();
+      return comments;
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<TicketComment> addTicketComment(
+      int ticketId, String comment) async {
+    try {
+      final response = await ApiClient.post(
+        '/tickets/$ticketId/comments',
+        data: {'comment_text': comment},
+      );
+      return TicketComment.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
   static Future<List<TicketCategory>> getTicketCategories() async {
     try {
       final response = await ApiClient.get('/tickets/categories');

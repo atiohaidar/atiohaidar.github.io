@@ -1,0 +1,66 @@
+name: Deploy Combined App to 'deploy' Branch
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # --- 1. BUILD FLUTTER WEB ---
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      
+      - name: Install Flutter dependencies
+        working-directory: ./mobile_flutter
+        run: flutter pub get
+
+      - name: Build Flutter Web
+        working-directory: ./mobile_flutter
+        # Penting: base-href diset ke /mobile/ karena akan ditaruh di sub-folder
+        run: flutter build web --release --base-href /mobile/
+
+      # --- 2. BUILD REACT FRONTEND ---
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Frontend Dependencies
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Build Frontend
+        working-directory: ./frontend
+        run: npm run build
+
+      # --- 3. COMBINE OUTPUTS ---
+      - name: Prepare Deployment Directory
+        run: |
+          mkdir deploy_artifact
+          # Copy Frontend (Root)
+          cp -r frontend/dist/* deploy_artifact/
+          # Buat folder mobile dan copy hasil Flutter
+          mkdir deploy_artifact/mobile
+          cp -r mobile_flutter/build/web/* deploy_artifact/mobile/
+
+      # --- 4. DEPLOY TO BRANCH 'deploy' ---
+      - name: Deploy to 'deploy' branch
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./deploy_artifact
+          publish_branch: deploy
+          force_orphan: true # Opsional: buat history branch bersih

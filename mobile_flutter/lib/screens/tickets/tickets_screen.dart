@@ -4,6 +4,7 @@ import '../../config/theme.dart';
 import '../../providers/providers.dart';
 import '../../widgets/widgets.dart';
 import '../../models/models.dart';
+import 'package:go_router/go_router.dart';
 
 /// Tickets screen for viewing tickets
 class TicketsScreen extends StatefulWidget {
@@ -508,7 +509,11 @@ class _TicketsScreenState extends State<TicketsScreen>
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: GestureDetector(
-        onTap: () => _showEditTicketDialog(context, ticket),
+        onTap: () => context.pushNamed(
+          'ticket_detail',
+          pathParameters: {'id': ticket.id.toString()},
+          extra: ticket,
+        ),
         child: GlassCard(
           padding: const EdgeInsets.all(16),
           child: Column(
