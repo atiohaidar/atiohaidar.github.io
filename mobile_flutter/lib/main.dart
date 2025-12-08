@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ArticlesProvider()),
         ChangeNotifierProvider(create: (_) => FormsProvider()),
         ChangeNotifierProvider(create: (_) => ChatProvider()),
+        ChangeNotifierProvider(create: (_) => DiscussionsProvider()),
       ],
       child: Consumer<AuthProvider>(
         builder: (context, authProvider, _) {

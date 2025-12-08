@@ -10,3 +10,4 @@ export 'item.dart';
 export 'form.dart';
 export 'stats.dart';
 export 'chat.dart';
+export 'discussion.dart';

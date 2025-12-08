@@ -268,6 +268,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
         subtitle: 'Messages and conversations',
         onTap: () => context.push('/chat'),
       ),
+      _MenuItem(
+        icon: Icons.forum_outlined,
+        title: 'Discussions',
+        subtitle: 'Community forum discussions',
+        onTap: () => context.push('/discussions'),
+      ),
       if (authProvider.isAdmin)
         _MenuItem(
           icon: Icons.people_outline,

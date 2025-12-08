@@ -121,6 +121,22 @@ class AppRouter {
                 child: TicketDetailScreen(ticketId: id, ticket: ticket));
           },
         ),
+        GoRoute(
+          path: '/discussions',
+          name: 'discussions',
+          builder: (context, state) =>
+              GradientBackground(child: const DiscussionsScreen()),
+        ),
+        GoRoute(
+          path: '/discussions/:id',
+          name: 'discussion_detail',
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            final discussion = state.extra as Discussion?;
+            return GradientBackground(
+                child: DiscussionDetailScreen(discussionId: id, discussion: discussion));
+          },
+        ),
       ],
       errorPageBuilder: (context, state) => MaterialPage(
         child: Scaffold(

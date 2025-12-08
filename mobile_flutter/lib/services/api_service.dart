@@ -538,4 +538,57 @@ class ApiService {
       throw ApiException.fromDioError(e);
     }
   }
+
+  // Discussions
+  static Future<List<Discussion>> getDiscussions() async {
+    try {
+      final response = await ApiClient.get('/discussions');
+      final discussions = (response.data['discussions'] as List)
+          .map((json) => Discussion.fromJson(json))
+          .toList();
+      return discussions;
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<DiscussionWithReplies> getDiscussion(String id) async {
+    try {
+      final response = await ApiClient.get('/discussions/$id');
+      return DiscussionWithReplies.fromJson(response.data['discussion']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<Discussion> createDiscussion(DiscussionCreate data) async {
+    try {
+      final response =
+          await ApiClient.post('/discussions', data: data.toJson());
+      return Discussion.fromJson(response.data['discussion']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<DiscussionReply> addDiscussionReply(
+      String discussionId, DiscussionReplyCreate data) async {
+    try {
+      final response = await ApiClient.post(
+        '/discussions/$discussionId/replies',
+        data: data.toJson(),
+      );
+      return DiscussionReply.fromJson(response.data['reply']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<void> deleteDiscussion(String id) async {
+    try {
+      await ApiClient.delete('/discussions/$id');
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
 }

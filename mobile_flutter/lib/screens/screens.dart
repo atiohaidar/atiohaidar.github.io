@@ -15,3 +15,5 @@ export 'chat/chat_list_screen.dart';
 export 'chat/chat_screen.dart';
 export 'profile/profile_screen.dart';
 export 'notifications/notifications_screen.dart';
+export 'discussions/discussions_screen.dart';
+export 'discussions/discussion_detail_screen.dart';
