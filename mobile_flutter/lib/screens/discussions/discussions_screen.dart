@@ -50,17 +50,17 @@ class _DiscussionsScreenState extends State<DiscussionsScreen> {
     }
 
     if (provider.error != null) {
-      return ErrorMessage(
+      return ErrorDisplay(
         message: provider.error!,
         onRetry: provider.loadDiscussions,
       );
     }
 
     if (provider.discussions.isEmpty) {
-      return EmptyState(
+      return const EmptyState(
         icon: Icons.forum_outlined,
-        message: 'No discussions yet',
-        description: 'Start a conversation by creating a new discussion',
+        title: 'No discussions yet',
+        subtitle: 'Start a conversation by creating a new discussion',
       );
     }
 

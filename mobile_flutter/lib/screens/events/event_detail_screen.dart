@@ -124,7 +124,7 @@ class _EventDetailScreenState extends State<EventDetailScreen>
     }
 
     if (_error != null) {
-      return ErrorMessage(
+      return ErrorDisplay(
         message: _error!,
         onRetry: _loadEventData,
       );
@@ -133,7 +133,7 @@ class _EventDetailScreenState extends State<EventDetailScreen>
     if (_event == null) {
       return const EmptyState(
         icon: Icons.event_outlined,
-        message: 'Event not found',
+        title: 'Event not found',
       );
     }
 
@@ -311,8 +311,8 @@ class _EventDetailScreenState extends State<EventDetailScreen>
       child: _attendees.isEmpty
           ? const EmptyState(
               icon: Icons.people_outline,
-              message: 'No attendees yet',
-              description: 'Be the first to register!',
+              title: 'No attendees yet',
+              subtitle: 'Be the first to register!',
             )
           : ListView.builder(
               padding: const EdgeInsets.all(16),
@@ -398,7 +398,7 @@ class _EventDetailScreenState extends State<EventDetailScreen>
       child: _admins.isEmpty
           ? const EmptyState(
               icon: Icons.admin_panel_settings_outlined,
-              message: 'No admins assigned',
+              title: 'No admins assigned',
             )
           : ListView.builder(
               padding: const EdgeInsets.all(16),

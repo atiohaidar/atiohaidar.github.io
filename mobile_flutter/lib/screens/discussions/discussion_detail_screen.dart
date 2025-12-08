@@ -68,7 +68,7 @@ class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
     }
 
     if (provider.error != null) {
-      return ErrorMessage(
+      return ErrorDisplay(
         message: provider.error!,
         onRetry: () => provider.loadDiscussion(widget.discussionId),
       );
@@ -78,7 +78,7 @@ class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
     if (discussionWithReplies == null) {
       return const EmptyState(
         icon: Icons.forum_outlined,
-        message: 'Discussion not found',
+        title: 'Discussion not found',
       );
     }
 
