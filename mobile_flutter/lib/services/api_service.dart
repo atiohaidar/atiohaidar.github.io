@@ -673,8 +673,116 @@ class ApiService {
   static Future<ChatMessage> sendMessage(MessageCreate data) async {
     try {
       final response =
-          await ApiClient.post('/chat/messages', data: data.toJson());
+          await ApiClient.post('/messages', data: data.toJson());
       return ChatMessage.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  // Group Chat
+  static Future<List<ChatGroup>> getGroups() async {
+    try {
+      final response = await ApiClient.get('/groups');
+      final groups = (response.data['data'] as List)
+          .map((json) => ChatGroup.fromJson(json))
+          .toList();
+      return groups;
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<ChatGroup> getGroup(String groupId) async {
+    try {
+      final response = await ApiClient.get('/groups/$groupId');
+      return ChatGroup.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<ChatGroup> createGroup(GroupCreate data) async {
+    try {
+      final response = await ApiClient.post('/groups', data: data.toJson());
+      return ChatGroup.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<ChatGroup> updateGroup(String groupId, GroupUpdate data) async {
+    try {
+      final response =
+          await ApiClient.put('/groups/$groupId', data: data.toJson());
+      return ChatGroup.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<void> deleteGroup(String groupId) async {
+    try {
+      await ApiClient.delete('/groups/$groupId');
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<List<ChatMessage>> getGroupMessages(String groupId) async {
+    try {
+      final response = await ApiClient.get('/groups/$groupId/messages');
+      final messages = (response.data['data'] as List)
+          .map((json) => ChatMessage.fromJson(json))
+          .toList();
+      return messages;
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<List<GroupMember>> getGroupMembers(String groupId) async {
+    try {
+      final response = await ApiClient.get('/groups/$groupId/members');
+      final members = (response.data['data'] as List)
+          .map((json) => GroupMember.fromJson(json))
+          .toList();
+      return members;
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<GroupMember> addGroupMember(
+      String groupId, String username) async {
+    try {
+      final response = await ApiClient.post(
+        '/groups/$groupId/members',
+        data: {'username': username},
+      );
+      return GroupMember.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<void> removeGroupMember(
+      String groupId, String username) async {
+    try {
+      await ApiClient.delete('/groups/$groupId/members/$username');
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<GroupMember> updateGroupMemberRole(
+      String groupId, String username, String role) async {
+    try {
+      final response = await ApiClient.put(
+        '/groups/$groupId/members/$username/role',
+        data: {'role': role},
+      );
+      return GroupMember.fromJson(response.data['data']);
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
     }

@@ -122,4 +122,109 @@ class ChatProvider extends ChangeNotifier {
     _messages = [];
     notifyListeners();
   }
+
+  // Group chat functionality
+  List<ChatGroup> _groups = [];
+  List<ChatGroup> get groups => _groups;
+  String? _currentGroupId;
+
+  Future<void> loadGroups({bool silent = false}) async {
+    if (!silent) {
+      _isLoading = true;
+      _error = null;
+      notifyListeners();
+    }
+
+    try {
+      _groups = await ApiService.getGroups();
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      if (!silent) {
+        _isLoading = false;
+        notifyListeners();
+      }
+    }
+  }
+
+  Future<void> loadGroupMessages(String groupId) async {
+    _isLoading = true;
+    _error = null;
+    _currentGroupId = groupId;
+    _messages = [];
+    notifyListeners();
+
+    try {
+      _messages = await ApiService.getGroupMessages(groupId);
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> sendGroupMessage(String content, {String? replyToId}) async {
+    if (_currentGroupId == null || content.trim().isEmpty) return;
+
+    try {
+      final msg = await ApiService.sendMessage(MessageCreate(
+        groupId: _currentGroupId,
+        content: content,
+        replyToId: replyToId,
+      ));
+
+      _messages.add(msg);
+      notifyListeners();
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future<void> createGroup(GroupCreate data) async {
+    try {
+      final group = await ApiService.createGroup(data);
+      _groups.insert(0, group);
+      notifyListeners();
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future<void> updateGroup(String groupId, GroupUpdate data) async {
+    try {
+      final updatedGroup = await ApiService.updateGroup(groupId, data);
+      final index = _groups.indexWhere((g) => g.id == groupId);
+      if (index != -1) {
+        _groups[index] = updatedGroup;
+        notifyListeners();
+      }
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  Future<void> deleteGroup(String groupId) async {
+    try {
+      await ApiService.deleteGroup(groupId);
+      _groups.removeWhere((g) => g.id == groupId);
+      notifyListeners();
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      rethrow;
+    }
+  }
+
+  void leaveGroup() {
+    _currentGroupId = null;
+    _messages = [];
+    notifyListeners();
+  }
 }

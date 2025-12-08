@@ -136,3 +136,117 @@ class MessageCreate {
     };
   }
 }
+
+/// Group chat model
+class ChatGroup extends Equatable {
+  final String id;
+  final String name;
+  final String? description;
+  final String createdBy;
+  final String createdAt;
+  final String updatedAt;
+  final int? memberCount;
+
+  const ChatGroup({
+    required this.id,
+    required this.name,
+    this.description,
+    required this.createdBy,
+    required this.createdAt,
+    required this.updatedAt,
+    this.memberCount,
+  });
+
+  factory ChatGroup.fromJson(Map<String, dynamic> json) {
+    return ChatGroup(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      description: json['description'] as String?,
+      createdBy: json['created_by'] as String,
+      createdAt: json['created_at'] as String,
+      updatedAt: json['updated_at'] as String,
+      memberCount: json['member_count'] as int?,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      if (description != null) 'description': description,
+      'created_by': createdBy,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
+      if (memberCount != null) 'member_count': memberCount,
+    };
+  }
+
+  @override
+  List<Object?> get props => [id, name, description, createdBy, createdAt, updatedAt, memberCount];
+}
+
+/// Group member model
+class GroupMember extends Equatable {
+  final String id;
+  final String groupId;
+  final String userUsername;
+  final String role; // 'admin' or 'member'
+  final String joinedAt;
+
+  const GroupMember({
+    required this.id,
+    required this.groupId,
+    required this.userUsername,
+    required this.role,
+    required this.joinedAt,
+  });
+
+  factory GroupMember.fromJson(Map<String, dynamic> json) {
+    return GroupMember(
+      id: json['id'] as String,
+      groupId: json['group_id'] as String,
+      userUsername: json['user_username'] as String,
+      role: json['role'] as String,
+      joinedAt: json['joined_at'] as String,
+    );
+  }
+
+  @override
+  List<Object?> get props => [id, groupId, userUsername, role, joinedAt];
+}
+
+/// Group create request
+class GroupCreate {
+  final String name;
+  final String? description;
+
+  const GroupCreate({
+    required this.name,
+    this.description,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      if (description != null) 'description': description,
+    };
+  }
+}
+
+/// Group update request
+class GroupUpdate {
+  final String? name;
+  final String? description;
+
+  const GroupUpdate({
+    this.name,
+    this.description,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      if (name != null) 'name': name,
+      if (description != null) 'description': description,
+    };
+  }
+}
