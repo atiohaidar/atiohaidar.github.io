@@ -304,7 +304,10 @@ class _FormsScreenState extends State<FormsScreen> {
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: () {
-                    // TODO: View responses
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Responses view not implemented yet')),
+                    );
                   },
                   icon: const Icon(Icons.bar_chart),
                   label: const Text('Responses'),
@@ -318,7 +321,10 @@ class _FormsScreenState extends State<FormsScreen> {
               Expanded(
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    // TODO: View/Edit form
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Form view/edit not implemented yet')),
+                    );
                   },
                   icon: const Icon(Icons.visibility_outlined),
                   label: const Text('View'),

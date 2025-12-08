@@ -97,6 +97,24 @@ class TicketsProvider extends ChangeNotifier {
     }
   }
 
+  /// Update a ticket
+  Future<bool> updateTicket(int id, TicketUpdate data) async {
+    try {
+      final ticket = await ApiService.updateTicket(id, data);
+      final index = _tickets.indexWhere((t) => t.id == id);
+      if (index != -1) {
+        _tickets[index] = ticket;
+        // Ideally reload stats too
+        notifyListeners();
+      }
+      return true;
+    } on ApiException catch (e) {
+      _error = e.message;
+      notifyListeners();
+      return false;
+    }
+  }
+
   void clearError() {
     _error = null;
     notifyListeners();

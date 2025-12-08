@@ -224,6 +224,164 @@ class _TicketsScreenState extends State<TicketsScreen>
     );
   }
 
+  void _showEditTicketDialog(BuildContext context, Ticket ticket) {
+    final titleController = TextEditingController(text: ticket.title);
+    final descController = TextEditingController(text: ticket.description);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    TicketPriority selectedPriority = ticket.priority;
+    TicketStatus selectedStatus = ticket.status;
+    TicketCategory? selectedCategory;
+    final categories = context.read<TicketsProvider>().categories;
+
+    try {
+      if (categories.isNotEmpty) {
+        selectedCategory =
+            categories.firstWhere((c) => c.id == ticket.categoryId);
+      }
+    } catch (_) {
+      // Category might be deleted or not found
+      if (categories.isNotEmpty) selectedCategory = categories.first;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.darkSurface : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? AppColors.borderMedium
+                          : Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'Edit Ticket #${ticket.id}',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? AppColors.textPrimary : AppColors.lightText,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                TextField(
+                  controller: titleController,
+                  decoration: const InputDecoration(
+                    labelText: 'Subject',
+                    hintText: 'Enter ticket subject',
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: descController,
+                  decoration: const InputDecoration(
+                    labelText: 'Description',
+                    hintText: 'Describe your issue',
+                  ),
+                  maxLines: 4,
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<TicketStatus>(
+                  value: selectedStatus,
+                  decoration: const InputDecoration(labelText: 'Status'),
+                  items: TicketStatus.values.map((s) {
+                    return DropdownMenuItem(
+                      value: s,
+                      child: Text(
+                        s.value.replaceAll('_', ' ').toUpperCase(),
+                        style: TextStyle(
+                          color: isDark
+                              ? AppColors.textPrimary
+                              : AppColors.lightText,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (val) {
+                    if (val != null) setState(() => selectedStatus = val);
+                  },
+                  dropdownColor: isDark ? AppColors.darkSurface : Colors.white,
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<TicketPriority>(
+                  value: selectedPriority,
+                  decoration: const InputDecoration(labelText: 'Priority'),
+                  items: TicketPriority.values.map((p) {
+                    return DropdownMenuItem(
+                      value: p,
+                      child: Text(
+                        p.value.toUpperCase(),
+                        style: TextStyle(
+                          color: isDark
+                              ? AppColors.textPrimary
+                              : AppColors.lightText,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (val) {
+                    if (val != null) setState(() => selectedPriority = val);
+                  },
+                  dropdownColor: isDark ? AppColors.darkSurface : Colors.white,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (titleController.text.trim().isNotEmpty &&
+                        descController.text.trim().isNotEmpty) {
+                      final provider = context.read<TicketsProvider>();
+                      final success = await provider.updateTicket(
+                        ticket.id,
+                        TicketUpdate(
+                          title: titleController.text.trim(),
+                          description: descController.text.trim(),
+                          priority: selectedPriority,
+                          status: selectedStatus,
+                          categoryId: selectedCategory?.id,
+                        ),
+                      );
+
+                      if (success && context.mounted) {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Ticket updated successfully')),
+                        );
+                      }
+                    }
+                  },
+                  child: const Text('Save Changes'),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildStatsCards(TicketsProvider provider, bool isDark) {
     final stats = provider.stats;
 
@@ -349,73 +507,78 @@ class _TicketsScreenState extends State<TicketsScreen>
   Widget _buildTicketCard(Ticket ticket, bool isDark) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: GlassCard(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                _buildStatusBadge(ticket.status),
-                const Spacer(),
-                _buildPriorityBadge(ticket.priority),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Text(
-              ticket.title,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: isDark ? AppColors.textPrimary : AppColors.lightText,
+      child: GestureDetector(
+        onTap: () => _showEditTicketDialog(context, ticket),
+        child: GlassCard(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  _buildStatusBadge(ticket.status),
+                  const Spacer(),
+                  _buildPriorityBadge(ticket.priority),
+                ],
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              ticket.description,
-              style: TextStyle(
-                fontSize: 14,
-                color: isDark ? AppColors.textMuted : Colors.grey.shade600,
+              const SizedBox(height: 12),
+              Text(
+                ticket.title,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? AppColors.textPrimary : AppColors.lightText,
+                ),
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                if (ticket.categoryName != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                ticket.description,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: isDark ? AppColors.textMuted : Colors.grey.shade600,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  if (ticket.categoryName != null) ...[
+                    Icon(
+                      Icons.category_outlined,
+                      size: 14,
+                      color:
+                          isDark ? AppColors.textMuted : Colors.grey.shade500,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      ticket.categoryName!,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color:
+                            isDark ? AppColors.textMuted : Colors.grey.shade500,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                  ],
                   Icon(
-                    Icons.category_outlined,
+                    Icons.tag,
                     size: 14,
                     color: isDark ? AppColors.textMuted : Colors.grey.shade500,
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    ticket.categoryName!,
+                    '#${ticket.id}',
                     style: TextStyle(
                       fontSize: 12,
                       color:
                           isDark ? AppColors.textMuted : Colors.grey.shade500,
                     ),
                   ),
-                  const SizedBox(width: 16),
                 ],
-                Icon(
-                  Icons.tag,
-                  size: 14,
-                  color: isDark ? AppColors.textMuted : Colors.grey.shade500,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  '#${ticket.id}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: isDark ? AppColors.textMuted : Colors.grey.shade500,
-                  ),
-                ),
-              ],
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );

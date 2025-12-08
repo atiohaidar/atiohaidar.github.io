@@ -162,7 +162,8 @@ class Ticket extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, token, title, description, categoryId, status, priority, createdAt];
+  List<Object?> get props =>
+      [id, token, title, description, categoryId, status, priority, createdAt];
 }
 
 /// Ticket comment model
@@ -198,7 +199,15 @@ class TicketComment extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, ticketId, commenterType, commenterName, commentText, isInternal, createdAt];
+  List<Object?> get props => [
+        id,
+        ticketId,
+        commenterType,
+        commenterName,
+        commentText,
+        isInternal,
+        createdAt
+      ];
 }
 
 /// Ticket create request
@@ -230,6 +239,33 @@ class TicketCreate {
       if (submitterName != null) 'submitter_name': submitterName,
       if (submitterEmail != null) 'submitter_email': submitterEmail,
       if (referenceLink != null) 'reference_link': referenceLink,
+    };
+  }
+}
+
+/// Ticket update request
+class TicketUpdate {
+  final String? title;
+  final String? description;
+  final int? categoryId;
+  final TicketPriority? priority;
+  final TicketStatus? status;
+
+  const TicketUpdate({
+    this.title,
+    this.description,
+    this.categoryId,
+    this.priority,
+    this.status,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      if (title != null) 'title': title,
+      if (description != null) 'description': description,
+      if (categoryId != null) 'category_id': categoryId,
+      if (priority != null) 'priority': priority!.value,
+      if (status != null) 'status': status!.value,
     };
   }
 }

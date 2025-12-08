@@ -280,11 +280,8 @@ class ApiService {
     }
   }
 
-  static Future<Ticket> updateTicket(int id, TicketCreate data) async {
+  static Future<Ticket> updateTicket(int id, TicketUpdate data) async {
     try {
-      // Assuming update uses same structure or subset, might need TicketUpdate model if different
-      // But usually just partial updates. Let's use TicketCreate for now or map manually.
-      // If endpoint accepts partial, we can use Map.
       final response = await ApiClient.put('/tickets/$id', data: data.toJson());
       return Ticket.fromJson(response.data['data']);
     } on DioException catch (e) {

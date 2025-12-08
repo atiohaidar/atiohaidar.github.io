@@ -209,6 +209,137 @@ class _UsersScreenState extends State<UsersScreen> {
     );
   }
 
+  void _showEditUserDialog(BuildContext context, User user) {
+    final nameController = TextEditingController(text: user.name);
+    final passwordController = TextEditingController();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    UserRole selectedRole = user.isAdmin ? UserRole.admin : UserRole.member;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.darkSurface : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? AppColors.borderMedium
+                          : Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'Edit User',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? AppColors.textPrimary : AppColors.lightText,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                TextField(
+                  enabled: false,
+                  controller: TextEditingController(text: user.username),
+                  decoration: const InputDecoration(
+                    labelText: 'Username',
+                    prefixIcon: Icon(Icons.alternate_email),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Full Name',
+                    hintText: 'Enter full name',
+                    prefixIcon: Icon(Icons.person),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: passwordController,
+                  decoration: const InputDecoration(
+                    labelText: 'New Password (optional)',
+                    hintText: 'Leave empty to keep current',
+                    prefixIcon: Icon(Icons.lock),
+                  ),
+                  obscureText: true,
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<UserRole>(
+                  value: selectedRole,
+                  decoration: const InputDecoration(
+                    labelText: 'Role',
+                    prefixIcon: Icon(Icons.admin_panel_settings),
+                  ),
+                  items: const [
+                    DropdownMenuItem(
+                      value: UserRole.member,
+                      child: Text('Member'),
+                    ),
+                    DropdownMenuItem(
+                      value: UserRole.admin,
+                      child: Text('Admin'),
+                    ),
+                  ],
+                  onChanged: (val) {
+                    if (val != null) setState(() => selectedRole = val);
+                  },
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (nameController.text.trim().isNotEmpty) {
+                      final provider = context.read<UsersProvider>();
+                      final success = await provider.updateUser(
+                        user.username,
+                        UserUpdate(
+                          name: nameController.text.trim(),
+                          password: passwordController.text.trim().isNotEmpty
+                              ? passwordController.text.trim()
+                              : null,
+                          role: selectedRole,
+                        ),
+                      );
+
+                      if (success && context.mounted) {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('User updated successfully')),
+                        );
+                      }
+                    }
+                  },
+                  child: const Text('Save Changes'),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildUserCard(User user, bool isDark) {
     return GlassCard(
       padding: const EdgeInsets.all(16),
@@ -285,9 +416,7 @@ class _UsersScreenState extends State<UsersScreen> {
             ),
             onSelected: (value) {
               if (value == 'edit') {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Edit not implemented yet')),
-                );
+                _showEditUserDialog(context, user);
               } else if (value == 'delete') {
                 showDialog(
                   context: context,

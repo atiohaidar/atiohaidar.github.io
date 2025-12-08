@@ -243,7 +243,12 @@ class _ChatScreenState extends State<ChatScreen> {
             IconButton(
               icon: Icon(Icons.add,
                   color: isDark ? AppColors.textMuted : Colors.grey.shade600),
-              onPressed: () {},
+              onPressed: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text('Attachments not implemented yet')),
+                );
+              },
             ),
             Expanded(
               child: Container(

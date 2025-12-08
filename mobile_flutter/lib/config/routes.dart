@@ -5,7 +5,6 @@ import '../providers/providers.dart';
 import '../models/models.dart';
 import '../screens/screens.dart';
 import '../widgets/widgets.dart';
-import '../models/models.dart';
 
 /// App router configuration
 class AppRouter {

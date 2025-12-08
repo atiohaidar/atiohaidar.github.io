@@ -176,13 +176,14 @@ class _TasksScreenState extends State<TasksScreen> {
                 height: 28,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: task.completed
-                      ? AppColors.success
-                      : Colors.transparent,
+                  color:
+                      task.completed ? AppColors.success : Colors.transparent,
                   border: Border.all(
                     color: task.completed
                         ? AppColors.success
-                        : (isDark ? AppColors.borderMedium : Colors.grey.shade400),
+                        : (isDark
+                            ? AppColors.borderMedium
+                            : Colors.grey.shade400),
                     width: 2,
                   ),
                 ),
@@ -193,55 +194,66 @@ class _TasksScreenState extends State<TasksScreen> {
             ),
             const SizedBox(width: 16),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    task.name,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: isDark ? AppColors.textPrimary : AppColors.lightText,
-                      decoration: task.completed
-                          ? TextDecoration.lineThrough
-                          : null,
+              child: GestureDetector(
+                onTap: () => _showEditTaskDialog(context, task),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      task.name,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: isDark
+                            ? AppColors.textPrimary
+                            : AppColors.lightText,
+                        decoration:
+                            task.completed ? TextDecoration.lineThrough : null,
+                      ),
                     ),
-                  ),
-                  if (task.description != null && task.description!.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: Text(
-                        task.description!,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: isDark ? AppColors.textMuted : Colors.grey.shade600,
+                    if (task.description != null &&
+                        task.description!.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          task.description!,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: isDark
+                                ? AppColors.textMuted
+                                : Colors.grey.shade600,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                  if (task.dueDate != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.calendar_today,
-                            size: 14,
-                            color: isDark ? AppColors.textMuted : Colors.grey.shade500,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            task.dueDate!,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: isDark ? AppColors.textMuted : Colors.grey.shade500,
+                    if (task.dueDate != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.calendar_today,
+                              size: 14,
+                              color: isDark
+                                  ? AppColors.textMuted
+                                  : Colors.grey.shade500,
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: 4),
+                            Text(
+                              task.dueDate!,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: isDark
+                                    ? AppColors.textMuted
+                                    : Colors.grey.shade500,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
             IconButton(
@@ -285,7 +297,8 @@ class _TasksScreenState extends State<TasksScreen> {
                   width: 40,
                   height: 4,
                   decoration: BoxDecoration(
-                    color: isDark ? AppColors.borderMedium : Colors.grey.shade300,
+                    color:
+                        isDark ? AppColors.borderMedium : Colors.grey.shade300,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -334,6 +347,96 @@ class _TasksScreenState extends State<TasksScreen> {
                   }
                 },
                 child: const Text('Add Task'),
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showEditTaskDialog(BuildContext context, Task task) {
+    final nameController = TextEditingController(text: task.name);
+    final descController = TextEditingController(text: task.description);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        decoration: BoxDecoration(
+          color: isDark ? AppColors.darkSurface : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color:
+                        isDark ? AppColors.borderMedium : Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'Edit Task',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? AppColors.textPrimary : AppColors.lightText,
+                ),
+              ),
+              const SizedBox(height: 24),
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(
+                  labelText: 'Task Name',
+                  hintText: 'Enter task name',
+                ),
+                autofocus: true,
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: descController,
+                decoration: const InputDecoration(
+                  labelText: 'Description (optional)',
+                  hintText: 'Enter task description',
+                ),
+                maxLines: 3,
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () async {
+                  if (nameController.text.trim().isNotEmpty) {
+                    final provider = context.read<TasksProvider>();
+                    final success = await provider.updateTask(
+                      task.id,
+                      TaskUpdate(
+                        name: nameController.text.trim(),
+                        description: descController.text.trim().isNotEmpty
+                            ? descController.text.trim()
+                            : null,
+                      ),
+                    );
+                    if (success && context.mounted) {
+                      Navigator.pop(context);
+                    }
+                  }
+                },
+                child: const Text('Save Changes'),
               ),
               const SizedBox(height: 16),
             ],
