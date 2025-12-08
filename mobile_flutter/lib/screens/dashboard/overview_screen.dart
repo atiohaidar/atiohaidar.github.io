@@ -11,7 +11,8 @@ class DashboardOverviewScreen extends StatefulWidget {
   const DashboardOverviewScreen({super.key});
 
   @override
-  State<DashboardOverviewScreen> createState() => _DashboardOverviewScreenState();
+  State<DashboardOverviewScreen> createState() =>
+      _DashboardOverviewScreenState();
 }
 
 class _DashboardOverviewScreenState extends State<DashboardOverviewScreen> {
@@ -35,7 +36,7 @@ class _DashboardOverviewScreenState extends State<DashboardOverviewScreen> {
     final authProvider = context.watch<AuthProvider>();
     final dashboardProvider = context.watch<DashboardProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return RefreshIndicator(
       onRefresh: () => dashboardProvider.refresh(),
       child: SingleChildScrollView(
@@ -47,11 +48,11 @@ class _DashboardOverviewScreenState extends State<DashboardOverviewScreen> {
             // Welcome card
             _buildWelcomeCard(authProvider.user, isDark),
             const SizedBox(height: 24),
-            
+
             // Stats grid
             _buildStatsGrid(dashboardProvider, isDark),
             const SizedBox(height: 24),
-            
+
             // Recent activity section
             _buildRecentActivitySection(dashboardProvider, isDark),
           ],
@@ -84,7 +85,9 @@ class _DashboardOverviewScreenState extends State<DashboardOverviewScreen> {
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        color: isDark ? AppColors.textPrimary : AppColors.lightText,
+                        color: isDark
+                            ? AppColors.textPrimary
+                            : AppColors.lightText,
                       ),
                     ),
                     ShaderMask(
@@ -105,7 +108,9 @@ class _DashboardOverviewScreenState extends State<DashboardOverviewScreen> {
                       "Here's what's happening with your projects today.",
                       style: TextStyle(
                         fontSize: 14,
-                        color: isDark ? AppColors.textSecondary : AppColors.lightTextSecondary,
+                        color: isDark
+                            ? AppColors.textSecondary
+                            : AppColors.lightTextSecondary,
                       ),
                     ),
                   ],
@@ -117,14 +122,12 @@ class _DashboardOverviewScreenState extends State<DashboardOverviewScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: isDark 
-                  ? Colors.white.withOpacity(0.05)
+              color: isDark
+                  ? Colors.white.withOpacity(0.1)
                   : Colors.white.withOpacity(0.5),
               borderRadius: BorderRadius.circular(20),
               border: Border.all(
-                color: isDark 
-                    ? AppColors.borderLight
-                    : Colors.grey.shade200,
+                color: isDark ? AppColors.borderLight : Colors.grey.shade200,
               ),
             ),
             child: Text(
@@ -144,7 +147,7 @@ class _DashboardOverviewScreenState extends State<DashboardOverviewScreen> {
   Widget _buildStatsGrid(DashboardProvider provider, bool isDark) {
     final stats = provider.stats;
     final isLoading = provider.isLoading;
-    
+
     final statItems = [
       _StatItem(
         title: 'Total Tasks',
@@ -202,19 +205,19 @@ class _DashboardOverviewScreenState extends State<DashboardOverviewScreen> {
   Widget _buildRecentActivitySection(DashboardProvider provider, bool isDark) {
     final activities = [
       ...provider.recentTickets.map((t) => _Activity(
-        type: 'Ticket',
-        title: t.title,
-        time: t.createdAt != null 
-            ? DateFormat('MMM d').format(DateTime.parse(t.createdAt!))
-            : 'Recently',
-        status: t.status.value,
-      )),
+            type: 'Ticket',
+            title: t.title,
+            time: t.createdAt != null
+                ? DateFormat('MMM d').format(DateTime.parse(t.createdAt!))
+                : 'Recently',
+            status: t.status.value,
+          )),
       ...provider.upcomingEvents.map((e) => _Activity(
-        type: 'Event',
-        title: e.title,
-        time: DateFormat('MMM d').format(DateTime.parse(e.eventDate)),
-        status: 'Upcoming',
-      )),
+            type: 'Event',
+            title: e.title,
+            time: DateFormat('MMM d').format(DateTime.parse(e.eventDate)),
+            status: 'Upcoming',
+          )),
     ].take(5).toList();
 
     return GlassCard(
@@ -232,7 +235,6 @@ class _DashboardOverviewScreenState extends State<DashboardOverviewScreen> {
             ),
           ),
           const SizedBox(height: 20),
-          
           if (provider.isLoading)
             const LoadingIndicator(message: 'Loading activities...')
           else if (activities.isEmpty)
@@ -252,7 +254,6 @@ class _DashboardOverviewScreenState extends State<DashboardOverviewScreen> {
                 return _buildActivityItem(activity, isDark);
               },
             ),
-          
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,

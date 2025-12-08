@@ -186,9 +186,7 @@ class _RoomsScreenState extends State<RoomsScreen>
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: room.available
-                          ? () {
-                              // TODO: Implement booking flow
-                            }
+                          ? () => _showBookRoomDialog(context, room)
                           : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primaryBlue,
@@ -203,6 +201,192 @@ class _RoomsScreenState extends State<RoomsScreen>
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _showBookRoomDialog(BuildContext context, Room room) {
+    final purposeController = TextEditingController();
+    DateTime selectedDate = DateTime.now();
+    TimeOfDay selectedTime = TimeOfDay.now();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.darkSurface : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? AppColors.borderMedium
+                          : Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'Book ${room.name}',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? AppColors.textPrimary : AppColors.lightText,
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Date Picker
+                InkWell(
+                  onTap: () async {
+                    final date = await showDatePicker(
+                      context: context,
+                      initialDate: selectedDate,
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime.now().add(const Duration(days: 30)),
+                    );
+                    if (date != null) {
+                      setState(() => selectedDate = date);
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: isDark
+                            ? AppColors.borderMedium
+                            : Colors.grey.shade300,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.calendar_today,
+                            color: isDark
+                                ? AppColors.textMuted
+                                : Colors.grey.shade600),
+                        const SizedBox(width: 12),
+                        Text(
+                          DateFormat('EEE, MMM d, y').format(selectedDate),
+                          style: TextStyle(
+                            color: isDark
+                                ? AppColors.textPrimary
+                                : AppColors.lightText,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Time Picker
+                InkWell(
+                  onTap: () async {
+                    final time = await showTimePicker(
+                      context: context,
+                      initialTime: selectedTime,
+                    );
+                    if (time != null) {
+                      setState(() => selectedTime = time);
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: isDark
+                            ? AppColors.borderMedium
+                            : Colors.grey.shade300,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.access_time,
+                            color: isDark
+                                ? AppColors.textMuted
+                                : Colors.grey.shade600),
+                        const SizedBox(width: 12),
+                        Text(
+                          selectedTime.format(context),
+                          style: TextStyle(
+                            color: isDark
+                                ? AppColors.textPrimary
+                                : AppColors.lightText,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                TextField(
+                  controller: purposeController,
+                  decoration: const InputDecoration(
+                    labelText: 'Purpose',
+                    hintText: 'Meeting purpose',
+                  ),
+                  maxLines: 2,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (purposeController.text.trim().isNotEmpty) {
+                      final provider = context.read<RoomsProvider>();
+                      final startTime = DateTime(
+                        selectedDate.year,
+                        selectedDate.month,
+                        selectedDate.day,
+                        selectedTime.hour,
+                        selectedTime.minute,
+                      );
+
+                      // Assuming 1 hour duration for MVP or add duration picker
+                      final endTime = startTime.add(const Duration(hours: 1));
+
+                      final success =
+                          await provider.createBooking(BookingCreate(
+                        roomId: room.id,
+                        startTime: startTime.toIso8601String(),
+                        endTime: endTime.toIso8601String(),
+                        purpose: purposeController.text.trim(),
+                      ));
+
+                      if (success && context.mounted) {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Room booked successfully!')),
+                        );
+                      }
+                    }
+                  },
+                  child: const Text('Confirm Booking'),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
         ),
       ),
     );

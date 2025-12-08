@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 import '../../config/theme.dart';
 import '../../providers/providers.dart';
 import '../../widgets/widgets.dart';
@@ -13,7 +14,8 @@ class ItemsScreen extends StatefulWidget {
   State<ItemsScreen> createState() => _ItemsScreenState();
 }
 
-class _ItemsScreenState extends State<ItemsScreen> with SingleTickerProviderStateMixin {
+class _ItemsScreenState extends State<ItemsScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -46,7 +48,8 @@ class _ItemsScreenState extends State<ItemsScreen> with SingleTickerProviderStat
         bottom: TabBar(
           controller: _tabController,
           labelColor: AppColors.primaryBlue,
-          unselectedLabelColor: isDark ? AppColors.textMuted : Colors.grey.shade600,
+          unselectedLabelColor:
+              isDark ? AppColors.textMuted : Colors.grey.shade600,
           indicatorColor: AppColors.primaryBlue,
           tabs: const [
             Tab(text: 'Items'),
@@ -55,9 +58,7 @@ class _ItemsScreenState extends State<ItemsScreen> with SingleTickerProviderStat
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: Add item or request borrowing
-        },
+        onPressed: () => _showCreateItemDialog(context),
         backgroundColor: AppColors.primaryBlue,
         child: const Icon(Icons.add, color: Colors.white),
       ),
@@ -67,6 +68,116 @@ class _ItemsScreenState extends State<ItemsScreen> with SingleTickerProviderStat
           _buildItemsList(itemsProvider, isDark),
           _buildBorrowingsList(itemsProvider, isDark),
         ],
+      ),
+    );
+  }
+
+  void _showCreateItemDialog(BuildContext context) {
+    final nameController = TextEditingController();
+    final descController = TextEditingController();
+    final stockController = TextEditingController(text: '1');
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.darkSurface : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? AppColors.borderMedium
+                          : Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'Add New Item',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? AppColors.textPrimary : AppColors.lightText,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Item Name',
+                    hintText: 'Enter item name',
+                  ),
+                  autofocus: true,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: descController,
+                  decoration: const InputDecoration(
+                    labelText: 'Description (optional)',
+                    hintText: 'Enter item description',
+                  ),
+                  maxLines: 2,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: stockController,
+                  decoration: const InputDecoration(
+                    labelText: 'Stock Quantity',
+                    hintText: 'Enter quantity',
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (nameController.text.trim().isNotEmpty &&
+                        stockController.text.trim().isNotEmpty) {
+                      final provider = context.read<ItemsProvider>();
+                      final stock =
+                          int.tryParse(stockController.text.trim()) ?? 1;
+
+                      final success = await provider.createItem(ItemCreate(
+                        name: nameController.text.trim(),
+                        description: descController.text.trim().isNotEmpty
+                            ? descController.text.trim()
+                            : null,
+                        stock: stock,
+                      ));
+
+                      if (success && context.mounted) {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Item added successfully')),
+                        );
+                      }
+                    }
+                  },
+                  child: const Text('Add Item'),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -100,7 +211,7 @@ class _ItemsScreenState extends State<ItemsScreen> with SingleTickerProviderStat
 
   Widget _buildItemCard(Item item, bool isDark) {
     final isAvailable = item.stock > 0;
-    
+
     return GlassCard(
       padding: const EdgeInsets.all(16),
       child: Row(
@@ -110,7 +221,9 @@ class _ItemsScreenState extends State<ItemsScreen> with SingleTickerProviderStat
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100,
+              color: isDark
+                  ? Colors.white.withOpacity(0.05)
+                  : Colors.grey.shade100,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
@@ -133,15 +246,18 @@ class _ItemsScreenState extends State<ItemsScreen> with SingleTickerProviderStat
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: isDark ? AppColors.textPrimary : AppColors.lightText,
+                          color: isDark
+                              ? AppColors.textPrimary
+                              : AppColors.lightText,
                         ),
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: isAvailable 
-                            ? AppColors.success.withOpacity(0.1) 
+                        color: isAvailable
+                            ? AppColors.success.withOpacity(0.1)
                             : AppColors.error.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -150,7 +266,8 @@ class _ItemsScreenState extends State<ItemsScreen> with SingleTickerProviderStat
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
-                          color: isAvailable ? AppColors.success : AppColors.error,
+                          color:
+                              isAvailable ? AppColors.success : AppColors.error,
                         ),
                       ),
                     ),
@@ -162,24 +279,187 @@ class _ItemsScreenState extends State<ItemsScreen> with SingleTickerProviderStat
                     item.description!,
                     style: TextStyle(
                       fontSize: 13,
-                      color: isDark ? AppColors.textMuted : Colors.grey.shade600,
+                      color:
+                          isDark ? AppColors.textMuted : Colors.grey.shade600,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
                 const SizedBox(height: 8),
-                Text(
-                  'Owner: ${item.ownerUsername}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: isDark ? AppColors.textMuted : Colors.grey.shade500,
-                  ),
+                Row(
+                  children: [
+                    Text(
+                      'Owner: ${item.ownerUsername}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color:
+                            isDark ? AppColors.textMuted : Colors.grey.shade500,
+                      ),
+                    ),
+                    const Spacer(),
+                    if (isAvailable)
+                      SizedBox(
+                        height: 32,
+                        child: ElevatedButton(
+                          onPressed: () => _showBorrowDialog(context, item),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryBlue,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            textStyle: const TextStyle(fontSize: 12),
+                          ),
+                          child: const Text('Borrow'),
+                        ),
+                      ),
+                  ],
                 ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showBorrowDialog(BuildContext context, Item item) {
+    final qtyController = TextEditingController(text: '1');
+    DateTime endDate = DateTime.now().add(const Duration(days: 7));
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.darkSurface : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? AppColors.borderMedium
+                          : Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'Borrow Item',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? AppColors.textPrimary : AppColors.lightText,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Borrowing: ${item.name}',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: isDark ? AppColors.textMuted : Colors.grey.shade600,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                TextField(
+                  controller: qtyController,
+                  decoration: const InputDecoration(
+                    labelText: 'Quantity',
+                    hintText: 'Enter quantity',
+                  ),
+                  keyboardType: TextInputType.number,
+                  autofocus: true,
+                ),
+                const SizedBox(height: 16),
+                InkWell(
+                  onTap: () async {
+                    final date = await showDatePicker(
+                      context: context,
+                      initialDate: endDate,
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime.now().add(const Duration(days: 365)),
+                    );
+                    if (date != null) setState(() => endDate = date);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: isDark
+                            ? AppColors.borderMedium
+                            : Colors.grey.shade300,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(Icons.event_available,
+                            size: 20,
+                            color: isDark
+                                ? AppColors.textMuted
+                                : Colors.grey.shade600),
+                        const SizedBox(width: 8),
+                        Text(
+                            'Return by: ${DateFormat('MMM d, y').format(endDate)}'),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (qtyController.text.trim().isNotEmpty) {
+                      final provider = context.read<ItemsProvider>();
+                      final qty = int.tryParse(qtyController.text.trim()) ?? 1;
+
+                      if (qty > item.stock) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Quantity exceeds stock')),
+                        );
+                        return;
+                      }
+
+                      final success =
+                          await provider.createBorrowing(ItemBorrowingCreate(
+                        itemId: item.id,
+                        quantity: qty,
+                        startDate:
+                            DateTime.now().toIso8601String().split('T')[0],
+                        endDate: endDate.toIso8601String().split('T')[0],
+                        notes: 'Borrowing',
+                      ));
+
+                      if (success && context.mounted) {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Borrow request sent')),
+                        );
+                      }
+                    }
+                  },
+                  child: const Text('Confirm Borrow'),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -206,18 +486,22 @@ class _ItemsScreenState extends State<ItemsScreen> with SingleTickerProviderStat
         itemBuilder: (context, index) {
           final borrowing = provider.borrowings[index];
           // Find item name
-          final itemName = provider.items.firstWhere(
-            (i) => i.id == borrowing.itemId,
-            orElse: () => const Item(id: '', name: 'Unknown Item', stock: 0, ownerUsername: ''),
-          ).name;
-          
+          final itemName = provider.items
+              .firstWhere(
+                (i) => i.id == borrowing.itemId,
+                orElse: () => const Item(
+                    id: '', name: 'Unknown Item', stock: 0, ownerUsername: ''),
+              )
+              .name;
+
           return _buildBorrowingCard(borrowing, itemName, isDark);
         },
       ),
     );
   }
 
-  Widget _buildBorrowingCard(ItemBorrowing borrowing, String itemName, bool isDark) {
+  Widget _buildBorrowingCard(
+      ItemBorrowing borrowing, String itemName, bool isDark) {
     return GlassCard(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -289,7 +573,7 @@ class _ItemsScreenState extends State<ItemsScreen> with SingleTickerProviderStat
   Widget _buildStatusBadge(ItemBorrowingStatus status) {
     Color color;
     Color bgColor;
-    
+
     switch (status) {
       case ItemBorrowingStatus.approved:
         color = const Color(0xFF059669);

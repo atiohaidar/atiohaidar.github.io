@@ -5,39 +5,42 @@ class AppColors {
   // Primary colors
   static const Color deepNavy = Color(0xFF0D1117);
   static const Color darkSurface = Color(0xFF1A2230);
-  static const Color cardBackground = Color(0x991A2230); // 60% opacity
-  
+  static const Color cardBackground = Color(0xB31A2230); // 70% opacity
+
   // Accent colors
   static const Color primaryBlue = Color(0xFF3B82F6);
   static const Color accentCyan = Color(0xFF22D3EE);
   static const Color accentIndigo = Color(0xFF6366F1);
   static const Color purple = Color(0xFF8B5CF6); // Added for admin badge
-  
+
   // Gradient colors
   static const Color gradientBlue = Color(0xFF3B82F6);
   static const Color gradientCyan = Color(0xFF06B6D4);
   static const Color gradientIndigo = Color(0xFF6366F1);
-  
+
   // Status colors
   static const Color success = Color(0xFF10B981);
   static const Color warning = Color(0xFFF59E0B);
   static const Color error = Color(0xFFEF4444);
   static const Color info = Color(0xFF3B82F6);
-  
+
   // Text colors
   static const Color textPrimary = Colors.white;
-  static const Color textSecondary = Color(0xFF8B949E);
-  static const Color textMuted = Color(0xFF6B7280);
-  
+  static const Color textSecondary =
+      Color(0xFFCBD5E1); // Lighter for better readability (Slate-300)
+  static const Color textMuted = Color(0xFF94A3B8); // Lighter muted (Slate-400)
+
   // Border colors
-  static const Color borderLight = Color(0x1AFFFFFF); // 10% white
-  static const Color borderMedium = Color(0x33FFFFFF); // 20% white
-  
+  static const Color borderLight =
+      Color(0x33FFFFFF); // 20% white for better card definition
+  static const Color borderMedium = Color(0x4DFFFFFF); // 30% white
+
   // Light theme colors
   static const Color lightBackground = Color(0xFFF8FAFC);
   static const Color lightSurface = Color(0xFFFFFFFF);
-  static const Color lightText = Color(0xFF1E293B);
-  static const Color lightTextSecondary = Color(0xFF64748B);
+  static const Color lightText =
+      Color(0xFF0F172A); // Slate-900 for better contrast
+  static const Color lightTextSecondary = Color(0xFF475569); // Slate-600
 }
 
 /// Gradient presets
@@ -47,7 +50,7 @@ class AppGradients {
     end: Alignment.bottomRight,
     colors: [AppColors.gradientBlue, AppColors.gradientCyan],
   );
-  
+
   static const LinearGradient backgroundGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
@@ -57,7 +60,7 @@ class AppGradients {
       Color(0x0D6366F1), // indigo-500/5
     ],
   );
-  
+
   static const LinearGradient cardGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
@@ -147,19 +150,28 @@ class AppTheme {
         ),
       ),
       textTheme: const TextTheme(
-        displayLarge: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold),
-        displayMedium: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold),
-        displaySmall: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold),
-        headlineLarge: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600),
-        headlineMedium: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600),
-        headlineSmall: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600),
-        titleLarge: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600),
-        titleMedium: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w500),
+        displayLarge: TextStyle(
+            color: AppColors.textPrimary, fontWeight: FontWeight.bold),
+        displayMedium: TextStyle(
+            color: AppColors.textPrimary, fontWeight: FontWeight.bold),
+        displaySmall: TextStyle(
+            color: AppColors.textPrimary, fontWeight: FontWeight.bold),
+        headlineLarge: TextStyle(
+            color: AppColors.textPrimary, fontWeight: FontWeight.w600),
+        headlineMedium: TextStyle(
+            color: AppColors.textPrimary, fontWeight: FontWeight.w600),
+        headlineSmall: TextStyle(
+            color: AppColors.textPrimary, fontWeight: FontWeight.w600),
+        titleLarge: TextStyle(
+            color: AppColors.textPrimary, fontWeight: FontWeight.w600),
+        titleMedium: TextStyle(
+            color: AppColors.textPrimary, fontWeight: FontWeight.w500),
         titleSmall: TextStyle(color: AppColors.textSecondary),
         bodyLarge: TextStyle(color: AppColors.textPrimary),
         bodyMedium: TextStyle(color: AppColors.textSecondary),
         bodySmall: TextStyle(color: AppColors.textMuted),
-        labelLarge: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600),
+        labelLarge: TextStyle(
+            color: AppColors.textPrimary, fontWeight: FontWeight.w600),
         labelMedium: TextStyle(color: AppColors.textSecondary),
         labelSmall: TextStyle(color: AppColors.textMuted),
       ),
@@ -246,19 +258,28 @@ class AppTheme {
         ),
       ),
       textTheme: const TextTheme(
-        displayLarge: TextStyle(color: AppColors.lightText, fontWeight: FontWeight.bold),
-        displayMedium: TextStyle(color: AppColors.lightText, fontWeight: FontWeight.bold),
-        displaySmall: TextStyle(color: AppColors.lightText, fontWeight: FontWeight.bold),
-        headlineLarge: TextStyle(color: AppColors.lightText, fontWeight: FontWeight.w600),
-        headlineMedium: TextStyle(color: AppColors.lightText, fontWeight: FontWeight.w600),
-        headlineSmall: TextStyle(color: AppColors.lightText, fontWeight: FontWeight.w600),
-        titleLarge: TextStyle(color: AppColors.lightText, fontWeight: FontWeight.w600),
-        titleMedium: TextStyle(color: AppColors.lightText, fontWeight: FontWeight.w500),
+        displayLarge:
+            TextStyle(color: AppColors.lightText, fontWeight: FontWeight.bold),
+        displayMedium:
+            TextStyle(color: AppColors.lightText, fontWeight: FontWeight.bold),
+        displaySmall:
+            TextStyle(color: AppColors.lightText, fontWeight: FontWeight.bold),
+        headlineLarge:
+            TextStyle(color: AppColors.lightText, fontWeight: FontWeight.w600),
+        headlineMedium:
+            TextStyle(color: AppColors.lightText, fontWeight: FontWeight.w600),
+        headlineSmall:
+            TextStyle(color: AppColors.lightText, fontWeight: FontWeight.w600),
+        titleLarge:
+            TextStyle(color: AppColors.lightText, fontWeight: FontWeight.w600),
+        titleMedium:
+            TextStyle(color: AppColors.lightText, fontWeight: FontWeight.w500),
         titleSmall: TextStyle(color: AppColors.lightTextSecondary),
         bodyLarge: TextStyle(color: AppColors.lightText),
         bodyMedium: TextStyle(color: AppColors.lightTextSecondary),
         bodySmall: TextStyle(color: AppColors.lightTextSecondary),
-        labelLarge: TextStyle(color: AppColors.lightText, fontWeight: FontWeight.w600),
+        labelLarge:
+            TextStyle(color: AppColors.lightText, fontWeight: FontWeight.w600),
         labelMedium: TextStyle(color: AppColors.lightTextSecondary),
         labelSmall: TextStyle(color: AppColors.lightTextSecondary),
       ),

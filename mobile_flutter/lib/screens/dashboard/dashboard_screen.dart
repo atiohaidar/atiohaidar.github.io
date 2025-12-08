@@ -5,6 +5,9 @@ import '../../config/theme.dart';
 import '../../providers/providers.dart';
 import '../../widgets/widgets.dart';
 import 'overview_screen.dart';
+import '../tasks/tasks_screen.dart';
+import '../tickets/tickets_screen.dart';
+import '../events/events_screen.dart';
 
 /// Main Dashboard Screen with navigation
 class DashboardScreen extends StatefulWidget {
@@ -64,15 +67,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
       case 0:
         return const DashboardOverviewScreen();
       case 1:
-        // Tasks Screen
-        return _buildPlaceholderScreen('Tasks', Icons.check_circle_outline);
+        return const TasksScreen();
       case 2:
-        // Tickets Screen
-        return _buildPlaceholderScreen(
-            'Tickets', Icons.confirmation_number_outlined);
+        return const TicketsScreen();
       case 3:
-        // Events Screen
-        return _buildPlaceholderScreen('Events', Icons.event_outlined);
+        return const EventsScreen();
       case 4:
         return _buildMoreScreen(authProvider, isDark);
       default:
@@ -233,59 +232,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             }),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildPlaceholderScreen(String title, IconData icon) {
-    // Check if we have implemented screens
-    if (title == 'Tasks') {
-      // Import and return TasksScreen if available, otherwise placeholder
-      // For now we'll use placeholder or navigation via GoRouter if we fully migrate
-      // But bottom nav usually switches widgets.
-      // Let's assume we want to navigate to those screens or embed them.
-      // If embed: return TasksScreen();
-      // But we haven't imported them. Let's keep placeholder for now as per instructions "Navigate to these new screens" implies they might be separate routes?
-      // Wait, the user instruction was "Update DashboardScreen to navigate to these new screens".
-      // Usually "More" menu does navigation. Tabs might also do it.
-      // Let's keep placeholder for now as the prompt focused on "More" menu navigation for Forms/Items/Users.
-      // And we have specific screens for Tasks/Tickets/Events in `screens/` but I need to import them to use them here.
-      // Let's just return the placeholder to be safe and consistent with previous state,
-      // or if I should hook them up:
-      // Actually previous logic had specific screens.
-
-      // I will keep placeholders for Tabs 1-3 to match the exact file content I see in my memory
-      // of what I'm replacing (which had placeholders or partials).
-    }
-
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            size: 64,
-            color: AppColors.primaryBlue.withOpacity(0.5),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Coming soon...',
-            style: TextStyle(
-              fontSize: 14,
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? AppColors.textMuted
-                  : Colors.grey.shade600,
-            ),
-          ),
-        ],
       ),
     );
   }

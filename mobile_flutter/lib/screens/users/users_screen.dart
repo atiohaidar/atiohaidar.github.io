@@ -36,13 +36,142 @@ class _UsersScreenState extends State<UsersScreen> {
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: Add new user
-        },
+        onPressed: () => _showCreateUserDialog(context),
         backgroundColor: AppColors.primaryBlue,
         child: const Icon(Icons.person_add, color: Colors.white),
       ),
       body: _buildBody(usersProvider, isDark),
+    );
+  }
+
+  void _showCreateUserDialog(BuildContext context) {
+    final usernameController = TextEditingController();
+    final nameController = TextEditingController();
+    final passwordController = TextEditingController();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    UserRole selectedRole = UserRole.member;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.darkSurface : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? AppColors.borderMedium
+                          : Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'Create New User',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? AppColors.textPrimary : AppColors.lightText,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                TextField(
+                  controller: usernameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Username',
+                    hintText: 'Enter username',
+                    prefixIcon: Icon(Icons.alternate_email),
+                  ),
+                  autofocus: true,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Full Name',
+                    hintText: 'Enter full name',
+                    prefixIcon: Icon(Icons.person),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: passwordController,
+                  decoration: const InputDecoration(
+                    labelText: 'Password',
+                    hintText: 'Enter password',
+                    prefixIcon: Icon(Icons.lock),
+                  ),
+                  obscureText: true,
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<UserRole>(
+                  value: selectedRole,
+                  decoration: const InputDecoration(
+                    labelText: 'Role',
+                    prefixIcon: Icon(Icons.admin_panel_settings),
+                  ),
+                  items: const [
+                    DropdownMenuItem(
+                      value: UserRole.member,
+                      child: Text('Member'),
+                    ),
+                    DropdownMenuItem(
+                      value: UserRole.admin,
+                      child: Text('Admin'),
+                    ),
+                  ],
+                  onChanged: (val) {
+                    if (val != null) setState(() => selectedRole = val);
+                  },
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (usernameController.text.trim().isNotEmpty &&
+                        nameController.text.trim().isNotEmpty &&
+                        passwordController.text.trim().isNotEmpty) {
+                      final provider = context.read<UsersProvider>();
+                      final success = await provider.createUser(UserCreate(
+                        username: usernameController.text.trim(),
+                        name: nameController.text.trim(),
+                        password: passwordController.text.trim(),
+                        role: selectedRole,
+                      ));
+
+                      if (success && context.mounted) {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('User created successfully')),
+                        );
+                      }
+                    }
+                  },
+                  child: const Text('Create User'),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -110,7 +239,9 @@ class _UsersScreenState extends State<UsersScreen> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: isDark ? AppColors.textPrimary : AppColors.lightText,
+                          color: isDark
+                              ? AppColors.textPrimary
+                              : AppColors.lightText,
                         ),
                       ),
                     ),
@@ -118,7 +249,8 @@ class _UsersScreenState extends State<UsersScreen> {
                       Padding(
                         padding: const EdgeInsets.only(left: 8),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 2),
                           decoration: BoxDecoration(
                             color: AppColors.purple.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
@@ -146,7 +278,6 @@ class _UsersScreenState extends State<UsersScreen> {
               ],
             ),
           ),
-
           IconButton(
             icon: Icon(
               Icons.more_vert,

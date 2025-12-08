@@ -38,7 +38,8 @@ class ApiService {
 
   static Future<User> updateUser(String username, UserUpdate data) async {
     try {
-      final response = await ApiClient.put('/users/$username', data: data.toJson());
+      final response =
+          await ApiClient.put('/users/$username', data: data.toJson());
       return User.fromJson(response.data['user']);
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
@@ -59,8 +60,9 @@ class ApiService {
       final queryParams = <String, dynamic>{};
       if (page != null) queryParams['page'] = page;
       if (isCompleted != null) queryParams['is_completed'] = isCompleted;
-      
-      final response = await ApiClient.get('/tasks', queryParameters: queryParams);
+
+      final response =
+          await ApiClient.get('/tasks', queryParameters: queryParams);
       final tasks = (response.data['tasks'] as List)
           .map((json) => Task.fromJson(json))
           .toList();
@@ -138,7 +140,8 @@ class ApiService {
 
   static Future<Article> updateArticle(String slug, ArticleUpdate data) async {
     try {
-      final response = await ApiClient.put('/articles/$slug', data: data.toJson());
+      final response =
+          await ApiClient.put('/articles/$slug', data: data.toJson());
       return Article.fromJson(response.data['article']);
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
@@ -223,9 +226,11 @@ class ApiService {
     }
   }
 
-  static Future<Booking> updateBookingStatus(String id, BookingUpdate data) async {
+  static Future<Booking> updateBookingStatus(
+      String id, BookingUpdate data) async {
     try {
-      final response = await ApiClient.put('/bookings/$id', data: data.toJson());
+      final response =
+          await ApiClient.put('/bookings/$id', data: data.toJson());
       return Booking.fromJson(response.data['data']);
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
@@ -245,8 +250,9 @@ class ApiService {
     try {
       final queryParams = <String, dynamic>{};
       if (status != null) queryParams['status'] = status;
-      
-      final response = await ApiClient.get('/tickets', queryParameters: queryParams);
+
+      final response =
+          await ApiClient.get('/tickets', queryParameters: queryParams);
       final tickets = (response.data['data'] as List)
           .map((json) => Ticket.fromJson(json))
           .toList();
@@ -259,6 +265,27 @@ class ApiService {
   static Future<Ticket> getTicket(int id) async {
     try {
       final response = await ApiClient.get('/tickets/$id');
+      return Ticket.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<Ticket> createTicket(TicketCreate data) async {
+    try {
+      final response = await ApiClient.post('/tickets', data: data.toJson());
+      return Ticket.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<Ticket> updateTicket(int id, TicketCreate data) async {
+    try {
+      // Assuming update uses same structure or subset, might need TicketUpdate model if different
+      // But usually just partial updates. Let's use TicketCreate for now or map manually.
+      // If endpoint accepts partial, we can use Map.
+      final response = await ApiClient.put('/tickets/$id', data: data.toJson());
       return Ticket.fromJson(response.data['data']);
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
@@ -389,9 +416,11 @@ class ApiService {
     }
   }
 
-  static Future<ItemBorrowing> createItemBorrowing(ItemBorrowingCreate data) async {
+  static Future<ItemBorrowing> createItemBorrowing(
+      ItemBorrowingCreate data) async {
     try {
-      final response = await ApiClient.post('/item-borrowings', data: data.toJson());
+      final response =
+          await ApiClient.post('/item-borrowings', data: data.toJson());
       return ItemBorrowing.fromJson(response.data['data']);
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
@@ -452,9 +481,11 @@ class ApiService {
     }
   }
 
-  static Future<ChatConversation> createConversation(String otherUsername) async {
+  static Future<ChatConversation> createConversation(
+      String otherUsername) async {
     try {
-      final response = await ApiClient.post('/chat/conversations', data: {'username': otherUsername});
+      final response = await ApiClient.post('/chat/conversations',
+          data: {'username': otherUsername});
       return ChatConversation.fromJson(response.data['data']);
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
@@ -463,7 +494,8 @@ class ApiService {
 
   static Future<List<ChatMessage>> getMessages(String conversationId) async {
     try {
-      final response = await ApiClient.get('/chat/conversations/$conversationId/messages');
+      final response =
+          await ApiClient.get('/chat/conversations/$conversationId/messages');
       final messages = (response.data['data'] as List)
           .map((json) => ChatMessage.fromJson(json))
           .toList();
@@ -477,7 +509,8 @@ class ApiService {
 
   static Future<ChatMessage> sendMessage(MessageCreate data) async {
     try {
-      final response = await ApiClient.post('/chat/messages', data: data.toJson());
+      final response =
+          await ApiClient.post('/chat/messages', data: data.toJson());
       return ChatMessage.fromJson(response.data['data']);
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);

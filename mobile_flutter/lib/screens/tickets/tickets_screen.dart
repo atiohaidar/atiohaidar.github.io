@@ -13,9 +13,10 @@ class TicketsScreen extends StatefulWidget {
   State<TicketsScreen> createState() => _TicketsScreenState();
 }
 
-class _TicketsScreenState extends State<TicketsScreen> with SingleTickerProviderStateMixin {
+class _TicketsScreenState extends State<TicketsScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  
+
   @override
   void initState() {
     super.initState();
@@ -48,40 +49,206 @@ class _TicketsScreenState extends State<TicketsScreen> with SingleTickerProvider
               child: TabBarView(
                 controller: _tabController,
                 children: [
-                  _buildTicketList(ticketsProvider.tickets, ticketsProvider, isDark),
-                  _buildTicketList(ticketsProvider.openTickets, ticketsProvider, isDark),
-                  _buildTicketList(ticketsProvider.inProgressTickets, ticketsProvider, isDark),
-                  _buildTicketList(ticketsProvider.solvedTickets, ticketsProvider, isDark),
+                  _buildTicketList(
+                      ticketsProvider.tickets, ticketsProvider, isDark),
+                  _buildTicketList(
+                      ticketsProvider.openTickets, ticketsProvider, isDark),
+                  _buildTicketList(ticketsProvider.inProgressTickets,
+                      ticketsProvider, isDark),
+                  _buildTicketList(
+                      ticketsProvider.solvedTickets, ticketsProvider, isDark),
                 ],
               ),
             ),
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showCreateTicketDialog(context),
+        backgroundColor: AppColors.primaryBlue,
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
+    );
+  }
+
+  void _showCreateTicketDialog(BuildContext context) {
+    final titleController = TextEditingController();
+    final descController = TextEditingController();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    TicketPriority selectedPriority = TicketPriority.medium;
+    TicketCategory? selectedCategory;
+    final categories = context.read<TicketsProvider>().categories;
+
+    if (categories.isNotEmpty) {
+      selectedCategory = categories.first;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.darkSurface : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? AppColors.borderMedium
+                          : Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'Create New Ticket',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? AppColors.textPrimary : AppColors.lightText,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                TextField(
+                  controller: titleController,
+                  decoration: const InputDecoration(
+                    labelText: 'Subject',
+                    hintText: 'Enter ticket subject',
+                  ),
+                  autofocus: true,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: descController,
+                  decoration: const InputDecoration(
+                    labelText: 'Description',
+                    hintText: 'Describe your issue',
+                  ),
+                  maxLines: 4,
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<TicketCategory>(
+                  value: selectedCategory,
+                  decoration: const InputDecoration(labelText: 'Category'),
+                  items: categories.map((c) {
+                    return DropdownMenuItem(
+                      value: c,
+                      child: Text(
+                        c.name,
+                        style: TextStyle(
+                          color: isDark
+                              ? AppColors.textPrimary
+                              : AppColors.lightText,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (val) {
+                    if (val != null) setState(() => selectedCategory = val);
+                  },
+                  dropdownColor: isDark ? AppColors.darkSurface : Colors.white,
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<TicketPriority>(
+                  value: selectedPriority,
+                  decoration: const InputDecoration(labelText: 'Priority'),
+                  items: TicketPriority.values.map((p) {
+                    return DropdownMenuItem(
+                      value: p,
+                      child: Text(
+                        p.toString().split('.').last.toUpperCase(),
+                        style: TextStyle(
+                          color: isDark
+                              ? AppColors.textPrimary
+                              : AppColors.lightText,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (val) {
+                    if (val != null) setState(() => selectedPriority = val);
+                  },
+                  dropdownColor: isDark ? AppColors.darkSurface : Colors.white,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (titleController.text.trim().isNotEmpty &&
+                        descController.text.trim().isNotEmpty &&
+                        selectedCategory != null) {
+                      final provider = context.read<TicketsProvider>();
+                      final success = await provider.createTicket(TicketCreate(
+                        title: titleController.text.trim(),
+                        description: descController.text.trim(),
+                        categoryId: selectedCategory!.id,
+                        priority: selectedPriority,
+                      ));
+                      if (success && context.mounted) {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Ticket created successfully')),
+                        );
+                      }
+                    } else if (selectedCategory == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Please select a category')),
+                      );
+                    }
+                  },
+                  child: const Text('Submit Ticket'),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
   Widget _buildStatsCards(TicketsProvider provider, bool isDark) {
     final stats = provider.stats;
-    
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
           Expanded(
-            child: _buildMiniStat('Total', '${stats?.total ?? 0}', AppColors.primaryBlue, isDark),
+            child: _buildMiniStat(
+                'Total', '${stats?.total ?? 0}', AppColors.primaryBlue, isDark),
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: _buildMiniStat('Open', '${stats?.open ?? 0}', AppColors.info, isDark),
+            child: _buildMiniStat(
+                'Open', '${stats?.open ?? 0}', AppColors.info, isDark),
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: _buildMiniStat('Progress', '${stats?.inProgress ?? 0}', AppColors.warning, isDark),
+            child: _buildMiniStat('Progress', '${stats?.inProgress ?? 0}',
+                AppColors.warning, isDark),
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: _buildMiniStat('Solved', '${stats?.solved ?? 0}', AppColors.success, isDark),
+            child: _buildMiniStat(
+                'Solved', '${stats?.solved ?? 0}', AppColors.success, isDark),
           ),
         ],
       ),
@@ -123,7 +290,7 @@ class _TicketsScreenState extends State<TicketsScreen> with SingleTickerProvider
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: isDark 
+        color: isDark
             ? AppColors.darkSurface.withOpacity(0.5)
             : Colors.grey.shade100,
         borderRadius: BorderRadius.circular(12),
@@ -131,7 +298,8 @@ class _TicketsScreenState extends State<TicketsScreen> with SingleTickerProvider
       child: TabBar(
         controller: _tabController,
         labelColor: AppColors.primaryBlue,
-        unselectedLabelColor: isDark ? AppColors.textMuted : Colors.grey.shade600,
+        unselectedLabelColor:
+            isDark ? AppColors.textMuted : Colors.grey.shade600,
         indicatorSize: TabBarIndicatorSize.tab,
         indicator: BoxDecoration(
           color: AppColors.primaryBlue.withOpacity(0.1),
@@ -147,7 +315,8 @@ class _TicketsScreenState extends State<TicketsScreen> with SingleTickerProvider
     );
   }
 
-  Widget _buildTicketList(List<Ticket> tickets, TicketsProvider provider, bool isDark) {
+  Widget _buildTicketList(
+      List<Ticket> tickets, TicketsProvider provider, bool isDark) {
     if (provider.isLoading && tickets.isEmpty) {
       return const LoadingIndicator(message: 'Loading tickets...');
     }
@@ -225,7 +394,8 @@ class _TicketsScreenState extends State<TicketsScreen> with SingleTickerProvider
                     ticket.categoryName!,
                     style: TextStyle(
                       fontSize: 12,
-                      color: isDark ? AppColors.textMuted : Colors.grey.shade500,
+                      color:
+                          isDark ? AppColors.textMuted : Colors.grey.shade500,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -253,43 +423,33 @@ class _TicketsScreenState extends State<TicketsScreen> with SingleTickerProvider
 
   Widget _buildStatusBadge(TicketStatus status) {
     Color color;
-    Color bgColor;
-    String text;
-    
     switch (status) {
       case TicketStatus.open:
-        color = const Color(0xFF2563EB);
-        bgColor = const Color(0xFFDBEAFE);
-        text = 'Open';
+        color = AppColors.info;
         break;
       case TicketStatus.inProgress:
-        color = const Color(0xFFD97706);
-        bgColor = const Color(0xFFFEF3C7);
-        text = 'In Progress';
+        color = AppColors.warning;
         break;
       case TicketStatus.waiting:
-        color = const Color(0xFF7C3AED);
-        bgColor = const Color(0xFFEDE9FE);
-        text = 'Waiting';
+        color = Colors.orange;
         break;
       case TicketStatus.solved:
-        color = const Color(0xFF059669);
-        bgColor = const Color(0xFFD1FAE5);
-        text = 'Solved';
+        color = AppColors.success;
         break;
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(12),
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Text(
-        text,
+        status.value.replaceAll('_', ' ').toUpperCase(),
         style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
+          fontSize: 10,
+          fontWeight: FontWeight.bold,
           color: color,
         ),
       ),
@@ -298,44 +458,31 @@ class _TicketsScreenState extends State<TicketsScreen> with SingleTickerProvider
 
   Widget _buildPriorityBadge(TicketPriority priority) {
     Color color;
-    String text;
-    
     switch (priority) {
       case TicketPriority.low:
-        color = Colors.grey;
-        text = 'Low';
+        color = Colors.green;
         break;
       case TicketPriority.medium:
-        color = AppColors.info;
-        text = 'Medium';
+        color = Colors.blue;
         break;
       case TicketPriority.high:
-        color = AppColors.warning;
-        text = 'High';
+        color = Colors.orange;
         break;
       case TicketPriority.critical:
-        color = AppColors.error;
-        text = 'Critical';
+        color = Colors.red;
         break;
     }
 
     return Row(
       children: [
-        Container(
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: color,
-          ),
-        ),
+        Icon(Icons.flag, size: 14, color: color),
         const SizedBox(width: 4),
         Text(
-          text,
+          priority.value.toUpperCase(),
           style: TextStyle(
-            fontSize: 12,
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
             color: color,
-            fontWeight: FontWeight.w500,
           ),
         ),
       ],

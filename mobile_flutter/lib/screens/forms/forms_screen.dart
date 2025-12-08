@@ -37,13 +37,107 @@ class _FormsScreenState extends State<FormsScreen> {
         centerTitle: true,
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: Navigate to create form screen
-        },
+        onPressed: () => _showCreateFormDialog(context),
         backgroundColor: AppColors.primaryBlue,
         child: const Icon(Icons.add, color: Colors.white),
       ),
       body: _buildBody(formsProvider, isDark),
+    );
+  }
+
+  void _showCreateFormDialog(BuildContext context) {
+    final titleController = TextEditingController();
+    final descController = TextEditingController();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.darkSurface : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? AppColors.borderMedium
+                          : Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'Create New Form',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? AppColors.textPrimary : AppColors.lightText,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                TextField(
+                  controller: titleController,
+                  decoration: const InputDecoration(
+                    labelText: 'Form Title',
+                    hintText: 'Enter form title',
+                  ),
+                  autofocus: true,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: descController,
+                  decoration: const InputDecoration(
+                    labelText: 'Description (optional)',
+                    hintText: 'Enter form description',
+                  ),
+                  maxLines: 2,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (titleController.text.trim().isNotEmpty) {
+                      final provider = context.read<FormsProvider>();
+                      final success = await provider.createForm(FormCreate(
+                        title: titleController.text.trim(),
+                        description: descController.text.trim().isNotEmpty
+                            ? descController.text.trim()
+                            : null,
+                        questions: [],
+                      ));
+
+                      if (success && context.mounted) {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Form created successfully')),
+                        );
+                      }
+                    }
+                  },
+                  child: const Text('Create Form'),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -114,7 +208,9 @@ class _FormsScreenState extends State<FormsScreen> {
               form.description!,
               style: TextStyle(
                 fontSize: 14,
-                color: isDark ? AppColors.textSecondary : AppColors.lightTextSecondary,
+                color: isDark
+                    ? AppColors.textSecondary
+                    : AppColors.lightTextSecondary,
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -139,7 +235,8 @@ class _FormsScreenState extends State<FormsScreen> {
               const Spacer(),
               if (form.createdAt != null)
                 Text(
-                  DateFormat('MMM d, y').format(DateTime.parse(form.createdAt!)),
+                  DateFormat('MMM d, y')
+                      .format(DateTime.parse(form.createdAt!)),
                   style: TextStyle(
                     fontSize: 12,
                     color: isDark ? AppColors.textMuted : Colors.grey.shade600,
@@ -158,7 +255,8 @@ class _FormsScreenState extends State<FormsScreen> {
                   icon: const Icon(Icons.bar_chart),
                   label: const Text('Responses'),
                   style: OutlinedButton.styleFrom(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
                   ),
                 ),
               ),
@@ -173,7 +271,8 @@ class _FormsScreenState extends State<FormsScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryBlue,
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8)),
                   ),
                 ),
               ),

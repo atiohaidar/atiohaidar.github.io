@@ -23,7 +23,7 @@ class GlassCard extends StatelessWidget {
     this.borderRadius = 16,
     this.backgroundColor,
     this.blur = 10,
-    this.opacity = 0.6,
+    this.opacity = 0.75,
     this.hasBorder = true,
     this.gradient,
     this.onTap,
@@ -32,15 +32,13 @@ class GlassCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
-    final cardColor = backgroundColor ?? 
-      (isDark 
-        ? AppColors.darkSurface.withOpacity(opacity)
-        : Colors.white.withOpacity(opacity));
-    
-    final borderColor = isDark 
-      ? AppColors.borderLight 
-      : Colors.grey.shade200;
+
+    final cardColor = backgroundColor ??
+        (isDark
+            ? AppColors.darkSurface.withOpacity(opacity)
+            : Colors.white.withOpacity(opacity));
+
+    final borderColor = isDark ? AppColors.borderLight : Colors.grey.shade200;
 
     Widget card = ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
@@ -92,11 +90,12 @@ class GradientGlassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = gradientColors ?? [
-      AppColors.gradientBlue.withOpacity(0.2),
-      AppColors.gradientCyan.withOpacity(0.2),
-      AppColors.gradientIndigo.withOpacity(0.2),
-    ];
+    final colors = gradientColors ??
+        [
+          AppColors.gradientBlue.withOpacity(0.2),
+          AppColors.gradientCyan.withOpacity(0.2),
+          AppColors.gradientIndigo.withOpacity(0.2),
+        ];
 
     return GlassCard(
       padding: padding,
