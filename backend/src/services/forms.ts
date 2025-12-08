@@ -66,14 +66,20 @@ const toFormResponse = (row: Record<string, unknown>): FormResponseRecord => {
 	return parsed.data;
 };
 
-// Generate a random alphanumeric token
+// Generate a secure random alphanumeric token
 const generateToken = (): string => {
-	const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-	let token = '';
-	for (let i = 0; i < 12; i++) {
-		token += chars.charAt(Math.floor(Math.random() * chars.length));
-	}
-	return token;
+	const array = new Uint8Array(9);
+	crypto.getRandomValues(array);
+	return btoa(String.fromCharCode(...array))
+		.replace(/\+/g, '-')
+		.replace(/\//g, '_')
+		.replace(/=/g, '')
+		.substring(0, 12);
+};
+
+// Generate secure unique ID
+const generateId = (prefix: string): string => {
+	return `${prefix}-${crypto.randomUUID()}`;
 };
 
 // List forms created by a specific user
@@ -133,7 +139,7 @@ export const createForm = async (
 	const data = FormCreateSchema.parse(input);
 
 	// Generate unique IDs and token
-	const formId = `form-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+	const formId = generateId('form');
 	const token = generateToken();
 
 	// Prepare all statements for batch execution
@@ -145,7 +151,7 @@ export const createForm = async (
 
 	// Add all question inserts to the batch
 	for (const question of data.questions) {
-		const questionId = `q-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+		const questionId = generateId('q');
 		statements.push(
 			db.prepare(
 				"INSERT INTO form_questions (id, form_id, question_text, question_order) VALUES (?, ?, ?, ?)"
@@ -208,7 +214,7 @@ export const updateForm = async (
 			const targetId =
 				(question.id && existingById.has(question.id))
 					? question.id
-					: question.id ?? `q-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+					: question.id ?? generateId('q');
 
 			incomingIds.add(targetId);
 
@@ -273,7 +279,7 @@ export const submitFormResponse = async (
 	const data = FormResponseCreateSchema.parse(input);
 
 	// Generate response ID
-	const responseId = `resp-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+	const responseId = generateId('resp');
 
 	// Prepare all statements for batch execution
 	const statements: D1PreparedStatement[] = [
@@ -284,7 +290,7 @@ export const submitFormResponse = async (
 
 	// Add all answer inserts to the batch
 	for (const answer of data.answers) {
-		const answerId = `ans-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+		const answerId = generateId('ans');
 		statements.push(
 			db.prepare(
 				"INSERT INTO form_answers (id, response_id, question_id, answer_text) VALUES (?, ?, ?, ?)"

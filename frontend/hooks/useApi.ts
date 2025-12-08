@@ -16,10 +16,14 @@ import type {
 import { setAuthToken, setStoredUser, removeAuthToken, removeStoredUser } from '../apiClient';
 
 // Query keys
+// Query keys
 export const queryKeys = {
     users: ['users'] as const,
     tasks: ['tasks'] as const,
     task: (id: number) => ['tasks', 'detail', id] as const,
+    tickets: ['tickets'] as const,
+    events: ['events'] as const,
+    stats: ['stats'] as const,
 };
 
 // Auth hooks
@@ -35,7 +39,7 @@ export const useLogin = (): UseMutationResult<LoginResponse, Error, LoginRequest
 
 export const useLogout = () => {
     const queryClient = useQueryClient();
-    
+
     return () => {
         removeAuthToken();
         removeStoredUser();
@@ -53,7 +57,7 @@ export const useUsers = (): UseQueryResult<User[], Error> => {
 
 export const useCreateUser = (): UseMutationResult<User, Error, UserCreate> => {
     const queryClient = useQueryClient();
-    
+
     return useMutation({
         mutationFn: api.createUser,
         onSuccess: () => {
@@ -64,7 +68,7 @@ export const useCreateUser = (): UseMutationResult<User, Error, UserCreate> => {
 
 export const useUpdateUser = (): UseMutationResult<User, Error, { username: string; updates: UserUpdate }> => {
     const queryClient = useQueryClient();
-    
+
     return useMutation({
         mutationFn: ({ username, updates }) => api.updateUser(username, updates),
         onSuccess: () => {
@@ -75,7 +79,7 @@ export const useUpdateUser = (): UseMutationResult<User, Error, { username: stri
 
 export const useDeleteUser = (): UseMutationResult<User, Error, string> => {
     const queryClient = useQueryClient();
-    
+
     return useMutation({
         mutationFn: api.deleteUser,
         onSuccess: () => {
@@ -104,7 +108,7 @@ export const useTask = (id: number | null): UseQueryResult<Task, Error> => {
 
 export const useCreateTask = (): UseMutationResult<Task, Error, TaskCreate> => {
     const queryClient = useQueryClient();
-    
+
     return useMutation({
         mutationFn: api.createTask,
         onSuccess: () => {
@@ -115,11 +119,36 @@ export const useCreateTask = (): UseMutationResult<Task, Error, TaskCreate> => {
 
 export const useDeleteTask = (): UseMutationResult<Task, Error, number> => {
     const queryClient = useQueryClient();
-    
+
     return useMutation({
         mutationFn: api.deleteTask,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: queryKeys.tasks });
         },
+    });
+};
+
+// Ticket hooks
+export const useTickets = (params?: { status?: string }): UseQueryResult<Ticket[], Error> => {
+    return useQuery({
+        queryKey: [...queryKeys.tickets, params],
+        queryFn: () => api.listTickets(params),
+    });
+};
+
+// Event hooks
+export const useEvents = (): UseQueryResult<Event[], Error> => {
+    return useQuery({
+        queryKey: queryKeys.events,
+        queryFn: api.listEvents,
+    });
+};
+
+// Stats hooks
+export const useDashboardStats = (): UseQueryResult<DashboardStats, Error> => {
+    return useQuery({
+        queryKey: queryKeys.stats,
+        queryFn: api.getStats,
+        refetchInterval: 60000, // Refresh every minute
     });
 };

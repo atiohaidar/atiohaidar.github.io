@@ -28,7 +28,12 @@ export interface VerifiedUser {
   role: UserRole;
 }
 
-export function verifyAuth(c: AppContext): VerifiedUser | null {
+/**
+ * Verify authentication from request (async - for JWT verification)
+ * @param c - Hono context
+ * @returns Promise that resolves to VerifiedUser or null
+ */
+export async function verifyAuth(c: AppContext): Promise<VerifiedUser | null> {
   const header = c.req.header('Authorization');
   if (!header) {
     return null;
@@ -39,7 +44,7 @@ export function verifyAuth(c: AppContext): VerifiedUser | null {
     return null;
   }
 
-  const payload = parseToken(match[1]?.trim() ?? '');
+  const payload = await parseToken(match[1]?.trim() ?? '');
   if (!payload) {
     return null;
   }

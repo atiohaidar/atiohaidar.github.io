@@ -2,14 +2,12 @@ import type { D1Database } from "@cloudflare/workers-types";
 import { z } from "zod";
 import { TicketCreateSchema, TicketUpdateSchema, TicketCommentCreateSchema, TicketAssignSchema } from "../models/types";
 
-// Helper function to generate unique ticket token
+// Helper function to generate unique ticket token using crypto
 function generateTicketToken(): string {
-	const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-	let token = "TKT-";
-	for (let i = 0; i < 8; i++) {
-		token += chars.charAt(Math.floor(Math.random() * chars.length));
-	}
-	return token;
+	const array = new Uint8Array(6);
+	crypto.getRandomValues(array);
+	const hex = Array.from(array, b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+	return `TKT-${hex.substring(0, 8)}`;
 }
 
 // Category operations

@@ -37,14 +37,16 @@ interface AttendanceScan {
 	longitude?: number;
 }
 
-// Generate unique ID
+// Generate unique ID using crypto for security
 function generateId(prefix: string): string {
-	return `${prefix}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+	return `${prefix}-${crypto.randomUUID()}`;
 }
 
-// Generate random token for QR code
+// Generate secure random token for QR code
 function generateToken(): string {
-	return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+	const array = new Uint8Array(16);
+	crypto.getRandomValues(array);
+	return Array.from(array, b => b.toString(16).padStart(2, '0')).join('');
 }
 
 // Event CRUD operations

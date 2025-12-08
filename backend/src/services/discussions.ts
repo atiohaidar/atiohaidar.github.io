@@ -1,15 +1,15 @@
 import type { Bindings } from "../models/types";
 
 export class DiscussionService {
-	constructor(private env: Bindings) {}
+	constructor(private env: Bindings) { }
 
-	// Generate unique ID
+	// Generate unique ID using crypto for security
 	private generateId(prefix: string): string {
-		return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+		return `${prefix}-${crypto.randomUUID()}`;
 	}
 
-	// List all discussions
-	async listDiscussions() {
+	// List all discussions with pagination
+	async listDiscussions(limit: number = 20, offset: number = 0) {
 		const stmt = this.env.DB.prepare(`
 			SELECT 
 				d.*,
@@ -18,8 +18,9 @@ export class DiscussionService {
 			LEFT JOIN discussion_replies dr ON d.id = dr.discussion_id
 			GROUP BY d.id
 			ORDER BY d.created_at DESC
+			LIMIT ? OFFSET ?
 		`);
-		const result = await stmt.all();
+		const result = await stmt.bind(limit, offset).all();
 		return result.results || [];
 	}
 
@@ -72,7 +73,7 @@ export class DiscussionService {
 		return await this.getDiscussion(id);
 	}
 
-	// Create reply to discussion
+	// Create reply to discussion (optimized with batch)
 	async createReply(
 		discussionId: string,
 		content: string,
@@ -80,10 +81,8 @@ export class DiscussionService {
 		creatorName: string
 	) {
 		// Check if discussion exists
-		const discussionStmt = this.env.DB.prepare(`
-			SELECT id FROM discussions WHERE id = ?
-		`);
-		const discussion = await discussionStmt.bind(discussionId).first();
+		const discussion = await this.env.DB.prepare(`SELECT id FROM discussions WHERE id = ?`)
+			.bind(discussionId).first();
 
 		if (!discussion) {
 			throw new Error("Discussion not found");
@@ -92,26 +91,20 @@ export class DiscussionService {
 		const id = this.generateId("reply");
 		const isAnonymous = creatorUsername ? 0 : 1;
 
-		const stmt = this.env.DB.prepare(`
-			INSERT INTO discussion_replies (id, discussion_id, content, creator_username, creator_name, is_anonymous, created_at)
-			VALUES (?, ?, ?, ?, ?, ?, datetime('now'))
-		`);
+		// Batch: insert reply + update discussion timestamp in single transaction
+		await this.env.DB.batch([
+			this.env.DB.prepare(`
+				INSERT INTO discussion_replies (id, discussion_id, content, creator_username, creator_name, is_anonymous, created_at)
+				VALUES (?, ?, ?, ?, ?, ?, datetime('now'))
+			`).bind(id, discussionId, content, creatorUsername, creatorName, isAnonymous),
 
-		await stmt
-			.bind(id, discussionId, content, creatorUsername, creatorName, isAnonymous)
-			.run();
-
-		// Update discussion's updated_at timestamp
-		const updateStmt = this.env.DB.prepare(`
-			UPDATE discussions SET updated_at = datetime('now') WHERE id = ?
-		`);
-		await updateStmt.bind(discussionId).run();
+			this.env.DB.prepare(`UPDATE discussions SET updated_at = datetime('now') WHERE id = ?`)
+				.bind(discussionId)
+		]);
 
 		// Get the created reply
-		const replyStmt = this.env.DB.prepare(`
-			SELECT * FROM discussion_replies WHERE id = ?
-		`);
-		return await replyStmt.bind(id).first();
+		return await this.env.DB.prepare(`SELECT * FROM discussion_replies WHERE id = ?`)
+			.bind(id).first();
 	}
 
 	// Delete discussion (only by creator or admin)

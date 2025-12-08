@@ -71,10 +71,10 @@ const toBooking = (row: Record<string, unknown>): BookingRecord => {
 };
 
 /**
- * Generate a unique booking ID
+ * Generate a unique booking ID using crypto for security
  */
 const generateBookingId = () => {
-	return `booking-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+	return `booking-${crypto.randomUUID()}`;
 };
 
 /**
@@ -319,7 +319,7 @@ export const updateBookingStatus = async (
 
 export const cancelBooking = async (db: D1Database, id: string, username: string) => {
 	await ensureInitialized(db);
-	
+
 	// Check if booking exists and belongs to user
 	const booking = await getBooking(db, id);
 	if (!booking) {

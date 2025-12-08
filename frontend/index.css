@@ -13,6 +13,22 @@
   }
 }
 
+/* Custom Scrollbar Utilities for Modern UI */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.3);
+  border-radius: 999px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.5);
+}
+
 /* Global utilities migrated from inline <style> in index.html */
 .no-scrollbar::-webkit-scrollbar {
   display: none;

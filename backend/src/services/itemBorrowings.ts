@@ -77,10 +77,10 @@ const toItemBorrowing = (row: Record<string, unknown>): ItemBorrowingRecord => {
 };
 
 /**
- * Generate a unique borrowing ID
+ * Generate a unique borrowing ID using crypto for security
  */
 const generateBorrowingId = () => {
-	return `borrow-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+	return `borrow-${crypto.randomUUID()}`;
 };
 
 /**

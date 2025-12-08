@@ -55,7 +55,7 @@ export class ChatService {
 		}
 
 		// Create new conversation
-		const id = `conv-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+		const id = `conv-${crypto.randomUUID()}`;
 		await db
 			.prepare(
 				"INSERT INTO conversations (id, user1_username, user2_username) VALUES (?, ?, ?)"
@@ -109,7 +109,7 @@ export class ChatService {
 		replyToId?: string
 	): Promise<Message> {
 		const db = this.env.DB;
-		const id = `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+		const id = `msg-${crypto.randomUUID()}`;
 
 		await db
 			.prepare(
@@ -180,7 +180,7 @@ export class ChatService {
 	// Group chat methods
 	async createGroup(name: string, description: string | undefined, creatorUsername: string): Promise<GroupChat> {
 		const db = this.env.DB;
-		const id = `group-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+		const id = `group-${crypto.randomUUID()}`;
 
 		await db
 			.prepare(
@@ -336,7 +336,7 @@ export class AnonymousChatService {
 
 	async sendMessage(senderId: string, content: string, replyToId?: string): Promise<any> {
 		const db = this.env.DB;
-		const id = `anon-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+		const id = `anon-${crypto.randomUUID()}`;
 
 		await db
 			.prepare(
@@ -406,7 +406,7 @@ export class AnonymousChatService {
 		const statements: D1PreparedStatement[] = [];
 
 		for (const msg of messages) {
-			const id = `anon-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+			const id = `anon-${crypto.randomUUID()}`;
 			const created_at = new Date().toISOString();
 
 			statements.push(

@@ -63,10 +63,10 @@ const toItem = (row: Record<string, unknown>): ItemRecord => {
 };
 
 /**
- * Generate a unique item ID
+ * Generate a unique item ID using crypto for security
  */
 const generateItemId = () => {
-	return `item-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+	return `item-${crypto.randomUUID()}`;
 };
 
 /**
@@ -76,11 +76,13 @@ export const listItems = async (
 	db: D1Database,
 	options: {
 		ownerUsername?: string;
+		limit?: number;
+		offset?: number;
 	} = {},
 ) => {
 	await ensureInitialized(db);
 
-	const { ownerUsername } = options;
+	const { ownerUsername, limit = 50, offset = 0 } = options;
 
 	let query =
 		"SELECT id, name, description, stock, attachment_link, owner_username, created_at, updated_at FROM items WHERE 1=1";
@@ -91,7 +93,8 @@ export const listItems = async (
 		bindings.push(ownerUsername);
 	}
 
-	query += " ORDER BY created_at DESC";
+	query += " ORDER BY created_at DESC LIMIT ? OFFSET ?";
+	bindings.push(limit, offset);
 
 	const { results } = await db.prepare(query).bind(...bindings).all();
 

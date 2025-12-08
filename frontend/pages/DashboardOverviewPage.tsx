@@ -1,0 +1,128 @@
+import React from 'react';
+import { useTheme } from '../contexts/ThemeContext';
+import { DASHBOARD_THEME } from '../utils/styles';
+import { getStoredUser } from '../apiClient';
+
+// Mock data for visual demonstration
+const stats = [
+    { title: 'Total Tasks', value: '12', trend: '+2 this week', icon: '📝', color: 'from-blue-500 to-cyan-400' },
+    { title: 'New Messages', value: '5', trend: '3 unread', icon: '💬', color: 'from-blue-600 to-indigo-500' },
+    { title: 'Active Tickets', value: '8', trend: '2 critical', icon: '🎫', color: 'from-orange-500 to-red-500' },
+    { title: 'Upcoming Events', value: '3', trend: 'Next: Tomorrow', icon: '🎉', color: 'from-teal-500 to-emerald-400' },
+];
+
+const recentActivities = [
+    { id: 1, type: 'task', title: 'Complete project documentation', time: '2 hours ago', status: 'In Progress' },
+    { id: 2, type: 'chat', title: 'New message from Alice', time: '4 hours ago', status: 'Unread' },
+    { id: 3, type: 'system', title: 'System update scheduled', time: '1 day ago', status: 'Info' },
+];
+
+const DashboardOverviewPage: React.FC = () => {
+    const { theme } = useTheme();
+    const user = getStoredUser();
+    const palette = DASHBOARD_THEME[theme];
+
+    // Get current greeting based on time
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening';
+
+    return (
+        <div className="space-y-8 animate-fade-in-up">
+            {/* Welcome Section */}
+            <div className="relative overflow-hidden rounded-3xl p-8 shadow-2xl">
+                {/* Background Gradient Mesh */}
+                <div className={`absolute inset-0 bg-gradient-to-br from-blue-600/20 via-cyan-600/20 to-indigo-600/20 backdrop-blur-3xl z-0`} />
+                <div className="absolute top-0 right-0 -mt-20 -mr-20 w-80 h-80 bg-cyan-500/30 rounded-full blur-3xl" />
+                <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-80 h-80 bg-blue-500/30 rounded-full blur-3xl" />
+
+                <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                    <div>
+                        <h1 className={`text-4xl md:text-5xl font-bold ${palette.panel.text} tracking-tight`}>
+                            {greeting}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">{user?.name}</span>
+                        </h1>
+                        <p className={`mt-2 text-lg ${palette.panel.textMuted}`}>
+                            Here's what's happening with your projects today.
+                        </p>
+                    </div>
+                    <div className="flex gap-3">
+                        <span className={`px-4 py-2 rounded-full text-sm font-medium border ${theme === 'dark' ? 'bg-white/5 border-white/10 text-white' : 'bg-white/50 border-gray-200 text-gray-800'} backdrop-blur-md shadow-lg`}>
+                            {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {stats.map((stat, index) => (
+                    <div
+                        key={index}
+                        className={`relative group p-6 rounded-2xl border ${theme === 'dark' ? 'bg-[#1A2230]/60 border-white/5' : 'bg-white/60 border-gray-100'} backdrop-blur-xl shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl overflow-hidden`}
+                    >
+                        <div className={`absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-gradient-to-br ${stat.color} opacity-20 blur-2xl group-hover:opacity-40 transition-opacity`} />
+
+                        <div className="relative z-10">
+                            <div className="flex justify-between items-start mb-4">
+                                <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.color} text-white shadow-lg`}>
+                                    <span className="text-xl">{stat.icon}</span>
+                                </div>
+                                <span className={`text-xs font-medium px-2 py-1 rounded-full ${theme === 'dark' ? 'bg-white/10 text-white/80' : 'bg-black/5 text-gray-600'}`}>
+                                    {stat.trend}
+                                </span>
+                            </div>
+                            <h3 className={`text-3xl font-bold ${palette.panel.text} mb-1`}>{stat.value}</h3>
+                            <p className={`text-sm font-medium ${palette.panel.textMuted}`}>{stat.title}</p>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Main Content Grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Visual Chart / Large Widget */}
+                <div className={`lg:col-span-2 p-6 rounded-3xl border ${theme === 'dark' ? 'bg-[#1A2230]/60 border-white/5' : 'bg-white/60 border-gray-100'} backdrop-blur-xl shadow-xl`}>
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className={`text-xl font-bold ${palette.panel.text}`}>Productivity Overview</h2>
+                        <select className={`bg-transparent border-none text-sm font-medium ${palette.panel.textMuted} focus:ring-0 cursor-pointer`}>
+                            <option>This Week</option>
+                            <option>Last Week</option>
+                        </select>
+                    </div>
+                    {/* Placeholder for Chart */}
+                    <div className="h-64 flex items-center justify-center rounded-2xl bg-gradient-to-r from-blue-500/5 to-cyan-500/5 border border-dashed border-gray-500/20">
+                        <p className={palette.panel.textMuted}>Chart Visualization Area</p>
+                    </div>
+                </div>
+
+                {/* Recent Activity */}
+                <div className={`p-6 rounded-3xl border ${theme === 'dark' ? 'bg-[#1A2230]/60 border-white/5' : 'bg-white/60 border-gray-100'} backdrop-blur-xl shadow-xl`}>
+                    <h2 className={`text-xl font-bold ${palette.panel.text} mb-6`}>Recent Activity</h2>
+                    <div className="space-y-6">
+                        {recentActivities.map((activity) => (
+                            <div key={activity.id} className="flex gap-4 items-start group">
+                                <div className={`mt-1 w-2 h-2 rounded-full bg-gradient-to-r from-blue-400 to-cyan-500 shadow-[0_0_8px_rgba(37,99,235,0.5)]`} />
+                                <div>
+                                    <h4 className={`text-sm font-medium ${palette.panel.text} group-hover:text-blue-400 transition-colors`}>
+                                        {activity.title}
+                                    </h4>
+                                    <p className={`text-xs ${palette.panel.textMuted} mt-1`}>
+                                        {activity.time} • {activity.status}
+                                    </p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    <button className={`mt-8 w-full py-3 rounded-xl text-sm font-semibold transition-all ${theme === 'dark'
+                        ? 'bg-white/5 hover:bg-white/10 text-white border border-white/10'
+                        : 'bg-black/5 hover:bg-black/10 text-gray-800'
+                        }`}>
+                        View All Activity
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default DashboardOverviewPage;

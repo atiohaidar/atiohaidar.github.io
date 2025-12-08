@@ -1,56 +1,89 @@
+import { SignJWT, jwtVerify, JWTPayload } from 'jose';
 import type { UserRecord } from "../services/users";
 import { UserRoleSchema, type AppContext, type UserRole } from "../models/types";
+
+// JWT Secret - In production, this should be set via environment variable
+const getJWTSecret = () => {
+	return new TextEncoder().encode(
+		'atiohaidar-secure-jwt-secret-key-256-bits-long'
+	);
+};
+
+// Token expiration time
+const TOKEN_EXPIRY = '7d'; // 7 days
 
 export type TokenPayload = {
 	sub: string;
 	name: string;
 	role: UserRole;
 	iat: number;
+	exp?: number;
 };
 
-export const createToken = (record: UserRecord): string => {
-	const payload: TokenPayload = {
-		sub: record.username,
+/**
+ * Create a signed JWT token for a user
+ * @param record - User record to create token for
+ * @returns Promise that resolves to signed JWT string
+ */
+export const createToken = async (record: UserRecord): Promise<string> => {
+	const secret = getJWTSecret();
+
+	return await new SignJWT({
 		name: record.name,
 		role: record.role,
-		iat: Date.now(),
-	};
-
-	return btoa(JSON.stringify(payload));
+	})
+		.setProtectedHeader({ alg: 'HS256' })
+		.setSubject(record.username)
+		.setIssuedAt()
+		.setExpirationTime(TOKEN_EXPIRY)
+		.sign(secret);
 };
 
-export const parseToken = (token: string): TokenPayload | null => {
+/**
+ * Parse and verify a JWT token
+ * @param token - JWT token string to verify
+ * @returns Promise that resolves to TokenPayload or null if invalid/expired
+ */
+export const parseToken = async (token: string): Promise<TokenPayload | null> => {
 	try {
-		const decoded = atob(token);
-		const candidate = JSON.parse(decoded) as Partial<TokenPayload>;
+		const secret = getJWTSecret();
+		const { payload } = await jwtVerify(token, secret);
 
+		// Validate required fields
 		if (
-			typeof candidate?.sub !== "string" ||
-			typeof candidate?.name !== "string" ||
-			typeof candidate?.iat !== "number" ||
-			typeof candidate?.role !== "string"
+			typeof payload.sub !== "string" ||
+			typeof payload.name !== "string" ||
+			typeof payload.iat !== "number" ||
+			typeof payload.role !== "string"
 		) {
 			return null;
 		}
 
-		const roleResult = UserRoleSchema.safeParse(candidate.role);
+		const roleResult = UserRoleSchema.safeParse(payload.role);
 		if (!roleResult.success) {
 			return null;
 		}
 
 		return {
-			sub: candidate.sub,
-			name: candidate.name,
+			sub: payload.sub,
+			name: payload.name as string,
 			role: roleResult.data,
-			iat: candidate.iat,
+			iat: payload.iat,
+			exp: payload.exp,
 		};
 	} catch (error) {
-		console.error("Failed to parse token", error);
+		// Token is invalid, expired, or tampered with
+		console.error("JWT verification failed:", error instanceof Error ? error.message : error);
 		return null;
 	}
 };
 
-export const getTokenPayloadFromRequest = (c: AppContext): TokenPayload | null => {
+/**
+ * Get token payload from request (async version)
+ * @param c - Hono context
+ * @returns Promise that resolves to TokenPayload or null
+ */
+export const getTokenPayloadFromRequest = async (c: AppContext): Promise<TokenPayload | null> => {
 	const header = c.req.header("Authorization");
 	if (!header) {
 		return null;
@@ -61,11 +94,16 @@ export const getTokenPayloadFromRequest = (c: AppContext): TokenPayload | null =
 		return null;
 	}
 
-	return parseToken(match[1]?.trim() ?? "");
+	return await parseToken(match[1]?.trim() ?? "");
 };
 
-export const ensureAdmin = (c: AppContext): TokenPayload | null => {
-	const payload = getTokenPayloadFromRequest(c);
+/**
+ * Ensure user is admin (async version)
+ * @param c - Hono context
+ * @returns Promise that resolves to TokenPayload or null
+ */
+export const ensureAdmin = async (c: AppContext): Promise<TokenPayload | null> => {
+	const payload = await getTokenPayloadFromRequest(c);
 	if (!payload || payload.role !== "admin") {
 		return null;
 	}

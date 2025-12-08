@@ -22,6 +22,7 @@ const LandingPage = lazy(() => import('./pages/LandingPage'));
 const ArticlesPage = lazy(() => import('./pages/ArticlesPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
+const DashboardOverviewPage = lazy(() => import('./pages/DashboardOverviewPage'));
 const DashboardTasksPage = lazy(() => import('./pages/DashboardTasksPage'));
 const DashboardChatPage = lazy(() => import('./pages/DashboardChatPage'));
 const DashboardUsersPage = lazy(() => import('./pages/DashboardUsersPage'));
@@ -77,7 +78,7 @@ const App: React.FC = () => {
                             <Route path="/discussions/:discussionId" element={<DiscussionDetailPage />} />
                             <Route path="/fullscreen-chat" element={<FullscreenAnonymousChatPage />} />
                             <Route path="/dashboard" element={<DashboardPage />}>
-                                <Route index element={<Navigate to="/dashboard/tasks" replace />} />
+                                <Route index element={<DashboardOverviewPage />} />
                                 <Route path="tasks" element={<DashboardTasksPage />} />
                                 <Route path="chat" element={<DashboardChatPage />} />
                                 <Route

@@ -37,7 +37,7 @@ export const COLORS = {
   BG_PRIMARY: 'bg-light-bg dark:bg-deep-navy',
   BG_SECONDARY: 'bg-light-card dark:bg-light-navy',
   PANEL: 'bg-white dark:bg-[#2B303A]',
-  
+
   // Text colors
   TEXT_PRIMARY: 'text-light-text dark:text-white',
   TEXT_SECONDARY: 'text-light-muted dark:text-soft-gray',
@@ -45,15 +45,15 @@ export const COLORS = {
   TEXT_ACCENT: 'text-light-accent dark:text-accent-blue',
   TEXT_ON_ACCENT: 'text-white',
   TEXT_WHITE: 'text-light-text dark:text-white',
-  
+
   // Borders
   BORDER: 'border-gray-300 dark:border-[#3F4654]',
   BORDER_ACCENT: 'border-light-accent dark:border-accent-blue',
-  
+
   // Backgrounds with accent
   BG_ACCENT: 'bg-light-accent dark:bg-accent-blue',
   BUTTON_PRIMARY: 'bg-light-accent dark:bg-accent-blue',
-  
+
   // Hover states
   HOVER_ACCENT: 'hover:bg-light-accent/10 dark:hover:bg-accent-blue/10',
   HOVER_TEXT_PRIMARY: 'hover:text-light-text dark:hover:text-deep-navy',
@@ -136,8 +136,8 @@ export const DASHBOARD_THEME: Record<DashboardThemeMode, DashboardThemeConfig> =
       toggleIcon: 'text-[#5B6887] hover:text-[#1A2136]',
       linkBase: 'text-[#5B6887]',
       linkHover: 'hover:bg-[#EEF4FF] hover:text-[#1A2136]',
-      linkActive: 'bg-[#9333EA]/10 text-[#9333EA] border border-[#9333EA]/40',
-      badgeAdmin: 'bg-[#9333EA]/12 text-[#9333EA]',
+      linkActive: 'bg-[#2563EB]/10 text-[#2563EB] border border-[#2563EB]/40',
+      badgeAdmin: 'bg-[#2563EB]/12 text-[#2563EB]',
       badgeDefault: 'bg-[#E8EBF2] text-[#5B6887]',
       active: 'bg-[#EEF4FF] border border-[#D6E2FF] text-[#1A2136]',
       hover: 'bg-[#F2F7FF]',
@@ -161,19 +161,19 @@ export const DASHBOARD_THEME: Record<DashboardThemeMode, DashboardThemeConfig> =
       info: 'bg-status-info-muted text-status-info',
     },
     buttons: {
-      primary: 'bg-[#9333EA] text-white hover:bg-[#9333EA]/90',
+      primary: 'bg-[#2563EB] text-white hover:bg-[#2563EB]/90',
       secondary: 'bg-[#EEF2FA] text-[#1A2136] hover:bg-[#E3E8F6]',
-      ghost: 'border border-[#CBD5E1] text-[#5B6887] hover:border-[#9333EA] hover:text-[#9333EA]',
+      ghost: 'border border-[#CBD5E1] text-[#5B6887] hover:border-[#2563EB] hover:text-[#2563EB]',
       success: 'bg-status-success text-white hover:bg-status-success-dark',
       danger: 'bg-status-danger text-white hover:bg-status-danger-dark',
       warning: 'bg-status-warning text-white hover:bg-status-warning-dark',
       info: 'bg-status-info text-white hover:bg-status-info/90',
     },
     surface: 'bg-white text-[#1A2136]',
-    input: 'bg-white border border-[#CBD5E1] text-[#1A2136] focus:border-[#9333EA] focus:ring-[#9333EA]/15',
+    input: 'bg-white border border-[#CBD5E1] text-[#1A2136] focus:border-[#2563EB] focus:ring-[#2563EB]/15',
     listDivider: 'border-[#E1E8F5]',
     button: {
-      primary: 'bg-[#9333EA]',
+      primary: 'bg-[#2563EB]',
       secondary: 'bg-[#EEF2FA]',
     },
     timeline: {
@@ -183,7 +183,7 @@ export const DASHBOARD_THEME: Record<DashboardThemeMode, DashboardThemeConfig> =
       hourBg: 'bg-[#EEF2FA]',
       stripeEven: 'bg-[#F8FAFF]',
       stripeOdd: 'bg-white',
-      today: 'bg-[#9333EA]/10',
+      today: 'bg-[#2563EB]/10',
     },
   },
   dark: {
@@ -197,10 +197,10 @@ export const DASHBOARD_THEME: Record<DashboardThemeMode, DashboardThemeConfig> =
       toggleIcon: 'text-[#8E9CB3] hover:text-white',
       linkBase: 'text-[#8E9CB3]',
       linkHover: 'hover:bg-[#1F2633] hover:text-white',
-      linkActive: 'bg-[#9333EA]/20 text-white border border-[#9333EA]/40',
-      badgeAdmin: 'bg-[#9333EA]/15 text-[#9333EA]',
+      linkActive: 'bg-[#2563EB]/20 text-white border border-[#2563EB]/40',
+      badgeAdmin: 'bg-[#2563EB]/15 text-[#2563EB]',
       badgeDefault: 'bg-[#2F3542] text-[#8E9CB3]',
-      active: 'bg-[#1F2633] border border-[#9333EA]/40 text-white',
+      active: 'bg-[#1F2633] border border-[#2563EB]/40 text-white',
       hover: 'bg-[#1F2633]',
     },
     header: {
@@ -222,19 +222,19 @@ export const DASHBOARD_THEME: Record<DashboardThemeMode, DashboardThemeConfig> =
       info: 'bg-status-info/20 text-status-info',
     },
     buttons: {
-      primary: 'bg-[#9333EA] text-white hover:bg-[#9333EA]/90',
+      primary: 'bg-[#2563EB] text-white hover:bg-[#2563EB]/90',
       secondary: 'bg-[#1F2633] text-[#CED7EA] hover:bg-[#252E3D]',
-      ghost: 'border border-[#2F3542] text-[#8E9CB3] hover:border-[#9333EA] hover:text-[#9333EA]',
+      ghost: 'border border-[#2F3542] text-[#8E9CB3] hover:border-[#2563EB] hover:text-[#2563EB]',
       success: 'bg-status-success text-white hover:bg-status-success-dark',
       danger: 'bg-status-danger text-white hover:bg-status-danger-dark',
       warning: 'bg-status-warning text-white hover:bg-status-warning-dark',
       info: 'bg-status-info text-white hover:bg-status-info/90',
     },
     surface: 'bg-[#1A2230] text-white',
-    input: 'bg-[#1F2633] border border-[#2F3542] text-white focus:border-[#9333EA] focus:ring-[#9333EA]/20',
+    input: 'bg-[#1F2633] border border-[#2F3542] text-white focus:border-[#2563EB] focus:ring-[#2563EB]/20',
     listDivider: 'border-[#2F3542]',
     button: {
-      primary: 'bg-[#9333EA]',
+      primary: 'bg-[#2563EB]',
       secondary: 'bg-[#1F2633]',
     },
     timeline: {
@@ -244,7 +244,7 @@ export const DASHBOARD_THEME: Record<DashboardThemeMode, DashboardThemeConfig> =
       hourBg: 'bg-[#1A2230]',
       stripeEven: 'bg-[#1F2633]',
       stripeOdd: 'bg-[#141A24]',
-      today: 'bg-[#9333EA]/10',
+      today: 'bg-[#2563EB]/10',
     },
   },
 };

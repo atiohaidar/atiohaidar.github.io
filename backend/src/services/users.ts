@@ -60,10 +60,17 @@ const mapRecord = (row: unknown): UserRecord => {
 	return parsed.data;
 };
 
-export const listUsers = async (db: D1Database): Promise<UserPublic[]> => {
+export const listUsers = async (
+	db: D1Database,
+	options: { limit?: number; offset?: number } = {}
+): Promise<UserPublic[]> => {
 	await ensureInitialized(db);
+	const limit = options.limit ?? 50;
+	const offset = options.offset ?? 0;
+
 	const { results } = await db
-		.prepare("SELECT username, name, role FROM users ORDER BY username")
+		.prepare("SELECT username, name, role FROM users ORDER BY username LIMIT ? OFFSET ?")
+		.bind(limit, offset)
 		.all();
 
 	return (results ?? []).map(mapPublic);

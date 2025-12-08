@@ -27,7 +27,7 @@ export class AuthLogin extends OpenAPIRoute {
 					"application/json": {
 						schema: z.object({
 							success: Bool(),
-							token: Str({ description: "Base64 encoded session token" }),
+							token: Str({ description: "JWT access token" }),
 							user: UserPublicSchema,
 						}),
 					},
@@ -63,7 +63,7 @@ export class AuthLogin extends OpenAPIRoute {
 			);
 		}
 
-		const token = createToken(matchedUser);
+		const token = await createToken(matchedUser);
 
 		return c.json({
 			success: true,

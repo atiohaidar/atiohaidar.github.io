@@ -56,11 +56,11 @@ const toRoom = (row: Record<string, unknown>): RoomRecord => {
 
 export const listRooms = async (
 	db: D1Database,
-	options: { available?: boolean | undefined } = {},
+	options: { available?: boolean | undefined; limit?: number; offset?: number } = {},
 ) => {
 	await ensureInitialized(db);
 
-	const { available } = options;
+	const { available, limit = 50, offset = 0 } = options;
 
 	let query = "SELECT id, name, capacity, description, available, created_at, updated_at FROM rooms";
 	const bindings: unknown[] = [];
@@ -70,7 +70,8 @@ export const listRooms = async (
 		bindings.push(available ? 1 : 0);
 	}
 
-	query += " ORDER BY name";
+	query += " ORDER BY name LIMIT ? OFFSET ?";
+	bindings.push(limit, offset);
 
 	const { results } = await db.prepare(query).bind(...bindings).all();
 
@@ -96,14 +97,8 @@ export const createRoom = async (
 	await ensureInitialized(db);
 	const data = RoomCreateSchema.parse(input);
 
-	// Generate unique ID
-	const generateRoomId = () => {
-		const timestamp = Date.now();
-		const random = Math.random().toString(36).substring(2, 8);
-		return `room-${timestamp}-${random}`;
-	};
-
-	const roomId = generateRoomId();
+	// Generate unique ID using crypto for security
+	const roomId = `room-${crypto.randomUUID()}`;
 
 	try {
 		await db
@@ -112,7 +107,7 @@ export const createRoom = async (
 			)
 			.bind(roomId, data.name, data.capacity, data.description ?? null, data.available ? 1 : 0)
 			.run();
-		
+
 		return roomId;
 	} catch (error) {
 		if (error instanceof Error && error.message.includes("UNIQUE")) {

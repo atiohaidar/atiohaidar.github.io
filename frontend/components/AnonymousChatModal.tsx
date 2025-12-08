@@ -8,6 +8,7 @@ import {
     type AnonymousMessage,
 } from '../services/chatService';
 import { webSocketService } from '../services/websocketService';
+import { ChatHeader, MessageBubble, MessageInput, DateSeparator } from './chat';
 
 interface AnonymousChatModalProps {
     isOpen: boolean;
@@ -16,7 +17,6 @@ interface AnonymousChatModalProps {
 
 const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose }) => {
     const [messages, setMessages] = useState<AnonymousMessage[]>([]);
-    const [messageContent, setMessageContent] = useState('');
     const [replyTo, setReplyTo] = useState<AnonymousMessage | null>(null);
     const [senderId, setSenderId] = useState<string>('');
     const [loading, setLoading] = useState(false);
@@ -25,11 +25,11 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
     const [showScrollToBottom, setShowScrollToBottom] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
     const [showResetConfirm, setShowResetConfirm] = useState(false);
+    const [onlineUsers, setOnlineUsers] = useState(0);
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const isUserScrollingRef = useRef(false);
-    const lastMessageCountRef = useRef(0);
 
     useEffect(() => {
         // Generate or retrieve anonymous sender ID
@@ -40,36 +40,6 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
         }
         setSenderId(storedId);
     }, []);
-
-    // Handle WebSocket messages
-    // const handleWebSocketMessage = useCallback((data: any) => {
-    //     if (data.type === 'new_message') {
-    //         setMessages(prev => {
-    //             // Check if message already exists to avoid duplicates
-    //             const exists = prev.some(msg => msg.id === data.message.id);
-    //             if (exists) return prev;
-
-    //             const newMessages = [...prev, data.message];
-    //             const isAtBottom = checkIfAtBottom();
-
-    //             // Auto-scroll if user is at bottom, otherwise increment unread count
-    //             if (isAtBottom) {
-    //                 setTimeout(() => scrollToBottom(), 100);
-    //             } else {
-    //                 setUnreadCount(prev => prev + 1);
-    //             }
-
-    //             return newMessages;
-    //         });
-    //     } else if (data.type === 'welcome') {
-    //         setIsConnected(true);
-    //         console.log(`Connected to chat room. ${data.connections} users online.`);
-    //     } else if (data.type === 'connections_update') {
-    //         console.log(`${data.connections} users online.`);
-    //     } else if (data.type === 'error') {
-    //         setError(data.message);
-    //     }
-    // }, []);
 
     // Check if user is at bottom of messages
     const checkIfAtBottom = useCallback(() => {
@@ -125,8 +95,12 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
             setTimeout(() => scrollToBottom(), 100);
         } else if (data.type === 'clear_messages') {
             setMessages([]);
+        } else if (data.type === 'connections_update' || data.type === 'welcome') {
+            if (data.connections) {
+                setOnlineUsers(data.connections);
+            }
         }
-    }, []);
+    }, [scrollToBottom]);
 
     useEffect(() => {
         if (isOpen) {
@@ -136,9 +110,7 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
                 setError(null);
                 try {
                     const data = await getAnonymousMessages();
-                    // Reverse to show oldest first, newest at bottom
                     setMessages(data);
-                    // Scroll to bottom after messages load
                     setTimeout(() => scrollToBottom(), 100);
                 } catch (err: any) {
                     setError(err.message || 'Failed to load messages');
@@ -178,8 +150,8 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
         }
     }, [isOpen, handleWebSocketMessage, handleScroll, handleUserScrollStart, handleUserScrollEnd, scrollToBottom]);
 
-    const handleSendMessage = async () => {
-        if (!messageContent.trim() || !senderId) return;
+    const handleSendMessage = async (content: string, replyToId?: string) => {
+        if (!content.trim() || !senderId) return;
 
         setError(null);
         try {
@@ -188,26 +160,24 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
                 webSocketService.sendMessage({
                     type: 'send_message',
                     sender_id: senderId,
-                    content: messageContent.trim(),
-                    reply_to_id: replyTo?.id
+                    content: content.trim(),
+                    reply_to_id: replyToId
                 });
 
-                setMessageContent('');
                 setReplyTo(null);
             } else {
                 // Fallback to REST API
                 console.log('WebSocket not connected, using REST API fallback');
                 const data: any = {
                     sender_id: senderId,
-                    content: messageContent.trim(),
+                    content: content.trim(),
                 };
 
-                if (replyTo) {
-                    data.reply_to_id = replyTo.id;
+                if (replyToId) {
+                    data.reply_to_id = replyToId;
                 }
 
                 await sendAnonymousMessage(data);
-                setMessageContent('');
                 setReplyTo(null);
                 await loadMessages();
             }
@@ -222,7 +192,6 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
         try {
             const data = await getAnonymousMessages();
             setMessages(data);
-            // Scroll to bottom after loading messages
             setTimeout(() => scrollToBottom(), 100);
         } catch (err: any) {
             setError(err.message || 'Failed to load messages');
@@ -301,61 +270,48 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
 
     if (!isOpen) return null;
 
+    const chatActions = (
+        <div className="flex items-center gap-2">
+            <Link
+                to="/fullscreen-chat"
+                className="p-2 rounded-full text-white hover:bg-white/10 transition-colors"
+                title="Buka fullscreen chat"
+                onClick={() => {
+                    webSocketService.disconnect(); // Disconnect before closing modal
+                    onClose(); // Close modal when going fullscreen
+                }}
+            >
+                ⛶
+            </Link>
+            <button
+                onClick={() => setShowResetConfirm(true)}
+                disabled={loading || messages.length === 0}
+                className="p-2 rounded-full text-white hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Hapus semua pesan"
+            >
+                🗑️
+            </button>
+            <button
+                onClick={loadMessages}
+                disabled={loading}
+                className="p-2 rounded-full text-white hover:bg-white/10 transition-colors disabled:opacity-50"
+                title="Muat ulang pesan"
+            >
+                {loading ? '⟳' : '🔄'}
+            </button>
+        </div>
+    );
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
             <div className={`${COLORS.BG_SECONDARY} rounded-lg shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden`}>
-                {/* Header */}
-                <div className={`p-3 ${COLORS.BORDER_ACCENT} flex justify-between items-center bg-[#2563EB]`}>
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-xl">
-                            💬
-                        </div>
-                        <div>
-                            <h2 className={`text-base font-medium text-white`}>Chat Anonim</h2>
-                            <p className="text-xs text-white/80 flex items-center gap-2">
-                                Ruang chat publik
-                                <span className={`inline-block w-2 h-2 rounded-full ${isConnected ? 'bg-green-400' : 'bg-red-400'}`}></span>
-                                {isConnected ? 'Terhubung' : 'Mencoba menghubungkan...'}
-                            </p>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <Link
-                            to="/fullscreen-chat"
-                            className="p-2 rounded-full text-white hover:bg-white/10 transition-colors"
-                            title="Buka fullscreen chat"
-                            onClick={() => {
-                                webSocketService.disconnect(); // Disconnect before closing modal
-                                onClose(); // Close modal when going fullscreen
-                            }}
-                        >
-                            ⛶
-                        </Link>
-                        <button
-                            onClick={() => setShowResetConfirm(true)}
-                            disabled={loading || messages.length === 0}
-                            className={`p-2 rounded-full text-white hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
-                            title="Hapus semua pesan"
-                        >
-                            🗑️
-                        </button>
-                        <button
-                            onClick={loadMessages}
-                            disabled={loading}
-                            className={`p-2 rounded-full text-white hover:bg-white/10 transition-colors disabled:opacity-50`}
-                            title="Muat ulang pesan"
-                        >
-                            {loading ? '⟳' : '🔄'}
-                        </button>
-                        <button
-                            onClick={onClose}
-                            className={`p-2 rounded-full text-white hover:bg-white/10 transition-colors`}
-                            title="Tutup"
-                        >
-                            ✕
-                        </button>
-                    </div>
-                </div>
+
+                <ChatHeader
+                    isConnected={isConnected}
+                    onlineUsers={onlineUsers} // Pass online users if backend supports it
+                    onClose={onClose}
+                    actions={chatActions}
+                />
 
                 {/* Messages */}
                 <div
@@ -372,65 +328,27 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
                             Belum ada pesan. Jadilah yang pertama untuk mengatakan sesuatu!
                         </div>
                     )}
+
                     {messages.length > 0 && Object.entries(groupMessagesByDate(messages))
-                        .sort(([dateA], [dateB]) => dateA.localeCompare(dateB)) // Sort by date ascending
+                        .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
                         .map(([dateKey, dateMessages]) => (
                             <div key={dateKey}>
-                                {/* Date Header */}
-                                <div className="flex items-center justify-center my-4">
-                                    <div className="bg-[#1f2c34] text-gray-300 text-xs px-3 py-1 rounded-full border border-[#2a3942]">
-                                        {formatDateHeader(dateKey)}
-                                    </div>
-                                </div>
+                                <DateSeparator dateLabel={formatDateHeader(dateKey)} />
 
-                                {/* Messages for this date */}
                                 {dateMessages
                                     .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
                                     .map((msg) => (
-                                        <div
+                                        <MessageBubble
                                             key={msg.id}
-                                            className={`flex ${msg.sender_id === senderId ? 'justify-end' : 'justify-start'} mb-1`}
-                                        >
-                                            <div className="flex flex-col max-w-[70%]">
-                                                <div
-                                                    className={`relative p-2 px-3 shadow-sm ${msg.sender_id === senderId
-                                                        ? 'bg-[#1D4ED8] text-white rounded-tl-lg rounded-tr-lg rounded-bl-lg'
-                                                        : 'bg-[#1f2c34] text-gray-100 rounded-tl-lg rounded-tr-lg rounded-br-lg'
-                                                        }`}
-                                                >
-                                                    <div className="text-xs mb-1 opacity-70">
-                                                        {msg.sender_id === senderId ? 'Anda' : `Anonim-${msg.sender_id.slice(-6)}`}
-                                                    </div>
-                                                    {msg.reply_to_id && msg.reply_content && (
-                                                        <div className={`text-xs p-2 mb-2 rounded border-l-4 ${msg.sender_id === senderId ? 'bg-[#1E40AF] border-[#3B82F6]' : 'bg-[#182229] border-[#3B82F6]'}`}>
-                                                            <div className="font-medium text-[#60A5FA]">
-                                                                {msg.reply_sender_id === senderId ? 'Anda' : `Anonim-${msg.reply_sender_id?.slice(-6)}`}
-                                                            </div>
-                                                            <div className="truncate opacity-80">{msg.reply_content}</div>
-                                                        </div>
-                                                    )}
-                                                    <div className="break-words">
-                                                        {msg.content}
-                                                    </div>
-                                                    <div className="flex items-center justify-end gap-1 mt-1">
-                                                        <span className="text-[10px] opacity-60">
-                                                            {new Date(msg.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                {msg.sender_id !== senderId && (
-                                                    <button
-                                                        onClick={() => handleReply(msg)}
-                                                        className="text-[10px] mt-1 ml-3 text-gray-400 hover:underline"
-                                                    >
-                                                        Balas
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </div>
+                                            message={msg}
+                                            currentUserId={senderId}
+                                            isOwnMessage={msg.sender_id === senderId}
+                                            onReply={handleReply}
+                                        />
                                     ))}
                             </div>
                         ))}
+
                     {/* Invisible element to scroll to */}
                     <div ref={messagesEndRef} />
 
@@ -455,53 +373,14 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
                     )}
                 </div>
 
-                {/* Message Input */}
-                <div className={`p-3 ${COLORS.BORDER_ACCENT} bg-[#1f2c34]`}>
-                    {replyTo && (
-                        <div className={`mb-2 p-2 rounded-lg bg-[#2a3942] flex justify-between items-start border-l-4 border-[#3B82F6]`}>
-                            <div className="flex-1">
-                                <div className="text-xs font-medium text-[#60A5FA]">
-                                    Membalas {replyTo.sender_id === senderId ? 'Anda' : `Anonim-${replyTo.sender_id.slice(-6)}`}
-                                </div>
-                                <div className="text-sm truncate opacity-80 text-gray-300">{replyTo.content}</div>
-                            </div>
-                            <button
-                                onClick={cancelReply}
-                                className="ml-2 text-gray-400 hover:text-red-500"
-                            >
-                                ✕
-                            </button>
-                        </div>
-                    )}
-                    <div className="flex gap-2 items-center">
-                        <input
-                            type="text"
-                            value={messageContent}
-                            onChange={(e) => setMessageContent(e.target.value)}
-                            onKeyPress={(e) => {
-                                if (e.key === 'Enter' && !e.shiftKey) {
-                                    e.preventDefault();
-                                    handleSendMessage();
-                                }
-                            }}
-                            placeholder="Ketik pesan anonim Anda..."
-                            className={`flex-1 px-4 py-3 rounded-full bg-[#2a3942] text-white focus:ring-2 focus:ring-[#3B82F6] focus:outline-none`}
-                        />
-                        <button
-                            onClick={handleSendMessage}
-                            disabled={!messageContent.trim() || loading}
-                            className={`p-3 rounded-full bg-[#2563EB] text-white hover:bg-[#1D4ED8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
-                            title="Kirim"
-                        >
-                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
-                            </svg>
-                        </button>
-                    </div>
-                    <div className={`text-xs text-gray-400 mt-2`}>
-                        Pesan Anda bersifat anonim. ID Anda: Anonim-{senderId.slice(-6)}
-                    </div>
-                </div>
+                <MessageInput
+                    onSendMessage={handleSendMessage}
+                    isConnected={isConnected}
+                    currentUserId={senderId}
+                    replyingTo={replyTo}
+                    onCancelReply={cancelReply}
+                    disabled={loading}
+                />
             </div>
 
             {/* Reset Confirmation Modal */}
