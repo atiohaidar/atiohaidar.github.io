@@ -17,6 +17,8 @@ export const unstable_settings = {
   anchor: '(public)',
 };
 
+import { LinearGradient } from 'expo-linear-gradient';
+
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
   const paperTheme = colorScheme === 'dark' ? darkTheme : lightTheme;
@@ -39,16 +41,28 @@ function RootLayoutNav() {
     }
   }, [isAuthenticated, loading, segments, router]);
 
+  // Global Background Gradient Colors
+  const gradientColors = colorScheme === 'dark'
+    ? ['#222222', '#1E40AF', '#222222'] as const // Deep Navy -> Blue -> Deep Navy
+    : ['#F5F5F5', '#E0F2FE', '#F5F5F5'] as const; // Light Gray -> Light Blue -> Light Gray
+
   return (
     <PaperProvider theme={paperTheme}>
       <ThemeProvider value={navTheme}>
-        <Stack>
-          <Stack.Screen name="(public)" options={{ headerShown: false }} />
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="chat" options={{ headerShown: false }} />
-          <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-        </Stack>
+        <LinearGradient
+          colors={gradientColors}
+          style={{ flex: 1 }}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <Stack screenOptions={{ contentStyle: { backgroundColor: 'transparent' } }}>
+            <Stack.Screen name="(public)" options={{ headerShown: false }} />
+            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="chat" options={{ headerShown: false }} />
+            <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+          </Stack>
+        </LinearGradient>
         <StatusBar style="auto" />
         <GlobalFeedback />
       </ThemeProvider>

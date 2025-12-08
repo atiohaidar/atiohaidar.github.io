@@ -5,56 +5,56 @@
  */
 
 export const AppColors = {
-  // Primary Brand Colors
-  primary: '#6200ee',
-  primaryLight: '#bb86fc',
-  primaryDark: '#3700b3',
-  primaryContainer: '#bb86fc',
-  
+  // Primary Brand Colors (Mapped from Web)
+  primary: '#2563EB', // accent-blue
+  primaryLight: '#60A5FA',
+  primaryDark: '#1E40AF',
+  primaryContainer: '#2563EB',
+
   // Secondary/Accent Colors
-  secondary: '#03dac6',
-  secondaryLight: '#66fff9',
-  secondaryDark: '#00a896',
-  secondaryContainer: '#018786',
-  
+  secondary: '#494949', // light-navy
+  secondaryLight: '#AAAAAA', // soft-gray
+  secondaryDark: '#222222', // deep-navy
+  secondaryContainer: '#494949',
+
   // Background Colors
-  backgroundLight: '#f5f5f5',
-  backgroundDark: '#121212',
-  surfaceLight: '#ffffff',
-  surfaceDark: '#1e1e1e',
-  
+  backgroundLight: '#F5F5F5', // light-bg
+  backgroundDark: '#222222', // deep-navy
+  surfaceLight: '#FFFFFF', // light-card
+  surfaceDark: 'rgba(30, 30, 30, 0.6)', // glass effect base
+
   // Text Colors
-  textPrimaryLight: '#000000',
-  textPrimaryDark: '#ffffff',
-  textSecondaryLight: '#666666',
-  textSecondaryDark: '#b3b3b3',
-  
-  // Status Colors
-  success: '#4caf50',
-  warning: '#ff9800',
-  error: '#b00020',
-  errorDark: '#cf6679',
-  info: '#2196f3',
-  
+  textPrimaryLight: '#1F2937', // light-text
+  textPrimaryDark: '#FFFFFF',
+  textSecondaryLight: '#6B7280', // light-muted
+  textSecondaryDark: '#D0D0D0', // light-slate
+
+  // Status Colors (Kept vibrant)
+  success: '#1AAE6F',
+  warning: '#FBBF24',
+  error: '#FF6B6B',
+  errorDark: '#C44545',
+  info: '#2563EB',
+
   // UI Element Colors
-  border: '#e0e0e0',
-  borderDark: '#333333',
-  divider: '#e0e0e0',
-  dividerDark: '#2c2c2c',
-  
+  border: '#E5E7EB',
+  borderDark: 'rgba(255, 255, 255, 0.1)',
+  divider: '#E5E7EB',
+  dividerDark: 'rgba(255, 255, 255, 0.1)',
+
   // Functional Colors
-  disabled: '#9e9e9e',
-  placeholder: '#9e9e9e',
+  disabled: '#9CA3AF',
+  placeholder: '#9CA3AF',
   shadow: '#000000',
   overlay: 'rgba(0, 0, 0, 0.5)',
-  
-  // Stat Card Colors
-  statBlue: '#2196F3',
-  statGreen: '#4CAF50',
-  statOrange: '#FF9800',
-  statPurple: '#9C27B0',
-  statRed: '#F44336',
-  
+
+  // Stat Card Colors (Updated to richer tones)
+  statBlue: '#2563EB',
+  statGreen: '#1AAE6F',
+  statOrange: '#F59E0B',
+  statPurple: '#7C3AED',
+  statRed: '#EF4444',
+
   // Transparent
   transparent: 'transparent',
 };

@@ -30,11 +30,17 @@ export const darkTheme = {
     secondaryContainer: AppColors.secondaryContainer,
     background: AppColors.backgroundDark,
     surface: AppColors.surfaceDark,
+    surfaceVariant: 'rgba(255, 255, 255, 0.05)', // For improved card contrast
     error: AppColors.errorDark,
-    onPrimary: '#000000',
-    onSecondary: '#000000',
+    onPrimary: '#FFFFFF',
+    onSecondary: '#FFFFFF',
     onBackground: AppColors.textPrimaryDark,
     onSurface: AppColors.textPrimaryDark,
-    onError: '#000000',
+    onError: '#FFFFFF',
+    elevation: {
+      ...MD3DarkTheme.colors.elevation,
+      level1: 'rgba(30, 30, 30, 0.4)',
+      level2: 'rgba(30, 30, 30, 0.6)',
+    }
   },
 };

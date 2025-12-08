@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
-import { Button, Text, Card, useTheme, HelperText, Checkbox } from 'react-native-paper';
+import { Button, Text, useTheme, HelperText, Checkbox } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
-import type { LoginRequest } from '@/types/api';
 import { useSavedAccounts } from '@/hooks/useSavedAccounts';
+import type { LoginRequest } from '@/types/api';
 import { LoginFields } from './components/LoginFields';
 import { DemoCredentials } from './components/DemoCredentials';
 import { SavedAccountsList } from './components/SavedAccountsList';
+import { GlassCard } from '@/components/GlassCard';
 
 export default function LoginScreen() {
   const [username, setUsername] = useState('');
@@ -70,15 +71,16 @@ export default function LoginScreen() {
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
         <View style={styles.content}>
-          <Card style={styles.card}>
-            <Card.Content>
-              <Text variant="headlineMedium" style={styles.title}>
+          <GlassCard style={styles.card}>
+            <View style={styles.cardContent}>
+              <Text variant="headlineMedium" style={[styles.title, { color: theme.colors.primary }]}>
                 Welcome Back
               </Text>
               <Text variant="bodyMedium" style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}>
-                Sign in to continue
+                Sign in to manage your dashboard
               </Text>
 
               <View style={styles.form}>
@@ -97,8 +99,9 @@ export default function LoginScreen() {
                     status={rememberMe ? 'checked' : 'unchecked'}
                     onPress={() => setRememberMe(!rememberMe)}
                     disabled={loading}
+                    color={theme.colors.primary}
                   />
-                  <Text variant="bodyMedium" style={styles.rememberLabel}>
+                  <Text variant="bodyMedium" style={[styles.rememberLabel, { color: theme.colors.onSurface }]}>
                     Remember this login
                   </Text>
                 </View>
@@ -116,6 +119,7 @@ export default function LoginScreen() {
                   disabled={loading}
                   style={styles.button}
                   contentStyle={styles.buttonContent}
+                  labelStyle={styles.buttonLabel}
                 >
                   {loading ? 'Signing in...' : 'Sign In'}
                 </Button>
@@ -129,8 +133,8 @@ export default function LoginScreen() {
                   onRemove={handleRemoveAccount}
                 />
               </View>
-            </Card.Content>
-          </Card>
+            </View>
+          </GlassCard>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -149,9 +153,15 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     justifyContent: 'center',
+    maxWidth: 600,
+    width: '100%',
+    alignSelf: 'center',
   },
   card: {
-    elevation: 4,
+    width: '100%',
+  },
+  cardContent: {
+    padding: 24,
   },
   title: {
     textAlign: 'center',
@@ -160,27 +170,33 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     textAlign: 'center',
-    marginBottom: 24,
+    marginBottom: 32,
   },
   form: {
-    marginTop: 16,
+    marginTop: 0,
   },
   rememberRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 24,
+    marginTop: 8,
   },
   rememberLabel: {
-    marginLeft: 4,
+    marginLeft: 8,
   },
   button: {
-    marginTop: 8,
-    marginBottom: 16,
+    marginBottom: 24,
+    borderRadius: 8,
   },
   buttonContent: {
-    paddingVertical: 8,
+    paddingVertical: 6,
+  },
+  buttonLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   error: {
     marginBottom: 8,
+    textAlign: 'center',
   },
 });

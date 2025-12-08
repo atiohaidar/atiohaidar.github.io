@@ -1,10 +1,11 @@
 import React from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
-import { Card, Text, useTheme, Avatar, ActivityIndicator } from 'react-native-paper';
+import { Text, useTheme, Avatar, ActivityIndicator } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '@/contexts/AuthContext';
 import { useStats } from '@/hooks/useApi';
 import { AppColors } from '@/constants/colors';
+import { GlassCard } from '@/components/GlassCard';
 
 export default function HomeScreen() {
   const { data: stats, isLoading, refetch, isRefetching } = useStats();
@@ -15,7 +16,7 @@ export default function HomeScreen() {
   if (isLoading) {
     return (
       <View style={styles.centerContainer}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color={AppColors.primary} />
       </View>
     );
   }
@@ -23,13 +24,13 @@ export default function HomeScreen() {
   const statCards = [
     ...(isAdmin && stats?.totalUsers
       ? [
-          {
-            title: 'Total Users',
-            value: stats.totalUsers,
-            icon: 'account-group',
-            color: AppColors.statBlue,
-          },
-        ]
+        {
+          title: 'Total Users',
+          value: stats.totalUsers,
+          icon: 'account-group',
+          color: AppColors.statBlue,
+        },
+      ]
       : []),
     {
       title: 'Total Tasks',
@@ -47,13 +48,13 @@ export default function HomeScreen() {
     },
     ...(isAdmin && stats?.totalRooms
       ? [
-          {
-            title: 'Rooms',
-            value: stats.totalRooms,
-            icon: 'door',
-            color: AppColors.statPurple,
-          },
-        ]
+        {
+          title: 'Rooms',
+          value: stats.totalRooms,
+          icon: 'door',
+          color: AppColors.statPurple,
+        },
+      ]
       : []),
     {
       title: 'Bookings',
@@ -69,11 +70,11 @@ export default function HomeScreen() {
       style={styles.container}
       contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
       refreshControl={
-        <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} />
+        <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor={theme.colors.onSurface} />
       }
     >
       <View style={styles.header}>
-        <Text variant="headlineMedium" style={styles.welcomeText}>
+        <Text variant="headlineMedium" style={[styles.welcomeText, { color: theme.colors.onSurface }]}>
           Welcome, {user?.name || user?.username}!
         </Text>
         <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
@@ -83,18 +84,19 @@ export default function HomeScreen() {
 
       <View style={styles.statsGrid}>
         {statCards.map((stat, index) => (
-          <Card key={index} style={styles.statCard} mode="elevated">
-            <Card.Content style={styles.statCardContent}>
+          <GlassCard key={index} style={styles.statCard} mode="elevated">
+            <View style={styles.statCardContent}>
               <Avatar.Icon
                 size={48}
                 icon={stat.icon}
                 style={[styles.statIcon, { backgroundColor: stat.color }]}
+                color="#FFF"
               />
               <View style={styles.statTextContainer}>
-                <Text variant="headlineMedium" style={styles.statValue}>
+                <Text variant="headlineMedium" style={[styles.statValue, { color: theme.colors.onSurface }]}>
                   {stat.value}
                 </Text>
-                <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
+                <Text variant="bodyMedium" style={{ color: theme.colors.onSurface }}>
                   {stat.title}
                 </Text>
                 {stat.subtitle && (
@@ -103,30 +105,30 @@ export default function HomeScreen() {
                   </Text>
                 )}
               </View>
-            </Card.Content>
-          </Card>
+            </View>
+          </GlassCard>
         ))}
       </View>
 
-      <Card style={styles.infoCard} mode="elevated">
-        <Card.Content>
-          <Text variant="titleMedium" style={styles.infoTitle}>
+      <GlassCard style={styles.infoCard} mode="elevated">
+        <View style={{ padding: 16 }}>
+          <Text variant="titleMedium" style={[styles.infoTitle, { color: theme.colors.onSurface }]}>
             Quick Actions
           </Text>
-          <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
+          <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, marginBottom: 8 }}>
             • Navigate to Tasks tab to manage your tasks
           </Text>
-          <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
+          <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, marginBottom: 8 }}>
             • Check Articles for published content
           </Text>
-          <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
+          <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, marginBottom: 8 }}>
             • Visit Bookings to reserve rooms
           </Text>
           <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
             • Use Chat to communicate with others
           </Text>
-        </Card.Content>
-      </Card>
+        </View>
+      </GlassCard>
     </ScrollView>
   );
 }
@@ -135,6 +137,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    backgroundColor: 'transparent',
   },
   centerContainer: {
     flex: 1,
@@ -153,11 +156,12 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   statCard: {
-    elevation: 2,
+    // GlassCard handles background and border
   },
   statCardContent: {
     flexDirection: 'row',
     alignItems: 'center',
+    padding: 16,
   },
   statIcon: {
     marginRight: 16,
@@ -170,7 +174,6 @@ const styles = StyleSheet.create({
   },
   infoCard: {
     marginBottom: 16,
-    elevation: 2,
   },
   infoTitle: {
     fontWeight: 'bold',
