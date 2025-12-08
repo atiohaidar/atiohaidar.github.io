@@ -12,10 +12,12 @@ import type {
     UserUpdate,
     Task,
     TaskCreate,
+    Ticket,
+    Event as ApiEvent,
+    DashboardStats,
 } from '../apiTypes';
 import { setAuthToken, setStoredUser, removeAuthToken, removeStoredUser } from '../apiClient';
 
-// Query keys
 // Query keys
 export const queryKeys = {
     users: ['users'] as const,
@@ -137,7 +139,7 @@ export const useTickets = (params?: { status?: string }): UseQueryResult<Ticket[
 };
 
 // Event hooks
-export const useEvents = (): UseQueryResult<Event[], Error> => {
+export const useEvents = (): UseQueryResult<ApiEvent[], Error> => {
     return useQuery({
         queryKey: queryKeys.events,
         queryFn: api.listEvents,

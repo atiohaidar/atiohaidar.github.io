@@ -2,25 +2,76 @@ import React from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { DASHBOARD_THEME } from '../utils/styles';
 import { getStoredUser } from '../apiClient';
-
-// Mock data for visual demonstration
-const stats = [
-    { title: 'Total Tasks', value: '12', trend: '+2 this week', icon: '📝', color: 'from-blue-500 to-cyan-400' },
-    { title: 'New Messages', value: '5', trend: '3 unread', icon: '💬', color: 'from-blue-600 to-indigo-500' },
-    { title: 'Active Tickets', value: '8', trend: '2 critical', icon: '🎫', color: 'from-orange-500 to-red-500' },
-    { title: 'Upcoming Events', value: '3', trend: 'Next: Tomorrow', icon: '🎉', color: 'from-teal-500 to-emerald-400' },
-];
-
-const recentActivities = [
-    { id: 1, type: 'task', title: 'Complete project documentation', time: '2 hours ago', status: 'In Progress' },
-    { id: 2, type: 'chat', title: 'New message from Alice', time: '4 hours ago', status: 'Unread' },
-    { id: 3, type: 'system', title: 'System update scheduled', time: '1 day ago', status: 'Info' },
-];
+import { useDashboardStats, useTickets, useEvents } from '../hooks/useApi';
 
 const DashboardOverviewPage: React.FC = () => {
     const { theme } = useTheme();
     const user = getStoredUser();
     const palette = DASHBOARD_THEME[theme];
+
+    // Fetch real data
+    const { data: statsData, isLoading: isStatsLoading } = useDashboardStats();
+    const { data: ticketsData, isLoading: isTicketsLoading } = useTickets();
+    const { data: eventsData, isLoading: isEventsLoading } = useEvents();
+
+    // Calculate stats
+    const totalTasks = statsData?.totalTasks || 0;
+    const pendingTickets = ticketsData?.filter(t => t.status !== 'solved').length || 0;
+    const upcomingEventsCount = eventsData?.filter(e => new Date(e.event_date) > new Date()).length || 0;
+
+    // Mock for now until chat API is ready in frontend
+    const unreadMessages = 0;
+
+    const stats = [
+        {
+            title: 'Total Tasks',
+            value: isStatsLoading ? '...' : totalTasks.toString(),
+            trend: 'Check tasks',
+            icon: '📝',
+            color: 'from-blue-500 to-cyan-400'
+        },
+        {
+            title: 'Unread Messages',
+            value: unreadMessages.toString(),
+            trend: 'Chat system',
+            icon: '💬',
+            color: 'from-blue-600 to-indigo-500'
+        },
+        {
+            title: 'Active Tickets',
+            value: isTicketsLoading ? '...' : pendingTickets.toString(),
+            trend: 'Open issues',
+            icon: '🎫',
+            color: 'from-orange-500 to-red-500'
+        },
+        {
+            title: 'Upcoming Events',
+            value: isEventsLoading ? '...' : upcomingEventsCount.toString(),
+            trend: 'Next: Soon',
+            icon: '🎉',
+            color: 'from-teal-500 to-emerald-400'
+        },
+    ];
+
+    // Combine recent activities
+    const recentTickets = ticketsData?.slice(0, 3).map(t => ({
+        id: `ticket-${t.id}`,
+        type: 'Ticket',
+        title: t.title,
+        time: new Date(t.created_at || Date.now()).toLocaleDateString(),
+        status: t.status
+    })) || [];
+
+    const recentEvents = eventsData?.slice(0, 2).map(e => ({
+        id: `event-${e.id}`,
+        type: 'Event',
+        title: e.title,
+        time: new Date(e.event_date).toLocaleDateString(),
+        status: 'Upcoming'
+    })) || [];
+
+    // Simple merge and sort could be done here, but for now just show tickets as activity
+    const recentActivities = [...recentTickets, ...recentEvents].slice(0, 5);
 
     // Get current greeting based on time
     const hour = new Date().getHours();
@@ -98,19 +149,23 @@ const DashboardOverviewPage: React.FC = () => {
                 <div className={`p-6 rounded-3xl border ${theme === 'dark' ? 'bg-[#1A2230]/60 border-white/5' : 'bg-white/60 border-gray-100'} backdrop-blur-xl shadow-xl`}>
                     <h2 className={`text-xl font-bold ${palette.panel.text} mb-6`}>Recent Activity</h2>
                     <div className="space-y-6">
-                        {recentActivities.map((activity) => (
-                            <div key={activity.id} className="flex gap-4 items-start group">
-                                <div className={`mt-1 w-2 h-2 rounded-full bg-gradient-to-r from-blue-400 to-cyan-500 shadow-[0_0_8px_rgba(37,99,235,0.5)]`} />
-                                <div>
-                                    <h4 className={`text-sm font-medium ${palette.panel.text} group-hover:text-blue-400 transition-colors`}>
-                                        {activity.title}
-                                    </h4>
-                                    <p className={`text-xs ${palette.panel.textMuted} mt-1`}>
-                                        {activity.time} • {activity.status}
-                                    </p>
+                        {recentActivities.length > 0 ? (
+                            recentActivities.map((activity) => (
+                                <div key={activity.id} className="flex gap-4 items-start group">
+                                    <div className={`mt-1 w-2 h-2 rounded-full bg-gradient-to-r from-blue-400 to-cyan-500 shadow-[0_0_8px_rgba(37,99,235,0.5)]`} />
+                                    <div>
+                                        <h4 className={`text-sm font-medium ${palette.panel.text} group-hover:text-blue-400 transition-colors`}>
+                                            {activity.title}
+                                        </h4>
+                                        <p className={`text-xs ${palette.panel.textMuted} mt-1`}>
+                                            {activity.type} • {activity.time} • {activity.status}
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))
+                        ) : (
+                            <p className={`text-sm ${palette.panel.textMuted}`}>No recent activity.</p>
+                        )}
                     </div>
 
                     <button className={`mt-8 w-full py-3 rounded-xl text-sm font-semibold transition-all ${theme === 'dark'
