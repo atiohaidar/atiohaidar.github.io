@@ -51,32 +51,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Force dark mode for dashboard to maintain Modern Dark Glass aesthetic
+    const isDark = true;
 
-    return Scaffold(
-      backgroundColor:
-          Colors.transparent, // Background handled by parent GradientBackground
-      appBar: _buildAppBar(authProvider, isDark),
-      body: _buildBody(authProvider, isDark),
-      bottomNavigationBar: _buildBottomNav(isDark),
+    return Theme(
+      data: AppTheme.darkTheme,
+      child: GradientBackground(
+        showBlobs: false,
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: _buildAppBar(authProvider, isDark),
+          body: IndexedStack(
+            index: _currentIndex,
+            children: [
+              const DashboardOverviewScreen(),
+              const TasksScreen(),
+              const TicketsScreen(),
+              const EventsScreen(),
+              _buildMoreScreen(authProvider, isDark),
+            ],
+          ),
+          bottomNavigationBar: _buildBottomNav(isDark),
+        ),
+      ),
     );
-  }
-
-  Widget _buildBody(AuthProvider authProvider, bool isDark) {
-    switch (_currentIndex) {
-      case 0:
-        return const DashboardOverviewScreen();
-      case 1:
-        return const TasksScreen();
-      case 2:
-        return const TicketsScreen();
-      case 3:
-        return const EventsScreen();
-      case 4:
-        return _buildMoreScreen(authProvider, isDark);
-      default:
-        return const DashboardOverviewScreen();
-    }
   }
 
   PreferredSizeWidget _buildAppBar(AuthProvider authProvider, bool isDark) {
@@ -116,7 +114,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             color:
                 isDark ? AppColors.textSecondary : AppColors.lightTextSecondary,
           ),
-          onPressed: () {},
+          onPressed: () => context.push('/notifications'),
         ),
         PopupMenuButton<String>(
           icon: CircleAvatar(
@@ -133,6 +131,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           onSelected: (value) {
             if (value == 'logout') {
               authProvider.logout();
+            } else if (value == 'profile') {
+              context.push('/profile');
             }
           },
           itemBuilder: (context) => [

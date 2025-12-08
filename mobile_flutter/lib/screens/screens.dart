@@ -12,3 +12,5 @@ export 'items/items_screen.dart';
 export 'users/users_screen.dart';
 export 'chat/chat_list_screen.dart';
 export 'chat/chat_screen.dart';
+export 'profile/profile_screen.dart';
+export 'notifications/notifications_screen.dart';

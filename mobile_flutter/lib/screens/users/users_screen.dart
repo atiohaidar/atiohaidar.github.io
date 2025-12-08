@@ -278,14 +278,65 @@ class _UsersScreenState extends State<UsersScreen> {
               ],
             ),
           ),
-          IconButton(
+          PopupMenuButton<String>(
             icon: Icon(
               Icons.more_vert,
               color: isDark ? AppColors.textMuted : Colors.grey.shade400,
             ),
-            onPressed: () {
-              // TODO: Edit/Delete user
+            onSelected: (value) {
+              if (value == 'edit') {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Edit not implemented yet')),
+                );
+              } else if (value == 'delete') {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Delete User'),
+                    content:
+                        Text('Are you sure you want to delete ${user.name}?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          final provider = context.read<UsersProvider>();
+                          await provider.deleteUser(user.username);
+                          if (context.mounted) Navigator.pop(context);
+                        },
+                        style: TextButton.styleFrom(
+                            foregroundColor: AppColors.error),
+                        child: const Text('Delete'),
+                      ),
+                    ],
+                  ),
+                );
+              }
             },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'edit',
+                child: Row(
+                  children: [
+                    Icon(Icons.edit, size: 20),
+                    SizedBox(width: 8),
+                    Text('Edit'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'delete',
+                child: Row(
+                  children: [
+                    Icon(Icons.delete, size: 20, color: AppColors.error),
+                    SizedBox(width: 8),
+                    Text('Delete', style: TextStyle(color: AppColors.error)),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),

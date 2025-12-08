@@ -98,6 +98,18 @@ class AppRouter {
                     ChatScreen(conversationId: id, conversation: conversation));
           },
         ),
+        GoRoute(
+          path: '/profile',
+          name: 'profile',
+          builder: (context, state) =>
+              GradientBackground(child: const ProfileScreen()),
+        ),
+        GoRoute(
+          path: '/notifications',
+          name: 'notifications',
+          builder: (context, state) =>
+              GradientBackground(child: const NotificationsScreen()),
+        ),
       ],
       errorPageBuilder: (context, state) => MaterialPage(
         child: Scaffold(
