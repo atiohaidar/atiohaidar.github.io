@@ -28,13 +28,13 @@ class ChatMessage extends Equatable {
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) {
     return ChatMessage(
-      id: json['id'].toString(),
-      conversationId: json['conversation_id']?.toString(),
-      groupId: json['group_id']?.toString(),
+      id: json['id'] as String,
+      conversationId: json['conversation_id'] as String?,
+      groupId: json['group_id'] as String?,
       senderUsername: json['sender_username'] as String,
       senderName: json['sender_name'] as String?,
       content: json['content'] as String,
-      replyToId: json['reply_to_id']?.toString(),
+      replyToId: json['reply_to_id'] as String?,
       replyContent: json['reply_content'] as String?,
       replySenderName: json['reply_sender_name'] as String?,
       createdAt: json['created_at'] as String,
@@ -54,15 +54,7 @@ class ChatMessage extends Equatable {
   }
 
   @override
-  List<Object?> get props => [
-        id,
-        conversationId,
-        groupId,
-        senderUsername,
-        content,
-        replyToId,
-        createdAt
-      ];
+  List<Object?> get props => [id, conversationId, groupId, senderUsername, content, replyToId, createdAt];
 }
 
 /// Chat conversation model
@@ -90,9 +82,8 @@ class ChatConversation extends Equatable {
   });
 
   factory ChatConversation.fromJson(Map<String, dynamic> json) {
-    print('ChatConversation.fromJson: $json');
     return ChatConversation(
-      id: json['id'].toString(),
+      id: json['id'] as String,
       user1Username: json['user1_username'] as String,
       user2Username: json['user2_username'] as String,
       otherUsername: json['other_username'] as String?,
@@ -119,8 +110,7 @@ class ChatConversation extends Equatable {
   }
 
   @override
-  List<Object?> get props =>
-      [id, user1Username, user2Username, otherUsername, lastMessage, updatedAt];
+  List<Object?> get props => [id, user1Username, user2Username, otherUsername, lastMessage, updatedAt];
 }
 
 /// Message create request
