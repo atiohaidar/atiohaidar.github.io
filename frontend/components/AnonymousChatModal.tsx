@@ -242,17 +242,17 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
     // Group messages by date
     const groupMessagesByDate = useCallback((messages: AnonymousMessage[]) => {
         const groups: { [date: string]: AnonymousMessage[] } = {};
-        
+
         messages.forEach(msg => {
             const date = new Date(msg.created_at);
             const dateKey = date.toISOString().split('T')[0]; // YYYY-MM-DD format
-            
+
             if (!groups[dateKey]) {
                 groups[dateKey] = [];
             }
             groups[dateKey].push(msg);
         });
-        
+
         return groups;
     }, []);
 
@@ -262,15 +262,15 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
         const today = new Date();
         const yesterday = new Date(today);
         yesterday.setDate(yesterday.getDate() - 1);
-        
+
         if (date.toDateString() === today.toDateString()) {
             return 'Hari Ini';
         } else if (date.toDateString() === yesterday.toDateString()) {
             return 'Kemarin';
         } else {
-            return date.toLocaleDateString('id-ID', { 
-                weekday: 'long', 
-                day: 'numeric', 
+            return date.toLocaleDateString('id-ID', {
+                weekday: 'long',
+                day: 'numeric',
                 month: 'long',
                 year: date.getFullYear() !== today.getFullYear() ? 'numeric' : undefined
             });
@@ -305,7 +305,7 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
             <div className={`${COLORS.BG_SECONDARY} rounded-lg shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden`}>
                 {/* Header */}
-                <div className={`p-3 ${COLORS.BORDER_ACCENT} flex justify-between items-center bg-[#00a884]`}>
+                <div className={`p-3 ${COLORS.BORDER_ACCENT} flex justify-between items-center bg-[#2563EB]`}>
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-xl">
                             💬
@@ -358,7 +358,7 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
                 </div>
 
                 {/* Messages */}
-                <div 
+                <div
                     ref={messagesContainerRef}
                     className="flex-1 overflow-y-auto p-4 space-y-2 bg-[#0a1014] relative"
                 >
@@ -375,76 +375,75 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
                     {messages.length > 0 && Object.entries(groupMessagesByDate(messages))
                         .sort(([dateA], [dateB]) => dateA.localeCompare(dateB)) // Sort by date ascending
                         .map(([dateKey, dateMessages]) => (
-                        <div key={dateKey}>
-                            {/* Date Header */}
-                            <div className="flex items-center justify-center my-4">
-                                <div className="bg-[#1f2c34] text-gray-300 text-xs px-3 py-1 rounded-full border border-[#2a3942]">
-                                    {formatDateHeader(dateKey)}
-                                </div>
-                            </div>
-                            
-                            {/* Messages for this date */}
-                            {dateMessages
-                                .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
-                                .map((msg) => (
-                                <div
-                                    key={msg.id}
-                                    className={`flex ${msg.sender_id === senderId ? 'justify-end' : 'justify-start'} mb-1`}
-                                >
-                                    <div className="flex flex-col max-w-[70%]">
-                                        <div
-                                            className={`relative p-2 px-3 shadow-sm ${
-                                                msg.sender_id === senderId
-                                                    ? 'bg-[#005c4b] text-white rounded-tl-lg rounded-tr-lg rounded-bl-lg'
-                                                    : 'bg-[#1f2c34] text-gray-100 rounded-tl-lg rounded-tr-lg rounded-br-lg'
-                                            }`}
-                                        >
-                                            <div className="text-xs mb-1 opacity-70">
-                                                {msg.sender_id === senderId ? 'Anda' : `Anonim-${msg.sender_id.slice(-6)}`}
-                                            </div>
-                                            {msg.reply_to_id && msg.reply_content && (
-                                                <div className={`text-xs p-2 mb-2 rounded border-l-4 ${msg.sender_id === senderId ? 'bg-[#004a3d] border-[#00a884]' : 'bg-[#182229] border-[#00a884]'}`}>
-                                                    <div className="font-medium text-[#00a884]">
-                                                        {msg.reply_sender_id === senderId ? 'Anda' : `Anonim-${msg.reply_sender_id?.slice(-6)}`}
-                                                    </div>
-                                                    <div className="truncate opacity-80">{msg.reply_content}</div>
-                                                </div>
-                                            )}
-                                            <div className="break-words">
-                                                {msg.content}
-                                            </div>
-                                            <div className="flex items-center justify-end gap-1 mt-1">
-                                                <span className="text-[10px] opacity-60">
-                                                    {new Date(msg.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        {msg.sender_id !== senderId && (
-                                            <button
-                                                onClick={() => handleReply(msg)}
-                                                className="text-[10px] mt-1 ml-3 text-gray-400 hover:underline"
-                                            >
-                                                Balas
-                                            </button>
-                                        )}
+                            <div key={dateKey}>
+                                {/* Date Header */}
+                                <div className="flex items-center justify-center my-4">
+                                    <div className="bg-[#1f2c34] text-gray-300 text-xs px-3 py-1 rounded-full border border-[#2a3942]">
+                                        {formatDateHeader(dateKey)}
                                     </div>
                                 </div>
-                            ))}
-                        </div>
-                    ))}
+
+                                {/* Messages for this date */}
+                                {dateMessages
+                                    .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+                                    .map((msg) => (
+                                        <div
+                                            key={msg.id}
+                                            className={`flex ${msg.sender_id === senderId ? 'justify-end' : 'justify-start'} mb-1`}
+                                        >
+                                            <div className="flex flex-col max-w-[70%]">
+                                                <div
+                                                    className={`relative p-2 px-3 shadow-sm ${msg.sender_id === senderId
+                                                        ? 'bg-[#1D4ED8] text-white rounded-tl-lg rounded-tr-lg rounded-bl-lg'
+                                                        : 'bg-[#1f2c34] text-gray-100 rounded-tl-lg rounded-tr-lg rounded-br-lg'
+                                                        }`}
+                                                >
+                                                    <div className="text-xs mb-1 opacity-70">
+                                                        {msg.sender_id === senderId ? 'Anda' : `Anonim-${msg.sender_id.slice(-6)}`}
+                                                    </div>
+                                                    {msg.reply_to_id && msg.reply_content && (
+                                                        <div className={`text-xs p-2 mb-2 rounded border-l-4 ${msg.sender_id === senderId ? 'bg-[#1E40AF] border-[#3B82F6]' : 'bg-[#182229] border-[#3B82F6]'}`}>
+                                                            <div className="font-medium text-[#60A5FA]">
+                                                                {msg.reply_sender_id === senderId ? 'Anda' : `Anonim-${msg.reply_sender_id?.slice(-6)}`}
+                                                            </div>
+                                                            <div className="truncate opacity-80">{msg.reply_content}</div>
+                                                        </div>
+                                                    )}
+                                                    <div className="break-words">
+                                                        {msg.content}
+                                                    </div>
+                                                    <div className="flex items-center justify-end gap-1 mt-1">
+                                                        <span className="text-[10px] opacity-60">
+                                                            {new Date(msg.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                {msg.sender_id !== senderId && (
+                                                    <button
+                                                        onClick={() => handleReply(msg)}
+                                                        className="text-[10px] mt-1 ml-3 text-gray-400 hover:underline"
+                                                    >
+                                                        Balas
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))}
+                            </div>
+                        ))}
                     {/* Invisible element to scroll to */}
                     <div ref={messagesEndRef} />
-                    
+
                     {/* Scroll to bottom button */}
                     {showScrollToBottom && (
                         <button
                             onClick={scrollToBottom}
-                            className="fixed bottom-24 right-6 bg-[#00a884] hover:bg-[#008069] text-white rounded-full p-3 shadow-lg transition-all duration-200 z-10"
+                            className="fixed bottom-24 right-6 bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded-full p-3 shadow-lg transition-all duration-200 z-10"
                             title="Lihat pesan terbaru"
                         >
                             <div className="relative">
                                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M7 14l5-5 5 5z"/>
+                                    <path d="M7 14l5-5 5 5z" />
                                 </svg>
                                 {unreadCount > 0 && (
                                     <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full min-w-[20px] h-5 flex items-center justify-center px-1">
@@ -459,9 +458,9 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
                 {/* Message Input */}
                 <div className={`p-3 ${COLORS.BORDER_ACCENT} bg-[#1f2c34]`}>
                     {replyTo && (
-                        <div className={`mb-2 p-2 rounded-lg bg-[#2a3942] flex justify-between items-start border-l-4 border-[#00a884]`}>
+                        <div className={`mb-2 p-2 rounded-lg bg-[#2a3942] flex justify-between items-start border-l-4 border-[#3B82F6]`}>
                             <div className="flex-1">
-                                <div className="text-xs font-medium text-[#00a884]">
+                                <div className="text-xs font-medium text-[#60A5FA]">
                                     Membalas {replyTo.sender_id === senderId ? 'Anda' : `Anonim-${replyTo.sender_id.slice(-6)}`}
                                 </div>
                                 <div className="text-sm truncate opacity-80 text-gray-300">{replyTo.content}</div>
@@ -486,16 +485,16 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
                                 }
                             }}
                             placeholder="Ketik pesan anonim Anda..."
-                            className={`flex-1 px-4 py-3 rounded-full bg-[#2a3942] text-white focus:ring-2 focus:ring-[#00a884] focus:outline-none`}
+                            className={`flex-1 px-4 py-3 rounded-full bg-[#2a3942] text-white focus:ring-2 focus:ring-[#3B82F6] focus:outline-none`}
                         />
                         <button
                             onClick={handleSendMessage}
                             disabled={!messageContent.trim() || loading}
-                            className={`p-3 rounded-full bg-[#00a884] text-white hover:bg-[#008069] transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
+                            className={`p-3 rounded-full bg-[#2563EB] text-white hover:bg-[#1D4ED8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
                             title="Kirim"
                         >
                             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
                             </svg>
                         </button>
                     </div>
@@ -521,7 +520,7 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
                             Hapus Semua Pesan?
                         </h2>
                         <p className={`${COLORS.TEXT_SECONDARY} mb-6`}>
-                            Tindakan ini akan menghapus semua pesan anonim secara permanen. 
+                            Tindakan ini akan menghapus semua pesan anonim secara permanen.
                             Pesan yang sudah terkirim tidak dapat dikembalikan.
                         </p>
                         <div className="flex flex-col gap-3 sm:flex-row">

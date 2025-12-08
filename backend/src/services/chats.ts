@@ -35,15 +35,15 @@ interface GroupMember {
 }
 
 export class ChatService {
-	constructor(private env: Bindings) {}
+	constructor(private env: Bindings) { }
 
 	// Conversation methods
 	async getOrCreateConversation(user1: string, user2: string): Promise<Conversation> {
 		const db = this.env.DB;
-		
+
 		// Sort usernames to ensure consistency
 		const [sortedUser1, sortedUser2] = [user1, user2].sort();
-		
+
 		// Check if conversation exists
 		const existing = await db
 			.prepare("SELECT * FROM conversations WHERE user1_username = ? AND user2_username = ?")
@@ -74,7 +74,7 @@ export class ChatService {
 
 	async getUserConversations(username: string): Promise<any[]> {
 		const db = this.env.DB;
-		
+
 		const conversations = await db
 			.prepare(`
 				SELECT 
@@ -131,7 +131,7 @@ export class ChatService {
 
 	async getConversationMessages(conversationId: string, limit = 50): Promise<any[]> {
 		const db = this.env.DB;
-		
+
 		const messages = await db
 			.prepare(`
 				SELECT 
@@ -155,7 +155,7 @@ export class ChatService {
 
 	async getGroupMessages(groupId: string, limit = 50): Promise<any[]> {
 		const db = this.env.DB;
-		
+
 		const messages = await db
 			.prepare(`
 				SELECT 
@@ -204,7 +204,7 @@ export class ChatService {
 
 	async getGroup(groupId: string): Promise<GroupChat | null> {
 		const db = this.env.DB;
-		
+
 		const group = await db
 			.prepare("SELECT * FROM group_chats WHERE id = ?")
 			.bind(groupId)
@@ -215,7 +215,7 @@ export class ChatService {
 
 	async getUserGroups(username: string): Promise<any[]> {
 		const db = this.env.DB;
-		
+
 		const groups = await db
 			.prepare(`
 				SELECT 
@@ -237,14 +237,14 @@ export class ChatService {
 
 	async updateGroup(groupId: string, name?: string, description?: string): Promise<void> {
 		const db = this.env.DB;
-		
+
 		if (name) {
 			await db
 				.prepare("UPDATE group_chats SET name = ? WHERE id = ?")
 				.bind(name, groupId)
 				.run();
 		}
-		
+
 		if (description !== undefined) {
 			await db
 				.prepare("UPDATE group_chats SET description = ? WHERE id = ?")
@@ -261,7 +261,7 @@ export class ChatService {
 	// Group member methods
 	async addGroupMember(groupId: string, username: string, role: string = "member"): Promise<void> {
 		const db = this.env.DB;
-		
+
 		await db
 			.prepare(
 				"INSERT OR IGNORE INTO group_members (group_id, user_username, role) VALUES (?, ?, ?)"
@@ -272,7 +272,7 @@ export class ChatService {
 
 	async removeGroupMember(groupId: string, username: string): Promise<void> {
 		const db = this.env.DB;
-		
+
 		await db
 			.prepare("DELETE FROM group_members WHERE group_id = ? AND user_username = ?")
 			.bind(groupId, username)
@@ -281,7 +281,7 @@ export class ChatService {
 
 	async getGroupMembers(groupId: string): Promise<any[]> {
 		const db = this.env.DB;
-		
+
 		const members = await db
 			.prepare(`
 				SELECT 
@@ -300,7 +300,7 @@ export class ChatService {
 
 	async isGroupMember(groupId: string, username: string): Promise<boolean> {
 		const db = this.env.DB;
-		
+
 		const member = await db
 			.prepare("SELECT * FROM group_members WHERE group_id = ? AND user_username = ?")
 			.bind(groupId, username)
@@ -311,7 +311,7 @@ export class ChatService {
 
 	async isGroupAdmin(groupId: string, username: string): Promise<boolean> {
 		const db = this.env.DB;
-		
+
 		const member = await db
 			.prepare("SELECT * FROM group_members WHERE group_id = ? AND user_username = ? AND role = 'admin'")
 			.bind(groupId, username)
@@ -322,7 +322,7 @@ export class ChatService {
 
 	async updateMemberRole(groupId: string, username: string, role: string): Promise<void> {
 		const db = this.env.DB;
-		
+
 		await db
 			.prepare("UPDATE group_members SET role = ? WHERE group_id = ? AND user_username = ?")
 			.bind(role, groupId, username)
@@ -332,7 +332,7 @@ export class ChatService {
 
 // Anonymous chat service
 export class AnonymousChatService {
-	constructor(private env: Bindings) {}
+	constructor(private env: Bindings) { }
 
 	async sendMessage(senderId: string, content: string, replyToId?: string): Promise<any> {
 		const db = this.env.DB;
@@ -356,7 +356,7 @@ export class AnonymousChatService {
 
 	async getMessages(limit = 100): Promise<any[]> {
 		const db = this.env.DB;
-		
+
 		const messages = await db
 			.prepare(`
 				SELECT 
@@ -397,5 +397,38 @@ export class AnonymousChatService {
 	async deleteAllMessages(): Promise<void> {
 		const db = this.env.DB;
 		await db.prepare("DELETE FROM anonymous_messages").run();
+	}
+
+	// Batch insert messages for better performance
+	async sendMessagesBatch(messages: Array<{ sender_id: string; content: string; reply_to_id?: string }>): Promise<any[]> {
+		const db = this.env.DB;
+		const savedMessages: any[] = [];
+		const statements: D1PreparedStatement[] = [];
+
+		for (const msg of messages) {
+			const id = `anon-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+			const created_at = new Date().toISOString();
+
+			statements.push(
+				db.prepare(
+					"INSERT INTO anonymous_messages (id, sender_id, content, reply_to_id) VALUES (?, ?, ?, ?)"
+				).bind(id, msg.sender_id, msg.content, msg.reply_to_id || null)
+			);
+
+			savedMessages.push({
+				id,
+				sender_id: msg.sender_id,
+				content: msg.content,
+				reply_to_id: msg.reply_to_id,
+				created_at,
+			});
+		}
+
+		// Execute all inserts in a single batch transaction
+		if (statements.length > 0) {
+			await db.batch(statements);
+		}
+
+		return savedMessages;
 	}
 }

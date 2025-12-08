@@ -15,7 +15,7 @@ import {
     type Message,
 } from '../services/chatService';
 
-interface ChatPageProps {}
+interface ChatPageProps { }
 
 const ChatPage: React.FC<ChatPageProps> = () => {
     const { theme } = useTheme();
@@ -224,21 +224,19 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                 {/* Tabs */}
                 <div className={`flex ${palette.sidebar.border}`}>
                     <button
-                        className={`flex-1 py-3 px-4 font-medium transition-colors ${
-                            activeTab === 'direct'
-                                ? `${theme === 'dark' ? 'bg-[#111b21] text-[#00a884]' : 'bg-white text-[#00a884]'} border-b-2 border-[#00a884]`
-                                : `${palette.sidebar.textMuted} hover:${palette.sidebar.hover}`
-                        }`}
+                        className={`flex-1 py-3 px-4 font-medium transition-colors ${activeTab === 'direct'
+                            ? `${theme === 'dark' ? 'bg-[#111b21] text-[#9333EA]' : 'bg-white text-[#9333EA]'} border-b-2 border-[#9333EA]`
+                            : `${palette.sidebar.textMuted} hover:${palette.sidebar.hover}`
+                            }`}
                         onClick={() => setActiveTab('direct')}
                     >
                         💬 Chat Langsung
                     </button>
                     <button
-                        className={`flex-1 py-3 px-4 font-medium transition-colors ${
-                            activeTab === 'group'
-                                ? `${theme === 'dark' ? 'bg-[#111b21] text-[#00a884]' : 'bg-white text-[#00a884]'} border-b-2 border-[#00a884]`
-                                : `${palette.sidebar.textMuted} hover:${palette.sidebar.hover}`
-                        }`}
+                        className={`flex-1 py-3 px-4 font-medium transition-colors ${activeTab === 'group'
+                            ? `${theme === 'dark' ? 'bg-[#111b21] text-[#9333EA]' : 'bg-white text-[#9333EA]'} border-b-2 border-[#9333EA]`
+                            : `${palette.sidebar.textMuted} hover:${palette.sidebar.hover}`
+                            }`}
                         onClick={() => setActiveTab('group')}
                     >
                         👥 Grup
@@ -250,7 +248,7 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                     <button
                         onClick={loadChats}
                         disabled={loading}
-                        className={`w-full py-2 px-4 rounded-lg bg-[#00a884] text-white hover:bg-[#008069] transition-colors disabled:opacity-50`}
+                        className={`w-full py-2 px-4 rounded-lg bg-[#2563EB] text-white hover:bg-[#1D4ED8] transition-colors disabled:opacity-50`}
                     >
                         {loading ? '⟳ Memuat ulang...' : '🔄 Muat Ulang'}
                     </button>
@@ -282,11 +280,10 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                                 conversations.map((conv) => (
                                     <div
                                         key={conv.id}
-                                        className={`p-3 cursor-pointer transition-colors ${palette.sidebar.border} flex items-center gap-3 ${
-                                            selectedChat === conv.id && chatType === 'conversation'
-                                                ? palette.sidebar.active
-                                                : `hover:${palette.sidebar.hover}`
-                                        }`}
+                                        className={`p-3 cursor-pointer transition-colors ${palette.sidebar.border} flex items-center gap-3 ${selectedChat === conv.id && chatType === 'conversation'
+                                            ? palette.sidebar.active
+                                            : `hover:${palette.sidebar.hover}`
+                                            }`}
                                         onClick={() => selectChat(conv.id, 'conversation')}
                                     >
                                         <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0 ${theme === 'dark' ? 'bg-[#2a3942]' : 'bg-gray-400'}`}>
@@ -314,11 +311,10 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                                 groups.map((group) => (
                                     <div
                                         key={group.id}
-                                        className={`p-3 cursor-pointer transition-colors ${palette.sidebar.border} flex items-center gap-3 ${
-                                            selectedChat === group.id && chatType === 'group'
-                                                ? palette.sidebar.active
-                                                : `hover:${palette.sidebar.hover}`
-                                        }`}
+                                        className={`p-3 cursor-pointer transition-colors ${palette.sidebar.border} flex items-center gap-3 ${selectedChat === group.id && chatType === 'group'
+                                            ? palette.sidebar.active
+                                            : `hover:${palette.sidebar.hover}`
+                                            }`}
                                         onClick={() => selectChat(group.id, 'group')}
                                     >
                                         <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0 ${theme === 'dark' ? 'bg-[#2a3942]' : 'bg-gray-400'}`}>
@@ -395,15 +391,14 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                                             </div>
                                         )}
                                         <div
-                                            className={`relative p-2 px-3 shadow-sm ${
-                                                msg.sender_username === user?.username
-                                                    ? 'bg-[#005c4b] text-white rounded-tl-lg rounded-tr-lg rounded-bl-lg'
-                                                    : theme === 'dark' ? 'bg-[#1f2c34] text-gray-100 rounded-tl-lg rounded-tr-lg rounded-br-lg' : 'bg-white text-gray-900 rounded-tl-lg rounded-tr-lg rounded-br-lg'
-                                            }`}
+                                            className={`relative p-2 px-3 shadow-sm ${msg.sender_username === user?.username
+                                                ? 'bg-[#1D4ED8] text-white rounded-tl-lg rounded-tr-lg rounded-bl-lg'
+                                                : theme === 'dark' ? 'bg-[#1f2c34] text-gray-100 rounded-tl-lg rounded-tr-lg rounded-br-lg' : 'bg-white text-gray-900 rounded-tl-lg rounded-tr-lg rounded-br-lg'
+                                                }`}
                                         >
                                             {msg.reply_to_id && msg.reply_content && (
-                                                <div className={`text-xs p-2 mb-2 rounded border-l-4 ${msg.sender_username === user?.username ? 'bg-[#004a3d] border-[#00a884]' : theme === 'dark' ? 'bg-[#182229] border-[#00a884]' : 'bg-gray-100 border-[#00a884]'}`}>
-                                                    <div className="font-medium text-[#00a884]">{msg.reply_sender_name}</div>
+                                                <div className={`text-xs p-2 mb-2 rounded border-l-4 ${msg.sender_username === user?.username ? 'bg-[#1E40AF] border-[#3B82F6]' : theme === 'dark' ? 'bg-[#182229] border-[#3B82F6]' : 'bg-gray-100 border-[#3B82F6]'}`}>
+                                                    <div className="font-medium text-[#60A5FA]">{msg.reply_sender_name}</div>
                                                     <div className="truncate opacity-80">{msg.reply_content}</div>
                                                 </div>
                                             )}
@@ -430,9 +425,9 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                         {/* Message Input */}
                         <div className={`flex-shrink-0 p-3 ${palette.sidebar.border}`} style={{ backgroundColor: theme === 'dark' ? '#1f2c34' : '#f0f2f5' }}>
                             {replyTo && (
-                                <div className={`mb-2 p-2 rounded-lg ${theme === 'dark' ? 'bg-[#2a3942]' : 'bg-white'} flex justify-between items-start border-l-4 border-[#00a884]`}>
+                                <div className={`mb-2 p-2 rounded-lg ${theme === 'dark' ? 'bg-[#2a3942]' : 'bg-white'} flex justify-between items-start border-l-4 border-[#3B82F6]`}>
                                     <div className="flex-1">
-                                        <div className="text-xs font-medium text-[#00a884]">Membalas {replyTo.sender_name}</div>
+                                        <div className="text-xs font-medium text-[#60A5FA]">Membalas {replyTo.sender_name}</div>
                                         <div className="text-sm truncate opacity-80">{replyTo.content}</div>
                                     </div>
                                     <button
@@ -455,16 +450,16 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                                         }
                                     }}
                                     placeholder="Ketik pesan..."
-                                    className={`flex-1 px-4 py-3 rounded-full ${theme === 'dark' ? 'bg-[#2a3942] text-white' : 'bg-white text-gray-900'} focus:ring-2 focus:ring-[#00a884] focus:outline-none`}
+                                    className={`flex-1 px-4 py-3 rounded-full ${theme === 'dark' ? 'bg-[#2a3942] text-white' : 'bg-white text-gray-900'} focus:ring-2 focus:ring-[#3B82F6] focus:outline-none`}
                                 />
                                 <button
                                     onClick={handleSendMessage}
                                     disabled={!messageContent.trim() || loading}
-                                    className={`p-3 rounded-full bg-[#00a884] text-white hover:bg-[#008069] transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
+                                    className={`p-3 rounded-full bg-[#2563EB] text-white hover:bg-[#1D4ED8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
                                     title="Kirim"
                                 >
                                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
                                     </svg>
                                 </button>
                             </div>

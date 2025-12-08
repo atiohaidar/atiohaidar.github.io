@@ -48,7 +48,10 @@ function generateToken(): string {
 }
 
 // Event CRUD operations
-export async function listEvents(db: D1Database, filters?: { created_by?: string }): Promise<Event[]> {
+export async function listEvents(
+	db: D1Database,
+	filters?: { created_by?: string; limit?: number; offset?: number }
+): Promise<Event[]> {
 	let query = "SELECT * FROM events";
 	const params: any[] = [];
 
@@ -58,6 +61,12 @@ export async function listEvents(db: D1Database, filters?: { created_by?: string
 	}
 
 	query += " ORDER BY event_date DESC";
+
+	// Add pagination with sensible defaults
+	const limit = filters?.limit ?? 50;
+	const offset = filters?.offset ?? 0;
+	query += " LIMIT ? OFFSET ?";
+	params.push(limit, offset);
 
 	const result = await db.prepare(query).bind(...params).all();
 	return result.results as unknown as Event[];
@@ -259,19 +268,20 @@ export async function removeEventAdmin(db: D1Database, eventId: string, username
 }
 
 export async function isEventAdmin(db: D1Database, eventId: string, username: string): Promise<boolean> {
-	// Check if user is event creator
-	const event = await getEvent(db, eventId);
-	if (event?.created_by === username) {
-		return true;
-	}
-
-	// Check if user is assigned as admin
-	const admin = await db
-		.prepare("SELECT * FROM event_admins WHERE event_id = ? AND user_username = ?")
-		.bind(eventId, username)
+	// Single query to check both creator and admin status
+	const result = await db
+		.prepare(`
+			SELECT 1 as is_admin FROM events 
+			WHERE id = ? AND created_by = ?
+			UNION ALL
+			SELECT 1 as is_admin FROM event_admins 
+			WHERE event_id = ? AND user_username = ?
+			LIMIT 1
+		`)
+		.bind(eventId, username, eventId, username)
 		.first();
 
-	return !!admin;
+	return !!result;
 }
 
 // Attendance scan operations
@@ -350,7 +360,7 @@ export async function getAttendeeWithScans(
 }
 
 // Get all scans for an event with attendee information
-export async function listAllEventScans(db: D1Database, eventId: string): Promise<Array<AttendanceScan & { 
+export async function listAllEventScans(db: D1Database, eventId: string): Promise<Array<AttendanceScan & {
 	attendee_username: string;
 	attendee_status: string;
 }>> {

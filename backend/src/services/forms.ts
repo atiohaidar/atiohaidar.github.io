@@ -1,9 +1,9 @@
 import { z } from "zod";
-import { 
-	Form, 
-	FormQuestion, 
-	FormCreateSchema, 
-	FormUpdateSchema, 
+import {
+	Form,
+	FormQuestion,
+	FormCreateSchema,
+	FormUpdateSchema,
 	FormResponse,
 	FormResponseCreateSchema,
 	FormAnswer,
@@ -136,24 +136,25 @@ export const createForm = async (
 	const formId = `form-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
 	const token = generateToken();
 
-	// Insert form
-	await db
-		.prepare(
+	// Prepare all statements for batch execution
+	const statements: D1PreparedStatement[] = [
+		db.prepare(
 			"INSERT INTO forms (id, title, description, token, created_by) VALUES (?, ?, ?, ?, ?)"
-		)
-		.bind(formId, data.title, data.description ?? null, token, username)
-		.run();
+		).bind(formId, data.title, data.description ?? null, token, username)
+	];
 
-	// Insert questions
+	// Add all question inserts to the batch
 	for (const question of data.questions) {
 		const questionId = `q-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
-		await db
-			.prepare(
+		statements.push(
+			db.prepare(
 				"INSERT INTO form_questions (id, form_id, question_text, question_order) VALUES (?, ?, ?, ?)"
-			)
-			.bind(questionId, formId, question.question_text, question.question_order)
-			.run();
+			).bind(questionId, formId, question.question_text, question.question_order)
+		);
 	}
+
+	// Execute all inserts in a single batch transaction
+	await db.batch(statements);
 
 	// Retrieve and return the created form with questions
 	const form = await getForm(db, formId);
@@ -174,6 +175,9 @@ export const updateForm = async (
 ) => {
 	const updates = FormUpdateSchema.parse(input);
 
+	// Collect all statements for batch execution
+	const statements: D1PreparedStatement[] = [];
+
 	// Update form metadata if provided
 	const setFragments: string[] = [];
 	const values: unknown[] = [];
@@ -191,7 +195,7 @@ export const updateForm = async (
 	if (setFragments.length > 0) {
 		values.push(id);
 		const statement = `UPDATE forms SET ${setFragments.join(", ")} WHERE id = ?`;
-		await db.prepare(statement).bind(...values).run();
+		statements.push(db.prepare(statement).bind(...values));
 	}
 
 	// Update questions if provided
@@ -209,30 +213,33 @@ export const updateForm = async (
 			incomingIds.add(targetId);
 
 			if (existingById.has(targetId)) {
-				await db
-					.prepare(
+				statements.push(
+					db.prepare(
 						"UPDATE form_questions SET question_text = ?, question_order = ? WHERE id = ? AND form_id = ?"
-					)
-					.bind(question.question_text, question.question_order, targetId, id)
-					.run();
+					).bind(question.question_text, question.question_order, targetId, id)
+				);
 			} else {
-				await db
-					.prepare(
+				statements.push(
+					db.prepare(
 						"INSERT INTO form_questions (id, form_id, question_text, question_order) VALUES (?, ?, ?, ?)"
-					)
-					.bind(targetId, id, question.question_text, question.question_order)
-					.run();
+					).bind(targetId, id, question.question_text, question.question_order)
+				);
 			}
 		}
 
 		for (const existing of existingQuestions) {
 			if (!incomingIds.has(existing.id)) {
-				await db
-					.prepare("DELETE FROM form_questions WHERE id = ? AND form_id = ?")
-					.bind(existing.id, id)
-					.run();
+				statements.push(
+					db.prepare("DELETE FROM form_questions WHERE id = ? AND form_id = ?")
+						.bind(existing.id, id)
+				);
 			}
 		}
+	}
+
+	// Execute all updates in a single batch transaction
+	if (statements.length > 0) {
+		await db.batch(statements);
 	}
 
 	// Retrieve and return the updated form with questions
@@ -268,24 +275,25 @@ export const submitFormResponse = async (
 	// Generate response ID
 	const responseId = `resp-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
 
-	// Insert response
-	await db
-		.prepare(
+	// Prepare all statements for batch execution
+	const statements: D1PreparedStatement[] = [
+		db.prepare(
 			"INSERT INTO form_responses (id, form_id, respondent_name) VALUES (?, ?, ?)"
-		)
-		.bind(responseId, formId, data.respondent_name ?? null)
-		.run();
+		).bind(responseId, formId, data.respondent_name ?? null)
+	];
 
-	// Insert answers
+	// Add all answer inserts to the batch
 	for (const answer of data.answers) {
 		const answerId = `ans-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
-		await db
-			.prepare(
+		statements.push(
+			db.prepare(
 				"INSERT INTO form_answers (id, response_id, question_id, answer_text) VALUES (?, ?, ?, ?)"
-			)
-			.bind(answerId, responseId, answer.question_id, answer.answer_text)
-			.run();
+			).bind(answerId, responseId, answer.question_id, answer.answer_text)
+		);
 	}
+
+	// Execute all inserts in a single batch transaction
+	await db.batch(statements);
 
 	return responseId;
 };
