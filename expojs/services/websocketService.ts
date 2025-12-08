@@ -5,6 +5,7 @@
  * - Message batching to reduce network calls
  * - Idle timeout to save resources
  * - Connection pooling for single room
+ * - Connection state callbacks for React hooks integration
  */
 
 interface WebSocketMessage {
@@ -18,23 +19,28 @@ interface MessageHandler {
   (msg: WebSocketMessage): void;
 }
 
+interface ConnectionStateHandler {
+  (isConnected: boolean): void;
+}
+
 export class WebSocketService {
   private socket: WebSocket | null = null;
   private messageHandlers: MessageHandler[] = [];
+  private connectionStateHandlers: ConnectionStateHandler[] = [];
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
   private reconnectInterval = 1000; // Start with 1 second
   private isConnecting = false;
-  private connectionTimeout: NodeJS.Timeout | null = null;
+  private connectionTimeout: ReturnType<typeof setTimeout> | null = null;
 
   // Message batching properties
   private messageQueue: any[] = [];
-  private batchTimeout: NodeJS.Timeout | null = null;
+  private batchTimeout: ReturnType<typeof setTimeout> | null = null;
   private readonly BATCH_DELAY = 100; // 100ms delay for batching
   private readonly MAX_BATCH_SIZE = 5; // Max 5 messages per batch
 
   // Idle timeout properties
-  private idleTimeout: NodeJS.Timeout | null = null;
+  private idleTimeout: ReturnType<typeof setTimeout> | null = null;
   private lastActivity = Date.now();
   private readonly IDLE_TIMEOUT = 5 * 60 * 1000; // 5 minutes idle timeout
 
@@ -46,7 +52,7 @@ export class WebSocketService {
     }
 
     this.isConnecting = true;
-    
+
     // Get WebSocket URL from environment or default
     const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL ?? 'https://backend.atiohaidar.workers.dev';
     const protocol = API_BASE_URL.startsWith('https') ? 'wss:' : 'ws:';
@@ -76,6 +82,8 @@ export class WebSocketService {
         this.reconnectAttempts = 0;
         this.reconnectInterval = 1000;
         this.startIdleTimeout();
+        // Notify connection state handlers
+        this.notifyConnectionState(true);
       };
 
       this.socket.onmessage = (event) => {
@@ -96,6 +104,8 @@ export class WebSocketService {
         }
         this.isConnecting = false;
         this.clearIdleTimeout();
+        // Notify connection state handlers
+        this.notifyConnectionState(false);
         this.attemptReconnect();
       };
 
@@ -133,16 +143,52 @@ export class WebSocketService {
 
   /**
    * Subscribe to WebSocket messages
+   * Prevents duplicate handlers
    */
   onMessage(handler: MessageHandler): void {
-    this.messageHandlers.push(handler);
+    if (!this.messageHandlers.includes(handler)) {
+      this.messageHandlers.push(handler);
+    }
   }
 
   /**
    * Unsubscribe from WebSocket messages
    */
   offMessage(handler: MessageHandler): void {
-    this.messageHandlers = this.messageHandlers.filter(h => h !== handler);
+    const index = this.messageHandlers.indexOf(handler);
+    if (index > -1) {
+      this.messageHandlers.splice(index, 1);
+    }
+  }
+
+  /**
+   * Subscribe to connection state changes
+   * Useful for React hooks to disable polling when WebSocket is connected
+   * Prevents duplicate handlers
+   */
+  onConnectionChange(handler: ConnectionStateHandler): void {
+    if (!this.connectionStateHandlers.includes(handler)) {
+      this.connectionStateHandlers.push(handler);
+      // Immediately notify with current state
+      handler(this.isConnected);
+    }
+  }
+
+  /**
+   * Unsubscribe from connection state changes
+   */
+  offConnectionChange(handler: ConnectionStateHandler): void {
+    const index = this.connectionStateHandlers.indexOf(handler);
+    if (index > -1) {
+      this.connectionStateHandlers.splice(index, 1);
+    }
+  }
+
+  /**
+   * Notify all connection state handlers of state change
+   */
+  private notifyConnectionState(connected: boolean): void {
+    this.connectionStateHandlers.forEach(handler => handler(connected));
   }
 
   /**
@@ -220,7 +266,7 @@ export class WebSocketService {
    */
   disconnect(): void {
     console.log('[WebSocket] Disconnecting...');
-    
+
     // Clear idle timeout
     this.clearIdleTimeout();
 

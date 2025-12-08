@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { COLORS } from '../utils/styles';
 import {
@@ -35,8 +35,8 @@ const FullscreenAnonymousChatPage: React.FC = () => {
         setSenderId(storedId);
     }, []);
 
-    // Group messages by date
-    const groupMessagesByDate = useCallback((messages: AnonymousMessage[]) => {
+    // Group messages by date - memoized to prevent recalculation on every render
+    const groupedMessages = useMemo(() => {
         const groups: { [date: string]: AnonymousMessage[] } = {};
 
         messages.forEach(msg => {
@@ -50,7 +50,19 @@ const FullscreenAnonymousChatPage: React.FC = () => {
         });
 
         return groups;
-    }, []);
+    }, [messages]);
+
+    // Sorted date entries - memoized
+    const sortedDateEntries = useMemo(() => {
+        return Object.entries(groupedMessages)
+            .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
+            .map(([dateKey, dateMessages]) => ({
+                dateKey,
+                messages: dateMessages.sort((a, b) =>
+                    new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+                )
+            }));
+    }, [groupedMessages]);
 
     // Format date header
     const formatDateHeader = useCallback((dateString: string) => {
@@ -73,8 +85,21 @@ const FullscreenAnonymousChatPage: React.FC = () => {
         }
     }, []);
 
-    // WebSocket message handler
-    const handleWebSocketMessage = useCallback((data: any) => {
+    // Scroll functions - defined first as they're used by message handlers
+    const checkIfAtBottom = useCallback(() => {
+        const container = messagesContainerRef.current;
+        if (!container) return true;
+        const threshold = 100;
+        return container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
+    }, []);
+
+    const scrollToBottom = useCallback(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, []);
+
+    // WebSocket message handler - use ref to maintain stable reference
+    const handleWebSocketMessageRef = useRef<(data: any) => void>(() => { });
+    handleWebSocketMessageRef.current = (data: any) => {
         // Any message from server implies the socket is alive
         setIsConnected(true);
 
@@ -102,19 +127,7 @@ const FullscreenAnonymousChatPage: React.FC = () => {
         } else if (data.type === 'clear_messages') {
             setMessages([]);
         }
-    }, []);
-
-    // Scroll functions
-    const checkIfAtBottom = useCallback(() => {
-        const container = messagesContainerRef.current;
-        if (!container) return true;
-        const threshold = 100;
-        return container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
-    }, []);
-
-    const scrollToBottom = useCallback(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, []);
+    };
 
     // Handle user scroll
     const handleScroll = useCallback(() => {
@@ -157,9 +170,14 @@ const FullscreenAnonymousChatPage: React.FC = () => {
 
         loadInitialMessages();
 
+        // Stable handler wrapper that delegates to the ref
+        const stableHandler = (data: any) => {
+            handleWebSocketMessageRef.current?.(data);
+        };
+
         // Setup WebSocket connection
         webSocketService.ensureConnected();
-        webSocketService.onMessage(handleWebSocketMessage);
+        webSocketService.onMessage(stableHandler);
         setIsConnected(webSocketService.isConnected);
 
         // Setup scroll event listeners
@@ -174,7 +192,7 @@ const FullscreenAnonymousChatPage: React.FC = () => {
 
         // Cleanup function
         return () => {
-            webSocketService.offMessage(handleWebSocketMessage);
+            webSocketService.offMessage(stableHandler);
             setIsConnected(false);
             if (container) {
                 container.removeEventListener('scroll', handleScroll);
@@ -184,7 +202,7 @@ const FullscreenAnonymousChatPage: React.FC = () => {
                 container.removeEventListener('mouseup', handleUserScrollEnd);
             }
         };
-    }, [senderId, handleWebSocketMessage, handleScroll, handleUserScrollStart, handleUserScrollEnd, scrollToBottom]);
+    }, [senderId, handleScroll, handleUserScrollStart, handleUserScrollEnd, scrollToBottom]);
 
     const handleSendMessage = async () => {
         if (!messageContent.trim() || !senderId) return;
@@ -330,65 +348,61 @@ const FullscreenAnonymousChatPage: React.FC = () => {
                             </div>
                         )}
 
-                        {messages.length > 0 && Object.entries(groupMessagesByDate(messages))
-                            .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
-                            .map(([dateKey, dateMessages]) => (
-                                <div key={dateKey}>
-                                    {/* Date Header */}
-                                    <div className="flex items-center justify-center my-6">
-                                        <div className="bg-[#1f2c34] text-gray-300 text-xs px-4 py-2 rounded-full border border-[#2a3942]">
-                                            {formatDateHeader(dateKey)}
-                                        </div>
+                        {messages.length > 0 && sortedDateEntries.map(({ dateKey, messages: dateMessages }) => (
+                            <div key={dateKey}>
+                                {/* Date Header */}
+                                <div className="flex items-center justify-center my-6">
+                                    <div className="bg-[#1f2c34] text-gray-300 text-xs px-4 py-2 rounded-full border border-[#2a3942]">
+                                        {formatDateHeader(dateKey)}
                                     </div>
+                                </div>
 
-                                    {/* Messages for this date */}
-                                    {dateMessages
-                                        .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
-                                        .map((msg) => (
+                                {/* Messages for this date */}
+                                {dateMessages.map((msg) => (
+                                    <div
+                                        key={msg.id}
+                                        className={`flex ${msg.sender_id === senderId ? 'justify-end' : 'justify-start'} mb-2`}
+                                    >
+                                        <div className="flex flex-col max-w-[70%]">
                                             <div
-                                                key={msg.id}
-                                                className={`flex ${msg.sender_id === senderId ? 'justify-end' : 'justify-start'} mb-2`}
+                                                className={`relative p-3 px-4 shadow-sm ${msg.sender_id === senderId
+                                                    ? 'bg-[#1D4ED8] text-white rounded-tl-lg rounded-tr-lg rounded-bl-lg'
+                                                    : 'bg-[#1f2c34] text-gray-100 rounded-tl-lg rounded-tr-lg rounded-br-lg'
+                                                    }`}
                                             >
-                                                <div className="flex flex-col max-w-[70%]">
-                                                    <div
-                                                        className={`relative p-3 px-4 shadow-sm ${msg.sender_id === senderId
-                                                            ? 'bg-[#1D4ED8] text-white rounded-tl-lg rounded-tr-lg rounded-bl-lg'
-                                                            : 'bg-[#1f2c34] text-gray-100 rounded-tl-lg rounded-tr-lg rounded-br-lg'
-                                                            }`}
-                                                    >
-                                                        <div className="text-sm mb-1 opacity-70 font-medium">
-                                                            {msg.sender_id === senderId ? 'Anda' : `Anonim-${msg.sender_id.slice(-6)}`}
+                                                <div className="text-sm mb-1 opacity-70 font-medium">
+                                                    {msg.sender_id === senderId ? 'Anda' : `Anonim-${msg.sender_id.slice(-6)}`}
+                                                </div>
+                                                {msg.reply_to_id && msg.reply_content && (
+                                                    <div className={`text-xs p-3 mb-3 rounded border-l-4 ${msg.sender_id === senderId ? 'bg-[#1E40AF] border-[#3B82F6]' : 'bg-[#182229] border-[#3B82F6]'}`}>
+                                                        <div className="font-medium text-[#60A5FA] mb-1">
+                                                            {msg.reply_sender_id === senderId ? 'Anda' : `Anonim-${msg.reply_sender_id?.slice(-6)}`}
                                                         </div>
-                                                        {msg.reply_to_id && msg.reply_content && (
-                                                            <div className={`text-xs p-3 mb-3 rounded border-l-4 ${msg.sender_id === senderId ? 'bg-[#1E40AF] border-[#3B82F6]' : 'bg-[#182229] border-[#3B82F6]'}`}>
-                                                                <div className="font-medium text-[#60A5FA] mb-1">
-                                                                    {msg.reply_sender_id === senderId ? 'Anda' : `Anonim-${msg.reply_sender_id?.slice(-6)}`}
-                                                                </div>
-                                                                <div className="truncate opacity-80">{msg.reply_content}</div>
-                                                            </div>
-                                                        )}
-                                                        <div className="break-words text-base leading-relaxed">
-                                                            {msg.content}
-                                                        </div>
-                                                        <div className="flex items-center justify-end gap-2 mt-2">
-                                                            <span className="text-xs opacity-60">
-                                                                {new Date(msg.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
-                                                            </span>
-                                                        </div>
+                                                        <div className="truncate opacity-80">{msg.reply_content}</div>
                                                     </div>
-                                                    {msg.sender_id !== senderId && (
-                                                        <button
-                                                            onClick={() => handleReply(msg)}
-                                                            className="text-xs mt-1 ml-4 text-gray-400 hover:text-[#60A5FA] hover:underline transition-colors"
-                                                        >
-                                                            Balas
-                                                        </button>
-                                                    )}
+                                                )}
+                                                <div className="break-words text-base leading-relaxed">
+                                                    {msg.content}
+                                                </div>
+                                                <div className="flex items-center justify-end gap-2 mt-2">
+                                                    <span className="text-xs opacity-60">
+                                                        {new Date(msg.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                                                    </span>
                                                 </div>
                                             </div>
-                                        ))}
-                                </div>
-                            ))}
+                                            {msg.sender_id !== senderId && (
+                                                <button
+                                                    onClick={() => handleReply(msg)}
+                                                    className="text-xs mt-1 ml-4 text-gray-400 hover:text-[#60A5FA] hover:underline transition-colors"
+                                                >
+                                                    Balas
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ))}
                         {/* Invisible element to scroll to */}
                         <div ref={messagesEndRef} />
                     </div>

@@ -50,10 +50,10 @@ export class WebSocketService {
 
 		this.isConnecting = true;
 		const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-		
+
 		// Determine WebSocket URL based on environment
 		let socketUrl: string;
-		
+
 		if (import.meta.env.DEV) {
 			// Development: use same host (proxied by Vite)
 			const host = window.location.host;
@@ -144,7 +144,10 @@ export class WebSocketService {
 	}
 
 	onMessage(handler: MessageHandler): void {
-		this.messageHandlers.push(handler);
+		// Prevent duplicate handlers
+		if (!this.messageHandlers.includes(handler)) {
+			this.messageHandlers.push(handler);
+		}
 	}
 
 	ensureConnected(): void {
@@ -154,7 +157,20 @@ export class WebSocketService {
 	}
 
 	offMessage(handler: MessageHandler): void {
-		this.messageHandlers = this.messageHandlers.filter(h => h !== handler);
+		const index = this.messageHandlers.indexOf(handler);
+		if (index > -1) {
+			this.messageHandlers.splice(index, 1);
+		}
+	}
+
+	// Check if a handler is already registered
+	hasHandler(handler: MessageHandler): boolean {
+		return this.messageHandlers.includes(handler);
+	}
+
+	// Get current handler count (useful for debugging)
+	get handlerCount(): number {
+		return this.messageHandlers.length;
 	}
 
 	sendMessage(message: {

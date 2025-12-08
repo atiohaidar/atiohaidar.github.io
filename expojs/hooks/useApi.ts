@@ -1,6 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useState, useEffect, useCallback } from 'react';
 import ApiService from '@/services/api';
 import { queryKeys } from '@/services/queryClient';
+import { webSocketService } from '@/services/websocketService';
 import * as Types from '@/types/api';
 
 // ============================================================================
@@ -16,22 +18,27 @@ export const useCurrentUser = () => {
 
 export const useLogin = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: (credentials: Types.LoginRequest) => 
+    mutationFn: (credentials: Types.LoginRequest) =>
       ApiService.login(credentials),
     onSuccess: (data) => {
       // Update the current user in the cache
       queryClient.setQueryData(queryKeys.currentUser, data.user);
-      // Invalidate all queries to refetch with new auth
-      queryClient.invalidateQueries();
+      // Invalidate specific queries that depend on auth, not all queries
+      // This is more efficient than invalidating everything
+      queryClient.invalidateQueries({ queryKey: queryKeys.stats });
+      queryClient.invalidateQueries({ queryKey: queryKeys.conversations });
+      queryClient.invalidateQueries({ queryKey: queryKeys.groups });
+      queryClient.invalidateQueries({ queryKey: queryKeys.tasks });
+      queryClient.invalidateQueries({ queryKey: queryKeys.bookings });
     },
   });
 };
 
 export const useLogout = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: () => ApiService.logout(),
     onSuccess: () => {
@@ -73,7 +80,7 @@ export const useUser = (username: string) => {
 
 export const useCreateUser = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (user: Types.UserCreate) => ApiService.createUser(user),
     onSuccess: () => {
@@ -84,7 +91,7 @@ export const useCreateUser = () => {
 
 export const useUpdateUser = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ username, updates }: { username: string; updates: Types.UserUpdate }) =>
       ApiService.updateUser(username, updates),
@@ -99,7 +106,7 @@ export const useUpdateUser = () => {
 
 export const useUpdateSelfProfile = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (updates: Types.UserUpdate) => ApiService.updateSelfProfile(updates),
     onSuccess: (data) => {
@@ -112,7 +119,7 @@ export const useUpdateSelfProfile = () => {
 
 export const useDeleteUser = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (username: string) => ApiService.deleteUser(username),
     onSuccess: () => {
@@ -144,7 +151,7 @@ export const useTask = (id?: number) => {
 
 export const useCreateTask = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (task: Types.TaskCreate) => ApiService.createTask(task),
     onSuccess: () => {
@@ -156,7 +163,7 @@ export const useCreateTask = () => {
 
 export const useUpdateTask = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ id, updates }: { id: number; updates: Types.TaskUpdate }) =>
       ApiService.updateTask(id, updates),
@@ -170,7 +177,7 @@ export const useUpdateTask = () => {
 
 export const useDeleteTask = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (id: number) => ApiService.deleteTask(id),
     onSuccess: () => {
@@ -201,7 +208,7 @@ export const useArticle = (slug: string) => {
 
 export const useCreateArticle = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (article: Types.ArticleCreate) => ApiService.createArticle(article),
     onSuccess: () => {
@@ -213,7 +220,7 @@ export const useCreateArticle = () => {
 
 export const useUpdateArticle = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ slug, updates }: { slug: string; updates: Types.ArticleUpdate }) =>
       ApiService.updateArticle(slug, updates),
@@ -227,7 +234,7 @@ export const useUpdateArticle = () => {
 
 export const useDeleteArticle = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (slug: string) => ApiService.deleteArticle(slug),
     onSuccess: () => {
@@ -258,7 +265,7 @@ export const useRoom = (roomId: string) => {
 
 export const useCreateRoom = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (room: Types.RoomCreate) => ApiService.createRoom(room),
     onSuccess: () => {
@@ -270,7 +277,7 @@ export const useCreateRoom = () => {
 
 export const useUpdateRoom = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ roomId, updates }: { roomId: string; updates: Types.RoomUpdate }) =>
       ApiService.updateRoom(roomId, updates),
@@ -283,7 +290,7 @@ export const useUpdateRoom = () => {
 
 export const useDeleteRoom = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (roomId: string) => ApiService.deleteRoom(roomId),
     onSuccess: () => {
@@ -314,7 +321,7 @@ export const useBooking = (bookingId: string) => {
 
 export const useCreateBooking = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (booking: Types.BookingCreate) => ApiService.createBooking(booking),
     onSuccess: () => {
@@ -326,7 +333,7 @@ export const useCreateBooking = () => {
 
 export const useUpdateBooking = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ bookingId, updates }: { bookingId: string; updates: Types.BookingUpdate }) =>
       ApiService.updateBookingStatus(bookingId, updates),
@@ -340,7 +347,7 @@ export const useUpdateBooking = () => {
 
 export const useCancelBooking = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (bookingId: string) => ApiService.cancelBooking(bookingId),
     onSuccess: () => {
@@ -348,6 +355,29 @@ export const useCancelBooking = () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.stats });
     },
   });
+};
+
+// ============================================================================
+// WebSocket State Hook
+// Tracks WebSocket connection state for disabling polling when connected
+// ============================================================================
+
+export const useWebSocketState = () => {
+  const [isConnected, setIsConnected] = useState(webSocketService.isConnected);
+
+  useEffect(() => {
+    const handler = (connected: boolean) => {
+      setIsConnected(connected);
+    };
+
+    webSocketService.onConnectionChange(handler);
+
+    return () => {
+      webSocketService.offConnectionChange(handler);
+    };
+  }, []);
+
+  return isConnected;
 };
 
 // ============================================================================
@@ -369,31 +399,38 @@ export const useConversation = (username: string) => {
   });
 };
 
-export const useConversationMessages = (conversationId: string) => {
+/**
+ * Hook for conversation messages with smart polling
+ * Disables polling when WebSocket is connected to prevent duplicate fetches
+ */
+export const useConversationMessages = (conversationId: string, options?: { disablePolling?: boolean }) => {
+  const wsConnected = useWebSocketState();
+
   return useQuery({
     queryKey: queryKeys.conversationMessages(conversationId),
     queryFn: () => ApiService.getConversationMessages(conversationId),
     enabled: !!conversationId,
-    // Refetch messages more frequently for real-time feel
-    refetchInterval: 5000,
+    // Disable polling when WebSocket is connected or when explicitly disabled
+    // This prevents race conditions and unnecessary network usage
+    refetchInterval: (wsConnected || options?.disablePolling) ? false : 5000,
   });
 };
 
 export const useSendMessage = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (message: Types.MessageCreate) => ApiService.sendMessage(message),
     onSuccess: (data) => {
       // Invalidate conversation messages
       if (data.conversation_id) {
-        queryClient.invalidateQueries({ 
-          queryKey: queryKeys.conversationMessages(data.conversation_id) 
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.conversationMessages(data.conversation_id)
         });
       }
       if (data.group_id) {
-        queryClient.invalidateQueries({ 
-          queryKey: queryKeys.groupMessages(data.group_id) 
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.groupMessages(data.group_id)
         });
       }
       queryClient.invalidateQueries({ queryKey: queryKeys.conversations });
@@ -420,13 +457,19 @@ export const useGroup = (groupId: string) => {
   });
 };
 
-export const useGroupMessages = (groupId: string) => {
+/**
+ * Hook for group messages with smart polling
+ * Disables polling when WebSocket is connected to prevent duplicate fetches
+ */
+export const useGroupMessages = (groupId: string, options?: { disablePolling?: boolean }) => {
+  const wsConnected = useWebSocketState();
+
   return useQuery({
     queryKey: queryKeys.groupMessages(groupId),
     queryFn: () => ApiService.getGroupMessages(groupId),
     enabled: !!groupId,
-    // Refetch messages more frequently for real-time feel
-    refetchInterval: 5000,
+    // Disable polling when WebSocket is connected or when explicitly disabled
+    refetchInterval: (wsConnected || options?.disablePolling) ? false : 5000,
   });
 };
 
@@ -440,7 +483,7 @@ export const useGroupMembers = (groupId: string) => {
 
 export const useCreateGroup = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (group: Types.GroupChatCreate) => ApiService.createGroup(group),
     onSuccess: () => {
@@ -451,7 +494,7 @@ export const useCreateGroup = () => {
 
 export const useUpdateGroup = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ groupId, updates }: { groupId: string; updates: Types.GroupChatUpdate }) =>
       ApiService.updateGroup(groupId, updates),
@@ -464,7 +507,7 @@ export const useUpdateGroup = () => {
 
 export const useDeleteGroup = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (groupId: string) => ApiService.deleteGroup(groupId),
     onSuccess: () => {
@@ -486,9 +529,9 @@ export const useAnonymousMessages = () => {
 
 export const useSendAnonymousMessage = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: (message: Types.AnonymousMessageCreate) => 
+    mutationFn: (message: Types.AnonymousMessageCreate) =>
       ApiService.sendAnonymousMessage(message),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.anonymousMessages });

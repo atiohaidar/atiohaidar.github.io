@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import NetInfo from '@react-native-community/netinfo';
+import NetInfo, { NetInfoState } from '@react-native-community/netinfo';
 import * as Types from '@/types/api';
 import { errorEvents } from './errorEvents';
 import { tokenStorage } from './tokenStorage';
@@ -18,6 +18,49 @@ const EMPTY_TICKET_STATS: Types.TicketStats = {
   solved: 0,
 };
 
+// ============================================================================
+// Network Status Manager - Efficient network monitoring with event listener
+// Avoids expensive NetInfo.fetch() on every API request
+// ============================================================================
+class NetworkStatusManager {
+  private static instance: NetworkStatusManager;
+  private _isConnected: boolean = true;
+  private _unsubscribe: (() => void) | null = null;
+
+  private constructor() {
+    // Subscribe to network changes once
+    this._unsubscribe = NetInfo.addEventListener((state: NetInfoState) => {
+      this._isConnected = state.isConnected ?? true;
+    });
+
+    // Initial fetch (one-time only)
+    NetInfo.fetch().then((state) => {
+      this._isConnected = state.isConnected ?? true;
+    });
+  }
+
+  static getInstance(): NetworkStatusManager {
+    if (!NetworkStatusManager.instance) {
+      NetworkStatusManager.instance = new NetworkStatusManager();
+    }
+    return NetworkStatusManager.instance;
+  }
+
+  get isConnected(): boolean {
+    return this._isConnected;
+  }
+
+  cleanup(): void {
+    if (this._unsubscribe) {
+      this._unsubscribe();
+      this._unsubscribe = null;
+    }
+  }
+}
+
+// Initialize network status manager (singleton)
+const networkStatus = NetworkStatusManager.getInstance();
+
 class ApiService {
   private api: AxiosInstance;
   private token: string | null = null;
@@ -31,10 +74,11 @@ class ApiService {
     });
 
     // Add request interceptor to include auth token
+    // Note: Using cached network status instead of NetInfo.fetch() for better performance
     this.api.interceptors.request.use(
       async (config) => {
-        const netState = await NetInfo.fetch();
-        if (!netState.isConnected) {
+        // Check cached network status (no async overhead)
+        if (!networkStatus.isConnected) {
           errorEvents.emit({
             message: 'Tidak ada koneksi internet. Periksa jaringan Anda.',
             endpoint: config.url,
