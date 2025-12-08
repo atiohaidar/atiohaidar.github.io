@@ -39,7 +39,8 @@ class _DiscussionsScreenState extends State<DiscussionsScreen> {
         onPressed: () => _showCreateDiscussionDialog(context),
         backgroundColor: AppColors.primaryBlue,
         icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text('New Discussion', style: TextStyle(color: Colors.white)),
+        label:
+            const Text('New Discussion', style: TextStyle(color: Colors.white)),
       ),
     );
   }
@@ -78,7 +79,8 @@ class _DiscussionsScreenState extends State<DiscussionsScreen> {
     return GlassCard(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
-      onTap: () => context.push('/discussions/${discussion.id}', extra: discussion),
+      onTap: () =>
+          context.push('/discussions/${discussion.id}', extra: discussion),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -92,7 +94,9 @@ class _DiscussionsScreenState extends State<DiscussionsScreen> {
                 child: Icon(
                   discussion.isAnonymous ? Icons.person_outline : Icons.person,
                   size: 18,
-                  color: discussion.isAnonymous ? Colors.grey : AppColors.primaryBlue,
+                  color: discussion.isAnonymous
+                      ? Colors.grey
+                      : AppColors.primaryBlue,
                 ),
               ),
               const SizedBox(width: 10),
@@ -105,14 +109,17 @@ class _DiscussionsScreenState extends State<DiscussionsScreen> {
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: isDark ? AppColors.textPrimary : AppColors.lightText,
+                        color: isDark
+                            ? AppColors.textPrimary
+                            : AppColors.lightText,
                       ),
                     ),
                     Text(
                       _formatDate(discussion.createdAt),
                       style: TextStyle(
                         fontSize: 11,
-                        color: isDark ? AppColors.textMuted : Colors.grey.shade600,
+                        color:
+                            isDark ? AppColors.textMuted : Colors.grey.shade600,
                       ),
                     ),
                   ],
@@ -263,7 +270,8 @@ class _DiscussionsScreenState extends State<DiscussionsScreen> {
     TextEditingController nameController,
   ) async {
     // Validate input fields
-    if (titleController.text.trim().isEmpty || contentController.text.trim().isEmpty) {
+    if (titleController.text.trim().isEmpty ||
+        contentController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please fill in title and content'),
@@ -293,7 +301,8 @@ class _DiscussionsScreenState extends State<DiscussionsScreen> {
     } else if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(discussionsProvider.error ?? 'Failed to create discussion'),
+          content:
+              Text(discussionsProvider.error ?? 'Failed to create discussion'),
           backgroundColor: AppColors.error,
         ),
       );

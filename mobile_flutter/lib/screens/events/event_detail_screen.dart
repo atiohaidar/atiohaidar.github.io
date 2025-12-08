@@ -165,7 +165,8 @@ class _EventDetailScreenState extends State<EventDetailScreen>
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: isDark ? AppColors.textPrimary : AppColors.lightText,
+                      color:
+                          isDark ? AppColors.textPrimary : AppColors.lightText,
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -214,7 +215,9 @@ class _EventDetailScreenState extends State<EventDetailScreen>
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: isDark ? AppColors.textPrimary : AppColors.lightText,
+                        color: isDark
+                            ? AppColors.textPrimary
+                            : AppColors.lightText,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -222,7 +225,9 @@ class _EventDetailScreenState extends State<EventDetailScreen>
                       _event!.description!,
                       style: TextStyle(
                         fontSize: 14,
-                        color: isDark ? AppColors.textSecondary : Colors.grey.shade700,
+                        color: isDark
+                            ? AppColors.textSecondary
+                            : Colors.grey.shade700,
                         height: 1.5,
                       ),
                     ),
@@ -238,8 +243,7 @@ class _EventDetailScreenState extends State<EventDetailScreen>
     );
   }
 
-  Widget _buildInfoRow(
-      IconData icon, String label, String value, bool isDark) {
+  Widget _buildInfoRow(IconData icon, String label, String value, bool isDark) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -376,7 +380,8 @@ class _EventDetailScreenState extends State<EventDetailScreen>
                     'Registered ${_formatDate(DateTime.parse(attendee.registeredAt!))}',
                     style: TextStyle(
                       fontSize: 12,
-                      color: isDark ? AppColors.textMuted : Colors.grey.shade600,
+                      color:
+                          isDark ? AppColors.textMuted : Colors.grey.shade600,
                     ),
                   ),
               ],

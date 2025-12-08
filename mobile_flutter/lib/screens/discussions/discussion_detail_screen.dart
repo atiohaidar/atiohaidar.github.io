@@ -30,7 +30,7 @@ class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<DiscussionsProvider>().loadDiscussion(widget.discussionId);
-      
+
       // Pre-fill name if user is authenticated
       final authProvider = context.read<AuthProvider>();
       if (authProvider.isAuthenticated && authProvider.user != null) {
@@ -90,7 +90,8 @@ class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildDiscussionHeader(discussionWithReplies.discussion, isDark),
+                _buildDiscussionHeader(
+                    discussionWithReplies.discussion, isDark),
                 const SizedBox(height: 24),
                 _buildRepliesSection(discussionWithReplies.replies, isDark),
               ],
@@ -118,7 +119,9 @@ class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
                 child: Icon(
                   discussion.isAnonymous ? Icons.person_outline : Icons.person,
                   size: 22,
-                  color: discussion.isAnonymous ? Colors.grey : AppColors.primaryBlue,
+                  color: discussion.isAnonymous
+                      ? Colors.grey
+                      : AppColors.primaryBlue,
                 ),
               ),
               const SizedBox(width: 12),
@@ -131,14 +134,18 @@ class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: isDark ? AppColors.textPrimary : AppColors.lightText,
+                        color: isDark
+                            ? AppColors.textPrimary
+                            : AppColors.lightText,
                       ),
                     ),
                     Text(
-                      DateFormat('MMM d, yyyy • h:mm a').format(discussion.createdAt),
+                      DateFormat('MMM d, yyyy • h:mm a')
+                          .format(discussion.createdAt),
                       style: TextStyle(
                         fontSize: 12,
-                        color: isDark ? AppColors.textMuted : Colors.grey.shade600,
+                        color:
+                            isDark ? AppColors.textMuted : Colors.grey.shade600,
                       ),
                     ),
                   ],
@@ -235,7 +242,8 @@ class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
                 child: Icon(
                   reply.isAnonymous ? Icons.person_outline : Icons.person,
                   size: 18,
-                  color: reply.isAnonymous ? Colors.grey : AppColors.primaryBlue,
+                  color:
+                      reply.isAnonymous ? Colors.grey : AppColors.primaryBlue,
                 ),
               ),
               const SizedBox(width: 10),
@@ -248,14 +256,17 @@ class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: isDark ? AppColors.textPrimary : AppColors.lightText,
+                        color: isDark
+                            ? AppColors.textPrimary
+                            : AppColors.lightText,
                       ),
                     ),
                     Text(
                       _formatDate(reply.createdAt),
                       style: TextStyle(
                         fontSize: 11,
-                        color: isDark ? AppColors.textMuted : Colors.grey.shade600,
+                        color:
+                            isDark ? AppColors.textMuted : Colors.grey.shade600,
                       ),
                     ),
                   ],
@@ -300,7 +311,8 @@ class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
                 labelText: 'Your Name (Optional)',
                 hintText: 'Leave empty to reply anonymously',
                 border: const OutlineInputBorder(),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 labelStyle: TextStyle(
                   fontSize: 12,
                   color: isDark ? AppColors.textMuted : Colors.grey.shade600,
@@ -318,9 +330,11 @@ class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
                     decoration: InputDecoration(
                       hintText: 'Write a reply...',
                       border: const OutlineInputBorder(),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 12),
                       hintStyle: TextStyle(
-                        color: isDark ? AppColors.textMuted : Colors.grey.shade500,
+                        color:
+                            isDark ? AppColors.textMuted : Colors.grey.shade500,
                       ),
                     ),
                     maxLines: 3,
@@ -382,8 +396,9 @@ class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
       creatorName: _nameController.text.isEmpty ? null : _nameController.text,
     );
 
-    final success = await discussionsProvider.addReply(widget.discussionId, data);
-    
+    final success =
+        await discussionsProvider.addReply(widget.discussionId, data);
+
     if (success && mounted) {
       _replyController.clear();
       ScaffoldMessenger.of(context).showSnackBar(
