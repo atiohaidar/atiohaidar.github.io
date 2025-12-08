@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../config/theme.dart';
 import '../../providers/providers.dart';
@@ -205,6 +206,7 @@ class _EventsScreenState extends State<EventsScreen> {
       padding: const EdgeInsets.only(bottom: 12),
       child: GlassCard(
         padding: const EdgeInsets.all(16),
+        onTap: () => context.push('/events/${event.id}', extra: event),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

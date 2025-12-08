@@ -245,6 +245,25 @@ class ApiService {
     }
   }
 
+  static Future<Booking> getBooking(String id) async {
+    try {
+      final response = await ApiClient.get('/bookings/$id');
+      return Booking.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<Booking> updateBooking(String id, BookingUpdate data) async {
+    try {
+      final response =
+          await ApiClient.put('/bookings/$id/edit', data: data.toJson());
+      return Booking.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
   // Tickets
   static Future<List<Ticket>> getTickets({String? status}) async {
     try {
@@ -395,6 +414,98 @@ class ApiService {
     }
   }
 
+  static Future<EventAttendee> registerForEvent(String eventId) async {
+    try {
+      final response = await ApiClient.post('/events/register', data: {
+        'event_id': eventId,
+      });
+      return EventAttendee.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<void> unregisterFromEvent(
+      String eventId, String attendeeId) async {
+    try {
+      await ApiClient.delete('/events/$eventId/attendees/$attendeeId');
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<EventAttendee> updateAttendeeStatus(
+      String eventId, String attendeeId, String status) async {
+    try {
+      final response = await ApiClient.put(
+        '/events/$eventId/attendees/$attendeeId/status',
+        data: {'status': status},
+      );
+      return EventAttendee.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<List<EventAdmin>> getEventAdmins(String eventId) async {
+    try {
+      final response = await ApiClient.get('/events/$eventId/admins');
+      final admins = (response.data['data'] as List)
+          .map((json) => EventAdmin.fromJson(json))
+          .toList();
+      return admins;
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<EventAdmin> assignEventAdmin(
+      String eventId, String username) async {
+    try {
+      final response = await ApiClient.post(
+        '/events/$eventId/admins',
+        data: {'username': username},
+      );
+      return EventAdmin.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<void> removeEventAdmin(String eventId, String username) async {
+    try {
+      await ApiClient.delete('/events/$eventId/admins/$username');
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<AttendanceScan> createAttendanceScan(
+      String eventId, String attendanceToken) async {
+    try {
+      final response = await ApiClient.post(
+        '/events/$eventId/scan',
+        data: {'attendance_token': attendanceToken},
+      );
+      return AttendanceScan.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<List<AttendanceScan>> getEventScanHistory(
+      String eventId) async {
+    try {
+      final response = await ApiClient.get('/events/$eventId/scan-history');
+      final scans = (response.data['data'] as List)
+          .map((json) => AttendanceScan.fromJson(json))
+          .toList();
+      return scans;
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
   // Items
   static Future<List<Item>> getItems() async {
     try {
@@ -443,6 +554,36 @@ class ApiService {
     try {
       final response =
           await ApiClient.post('/item-borrowings', data: data.toJson());
+      return ItemBorrowing.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<ItemBorrowing> updateItemBorrowingStatus(
+      String borrowingId, String status) async {
+    try {
+      final response = await ApiClient.put(
+        '/item-borrowings/$borrowingId/status',
+        data: {'status': status},
+      );
+      return ItemBorrowing.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<void> cancelItemBorrowing(String borrowingId) async {
+    try {
+      await ApiClient.delete('/item-borrowings/$borrowingId');
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<ItemBorrowing> getItemBorrowing(String borrowingId) async {
+    try {
+      final response = await ApiClient.get('/item-borrowings/$borrowingId');
       return ItemBorrowing.fromJson(response.data['data']);
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);

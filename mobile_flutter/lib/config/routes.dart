@@ -137,6 +137,16 @@ class AppRouter {
                 child: DiscussionDetailScreen(discussionId: id, discussion: discussion));
           },
         ),
+        GoRoute(
+          path: '/events/:id',
+          name: 'event_detail',
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            final event = state.extra as Event?;
+            return GradientBackground(
+                child: EventDetailScreen(eventId: id, event: event));
+          },
+        ),
       ],
       errorPageBuilder: (context, state) => MaterialPage(
         child: Scaffold(
