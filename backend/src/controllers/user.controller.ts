@@ -450,7 +450,7 @@ export class UserController {
   };
 
   static async updateSelfProfile(c: AppContext) {
-    const payload = getTokenPayloadFromRequest(c);
+    const payload = await getTokenPayloadFromRequest(c);
     if (!payload) {
       return c.json(
         { success: false, message: "Authentication required" },

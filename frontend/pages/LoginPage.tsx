@@ -23,26 +23,45 @@ const LoginPage: React.FC = () => {
     };
 
     return (
-        <div className={`min-h-screen ${palette.appBg} ${palette.panel.text} transition-colors duration-300`}>
-            <header className={`px-6 py-4 flex justify-between items-center ${palette.panel.border}`}>
-                <Link to="/" className={palette.panel.textAccent}>
-                    ← Kembali ke Landing Page
+        <div className={`min-h-screen w-full relative flex items-center justify-center p-4 bg-light-bg dark:bg-deep-navy overflow-hidden`}>
+            {/* Global Background Elements */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-cyan-500/5 to-indigo-500/5 -z-10" />
+            <div className="absolute top-[20%] right-[10%] w-[500px] h-[500px] bg-blue-500/20 rounded-full blur-[100px] animate-blob mix-blend-multiply dark:mix-blend-screen opacity-70 -z-10" />
+            <div className="absolute bottom-[20%] left-[10%] w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-[100px] animate-blob animation-delay-2000 mix-blend-multiply dark:mix-blend-screen opacity-70 -z-10" />
+
+            <header className={`absolute top-0 left-0 right-0 px-6 py-6 flex justify-between items-center z-20`}>
+                <Link to="/" className="flex items-center gap-2 text-light-muted dark:text-light-slate hover:text-accent-blue transition-colors">
+                    <span>←</span> Kembali ke Landing Page
                 </Link>
-                <span className={`text-sm ${palette.panel.textMuted}`}>Dashboard Backend</span>
             </header>
-            <main className="max-w-5xl mx-auto px-6 py-12 flex flex-col lg:flex-row gap-12 items-center">
-                <div className="flex-1 space-y-4">
-                    <h1 className={`text-3xl font-bold ${palette.panel.text}`}>Login ke Dashboard</h1>
-                    <p className={`${palette.panel.textMuted} leading-relaxed`}>
-                        Gunakan kredensial demo untuk mengakses fitur manajemen pengguna dan tugas. Role admin akan mendapatkan
-                        akses penuh untuk mengelola pengguna, sedangkan role member dapat mencoba fitur todo list.
+
+            <main className="w-full max-w-6xl flex flex-col lg:flex-row gap-12 items-center z-10">
+                <div className="flex-1 space-y-6 text-center lg:text-left">
+                    <h1 className="text-4xl lg:text-5xl font-bold text-light-text dark:text-white">
+                        Welcome Back.
+                    </h1>
+                    <p className="text-lg text-light-muted dark:text-soft-gray leading-relaxed max-w-lg mx-auto lg:mx-0">
+                        Masuk ke Dashboard untuk mengelola konten, memantau tiket, dan melihat statistik project Anda.
                     </p>
-                    <p className={`text-sm ${palette.panel.textMuted}/80`}>
-                        Belum punya akun? Hubungi administrator untuk dibuatkan akun baru.
-                    </p>
+                    <div className="hidden lg:flex gap-4 pt-4">
+                        <div className="flex -space-x-3">
+                            {[1, 2, 3].map(i => (
+                                <div key={i} className="w-10 h-10 rounded-full bg-gray-200 dark:bg-white/10 border-2 border-white dark:border-deep-navy flex items-center justify-center text-xs font-bold text-gray-500 dark:text-gray-300">
+                                    {i}
+                                </div>
+                            ))}
+                        </div>
+                        <div className="flex items-center text-sm text-light-muted dark:text-soft-gray">
+                            <span className="font-bold text-accent-blue mr-1">50+</span> users joined
+                        </div>
+                    </div>
                 </div>
-                <div className="flex-1 w-full">
+
+                <div className="flex-1 w-full max-w-md">
                     <Login onLoginSuccess={handleLoginSuccess} />
+                    <p className={`text-sm text-center mt-6 text-light-muted/80 dark:text-soft-gray/60`}>
+                        Belum punya akun? Hubungi administrator.
+                    </p>
                 </div>
             </main>
         </div>

@@ -46,7 +46,7 @@ export class ItemBorrowingList extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -124,7 +124,7 @@ export class ItemBorrowingGet extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -189,7 +189,7 @@ export class ItemBorrowingCreate extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -256,7 +256,7 @@ export class ItemBorrowingUpdateStatus extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -326,7 +326,7 @@ export class ItemBorrowingCancel extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}

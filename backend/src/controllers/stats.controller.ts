@@ -38,7 +38,7 @@ export class StatsGet extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}

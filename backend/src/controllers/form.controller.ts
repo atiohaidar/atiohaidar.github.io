@@ -47,7 +47,7 @@ export class FormList extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -99,7 +99,7 @@ export class FormGet extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -218,7 +218,7 @@ export class FormCreate extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -281,7 +281,7 @@ export class FormUpdate extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -343,7 +343,7 @@ export class FormDelete extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -462,7 +462,7 @@ export class FormResponseList extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -532,7 +532,7 @@ export class FormResponseGet extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}

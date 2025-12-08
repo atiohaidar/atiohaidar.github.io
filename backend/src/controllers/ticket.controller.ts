@@ -83,7 +83,7 @@ export class TicketList {
 	};
 
 	static async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -144,7 +144,7 @@ export class TicketGet {
 	};
 
 	static async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -197,7 +197,7 @@ export class TicketUpdate {
 	};
 
 	static async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -250,7 +250,7 @@ export class TicketDelete {
 	};
 
 	static async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload || payload.role !== "admin") {
 			return c.json({ success: false, message: "Admin access required" }, 403);
 		}
@@ -297,7 +297,7 @@ export class TicketCommentList {
 	};
 
 	static async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -343,7 +343,7 @@ export class TicketCommentCreate {
 	};
 
 	static async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -393,7 +393,7 @@ export class TicketAssignmentList {
 	};
 
 	static async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -436,7 +436,7 @@ export class TicketAssign {
 	};
 
 	static async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -486,7 +486,7 @@ export class TicketStatsGet {
 	};
 
 	static async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}

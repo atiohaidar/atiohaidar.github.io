@@ -49,7 +49,7 @@ export class ArticleList extends OpenAPIRoute {
   };
 
   async handle(c: AppContext) {
-    const payload = getTokenPayloadFromRequest(c);
+    const payload = await getTokenPayloadFromRequest(c);
     if (!payload) {
       return c.json({ success: false, message: "Unauthorized" }, 401);
     }
@@ -102,7 +102,7 @@ export class ArticleGet extends OpenAPIRoute {
   };
 
   async handle(c: AppContext) {
-    const payload = getTokenPayloadFromRequest(c);
+    const payload = await getTokenPayloadFromRequest(c);
     if (!payload) {
       return c.json({ success: false, message: "Unauthorized" }, 401);
     }
@@ -182,7 +182,7 @@ export class ArticleCreate extends OpenAPIRoute {
   };
 
   async handle(c: AppContext) {
-    const payload = getTokenPayloadFromRequest(c);
+    const payload = await getTokenPayloadFromRequest(c);
     if (!payload) {
       return c.json({ success: false, message: "Unauthorized" }, 401);
     }
@@ -264,7 +264,7 @@ export class ArticleUpdate extends OpenAPIRoute {
   };
 
   async handle(c: AppContext) {
-    const payload = getTokenPayloadFromRequest(c);
+    const payload = await getTokenPayloadFromRequest(c);
     if (!payload) {
       return c.json({ success: false, message: "Unauthorized" }, 401);
     }
@@ -342,7 +342,7 @@ export class ArticleDelete extends OpenAPIRoute {
   };
 
   async handle(c: AppContext) {
-    const payload = getTokenPayloadFromRequest(c);
+    const payload = await getTokenPayloadFromRequest(c);
     if (!payload) {
       return c.json({ success: false, message: "Unauthorized" }, 401);
     }

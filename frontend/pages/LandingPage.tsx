@@ -163,7 +163,20 @@ const LandingPage: React.FC = () => {
     }
 
     return (
-        <div className={`relative ${PRINT.PRESERVE_COLORS} bg-gradient-to-br from-light-bg via-accent-blue/10 to-light-card dark:from-deep-navy dark:via-accent-blue/20 dark:to-light-navy transition-colors duration-300`}>
+        <div className={`relative min-h-screen bg-light-bg dark:bg-deep-navy transition-colors duration-300 overflow-hidden`}>
+            {/* Global Background Elements */}
+            <div className="fixed inset-0 bg-gradient-to-br from-blue-500/5 via-cyan-500/5 to-purple-500/5 -z-10" />
+
+            {/* Animated Orbs (Fixed) */}
+            <div className="fixed top-[20%] right-[10%] w-[500px] h-[500px] bg-accent-blue/20 rounded-full blur-[100px] animate-blob mix-blend-multiply dark:mix-blend-screen opacity-70 -z-10 pointer-events-none" />
+            <div className="fixed bottom-[20%] left-[10%] w-[500px] h-[500px] bg-purple-500/20 rounded-full blur-[100px] animate-blob animation-delay-2000 mix-blend-multiply dark:mix-blend-screen opacity-70 -z-10 pointer-events-none" />
+            <div className="fixed top-[40%] left-[40%] w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-[100px] animate-blob animation-delay-4000 mix-blend-multiply dark:mix-blend-screen opacity-70 -z-10 pointer-events-none" />
+
+            {/* Particle Overlay (Optional, keep it subtle) */}
+            {/* <div className="fixed inset-0 opacity-20 dark:opacity-30 -z-10 pointer-events-none">
+                 <ParticleBackground />
+            </div> */}
+
             <Navbar
                 logoSrc={profile.logoSrc}
                 socials={profile.socials}
@@ -171,7 +184,7 @@ const LandingPage: React.FC = () => {
                 onLogout={handleLogout}
                 onNavAction={handleNavAction}
             />
-            <main className="mx-auto">
+            <main className="mx-auto relative z-10">
                 <Hero
                     greeting={profile.heroGreeting}
                     name={profile.name}

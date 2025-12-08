@@ -40,44 +40,51 @@ const Hero: React.FC<HeroProps> = ({ greeting, name, tagline, bio, linkedinUrl }
 
             <section
                 id="hero"
-                className={`h-screen ${LAYOUT.FLEX_CENTER} container mx-auto px-6 md:px-16 lg:px-20 ${PRINT.COMPACT_SPACING} print:min-h-0 print:py-4 print:px-4 relative overflow-hidden `}
+                className={`min-h-screen ${LAYOUT.FLEX_CENTER} relative overflow-hidden pt-20 pb-0 md:pt-0`}
             >
-                <ParticleBackground />
-                <div className={`max-w-3xl space-y-4 ${PRINT.COMPACT_SPACING} text-center relative z-10`}>
-                    <p className={`text-light-accent dark:text-accent-blue text-lg print:text-gray-600 print:text-base`} style={createAnimationStyle(ANIMATION_DELAYS.HERO.NAME)}>
-                        {greeting}
-                    </p>
-                    <h1 className={TYPOGRAPHY.HEADING_LARGE} style={createAnimationStyle(ANIMATION_DELAYS.HERO.TAGLINE)}>
-                        {name}.
-                    </h1>
-                    <h2 className={TYPOGRAPHY.HEADING_MEDIUM} style={createAnimationStyle(ANIMATION_DELAYS.HERO.BIO)}>
-                        {tagline}
-                    </h2>
+                {/* Content Container - Background is handled by parent/layout */}
+                <div className={`container mx-auto px-6 md:px-16 lg:px-20 relative z-10 text-center`}>
+                    <div className="max-w-4xl mx-auto space-y-6">
+                        <p className={`text-lg md:text-xl font-medium text-accent-blue dark:text-cyan-400 tracking-wide uppercase`} style={createAnimationStyle(ANIMATION_DELAYS.HERO.NAME)}>
+                            {greeting}
+                        </p>
 
-                    <div className={`${PRINT.SHOW} pt-2 text-sm`}>
-                        <p>Portfolio: <a className={`${COLORS.TEXT_ACCENT} underline`} {...getExternalLinkProps('https://atiohaidar.github.io')}>https://atiohaidar.github.io</a></p>
-                        <p>LinkedIn: <a className={`${COLORS.TEXT_ACCENT} underline`} {...getExternalLinkProps(linkedinUrl)}>{linkedinUrl}</a></p>
-                    </div>
+                        <h1 className="text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tight text-light-text dark:text-white mb-4" style={createAnimationStyle(ANIMATION_DELAYS.HERO.TAGLINE)}>
+                            <span className="inline-block relative">
+                                {name}
+                                <span className="absolute -bottom-2 left-0 w-full h-2 bg-accent-blue rounded-full opacity-0 animate-fade-in-up animation-delay-500"></span>
+                            </span>
+                            <span className="text-accent-blue">.</span>
+                        </h1>
 
-                    <p className={`max-w-xl ${TYPOGRAPHY.BODY_TEXT} pt-4 text-light-muted dark:text-soft-gray`} style={createAnimationStyle(ANIMATION_DELAYS.HERO.CTA)}>
-                        {bio}
-                    </p>
-                    <div className={`pt-8 ${PRINT.HIDE}`} style={createAnimationStyle(1000)}>
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <a href="#portfolio" className={`bg-transparent ${COLORS.TEXT_ACCENT} border ${COLORS.BORDER_ACCENT} rounded px-8 py-4 font-medium ${COLORS.HOVER_ACCENT} transition-colors duration-300`}>
-                                Lihat Portofolio Saya
+                        <h2 className="text-2xl sm:text-4xl lg:text-5xl font-semibold text-light-muted dark:text-slate-300" style={createAnimationStyle(ANIMATION_DELAYS.HERO.BIO)}>
+                            {tagline}
+                        </h2>
+
+                        <div className={`${PRINT.SHOW} pt-2 text-sm`}>
+                            <p>Portfolio: <a className={`${COLORS.TEXT_ACCENT} underline`} {...getExternalLinkProps('https://atiohaidar.github.io')}>https://atiohaidar.github.io</a></p>
+                            <p>LinkedIn: <a className={`${COLORS.TEXT_ACCENT} underline`} {...getExternalLinkProps(linkedinUrl)}>{linkedinUrl}</a></p>
+                        </div>
+
+                        <p className={`max-w-2xl mx-auto text-lg sm:text-xl leading-relaxed text-gray-600 dark:text-slate-400 pt-6`} style={createAnimationStyle(ANIMATION_DELAYS.HERO.CTA)}>
+                            {bio}
+                        </p>
+
+                        <div className={`pt-10 flex flex-col sm:flex-row gap-4 justify-center ${PRINT.HIDE}`} style={createAnimationStyle(1000)}>
+                            <a href="#portfolio" className="glass-button px-8 py-4 rounded-full text-lg font-medium text-light-text dark:text-white hover:text-accent-blue hover:border-accent-blue/50">
+                                Lihat Portofolio
                             </a>
                             <a
                                 href="#backend"
-                                className={`px-8 py-4 rounded font-medium transition-colors duration-300 ${COLORS.BUTTON_PRIMARY} text-white border border-light-accent dark:border-accent-blue hover:opacity-90`}
+                                className="px-8 py-4 rounded-full text-lg font-medium bg-accent-blue text-white shadow-lg shadow-accent-blue/30 hover:bg-accent-blue/90 hover:-translate-y-1 transition-all duration-300"
                             >
-                                �️ Coba Backend
+                                ⚡ Coba Backend
                             </a>
                             <a
                                 href="#form-token"
-                                className={`px-8 py-4 rounded font-medium transition-colors duration-300 ${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ON_ACCENT} border border-light-accent/40 dark:border-accent-blue/40 hover:opacity-90`}
+                                className="px-8 py-4 rounded-full text-lg font-medium border border-gray-300 dark:border-white/20 hover:bg-white/5 hover:border-accent-blue hover:text-accent-blue transition-all duration-300"
                             >
-                                Masukkan Token Formulir
+                                Akses Form
                             </a>
                         </div>
                     </div>

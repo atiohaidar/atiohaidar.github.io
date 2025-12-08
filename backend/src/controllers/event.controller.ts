@@ -59,7 +59,7 @@ export class EventList extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -105,7 +105,7 @@ export class EventGet extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -158,7 +158,7 @@ export class EventCreate extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -226,7 +226,7 @@ export class EventUpdate extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -294,7 +294,7 @@ export class EventDelete extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -353,7 +353,7 @@ export class EventAttendeeList extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -406,7 +406,7 @@ export class EventAttendeeRegister extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -473,7 +473,7 @@ export class EventAttendeeUpdateStatus extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -539,7 +539,7 @@ export class EventAttendeeUnregister extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -601,7 +601,7 @@ export class EventAdminList extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -660,7 +660,7 @@ export class EventAdminAssign extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -734,7 +734,7 @@ export class EventAdminRemove extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -813,7 +813,7 @@ export class AttendanceScanCreate extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -883,7 +883,7 @@ export class AttendeeWithScansGet extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
@@ -941,7 +941,7 @@ export class EventScanHistoryList extends OpenAPIRoute {
 	};
 
 	async handle(c: AppContext) {
-		const payload = getTokenPayloadFromRequest(c);
+		const payload = await getTokenPayloadFromRequest(c);
 		if (!payload) {
 			return c.json({ success: false, message: "Unauthorized" }, 401);
 		}
