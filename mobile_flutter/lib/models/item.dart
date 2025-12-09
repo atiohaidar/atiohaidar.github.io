@@ -49,11 +49,27 @@ class Item extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, name, description, stock, attachmentLink, ownerUsername, createdAt, updatedAt];
+  List<Object?> get props => [
+        id,
+        name,
+        description,
+        stock,
+        attachmentLink,
+        ownerUsername,
+        createdAt,
+        updatedAt
+      ];
 }
 
 /// Item borrowing status enum
-enum ItemBorrowingStatus { pending, approved, rejected, returned, damaged, extended }
+enum ItemBorrowingStatus {
+  pending,
+  approved,
+  rejected,
+  returned,
+  damaged,
+  extended
+}
 
 extension ItemBorrowingStatusExtension on ItemBorrowingStatus {
   String get value {
@@ -148,7 +164,18 @@ class ItemBorrowing extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, itemId, borrowerUsername, quantity, startDate, endDate, status, notes, createdAt, updatedAt];
+  List<Object?> get props => [
+        id,
+        itemId,
+        borrowerUsername,
+        quantity,
+        startDate,
+        endDate,
+        status,
+        notes,
+        createdAt,
+        updatedAt
+      ];
 }
 
 /// Item create request
@@ -198,6 +225,30 @@ class ItemBorrowingCreate {
       'start_date': startDate,
       'end_date': endDate,
       if (notes != null) 'notes': notes,
+    };
+  }
+}
+
+/// Item update request
+class ItemUpdate {
+  final String? name;
+  final String? description;
+  final int? stock;
+  final String? attachmentLink;
+
+  const ItemUpdate({
+    this.name,
+    this.description,
+    this.stock,
+    this.attachmentLink,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      if (name != null) 'name': name,
+      if (description != null) 'description': description,
+      if (stock != null) 'stock': stock,
+      if (attachmentLink != null) 'attachment_link': attachmentLink,
     };
   }
 }

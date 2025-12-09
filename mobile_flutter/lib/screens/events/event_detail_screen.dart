@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../../config/theme.dart';
@@ -94,6 +95,13 @@ class _EventDetailScreenState extends State<EventDetailScreen>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final authProvider = context.read<AuthProvider>();
+
+    // Check if current user is an admin of this event
+    final isEventAdmin = authProvider.isAuthenticated &&
+        authProvider.user != null &&
+        (_admins.any((a) => a.userUsername == authProvider.user!.username) ||
+            authProvider.isAdmin);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -114,6 +122,20 @@ class _EventDetailScreenState extends State<EventDetailScreen>
           ],
         ),
       ),
+      floatingActionButton: isEventAdmin && _event != null
+          ? FloatingActionButton.extended(
+              onPressed: () {
+                context.pushNamed(
+                  'event_scanner',
+                  pathParameters: {'id': widget.eventId},
+                  extra: _event!.title,
+                );
+              },
+              backgroundColor: AppColors.primaryBlue,
+              icon: const Icon(Icons.qr_code_scanner, color: Colors.white),
+              label: const Text('Scan', style: TextStyle(color: Colors.white)),
+            )
+          : null,
       body: _buildBody(isDark),
     );
   }

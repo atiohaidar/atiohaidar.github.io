@@ -318,6 +318,14 @@ class ApiService {
     }
   }
 
+  static Future<void> deleteTicket(int id) async {
+    try {
+      await ApiClient.delete('/tickets/$id');
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
   static Future<TicketStats> getTicketStats() async {
     try {
       final response = await ApiClient.get('/tickets/stats');
@@ -574,6 +582,24 @@ class ApiService {
     }
   }
 
+  static Future<Item> getItem(String id) async {
+    try {
+      final response = await ApiClient.get('/items/$id');
+      return Item.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<Item> updateItem(String id, ItemUpdate data) async {
+    try {
+      final response = await ApiClient.put('/items/$id', data: data.toJson());
+      return Item.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
   // Item Borrowings
   static Future<List<ItemBorrowing>> getItemBorrowings() async {
     try {
@@ -664,6 +690,15 @@ class ApiService {
   static Future<void> deleteForm(String id) async {
     try {
       await ApiClient.delete('/forms/$id');
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<FormData> updateForm(String id, FormCreate data) async {
+    try {
+      final response = await ApiClient.put('/forms/$id', data: data.toJson());
+      return FormData.fromJson(response.data['data']);
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
     }

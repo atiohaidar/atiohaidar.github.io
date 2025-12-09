@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../../config/theme.dart';
@@ -304,9 +305,10 @@ class _FormsScreenState extends State<FormsScreen> {
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Responses view not implemented yet')),
+                    context.pushNamed(
+                      'form_responses',
+                      pathParameters: {'id': form.id},
+                      extra: form.title,
                     );
                   },
                   icon: const Icon(Icons.bar_chart),
