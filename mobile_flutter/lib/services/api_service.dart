@@ -974,4 +974,82 @@ class ApiService {
       throw ApiException.fromDioError(e);
     }
   }
+
+  // Public Ticket (No Auth)
+  static Future<Ticket> createPublicTicket(TicketCreate data) async {
+    try {
+      final response =
+          await ApiClient.post('/public/tickets', data: data.toJson());
+      return Ticket.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<Ticket> getPublicTicketByToken(String token) async {
+    try {
+      final response = await ApiClient.get('/public/tickets/$token');
+      return Ticket.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<List<TicketComment>> getPublicTicketComments(
+      String token) async {
+    try {
+      final response = await ApiClient.get('/public/tickets/$token/comments');
+      final data = response.data['data'];
+      if (data == null) return [];
+      return (data as List).map((j) => TicketComment.fromJson(j)).toList();
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<TicketComment> addPublicTicketComment(
+      String token, String comment) async {
+    try {
+      final response = await ApiClient.post(
+        '/public/tickets/$token/comments',
+        data: {'comment_text': comment},
+      );
+      return TicketComment.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  // Public Form (No Auth)
+  static Future<FormWithQuestions> getPublicFormByToken(String token) async {
+    try {
+      final response = await ApiClient.get('/public/forms/$token');
+      return FormWithQuestions.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<void> submitPublicFormResponse(
+      String token, Map<String, dynamic> answers) async {
+    try {
+      await ApiClient.post('/public/forms/$token/submit', data: answers);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  // Event Attendee Scans
+  static Future<List<AttendanceScan>> getAttendeeScans(
+      String eventId, String attendeeId) async {
+    try {
+      final response =
+          await ApiClient.get('/events/$eventId/attendees/$attendeeId/scans');
+      final data = response.data['data'];
+      if (data == null) return [];
+      return (data as List).map((j) => AttendanceScan.fromJson(j)).toList();
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
 }

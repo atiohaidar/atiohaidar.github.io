@@ -64,4 +64,33 @@ class UserRepository @Inject constructor(
             Result.failure(e)
         }
     }
+    
+    // Self-profile operations
+    suspend fun getCurrentUser(): Result<User> {
+        return try {
+            val response = userApiService.getCurrentUser()
+            if (response.isSuccessful && response.body()?.data != null) {
+                Result.success(response.body()!!.data!!)
+            } else {
+                Result.failure(Exception(response.message() ?: "Failed to get current user"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    
+    suspend fun updateCurrentUser(name: String?, password: String?): Result<User> {
+        return try {
+            val update = com.example.portoflio_android.data.network.api.ProfileUpdate(name, password)
+            val response = userApiService.updateCurrentUser(update)
+            if (response.isSuccessful && response.body()?.data != null) {
+                Result.success(response.body()!!.data!!)
+            } else {
+                Result.failure(Exception(response.message() ?: "Failed to update profile"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
+

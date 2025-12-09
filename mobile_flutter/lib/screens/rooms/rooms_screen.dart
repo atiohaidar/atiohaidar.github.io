@@ -65,6 +65,132 @@ class _RoomsScreenState extends State<RoomsScreen>
           _buildBookingsList(roomsProvider, isDark),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showCreateRoomDialog(context),
+        backgroundColor: AppColors.primaryBlue,
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
+    );
+  }
+
+  void _showCreateRoomDialog(BuildContext context) {
+    final idController = TextEditingController();
+    final nameController = TextEditingController();
+    final capacityController = TextEditingController(text: '10');
+    final descController = TextEditingController();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.darkSurface : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? AppColors.borderMedium
+                          : Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'Create New Room',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? AppColors.textPrimary : AppColors.lightText,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                TextField(
+                  controller: idController,
+                  decoration: const InputDecoration(
+                    labelText: 'Room ID',
+                    hintText: 'e.g., ROOM-A1',
+                  ),
+                  autofocus: true,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Room Name',
+                    hintText: 'Enter room name',
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: capacityController,
+                  decoration: const InputDecoration(
+                    labelText: 'Capacity',
+                    hintText: 'Number of people',
+                  ),
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: descController,
+                  decoration: const InputDecoration(
+                    labelText: 'Description (optional)',
+                    hintText: 'Room description',
+                  ),
+                  maxLines: 2,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (idController.text.trim().isNotEmpty &&
+                        nameController.text.trim().isNotEmpty) {
+                      final provider = context.read<RoomsProvider>();
+                      final capacity =
+                          int.tryParse(capacityController.text.trim()) ?? 10;
+
+                      final success = await provider.createRoom(RoomCreate(
+                        id: idController.text.trim(),
+                        name: nameController.text.trim(),
+                        capacity: capacity,
+                        description: descController.text.trim().isNotEmpty
+                            ? descController.text.trim()
+                            : null,
+                        available: true,
+                      ));
+
+                      if (success && context.mounted) {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Room created successfully')),
+                        );
+                      }
+                    }
+                  },
+                  child: const Text('Create Room'),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 

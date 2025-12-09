@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import '../providers/providers.dart';
 import '../models/models.dart';
 import '../screens/screens.dart';
-import '../screens/tickets/ticket_detail_screen.dart'; // Add this import
 import '../widgets/widgets.dart';
 
 /// App router configuration
@@ -92,10 +91,36 @@ class AppRouter {
           name: 'chat_detail',
           builder: (context, state) {
             final id = state.pathParameters['id']!;
-            final conversation = state.extra as ChatConversation?;
+            final extra = state.extra;
+
+            ChatConversation? conversation;
+            ChatGroup? group;
+            bool isGroup = false;
+
+            if (extra is ChatGroup) {
+              group = extra;
+              isGroup = true;
+            } else if (extra is ChatConversation) {
+              conversation = extra;
+            }
+
             return GradientBackground(
-                child:
-                    ChatScreen(conversationId: id, conversation: conversation));
+                child: ChatScreen(
+              conversationId: id,
+              conversation: conversation,
+              group: group,
+              isGroup: isGroup,
+            ));
+          },
+        ),
+        GoRoute(
+          path: '/groups/:id/members',
+          name: 'group_members',
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            final group = state.extra as ChatGroup?;
+            return GradientBackground(
+                child: GroupMembersScreen(groupId: id, group: group));
           },
         ),
         GoRoute(
@@ -139,6 +164,17 @@ class AppRouter {
           },
         ),
         GoRoute(
+          path: '/borrowings/:id',
+          name: 'borrowing_detail',
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            final borrowing = state.extra as ItemBorrowing?;
+            return GradientBackground(
+                child: ItemBorrowingDetailScreen(
+                    borrowingId: id, borrowing: borrowing));
+          },
+        ),
+        GoRoute(
           path: '/events/:id',
           name: 'event_detail',
           builder: (context, state) {
@@ -174,6 +210,30 @@ class AppRouter {
             final title = state.extra as String? ?? 'Form';
             return GradientBackground(
                 child: FormResponsesScreen(formId: id, formTitle: title));
+          },
+        ),
+        // Public routes (no auth required)
+        GoRoute(
+          path: '/public/tickets',
+          name: 'public_ticket',
+          builder: (context, state) =>
+              GradientBackground(child: const PublicTicketScreen()),
+        ),
+        GoRoute(
+          path: '/public/tickets/:token',
+          name: 'public_ticket_detail',
+          builder: (context, state) {
+            final token = state.pathParameters['token']!;
+            return GradientBackground(
+                child: PublicTicketDetailScreen(token: token));
+          },
+        ),
+        GoRoute(
+          path: '/public/forms/:token',
+          name: 'public_form',
+          builder: (context, state) {
+            final token = state.pathParameters['token']!;
+            return GradientBackground(child: PublicFormScreen(token: token));
           },
         ),
       ],

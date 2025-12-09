@@ -123,4 +123,24 @@ object NetworkModule {
     fun provideItemApiService(retrofit: Retrofit): ItemApiService {
         return retrofit.create(ItemApiService::class.java)
     }
+    
+    @Provides
+    @Singleton
+    fun provideChatApiService(retrofit: Retrofit): ChatApiService {
+        return retrofit.create(ChatApiService::class.java)
+    }
+    
+    @Provides
+    @Singleton
+    fun provideDiscussionApiService(retrofit: Retrofit): DiscussionApiService {
+        return retrofit.create(DiscussionApiService::class.java)
+    }
+    
+    @Provides
+    @Singleton
+    fun provideAnonymousChatApiService(retrofit: Retrofit): AnonymousChatApiService {
+        return retrofit.create(AnonymousChatApiService::class.java)
+    }
 }
+
+

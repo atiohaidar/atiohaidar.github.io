@@ -3,6 +3,7 @@ package com.example.portoflio_android.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.portoflio_android.data.models.Ticket
+import com.example.portoflio_android.data.models.TicketAssignment
 import com.example.portoflio_android.data.models.TicketCategory
 import com.example.portoflio_android.data.models.TicketComment
 import com.example.portoflio_android.data.network.api.TicketStats
@@ -18,6 +19,7 @@ data class TicketsUiState(
     val tickets: List<Ticket> = emptyList(),
     val categories: List<TicketCategory> = emptyList(),
     val comments: List<TicketComment> = emptyList(),
+    val assignments: List<TicketAssignment> = emptyList(),
     val stats: TicketStats? = null,
     val selectedTicket: Ticket? = null,
     val isLoading: Boolean = false,
@@ -107,6 +109,31 @@ class TicketsViewModel @Inject constructor(
     }
     
     fun clearSelectedTicket() {
-        _uiState.value = _uiState.value.copy(selectedTicket = null, comments = emptyList())
+        _uiState.value = _uiState.value.copy(selectedTicket = null, comments = emptyList(), assignments = emptyList())
+    }
+    
+    fun loadAssignments(ticketId: Int) {
+        viewModelScope.launch {
+            ticketRepository.getAssignments(ticketId)
+                .onSuccess { assignments ->
+                    _uiState.value = _uiState.value.copy(assignments = assignments)
+                }
+                .onFailure { exception ->
+                    _uiState.value = _uiState.value.copy(error = exception.message)
+                }
+        }
+    }
+    
+    fun assignTicket(ticketId: Int, username: String) {
+        viewModelScope.launch {
+            ticketRepository.assignTicket(ticketId, username)
+                .onSuccess {
+                    loadAssignments(ticketId)
+                    loadTickets()
+                }
+                .onFailure { exception ->
+                    _uiState.value = _uiState.value.copy(error = exception.message)
+                }
+        }
     }
 }

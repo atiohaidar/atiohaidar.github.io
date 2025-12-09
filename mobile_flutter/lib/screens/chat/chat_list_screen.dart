@@ -7,7 +7,7 @@ import '../../providers/providers.dart';
 import '../../widgets/widgets.dart';
 import '../../models/models.dart';
 
-/// Screen to list all conversations
+/// Screen to list all conversations and groups
 class ChatListScreen extends StatefulWidget {
   const ChatListScreen({super.key});
 
@@ -15,13 +15,24 @@ class ChatListScreen extends StatefulWidget {
   State<ChatListScreen> createState() => _ChatListScreenState();
 }
 
-class _ChatListScreenState extends State<ChatListScreen> {
+class _ChatListScreenState extends State<ChatListScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ChatProvider>().loadConversations();
+      context.read<ChatProvider>().loadGroups();
     });
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   @override
@@ -37,19 +48,40 @@ class _ChatListScreenState extends State<ChatListScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: AppColors.primaryBlue,
+          labelColor: isDark ? AppColors.textPrimary : AppColors.lightText,
+          unselectedLabelColor:
+              isDark ? AppColors.textMuted : Colors.grey.shade600,
+          tabs: const [
+            Tab(text: 'Direct', icon: Icon(Icons.person)),
+            Tab(text: 'Grup', icon: Icon(Icons.group)),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _showNewChatDialog(context);
+          if (_tabController.index == 0) {
+            _showNewChatDialog(context);
+          } else {
+            _showNewGroupDialog(context);
+          }
         },
         backgroundColor: AppColors.primaryBlue,
-        child: const Icon(Icons.message, color: Colors.white),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
-      body: _buildBody(chatProvider, authProvider, isDark),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          _buildConversationsTab(chatProvider, authProvider, isDark),
+          _buildGroupsTab(chatProvider, isDark),
+        ],
+      ),
     );
   }
 
-  Widget _buildBody(
+  Widget _buildConversationsTab(
       ChatProvider provider, AuthProvider authProvider, bool isDark) {
     if (provider.isLoading && provider.conversations.isEmpty) {
       return const LoadingIndicator(message: 'Loading conversations...');
@@ -78,9 +110,35 @@ class _ChatListScreenState extends State<ChatListScreen> {
     );
   }
 
+  Widget _buildGroupsTab(ChatProvider provider, bool isDark) {
+    if (provider.isLoading && provider.groups.isEmpty) {
+      return const LoadingIndicator(message: 'Loading groups...');
+    }
+
+    if (provider.groups.isEmpty) {
+      return const EmptyState(
+        icon: Icons.group_off,
+        title: 'No groups',
+        subtitle: 'Create or join a group to start chatting',
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: () => provider.loadGroups(),
+      child: ListView.separated(
+        padding: const EdgeInsets.all(16),
+        itemCount: provider.groups.length,
+        separatorBuilder: (context, index) => const SizedBox(height: 12),
+        itemBuilder: (context, index) {
+          final group = provider.groups[index];
+          return _buildGroupCard(group, isDark);
+        },
+      ),
+    );
+  }
+
   Widget _buildConversationCard(
       ChatConversation conversation, String? currentUsername, bool isDark) {
-    // Determine the other user's name/username
     final isUser1 = conversation.user1Username == currentUsername;
     final otherUsername =
         isUser1 ? conversation.user2Username : conversation.user1Username;
@@ -160,6 +218,58 @@ class _ChatListScreenState extends State<ChatListScreen> {
     );
   }
 
+  Widget _buildGroupCard(ChatGroup group, bool isDark) {
+    return GestureDetector(
+      onTap: () {
+        context.push('/chat/${group.id}', extra: group);
+      },
+      child: GlassCard(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 24,
+              backgroundColor: AppColors.purple.withOpacity(0.1),
+              child: const Icon(
+                Icons.group,
+                color: AppColors.purple,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    group.name,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color:
+                          isDark ? AppColors.textPrimary : AppColors.lightText,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    group.description ?? '${group.memberCount ?? 0} members',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: isDark
+                          ? AppColors.textSecondary
+                          : AppColors.lightTextSecondary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   String _formatTime(String isoString) {
     final date = DateTime.parse(isoString).toLocal();
     final now = DateTime.now();
@@ -181,9 +291,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('New Message',
-            style: TextStyle(
-                color: AppColors
-                    .textPrimary)), // Assuming dark theme default for dialog
+            style: TextStyle(color: AppColors.textPrimary)),
         backgroundColor: AppColors.darkSurface,
         content: TextField(
           controller: controller,
@@ -207,7 +315,6 @@ class _ChatListScreenState extends State<ChatListScreen> {
                       .createConversation(controller.text.trim());
                   if (context.mounted) {
                     Navigator.pop(context);
-                    // Navigate to the newest conversation (idx 0)
                     final newConv =
                         context.read<ChatProvider>().conversations.first;
                     context.push('/chat/${newConv.id}', extra: newConv);
@@ -222,6 +329,73 @@ class _ChatListScreenState extends State<ChatListScreen> {
               }
             },
             child: const Text('Start Chat'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showNewGroupDialog(BuildContext context) {
+    final nameController = TextEditingController();
+    final descController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('New Group',
+            style: TextStyle(color: AppColors.textPrimary)),
+        backgroundColor: AppColors.darkSurface,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(
+                labelText: 'Group Name',
+                hintText: 'Enter group name',
+              ),
+              style: const TextStyle(color: AppColors.textPrimary),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: descController,
+              decoration: const InputDecoration(
+                labelText: 'Description (optional)',
+                hintText: 'Enter description',
+              ),
+              style: const TextStyle(color: AppColors.textPrimary),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (nameController.text.trim().isNotEmpty) {
+                try {
+                  await context.read<ChatProvider>().createGroup(GroupCreate(
+                        name: nameController.text.trim(),
+                        description: descController.text.trim().isNotEmpty
+                            ? descController.text.trim()
+                            : null,
+                      ));
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                    final newGroup = context.read<ChatProvider>().groups.first;
+                    context.push('/chat/${newGroup.id}', extra: newGroup);
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error: $e')),
+                    );
+                  }
+                }
+              }
+            },
+            child: const Text('Create Group'),
           ),
         ],
       ),

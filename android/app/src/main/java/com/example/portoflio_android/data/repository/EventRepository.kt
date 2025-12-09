@@ -1,6 +1,8 @@
 package com.example.portoflio_android.data.repository
 
 import com.example.portoflio_android.data.models.*
+import com.example.portoflio_android.data.network.api.AttendanceScanRequest
+import com.example.portoflio_android.data.network.api.EventAdminAssign
 import com.example.portoflio_android.data.network.api.EventApiService
 import com.example.portoflio_android.data.network.api.EventAttendeeRegister
 import javax.inject.Inject
@@ -78,4 +80,72 @@ class EventRepository @Inject constructor(
             Result.failure(e)
         }
     }
+    
+    // Admin operations
+    suspend fun getEventAdmins(eventId: String): Result<List<EventAdmin>> {
+        return try {
+            val response = eventApiService.getEventAdmins(eventId)
+            if (response.isSuccessful && response.body()?.data != null) {
+                Result.success(response.body()!!.data!!)
+            } else {
+                Result.failure(Exception(response.message() ?: "Failed to get admins"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    
+    suspend fun assignEventAdmin(eventId: String, username: String): Result<EventAdmin> {
+        return try {
+            val response = eventApiService.assignEventAdmin(eventId, EventAdminAssign(username))
+            if (response.isSuccessful && response.body()?.data != null) {
+                Result.success(response.body()!!.data!!)
+            } else {
+                Result.failure(Exception(response.message() ?: "Failed to assign admin"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    
+    suspend fun removeEventAdmin(eventId: String, username: String): Result<Unit> {
+        return try {
+            val response = eventApiService.removeEventAdmin(eventId, username)
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception(response.message() ?: "Failed to remove admin"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    
+    // Attendance scanning
+    suspend fun scanAttendance(eventId: String, token: String): Result<AttendanceScan> {
+        return try {
+            val response = eventApiService.scanAttendance(eventId, AttendanceScanRequest(token))
+            if (response.isSuccessful && response.body()?.data != null) {
+                Result.success(response.body()!!.data!!)
+            } else {
+                Result.failure(Exception(response.message() ?: "Failed to scan attendance"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    
+    suspend fun getScanHistory(eventId: String): Result<List<AttendanceScan>> {
+        return try {
+            val response = eventApiService.getScanHistory(eventId)
+            if (response.isSuccessful && response.body()?.data != null) {
+                Result.success(response.body()!!.data!!)
+            } else {
+                Result.failure(Exception(response.message() ?: "Failed to get scan history"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
+

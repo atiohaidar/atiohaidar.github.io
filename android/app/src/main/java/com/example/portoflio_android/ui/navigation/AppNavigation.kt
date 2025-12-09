@@ -20,6 +20,10 @@ object Routes {
     const val USERS = "users"
     const val FORMS = "forms"
     const val ITEMS = "items"
+    const val CHAT = "chat"
+    const val DISCUSSIONS = "discussions"
+    const val PROFILE = "profile"
+    const val ANONYMOUS_CHAT = "anonymous_chat"
 }
 
 /**
@@ -54,6 +58,10 @@ fun AppNavigation(
                 onNavigateToUsers = { navController.navigate(Routes.USERS) },
                 onNavigateToForms = { navController.navigate(Routes.FORMS) },
                 onNavigateToItems = { navController.navigate(Routes.ITEMS) },
+                onNavigateToChat = { navController.navigate(Routes.CHAT) },
+                onNavigateToDiscussions = { navController.navigate(Routes.DISCUSSIONS) },
+                onNavigateToProfile = { navController.navigate(Routes.PROFILE) },
+                onNavigateToAnonymousChat = { navController.navigate(Routes.ANONYMOUS_CHAT) },
                 onLogout = {
                     navController.navigate(Routes.LOGIN) {
                         popUpTo(Routes.DASHBOARD) { inclusive = true }
@@ -92,6 +100,22 @@ fun AppNavigation(
         
         composable(Routes.ITEMS) {
             ItemsScreen(onNavigateBack = { navController.popBackStack() })
+        }
+        
+        composable(Routes.CHAT) {
+            ChatScreen(onNavigateBack = { navController.popBackStack() })
+        }
+        
+        composable(Routes.DISCUSSIONS) {
+            DiscussionsScreen(onNavigateBack = { navController.popBackStack() })
+        }
+        
+        composable(Routes.PROFILE) {
+            ProfileScreen(onNavigateBack = { navController.popBackStack() })
+        }
+        
+        composable(Routes.ANONYMOUS_CHAT) {
+            AnonymousChatScreen(onNavigateBack = { navController.popBackStack() })
         }
     }
 }

@@ -47,6 +47,18 @@ interface TicketApiService {
         @Body comment: TicketCommentCreate
     ): Response<ApiResponse<TicketComment>>
     
+    // Assignments
+    @GET("/api/tickets/{ticketId}/assignments")
+    suspend fun getAssignments(
+        @Path("ticketId") ticketId: Int
+    ): Response<ApiResponse<List<TicketAssignment>>>
+    
+    @POST("/api/tickets/{ticketId}/assign")
+    suspend fun assignTicket(
+        @Path("ticketId") ticketId: Int,
+        @Body assign: TicketAssign
+    ): Response<ApiResponse<TicketAssignment>>
+    
     // Stats
     @GET("/api/tickets/stats")
     suspend fun getStats(

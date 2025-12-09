@@ -100,3 +100,21 @@ data class TicketComment(
     @SerializedName("created_at")
     val createdAt: String? = null
 )
+
+data class TicketAssignment(
+    val id: Int,
+    @SerializedName("ticket_id")
+    val ticketId: Int,
+    @SerializedName("assigned_to")
+    val assignedTo: String,
+    @SerializedName("assigned_by")
+    val assignedBy: String,
+    @SerializedName("assigned_at")
+    val assignedAt: String? = null
+)
+
+data class TicketAssign(
+    @SerializedName("assigned_to")
+    val assignedTo: String
+)
+

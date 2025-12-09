@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import '../config/api_config.dart';
 import 'storage_service.dart';
 
@@ -50,12 +51,14 @@ class ApiClient {
       ),
     );
 
-    // Add logging in debug mode
-    dio.interceptors.add(LogInterceptor(
-      requestBody: true,
-      responseBody: true,
-      logPrint: (o) => print('API: $o'),
-    ));
+    // Add logging only in debug mode
+    if (kDebugMode) {
+      dio.interceptors.add(LogInterceptor(
+        requestBody: true,
+        responseBody: true,
+        logPrint: (o) => debugPrint('API: $o'),
+      ));
+    }
 
     return dio;
   }
@@ -71,7 +74,8 @@ class ApiClient {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
-    return instance.get<T>(path, queryParameters: queryParameters, options: options);
+    return instance.get<T>(path,
+        queryParameters: queryParameters, options: options);
   }
 
   static Future<Response<T>> post<T>(
@@ -80,7 +84,8 @@ class ApiClient {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
-    return instance.post<T>(path, data: data, queryParameters: queryParameters, options: options);
+    return instance.post<T>(path,
+        data: data, queryParameters: queryParameters, options: options);
   }
 
   static Future<Response<T>> put<T>(
@@ -89,7 +94,8 @@ class ApiClient {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
-    return instance.put<T>(path, data: data, queryParameters: queryParameters, options: options);
+    return instance.put<T>(path,
+        data: data, queryParameters: queryParameters, options: options);
   }
 
   static Future<Response<T>> delete<T>(
@@ -98,7 +104,8 @@ class ApiClient {
     Map<String, dynamic>? queryParameters,
     Options? options,
   }) async {
-    return instance.delete<T>(path, data: data, queryParameters: queryParameters, options: options);
+    return instance.delete<T>(path,
+        data: data, queryParameters: queryParameters, options: options);
   }
 }
 

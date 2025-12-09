@@ -51,8 +51,10 @@ fun TicketsScreen(
             TicketDetailView(
                 ticket = uiState.selectedTicket!!,
                 comments = uiState.comments,
+                viewModel = viewModel,
                 onBack = { viewModel.clearSelectedTicket() },
-                onAddComment = { viewModel.addComment(uiState.selectedTicket!!.id, it) }
+                onAddComment = { viewModel.addComment(uiState.selectedTicket!!.id, it) },
+                onAssign = { viewModel.assignTicket(uiState.selectedTicket!!.id, it) }
             )
         } else {
             TicketListView(
@@ -305,10 +307,13 @@ private fun TicketCard(
 private fun TicketDetailView(
     ticket: Ticket,
     comments: List<TicketComment>,
+    viewModel: TicketsViewModel,
     onBack: () -> Unit,
-    onAddComment: (String) -> Unit
+    onAddComment: (String) -> Unit,
+    onAssign: (String) -> Unit
 ) {
     var commentText by remember { mutableStateOf("") }
+    var showAssignDialog by remember { mutableStateOf(false) }
     
     Column(
         modifier = Modifier.fillMaxSize()
@@ -326,6 +331,15 @@ private fun TicketDetailView(
                     Icon(
                         Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
+                        tint = Color.White
+                    )
+                }
+            },
+            actions = {
+                IconButton(onClick = { showAssignDialog = true }) {
+                    Icon(
+                        Icons.Default.PersonAdd,
+                        contentDescription = "Assign",
                         tint = Color.White
                     )
                 }
@@ -450,4 +464,70 @@ private fun TicketDetailView(
             }
         }
     }
+    
+    // Assign Dialog
+    if (showAssignDialog) {
+        AssignTicketDialog(
+            currentAssignee = ticket.assignedTo,
+            onDismiss = { showAssignDialog = false },
+            onAssign = { username ->
+                onAssign(username)
+                showAssignDialog = false
+            }
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AssignTicketDialog(
+    currentAssignee: String?,
+    onDismiss: () -> Unit,
+    onAssign: (String) -> Unit
+) {
+    var username by remember { mutableStateOf(currentAssignee ?: "") }
+    
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Assign Ticket", color = Color.White) },
+        text = {
+            Column {
+                if (currentAssignee != null) {
+                    Text(
+                        "Currently assigned to: $currentAssignee",
+                        color = Color(0xFF94A3B8),
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+                OutlinedTextField(
+                    value = username,
+                    onValueChange = { username = it },
+                    label = { Text("Assign to username", color = Color(0xFF94A3B8)) },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        focusedBorderColor = Color(0xFF2563EB),
+                        unfocusedBorderColor = Color(0xFF334155)
+                    ),
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = { if (username.isNotBlank()) onAssign(username) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2563EB))
+            ) {
+                Text("Assign")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel", color = Color(0xFF94A3B8))
+            }
+        },
+        containerColor = Color(0xFF1E293B)
+    )
 }

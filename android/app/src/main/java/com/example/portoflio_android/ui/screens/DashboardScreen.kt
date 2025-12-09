@@ -33,6 +33,10 @@ fun DashboardScreen(
     onNavigateToUsers: () -> Unit,
     onNavigateToForms: () -> Unit,
     onNavigateToItems: () -> Unit,
+    onNavigateToChat: () -> Unit,
+    onNavigateToDiscussions: () -> Unit,
+    onNavigateToProfile: () -> Unit,
+    onNavigateToAnonymousChat: () -> Unit,
     onLogout: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -211,6 +215,52 @@ fun DashboardScreen(
                                 color = Color(0xFF8B5CF6),
                                 modifier = Modifier.weight(1f),
                                 onClick = onNavigateToItems
+                            )
+                        }
+                    }
+                    
+                    // Quick Actions - Row 5 (New: Chat & Discussions)
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            QuickActionCard(
+                                title = "Chat",
+                                icon = Icons.Default.Chat,
+                                color = Color(0xFF14B8A6),
+                                modifier = Modifier.weight(1f),
+                                onClick = onNavigateToChat
+                            )
+                            QuickActionCard(
+                                title = "Forum",
+                                icon = Icons.Default.Forum,
+                                color = Color(0xFFF97316),
+                                modifier = Modifier.weight(1f),
+                                onClick = onNavigateToDiscussions
+                            )
+                        }
+                    }
+                    
+                    // Quick Actions - Row 6 (Profile & Anonymous)
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            QuickActionCard(
+                                title = "Profile",
+                                icon = Icons.Default.Person,
+                                color = Color(0xFF6366F1),
+                                modifier = Modifier.weight(1f),
+                                onClick = onNavigateToProfile
+                            )
+                            QuickActionCard(
+                                title = "Anon Chat",
+                                icon = Icons.Default.VisibilityOff,
+                                color = Color(0xFF7C3AED),
+                                modifier = Modifier.weight(1f),
+                                onClick = onNavigateToAnonymousChat
                             )
                         }
                     }

@@ -57,3 +57,30 @@ data class EventAttendee(
     @SerializedName("registered_at")
     val registeredAt: String? = null
 )
+
+data class EventAdmin(
+    val id: String,
+    @SerializedName("event_id")
+    val eventId: String,
+    val username: String,
+    @SerializedName("assigned_at")
+    val assignedAt: String? = null
+)
+
+data class AttendanceScan(
+    val id: String,
+    @SerializedName("event_id")
+    val eventId: String,
+    @SerializedName("attendee_id")
+    val attendeeId: String,
+    @SerializedName("scanned_by")
+    val scannedBy: String,
+    @SerializedName("scanned_at")
+    val scannedAt: String? = null
+)
+
+data class AttendeeWithScans(
+    val attendee: EventAttendee,
+    val scans: List<AttendanceScan>
+)
+

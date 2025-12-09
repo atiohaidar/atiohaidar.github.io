@@ -106,4 +106,31 @@ class TicketRepository @Inject constructor(
             Result.failure(e)
         }
     }
+    
+    suspend fun getAssignments(ticketId: Int): Result<List<TicketAssignment>> {
+        return try {
+            val response = ticketApiService.getAssignments(ticketId)
+            if (response.isSuccessful && response.body()?.data != null) {
+                Result.success(response.body()!!.data!!)
+            } else {
+                Result.failure(Exception(response.message() ?: "Failed to get assignments"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    
+    suspend fun assignTicket(ticketId: Int, username: String): Result<TicketAssignment> {
+        return try {
+            val response = ticketApiService.assignTicket(ticketId, TicketAssign(username))
+            if (response.isSuccessful && response.body()?.data != null) {
+                Result.success(response.body()!!.data!!)
+            } else {
+                Result.failure(Exception(response.message() ?: "Failed to assign ticket"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
+

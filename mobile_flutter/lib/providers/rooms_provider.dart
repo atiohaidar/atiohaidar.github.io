@@ -93,6 +93,20 @@ class RoomsProvider extends ChangeNotifier {
     }
   }
 
+  /// Create a room
+  Future<bool> createRoom(RoomCreate data) async {
+    try {
+      final room = await ApiService.createRoom(data);
+      _rooms.insert(0, room);
+      notifyListeners();
+      return true;
+    } on ApiException catch (e) {
+      _error = e.message;
+      notifyListeners();
+      return false;
+    }
+  }
+
   /// Create a booking
   Future<bool> createBooking(BookingCreate data) async {
     try {
