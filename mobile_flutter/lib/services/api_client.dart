@@ -134,7 +134,14 @@ class ApiException implements Exception {
         message = 'Receive timeout. Please try again.';
         break;
       case DioExceptionType.badResponse:
-        message = error.response?.data?['message'] ?? 'Server error occurred';
+        final data = error.response?.data;
+        if (data is Map<String, dynamic>) {
+          message = data['message']?.toString() ?? 'Server error occurred';
+        } else if (data is String) {
+          message = data;
+        } else {
+          message = 'Server error occurred (${error.response?.statusCode})';
+        }
         break;
       case DioExceptionType.cancel:
         message = 'Request was cancelled';

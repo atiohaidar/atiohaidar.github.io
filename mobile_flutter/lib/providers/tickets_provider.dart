@@ -37,12 +37,12 @@ class TicketsProvider extends ChangeNotifier {
       final results = await Future.wait([
         ApiService.getTickets(),
         ApiService.getTicketCategories(),
-        ApiService.getTicketStats(),
       ]);
 
       _tickets = results[0] as List<Ticket>;
       _categories = results[1] as List<TicketCategory>;
-      _stats = results[2] as TicketStats;
+
+      _calculateStats(); // Calculate stats locally
 
       _isLoading = false;
       notifyListeners();
@@ -55,6 +55,38 @@ class TicketsProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  void _calculateStats() {
+    int open = 0;
+    int inProgress = 0;
+    int waiting = 0;
+    int solved = 0;
+
+    for (var ticket in _tickets) {
+      switch (ticket.status) {
+        case TicketStatus.open:
+          open++;
+          break;
+        case TicketStatus.inProgress:
+          inProgress++;
+          break;
+        case TicketStatus.waiting:
+          waiting++;
+          break;
+        case TicketStatus.solved:
+          solved++;
+          break;
+      }
+    }
+
+    _stats = TicketStats(
+      total: _tickets.length,
+      open: open,
+      inProgress: inProgress,
+      waiting: waiting,
+      solved: solved,
+    );
   }
 
   /// Load ticket by ID
@@ -88,16 +120,7 @@ class TicketsProvider extends ChangeNotifier {
     try {
       final ticket = await ApiService.createTicket(data);
       _tickets.insert(0, ticket);
-      // Update stats locally or reload? For MVP reload is safer but let's just increment total/open
-      if (_stats != null) {
-        _stats = TicketStats(
-          total: _stats!.total + 1,
-          open: _stats!.open + 1,
-          inProgress: _stats!.inProgress,
-          waiting: _stats!.waiting,
-          solved: _stats!.solved,
-        );
-      }
+      _calculateStats(); // Recalculate stats
       notifyListeners();
       return true;
     } on ApiException catch (e) {
@@ -114,7 +137,7 @@ class TicketsProvider extends ChangeNotifier {
       final index = _tickets.indexWhere((t) => t.id == id);
       if (index != -1) {
         _tickets[index] = ticket;
-        // Ideally reload stats too
+        _calculateStats(); // Recalculate stats
         notifyListeners();
       }
       return true;

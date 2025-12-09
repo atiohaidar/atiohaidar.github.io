@@ -340,6 +340,7 @@ class _TasksScreenState extends State<TasksScreen> {
                       description: descController.text.trim().isNotEmpty
                           ? descController.text.trim()
                           : null,
+                      completed: false, // Explicitly match backend expectation
                     ));
                     if (success && context.mounted) {
                       Navigator.pop(context);

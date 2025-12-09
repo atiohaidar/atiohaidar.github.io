@@ -23,16 +23,26 @@ class Task extends Equatable {
   });
 
   factory Task.fromJson(Map<String, dynamic> json) {
-    return Task(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      description: json['description'] as String?,
-      completed: _parseBool(json['completed']),
-      dueDate: json['due_date'] as String?,
-      owner: json['owner'] as String?,
-      createdAt: json['created_at'] as String?,
-      updatedAt: json['updated_at'] as String?,
-    );
+    try {
+      return Task(
+        id: json['id'] is int
+            ? json['id'] as int
+            : int.tryParse(json['id']?.toString() ?? '0') ?? 0,
+        name: json['name']?.toString() ?? '',
+        description: json['description']?.toString(),
+        completed: _parseBool(json['completed']),
+        dueDate: json['due_date']?.toString(),
+        owner: json['owner']?.toString(),
+        createdAt: json['created_at']?.toString(),
+        updatedAt: json['updated_at']?.toString(),
+      );
+    } catch (e) {
+      // ignore: avoid_print
+      print('DEBUG: Error parsing Task: $e');
+      // ignore: avoid_print
+      print('DEBUG: Task JSON: $json');
+      rethrow;
+    }
   }
 
   Map<String, dynamic> toJson() {

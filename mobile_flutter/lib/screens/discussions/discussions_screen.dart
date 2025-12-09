@@ -31,6 +31,18 @@ class _DiscussionsScreenState extends State<DiscussionsScreen> {
 
     return Scaffold(
       backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        title: Text(
+          'Forum Discussions',
+          style: TextStyle(
+            color: isDark ? AppColors.textPrimary : AppColors.lightText,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+      ),
       body: RefreshIndicator(
         onRefresh: () => discussionsProvider.loadDiscussions(),
         child: _buildBody(discussionsProvider, isDark),

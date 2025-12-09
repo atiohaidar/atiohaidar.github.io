@@ -288,11 +288,21 @@ class TicketStats extends Equatable {
 
   factory TicketStats.fromJson(Map<String, dynamic> json) {
     return TicketStats(
-      total: json['total'] as int? ?? 0,
-      open: json['open'] as int? ?? 0,
-      inProgress: json['in_progress'] as int? ?? 0,
-      waiting: json['waiting'] as int? ?? 0,
-      solved: json['solved'] as int? ?? 0,
+      total: json['total'] is int
+          ? json['total'] as int
+          : int.tryParse(json['total']?.toString() ?? '0') ?? 0,
+      open: json['open'] is int
+          ? json['open'] as int
+          : int.tryParse(json['open']?.toString() ?? '0') ?? 0,
+      inProgress: json['in_progress'] is int
+          ? json['in_progress'] as int
+          : int.tryParse(json['in_progress']?.toString() ?? '0') ?? 0,
+      waiting: json['waiting'] is int
+          ? json['waiting'] as int
+          : int.tryParse(json['waiting']?.toString() ?? '0') ?? 0,
+      solved: json['solved'] is int
+          ? json['solved'] as int
+          : int.tryParse(json['solved']?.toString() ?? '0') ?? 0,
     );
   }
 
