@@ -52,7 +52,7 @@ const LoginPage: React.FC = () => {
                             ))}
                         </div>
                         <div className="flex items-center text-sm text-light-muted dark:text-soft-gray">
-                            <span className="font-bold text-accent-blue mr-1">50+</span> users joined
+                            <span className="font-bold text-accent-blue mr-1">Entah berapa</span> users yang join
                         </div>
                     </div>
                 </div>

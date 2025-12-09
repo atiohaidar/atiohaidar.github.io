@@ -93,10 +93,10 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                     <p className="text-xs text-center text-gray-500 dark:text-gray-400 mb-3 font-medium uppercase tracking-wider">Demo Credentials</p>
                     <div className="flex justify-center gap-4 text-xs">
                         <div className="px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300">
-                            <strong>Admin:</strong> admin
+                            <strong>Admin:</strong> username: admin, password: admin123
                         </div>
                         <div className="px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300">
-                            <strong>User:</strong> user
+                            <strong>User:</strong> username: user, password: user123
                         </div>
                     </div>
                 </div>
