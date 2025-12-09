@@ -299,3 +299,58 @@ class TicketStats extends Equatable {
   @override
   List<Object?> get props => [total, open, inProgress, waiting, solved];
 }
+
+/// Ticket assignment model
+class TicketAssignment extends Equatable {
+  final int id;
+  final int ticketId;
+  final String? assignedFrom;
+  final String assignedTo;
+  final String assignedBy;
+  final String? notes;
+  final String? createdAt;
+
+  const TicketAssignment({
+    required this.id,
+    required this.ticketId,
+    this.assignedFrom,
+    required this.assignedTo,
+    required this.assignedBy,
+    this.notes,
+    this.createdAt,
+  });
+
+  factory TicketAssignment.fromJson(Map<String, dynamic> json) {
+    return TicketAssignment(
+      id: json['id'] as int,
+      ticketId: json['ticket_id'] as int,
+      assignedFrom: json['assigned_from'] as String?,
+      assignedTo: json['assigned_to'] as String,
+      assignedBy: json['assigned_by'] as String,
+      notes: json['notes'] as String?,
+      createdAt: json['created_at'] as String?,
+    );
+  }
+
+  @override
+  List<Object?> get props =>
+      [id, ticketId, assignedFrom, assignedTo, assignedBy, notes, createdAt];
+}
+
+/// Ticket assign request
+class TicketAssign {
+  final String assignedTo;
+  final String? notes;
+
+  const TicketAssign({
+    required this.assignedTo,
+    this.notes,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'assigned_to': assignedTo,
+      if (notes != null) 'notes': notes,
+    };
+  }
+}

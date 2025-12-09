@@ -237,56 +237,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _saveProfile() async {
-    final provider = context.read<
-        UsersProvider>(); // Assuming UsersProvider is available globally, or accessible.
-    // Wait, AuthProvider usually handles current user. UsersProvider is for admin.
-    // DOES USER HAVE PERMISSION TO EDIT SELF?
-    // The previous analysis showed UsersProvider has updateUser.
-    // Let's try to update using current username.
+    final authProvider = context.read<AuthProvider>();
+    final user = authProvider.user;
 
-    final user = context.read<AuthProvider>().user;
     if (user != null && _nameController.text.trim().isNotEmpty) {
       if (_nameController.text.trim() == user.name) {
         setState(() => _isEditing = false);
         return;
       }
 
-      // We might need to ensure UsersProvider is available or move the logic to AuthProvider/UserService?
-      // Assuming for now we can use UsersProvider.
-      // If UsersProvider is "Admin Only" as per comment, then regular users can't edit?
-      // "/// Users provider (admin only)" comment in UsersProvider.
-      // This suggests we might need a `MeProvider` or update `AuthProvider` to handle profile updates.
-      // For now, I'll attempt using UsersProvider but if it fails (403), we know why.
-      // Alternatively, the API might allow updating OWN profile via /users/:username if username matches.
+      final success = await authProvider.updateProfile(
+        UserUpdate(name: _nameController.text.trim()),
+      );
 
-      try {
-        final success = await provider.updateUser(
-          user.username,
-          UserUpdate(name: _nameController.text.trim()),
-        );
-
-        if (success) {
-          // Reload auth user to reflect changes?
-          // AuthProvider reads from StorageService. If UsersProvider updates API, we might need to re-fetch "me".
-          // But AuthProvider doesn't have "fetchMe". It has "initialize" which reads from storage.
-          // Ideally, after update, we should update the local user in AuthProvider.
-          // However, AuthProvider doesn't expose a setter for _user easily except via login.
-          // I'll skip complex state sync for this iteration and just update UI.
-
-          setState(() => _isEditing = false);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profile updated successfully')),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(provider.error ?? 'Update failed')),
-          );
-        }
-      } catch (e) {
-        // If UsersProvider is not found (e.g. not provided at root for members?), this will throw.
-        // But it is provided at root.
+      if (success && mounted) {
+        setState(() => _isEditing = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to update profile')),
+          const SnackBar(content: Text('Profile updated successfully')),
+        );
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(authProvider.error ?? 'Update failed')),
         );
       }
     }

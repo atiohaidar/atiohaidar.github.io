@@ -54,6 +54,16 @@ class ApiService {
     }
   }
 
+  /// Update current user's profile (self-update)
+  static Future<User> updateProfile(UserUpdate data) async {
+    try {
+      final response = await ApiClient.put('/profile', data: data.toJson());
+      return User.fromJson(response.data['user']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
   // Tasks
   static Future<List<Task>> getTasks({int? page, bool? isCompleted}) async {
     try {
@@ -354,6 +364,34 @@ class ApiService {
     }
   }
 
+  /// Get ticket assignment history
+  static Future<List<TicketAssignment>> getTicketAssignments(
+      int ticketId) async {
+    try {
+      final response = await ApiClient.get('/tickets/$ticketId/assignments');
+      final assignments = (response.data['data'] as List)
+          .map((json) => TicketAssignment.fromJson(json))
+          .toList();
+      return assignments;
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  /// Assign ticket to a user
+  static Future<TicketAssignment> assignTicket(
+      int ticketId, TicketAssign data) async {
+    try {
+      final response = await ApiClient.post(
+        '/tickets/$ticketId/assign',
+        data: data.toJson(),
+      );
+      return TicketAssignment.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
   // Events
   static Future<List<Event>> getEvents() async {
     try {
@@ -631,6 +669,29 @@ class ApiService {
     }
   }
 
+  static Future<List<FormResponse>> getFormResponses(String formId) async {
+    try {
+      final response = await ApiClient.get('/forms/$formId/responses');
+      final responses = (response.data['data'] as List)
+          .map((json) => FormResponse.fromJson(json))
+          .toList();
+      return responses;
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<FormResponseDetail> getFormResponse(
+      String formId, String responseId) async {
+    try {
+      final response =
+          await ApiClient.get('/forms/$formId/responses/$responseId');
+      return FormResponseDetail.fromJson(response.data['data']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
   // Chat
   static Future<List<ChatConversation>> getConversations() async {
     try {
@@ -677,8 +738,7 @@ class ApiService {
       // - Fetch conversation messages: GET /api/conversations/:id/messages
       // - Fetch group messages: GET /api/groups/:groupId/messages
       // The MessageCreate model includes conversationId or groupId to route correctly
-      final response =
-          await ApiClient.post('/messages', data: data.toJson());
+      final response = await ApiClient.post('/messages', data: data.toJson());
       return ChatMessage.fromJson(response.data['data']);
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
@@ -771,8 +831,7 @@ class ApiService {
     }
   }
 
-  static Future<void> removeGroupMember(
-      String groupId, String username) async {
+  static Future<void> removeGroupMember(String groupId, String username) async {
     try {
       await ApiClient.delete('/groups/$groupId/members/$username');
     } on DioException catch (e) {
@@ -841,6 +900,38 @@ class ApiService {
   static Future<void> deleteDiscussion(String id) async {
     try {
       await ApiClient.delete('/discussions/$id');
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  // Anonymous Chat
+  static Future<List<AnonymousMessage>> getAnonymousMessages() async {
+    try {
+      final response = await ApiClient.get('/anonymous/messages');
+      final messages = (response.data['messages'] as List)
+          .map((json) => AnonymousMessage.fromJson(json))
+          .toList();
+      return messages;
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<AnonymousMessage> sendAnonymousMessage(
+      AnonymousMessageCreate data) async {
+    try {
+      final response =
+          await ApiClient.post('/anonymous/messages', data: data.toJson());
+      return AnonymousMessage.fromJson(response.data['message']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<void> deleteAnonymousMessages() async {
+    try {
+      await ApiClient.delete('/anonymous/messages');
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
     }

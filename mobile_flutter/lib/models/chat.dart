@@ -54,7 +54,15 @@ class ChatMessage extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, conversationId, groupId, senderUsername, content, replyToId, createdAt];
+  List<Object?> get props => [
+        id,
+        conversationId,
+        groupId,
+        senderUsername,
+        content,
+        replyToId,
+        createdAt
+      ];
 }
 
 /// Chat conversation model
@@ -110,7 +118,8 @@ class ChatConversation extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, user1Username, user2Username, otherUsername, lastMessage, updatedAt];
+  List<Object?> get props =>
+      [id, user1Username, user2Username, otherUsername, lastMessage, updatedAt];
 }
 
 /// Message create request
@@ -182,7 +191,8 @@ class ChatGroup extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, name, description, createdBy, createdAt, updatedAt, memberCount];
+  List<Object?> get props =>
+      [id, name, description, createdBy, createdAt, updatedAt, memberCount];
 }
 
 /// Group member model
@@ -247,6 +257,70 @@ class GroupUpdate {
     return {
       if (name != null) 'name': name,
       if (description != null) 'description': description,
+    };
+  }
+}
+
+/// Anonymous chat message model
+class AnonymousMessage extends Equatable {
+  final String id;
+  final String senderId;
+  final String content;
+  final String? replyToId;
+  final String? replyContent;
+  final String createdAt;
+
+  const AnonymousMessage({
+    required this.id,
+    required this.senderId,
+    required this.content,
+    this.replyToId,
+    this.replyContent,
+    required this.createdAt,
+  });
+
+  factory AnonymousMessage.fromJson(Map<String, dynamic> json) {
+    return AnonymousMessage(
+      id: json['id'] as String,
+      senderId: json['sender_id'] as String,
+      content: json['content'] as String,
+      replyToId: json['reply_to_id'] as String?,
+      replyContent: json['reply_content'] as String?,
+      createdAt: json['created_at'] as String,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'sender_id': senderId,
+      'content': content,
+      if (replyToId != null) 'reply_to_id': replyToId,
+      'created_at': createdAt,
+    };
+  }
+
+  @override
+  List<Object?> get props => [id, senderId, content, replyToId, createdAt];
+}
+
+/// Anonymous message create request
+class AnonymousMessageCreate {
+  final String senderId;
+  final String content;
+  final String? replyToId;
+
+  const AnonymousMessageCreate({
+    required this.senderId,
+    required this.content,
+    this.replyToId,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'sender_id': senderId,
+      'content': content,
+      if (replyToId != null) 'reply_to_id': replyToId,
     };
   }
 }

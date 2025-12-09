@@ -134,7 +134,8 @@ class AppRouter {
             final id = state.pathParameters['id']!;
             final discussion = state.extra as Discussion?;
             return GradientBackground(
-                child: DiscussionDetailScreen(discussionId: id, discussion: discussion));
+                child: DiscussionDetailScreen(
+                    discussionId: id, discussion: discussion));
           },
         ),
         GoRoute(
@@ -145,6 +146,34 @@ class AppRouter {
             final event = state.extra as Event?;
             return GradientBackground(
                 child: EventDetailScreen(eventId: id, event: event));
+          },
+        ),
+        GoRoute(
+          path: '/anonymous-chat',
+          name: 'anonymous_chat',
+          builder: (context, state) => ChangeNotifierProvider(
+            create: (_) => AnonymousChatProvider(),
+            child: GradientBackground(child: const AnonymousChatScreen()),
+          ),
+        ),
+        GoRoute(
+          path: '/events/:id/scanner',
+          name: 'event_scanner',
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            final title = state.extra as String? ?? 'Event';
+            return GradientBackground(
+                child: EventScannerScreen(eventId: id, eventTitle: title));
+          },
+        ),
+        GoRoute(
+          path: '/forms/:id/responses',
+          name: 'form_responses',
+          builder: (context, state) {
+            final id = state.pathParameters['id']!;
+            final title = state.extra as String? ?? 'Form';
+            return GradientBackground(
+                child: FormResponsesScreen(formId: id, formTitle: title));
           },
         ),
       ],

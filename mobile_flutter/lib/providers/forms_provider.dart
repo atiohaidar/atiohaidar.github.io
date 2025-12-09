@@ -6,11 +6,15 @@ import '../services/services.dart';
 class FormsProvider extends ChangeNotifier {
   List<FormData> _forms = [];
   FormWithQuestions? _selectedForm;
+  List<FormResponse> _responses = [];
+  FormResponseDetail? _selectedResponse;
   bool _isLoading = false;
   String? _error;
 
   List<FormData> get forms => _forms;
   FormWithQuestions? get selectedForm => _selectedForm;
+  List<FormResponse> get responses => _responses;
+  FormResponseDetail? get selectedResponse => _selectedResponse;
   bool get isLoading => _isLoading;
   String? get error => _error;
 
@@ -38,6 +42,39 @@ class FormsProvider extends ChangeNotifier {
 
     try {
       _selectedForm = await ApiService.getForm(id);
+      _isLoading = false;
+      notifyListeners();
+    } on ApiException catch (e) {
+      _error = e.message;
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Load form responses
+  Future<void> loadFormResponses(String formId) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      _responses = await ApiService.getFormResponses(formId);
+      _isLoading = false;
+      notifyListeners();
+    } on ApiException catch (e) {
+      _error = e.message;
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Load single response detail
+  Future<void> loadFormResponse(String formId, String responseId) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _selectedResponse = await ApiService.getFormResponse(formId, responseId);
       _isLoading = false;
       notifyListeners();
     } on ApiException catch (e) {
@@ -80,6 +117,12 @@ class FormsProvider extends ChangeNotifier {
 
   void clearError() {
     _error = null;
+    notifyListeners();
+  }
+
+  void clearResponses() {
+    _responses = [];
+    _selectedResponse = null;
     notifyListeners();
   }
 }

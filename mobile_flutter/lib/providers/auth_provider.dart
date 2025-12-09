@@ -8,7 +8,7 @@ enum AuthState { initial, loading, authenticated, unauthenticated, error }
 /// Authentication provider
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService = AuthService();
-  
+
   AuthState _state = AuthState.initial;
   User? _user;
   String? _error;
@@ -83,5 +83,25 @@ class AuthProvider extends ChangeNotifier {
       _state = AuthState.unauthenticated;
     }
     notifyListeners();
+  }
+
+  /// Update current user's profile
+  Future<bool> updateProfile(UserUpdate data) async {
+    try {
+      final updatedUser = await ApiService.updateProfile(data);
+      _user = updatedUser;
+      // Update stored user via auth service
+      await _authService.updateStoredUser(updatedUser);
+      notifyListeners();
+      return true;
+    } on ApiException catch (e) {
+      _error = e.message;
+      notifyListeners();
+      return false;
+    } catch (e) {
+      _error = 'Failed to update profile';
+      notifyListeners();
+      return false;
+    }
   }
 }

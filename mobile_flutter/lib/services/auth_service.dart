@@ -16,11 +16,11 @@ class AuthService {
       );
 
       final loginResponse = LoginResponse.fromJson(response.data);
-      
+
       // Save token and user
       await _storage.saveToken(loginResponse.token);
       await _storage.saveUser(loginResponse.user);
-      
+
       return loginResponse;
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
@@ -46,5 +46,10 @@ class AuthService {
   /// Get stored token
   Future<String?> getToken() async {
     return await _storage.getToken();
+  }
+
+  /// Update stored user data (for profile updates)
+  Future<void> updateStoredUser(User user) async {
+    await _storage.saveUser(user);
   }
 }

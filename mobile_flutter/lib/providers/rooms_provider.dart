@@ -13,7 +13,8 @@ class RoomsProvider extends ChangeNotifier {
   List<Room> get rooms => _rooms;
   List<Room> get availableRooms => _rooms.where((r) => r.available).toList();
   List<Booking> get bookings => _bookings;
-  List<Booking> get pendingBookings => _bookings.where((b) => b.status == BookingStatus.pending).toList();
+  List<Booking> get pendingBookings =>
+      _bookings.where((b) => b.status == BookingStatus.pending).toList();
   Room? get selectedRoom => _selectedRoom;
   bool get isLoading => _isLoading;
   String? get error => _error;
@@ -66,7 +67,7 @@ class RoomsProvider extends ChangeNotifier {
 
       _rooms = results[0] as List<Room>;
       _bookings = results[1] as List<Booking>;
-      
+
       _isLoading = false;
       notifyListeners();
     } on ApiException catch (e) {
@@ -109,7 +110,8 @@ class RoomsProvider extends ChangeNotifier {
   /// Update booking status
   Future<bool> updateBookingStatus(String id, BookingStatus status) async {
     try {
-      final updated = await ApiService.updateBookingStatus(id, BookingUpdate(status: status));
+      final updated = await ApiService.updateBookingStatus(
+          id, BookingUpdate(status: status));
       final index = _bookings.indexWhere((b) => b.id == id);
       if (index != -1) {
         _bookings[index] = updated;
@@ -126,6 +128,20 @@ class RoomsProvider extends ChangeNotifier {
   /// Get bookings for a specific room
   List<Booking> getBookingsForRoom(String roomId) {
     return _bookings.where((b) => b.roomId == roomId).toList();
+  }
+
+  /// Cancel a booking
+  Future<bool> cancelBooking(String id) async {
+    try {
+      await ApiService.cancelBooking(id);
+      _bookings.removeWhere((b) => b.id == id);
+      notifyListeners();
+      return true;
+    } on ApiException catch (e) {
+      _error = e.message;
+      notifyListeners();
+      return false;
+    }
   }
 
   void clearError() {
