@@ -22,7 +22,7 @@ data class Task(
 data class TaskCreate(
     val name: String,
     val description: String? = null,
-    val completed: Boolean? = null,
+    val completed: Boolean? = true,
     @SerializedName("due_date")
     val dueDate: String? = null
 )
