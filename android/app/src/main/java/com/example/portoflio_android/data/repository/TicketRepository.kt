@@ -21,7 +21,7 @@ class TicketRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.success(response.body()!!.data!!)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to get categories"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -34,7 +34,7 @@ class TicketRepository @Inject constructor(
             if (response.isSuccessful && response.body() != null) {
                 Result.success(response.body()!!.data)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to get tickets"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -47,7 +47,7 @@ class TicketRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.success(response.body()!!.data!!)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to get ticket"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -60,7 +60,7 @@ class TicketRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.success(response.body()!!.data!!)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to update ticket"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -73,7 +73,7 @@ class TicketRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.success(response.body()!!.data!!)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to get comments"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -87,7 +87,7 @@ class TicketRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.success(response.body()!!.data!!)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to add comment"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -100,7 +100,7 @@ class TicketRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.success(response.body()!!.data!!)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to get stats"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -113,7 +113,7 @@ class TicketRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.success(response.body()!!.data!!)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to get assignments"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -126,7 +126,7 @@ class TicketRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.success(response.body()!!.data!!)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to assign ticket"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)

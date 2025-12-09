@@ -24,7 +24,7 @@ class TaskRepository @Inject constructor(
             if (response.isSuccessful && response.body() != null) {
                 Result.success(response.body()!!.tasks)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to get tasks"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -40,7 +40,7 @@ class TaskRepository @Inject constructor(
             if (response.isSuccessful && response.body() != null) {
                 Result.success(response.body()!!.task)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to get task"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -56,7 +56,7 @@ class TaskRepository @Inject constructor(
             if (response.isSuccessful && response.body() != null) {
                 Result.success(response.body()!!.task)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to create task"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -72,7 +72,7 @@ class TaskRepository @Inject constructor(
             if (response.isSuccessful && response.body() != null) {
                 Result.success(response.body()!!.task)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to update task"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -88,7 +88,7 @@ class TaskRepository @Inject constructor(
             if (response.isSuccessful) {
                 Result.success(Unit)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to delete task"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)

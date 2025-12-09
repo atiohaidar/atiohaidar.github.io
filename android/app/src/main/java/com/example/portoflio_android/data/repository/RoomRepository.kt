@@ -21,7 +21,7 @@ class RoomRepository @Inject constructor(
             if (response.isSuccessful && response.body() != null) {
                 Result.success(response.body()!!.data)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to get rooms"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -34,7 +34,7 @@ class RoomRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.success(response.body()!!.data!!)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to get room"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -47,7 +47,7 @@ class RoomRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.success(response.body()!!.data!!)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to create room"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -62,7 +62,7 @@ class RoomRepository @Inject constructor(
             if (response.isSuccessful && response.body() != null) {
                 Result.success(response.body()!!.data)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to get bookings"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -75,7 +75,7 @@ class RoomRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.success(response.body()!!.data!!)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to create booking"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -91,7 +91,7 @@ class RoomRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.success(response.body()!!.data!!)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to update booking"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -104,7 +104,7 @@ class RoomRepository @Inject constructor(
             if (response.isSuccessful) {
                 Result.success(Unit)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to cancel booking"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)

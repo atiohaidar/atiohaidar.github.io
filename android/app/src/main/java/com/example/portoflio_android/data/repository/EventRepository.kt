@@ -22,7 +22,7 @@ class EventRepository @Inject constructor(
             if (response.isSuccessful && response.body() != null) {
                 Result.success(response.body()!!.data)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to get events"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -35,7 +35,7 @@ class EventRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.success(response.body()!!.data!!)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to get event"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -48,7 +48,7 @@ class EventRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.success(response.body()!!.data!!)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to create event"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -61,7 +61,7 @@ class EventRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.success(response.body()!!.data!!)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to register"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -74,7 +74,7 @@ class EventRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.success(response.body()!!.data!!)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to get attendees"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -88,7 +88,7 @@ class EventRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.success(response.body()!!.data!!)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to get admins"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -101,7 +101,7 @@ class EventRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.success(response.body()!!.data!!)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to assign admin"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -114,7 +114,7 @@ class EventRepository @Inject constructor(
             if (response.isSuccessful) {
                 Result.success(Unit)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to remove admin"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -128,7 +128,7 @@ class EventRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.success(response.body()!!.data!!)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to scan attendance"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -141,7 +141,7 @@ class EventRepository @Inject constructor(
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.success(response.body()!!.data!!)
             } else {
-                Result.failure(Exception(response.message() ?: "Failed to get scan history"))
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
         } catch (e: Exception) {
             Result.failure(e)
