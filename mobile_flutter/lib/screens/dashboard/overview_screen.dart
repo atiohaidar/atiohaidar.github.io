@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../config/theme.dart';
 import '../../providers/providers.dart';
@@ -47,6 +48,10 @@ class _DashboardOverviewScreenState extends State<DashboardOverviewScreen> {
           children: [
             // Welcome card
             _buildWelcomeCard(authProvider.user, isDark),
+            const SizedBox(height: 24),
+
+            // Balance Card
+            _buildBalanceCard(authProvider.user, isDark),
             const SizedBox(height: 24),
 
             // Stats grid
@@ -333,6 +338,98 @@ class _DashboardOverviewScreenState extends State<DashboardOverviewScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildBalanceCard(User? user, bool isDark) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: isDark
+              ? [
+                  const Color(0xFF1A2230).withOpacity(0.6),
+                  const Color(0xFF1A2230).withOpacity(0.4)
+                ]
+              : [Colors.white.withOpacity(0.6), Colors.white.withOpacity(0.4)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: isDark ? Colors.white.withOpacity(0.05) : Colors.grey.shade100,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Colors.green, Colors.teal],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.green.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: const Text('💰', style: TextStyle(fontSize: 24)),
+              ),
+              ElevatedButton(
+                onPressed: () => context.push('/transfer'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                ),
+                child: const Text('Transfer',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Rp ${(user?.balance ?? 0).toStringAsFixed(0).replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
+            style: TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              color: isDark ? AppColors.textPrimary : AppColors.lightText,
+              height: 1.2,
+            ),
+          ),
+          Text(
+            'Total Balance',
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color:
+                  isDark ? AppColors.textMuted : AppColors.lightTextSecondary,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

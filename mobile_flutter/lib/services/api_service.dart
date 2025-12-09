@@ -27,6 +27,47 @@ class ApiService {
     }
   }
 
+  static Future<User> getUser(String username) async {
+    try {
+      final response = await ApiClient.get('/users/$username');
+      return User.fromJson(response.data['user']);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<void> transferBalance({
+    required String toUsername,
+    required double amount,
+    String? description,
+  }) async {
+    try {
+      await ApiClient.post('/users/transfer', data: {
+        'to_username': toUsername,
+        'amount': amount,
+        'description': description,
+      });
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  static Future<void> topUpBalance({
+    required String targetUsername,
+    required double amount,
+    String? description,
+  }) async {
+    try {
+      await ApiClient.post('/users/topup', data: {
+        'target_username': targetUsername,
+        'amount': amount,
+        'description': description,
+      });
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
   static Future<User> createUser(UserCreate data) async {
     try {
       final response = await ApiClient.post('/users', data: data.toJson());

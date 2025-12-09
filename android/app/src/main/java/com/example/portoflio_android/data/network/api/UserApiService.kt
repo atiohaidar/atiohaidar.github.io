@@ -30,10 +30,28 @@ interface UserApiService {
     // Self-profile update (uses /api/profile per backend)
     @PUT("/api/profile")
     suspend fun updateProfile(@Body update: ProfileUpdate): Response<ApiResponse<User>>
+
+    @POST("/api/users/transfer")
+    suspend fun transfer(@Body request: TransferRequest): Response<ApiResponse<Unit>>
+
+    @POST("/api/users/topup")
+    suspend fun topUp(@Body request: TopUpRequest): Response<ApiResponse<Unit>>
 }
 
 data class ProfileUpdate(
     val name: String? = null,
     val password: String? = null
+)
+
+data class TransferRequest(
+    @SerializedName("to_username") val toUsername: String,
+    val amount: Double,
+    val description: String? = null
+)
+
+data class TopUpRequest(
+    @SerializedName("target_username") val targetUsername: String,
+    val amount: Double,
+    val description: String? = null
 )
 

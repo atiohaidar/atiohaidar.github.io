@@ -274,6 +274,22 @@ class ApiService {
     }
   }
 
+  async transferBalance(to_username: string, amount: number, description?: string): Promise<void> {
+    try {
+      await this.api.post('/api/users/transfer', { to_username, amount, description });
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async topUpBalance(target_username: string, amount: number, description?: string): Promise<void> {
+    try {
+      await this.api.post('/api/users/topup', { target_username, amount, description });
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
   // Task APIs
   async listTasks(params?: { page?: number; isCompleted?: boolean }): Promise<Types.Task[]> {
     try {

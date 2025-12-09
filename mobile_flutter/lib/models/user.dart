@@ -8,11 +8,13 @@ class User extends Equatable {
   final String username;
   final String name;
   final UserRole role;
+  final double balance;
 
   const User({
     required this.username,
     required this.name,
     required this.role,
+    this.balance = 0.0,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class User extends Equatable {
       username: json['username'] as String,
       name: json['name'] as String,
       role: json['role'] == 'admin' ? UserRole.admin : UserRole.member,
+      balance: (json['balance'] as num?)?.toDouble() ?? 0.0,
     );
   }
 
@@ -34,7 +37,7 @@ class User extends Equatable {
   bool get isAdmin => role == UserRole.admin;
 
   @override
-  List<Object?> get props => [username, name, role];
+  List<Object?> get props => [username, name, role, balance];
 }
 
 /// Login request

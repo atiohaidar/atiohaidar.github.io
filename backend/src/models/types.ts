@@ -65,6 +65,7 @@ export const ArticleUpdateSchema = z
 		message: "Minimal satu field harus diisi",
 	});
 
+// User schemas
 export const UserRoleSchema = z.enum(["admin", "member"], {
 	description: "Role pengguna yang menentukan hak akses",
 });
@@ -75,6 +76,7 @@ export const UserPublicSchema = z.object({
 	username: Str({ example: "admin" }),
 	name: Str({ example: "Administrator" }),
 	role: UserRoleSchema,
+	balance: Num({ example: 1000 }).default(0),
 });
 
 export type UserPublic = z.infer<typeof UserPublicSchema>;
@@ -95,6 +97,31 @@ export const UserUpdateSchema = z
 	.refine((data) => Object.keys(data).length > 0, {
 		message: "Minimal satu field harus diisi",
 	});
+
+// Transaction schemas
+export const TransactionTypeSchema = z.enum(["transfer", "topup"]);
+
+export const Transaction = z.object({
+	id: Num({ description: "Transaction ID", example: 1 }),
+	from_username: Str({ required: false, example: "user1" }),
+	to_username: Str({ example: "user2" }),
+	amount: Num({ example: 100 }),
+	type: TransactionTypeSchema,
+	description: Str({ required: false }),
+	created_at: Str({ required: false }),
+});
+
+export const TransferBalanceSchema = z.object({
+	to_username: Str({ example: "user2" }),
+	amount: Num({ example: 100 }).min(1),
+	description: Str({ required: false }),
+});
+
+export const TopUpBalanceSchema = z.object({
+	target_username: Str({ example: "user1" }),
+	amount: Num({ example: 1000 }).min(1),
+	description: Str({ required: false }),
+});
 
 // Room schemas
 export const Room = z.object({

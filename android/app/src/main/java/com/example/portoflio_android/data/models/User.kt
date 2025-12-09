@@ -8,7 +8,8 @@ import com.google.gson.annotations.SerializedName
 data class User(
     val username: String,
     val name: String,
-    val role: UserRole
+    val role: UserRole,
+    val balance: Double = 0.0
 )
 
 enum class UserRole {

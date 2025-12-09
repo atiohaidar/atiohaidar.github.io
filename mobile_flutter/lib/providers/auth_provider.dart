@@ -104,4 +104,19 @@ class AuthProvider extends ChangeNotifier {
       return false;
     }
   }
+
+  /// Check authentication status and refresh user data
+  Future<void> checkAuth() async {
+    try {
+      if (_user != null) {
+        final refreshedUser = await ApiService.getUser(_user!.username);
+        _user = refreshedUser;
+        notifyListeners();
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Check auth failed: $e');
+      }
+    }
+  }
 }

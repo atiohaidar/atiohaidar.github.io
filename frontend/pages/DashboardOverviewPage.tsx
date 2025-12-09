@@ -2,12 +2,18 @@ import React from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { DASHBOARD_THEME } from '../utils/styles';
 import { getStoredUser } from '../apiClient';
-import { useDashboardStats, useTickets, useEvents } from '../hooks/useApi';
+import { useDashboardStats, useTickets, useEvents, useUser } from '../hooks/useApi';
+import TransferModal from '../components/TransferModal';
+import TopUpModal from '../components/TopUpModal';
+import { useState } from 'react';
 
 const DashboardOverviewPage: React.FC = () => {
     const { theme } = useTheme();
-    const user = getStoredUser();
+    const storedUser = getStoredUser();
+    const { data: user } = useUser(storedUser?.username);
     const palette = DASHBOARD_THEME[theme];
+    const [isTransferModalOpen, setIsTransferModalOpen] = useState(false);
+    const [isTopUpModalOpen, setIsTopUpModalOpen] = useState(false);
 
     // Fetch real data
     const { data: statsData, isLoading: isStatsLoading } = useDashboardStats();
@@ -89,7 +95,7 @@ const DashboardOverviewPage: React.FC = () => {
                 <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                     <div>
                         <h1 className={`text-4xl md:text-5xl font-bold ${palette.panel.text} tracking-tight`}>
-                            {greeting}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">{user?.name}</span>
+                            {greeting}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">{user?.name || storedUser?.name}</span>
                         </h1>
                         <p className={`mt-2 text-lg ${palette.panel.textMuted}`}>
                             Here's what's happening with your projects today.
@@ -105,6 +111,47 @@ const DashboardOverviewPage: React.FC = () => {
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {/* Balance Card */}
+                <div
+                    className={`relative group p-6 rounded-2xl border ${theme === 'dark' ? 'bg-[#1A2230]/60 border-white/5' : 'bg-white/60 border-gray-100'} backdrop-blur-xl shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl overflow-hidden`}
+                >
+                    <div className={`absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-gradient-to-br from-green-500 to-emerald-400 opacity-20 blur-2xl group-hover:opacity-40 transition-opacity`} />
+
+                    <div className="relative z-10 flex flex-col h-full justify-between">
+                        <div>
+                            <div className="flex justify-between items-start mb-4">
+                                <div className={`p-3 rounded-xl bg-gradient-to-br from-green-500 to-emerald-400 text-white shadow-lg`}>
+                                    <span className="text-xl">💰</span>
+                                </div>
+                                <div className={`px-2 py-1 rounded-full text-xs font-medium ${theme === 'dark' ? 'bg-white/10 text-white/80' : 'bg-green-100 text-green-700'}`}>
+                                    Wallet
+                                </div>
+                            </div>
+                            <h3 className={`text-3xl font-bold ${palette.panel.text} mb-1`}>
+                                Rp {(user?.balance || 0).toLocaleString()}
+                            </h3>
+                            <p className={`text-sm font-medium ${palette.panel.textMuted}`}>Total Balance</p>
+                        </div>
+
+                        <div className="flex gap-2 mt-4 pt-4 border-t border-gray-200/10">
+                            {user?.role === 'admin' && (
+                                <button
+                                    onClick={() => setIsTopUpModalOpen(true)}
+                                    className={`flex-1 text-xs font-bold px-3 py-2 rounded-xl bg-purple-500 hover:bg-purple-600 text-white transition-all shadow-lg hover:shadow-purple-500/20 active:scale-95`}
+                                >
+                                    Top Up
+                                </button>
+                            )}
+                            <button
+                                onClick={() => setIsTransferModalOpen(true)}
+                                className={`flex-1 text-xs font-bold px-3 py-2 rounded-xl bg-green-500 hover:bg-green-600 text-white transition-all shadow-lg hover:shadow-green-500/20 active:scale-95`}
+                            >
+                                Transfer
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 {stats.map((stat, index) => (
                     <div
                         key={index}
@@ -127,6 +174,17 @@ const DashboardOverviewPage: React.FC = () => {
                     </div>
                 ))}
             </div>
+
+            <TransferModal
+                isOpen={isTransferModalOpen}
+                onClose={() => setIsTransferModalOpen(false)}
+                currentBalance={user?.balance || 0}
+            />
+
+            <TopUpModal
+                isOpen={isTopUpModalOpen}
+                onClose={() => setIsTopUpModalOpen(false)}
+            />
 
             {/* Main Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

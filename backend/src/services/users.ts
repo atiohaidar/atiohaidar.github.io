@@ -13,6 +13,7 @@ const PublicRowSchema = z.object({
 	username: z.string(),
 	name: z.string(),
 	role: UserRoleSchema,
+	balance: z.number().default(0), // Added balance
 });
 
 const UserRecordSchema = PublicRowSchema.extend({
@@ -35,6 +36,7 @@ const ensureInitialized = async (db: D1Database) => {
 					name TEXT NOT NULL,
 					password TEXT NOT NULL,
 					role TEXT NOT NULL CHECK(role IN ('admin', 'member')),
+					balance REAL DEFAULT 0,
 					created_at TEXT DEFAULT CURRENT_TIMESTAMP
 				)
 			`).run();
@@ -47,6 +49,8 @@ const ensureInitialized = async (db: D1Database) => {
 const mapPublic = (row: unknown): UserPublic => {
 	const parsed = PublicRowSchema.safeParse(row);
 	if (!parsed.success) {
+		// Log error safely?
+		// console.error("Validation error:", parsed.error);
 		throw new Error("Data pengguna tidak valid di database");
 	}
 	return parsed.data;
@@ -69,7 +73,7 @@ export const listUsers = async (
 	const offset = options.offset ?? 0;
 
 	const { results } = await db
-		.prepare("SELECT username, name, role FROM users ORDER BY username LIMIT ? OFFSET ?")
+		.prepare("SELECT username, name, role, balance FROM users ORDER BY username LIMIT ? OFFSET ?")
 		.bind(limit, offset)
 		.all();
 
@@ -79,7 +83,7 @@ export const listUsers = async (
 export const getUser = async (db: D1Database, username: string): Promise<UserPublic | undefined> => {
 	await ensureInitialized(db);
 	const row = await db
-		.prepare("SELECT username, name, role FROM users WHERE username = ?")
+		.prepare("SELECT username, name, role, balance FROM users WHERE username = ?")
 		.bind(username)
 		.first();
 
@@ -90,7 +94,7 @@ const getUserRecordInternal = async (db: D1Database, username: string): Promise<
 	await ensureInitialized(db);
 	const row = await db
 		.prepare(
-			"SELECT username, name, role, password, created_at FROM users WHERE username = ?",
+			"SELECT username, name, role, balance, password, created_at FROM users WHERE username = ?",
 		)
 		.bind(username)
 		.first();

@@ -88,6 +88,11 @@ export const userService = {
         return response.users;
     },
 
+    get: async (username: string): Promise<User> => {
+        const response = await apiFetch<UserResponse>(`/api/users/${username}`);
+        return response.user;
+    },
+
     create: async (user: UserCreate): Promise<User> => {
         const response = await apiFetch<UserResponse>('/api/users', {
             method: 'POST',
@@ -110,6 +115,22 @@ export const userService = {
         });
         return response.user;
     },
+
+    transfer: async (toUsername: string, amount: number, description?: string): Promise<{ success: boolean; newBalance: number }> => {
+        const response = await apiFetch<{ success: boolean; newBalance: number }>('/api/users/transfer', {
+            method: 'POST',
+            body: JSON.stringify({ to_username: toUsername, amount, description }),
+        });
+        return response;
+    },
+
+    topUp: async (targetUsername: string, amount: number, description?: string): Promise<{ success: boolean; newBalance: number }> => {
+        const response = await apiFetch<{ success: boolean; newBalance: number }>('/api/users/topup', {
+            method: 'POST',
+            body: JSON.stringify({ target_username: targetUsername, amount, description }),
+        });
+        return response;
+    },
 };
 
 // ============================================================================
@@ -122,7 +143,7 @@ export const taskService = {
         if (params?.isCompleted !== undefined) {
             queryParams.append('isCompleted', params.isCompleted.toString());
         }
-        
+
         const endpoint = `/api/tasks?${queryParams.toString()}`;
         const response = await apiFetch<TasksListResponse>(endpoint);
         return response.tasks;
@@ -167,7 +188,7 @@ export const articleService = {
         if (params?.published !== undefined) {
             queryParams.append('published', params.published.toString());
         }
-        
+
         const endpoint = `/api/articles?${queryParams.toString()}`;
         const response = await apiFetch<ArticlesListResponse>(endpoint);
         return response.articles;
@@ -211,7 +232,7 @@ export const roomService = {
         if (params?.available !== undefined) {
             queryParams.append('available', params.available.toString());
         }
-        
+
         const endpoint = queryParams.toString() ? `/api/rooms?${queryParams.toString()}` : '/api/rooms';
         const response = await apiFetch<RoomsListResponse>(endpoint);
         return response.data;
@@ -254,7 +275,7 @@ export const bookingService = {
         const queryParams = new URLSearchParams();
         if (params?.roomId) queryParams.append('roomId', params.roomId);
         if (params?.status) queryParams.append('status', params.status);
-        
+
         const endpoint = queryParams.toString() ? `/api/bookings?${queryParams.toString()}` : '/api/bookings';
         const response = await apiFetch<BookingsListResponse>(endpoint);
         return response.data;
@@ -305,6 +326,8 @@ export const listUsers = userService.list;
 export const createUser = userService.create;
 export const updateUser = userService.update;
 export const deleteUser = userService.delete;
+export const transferBalance = userService.transfer;
+export const topUpBalance = userService.topUp;
 export const listTasks = taskService.list;
 export const getTask = taskService.get;
 export const createTask = taskService.create;

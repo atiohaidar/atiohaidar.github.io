@@ -57,6 +57,14 @@ export const useUsers = (): UseQueryResult<User[], Error> => {
     });
 };
 
+export const useUser = (username: string | undefined): UseQueryResult<User, Error> => {
+    return useQuery({
+        queryKey: ['users', username],
+        queryFn: () => api.userService.get(username!),
+        enabled: !!username,
+    });
+};
+
 export const useCreateUser = (): UseMutationResult<User, Error, UserCreate> => {
     const queryClient = useQueryClient();
 
@@ -84,6 +92,29 @@ export const useDeleteUser = (): UseMutationResult<User, Error, string> => {
 
     return useMutation({
         mutationFn: api.deleteUser,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.users });
+        },
+    });
+};
+
+export const useTransferBalance = (): UseMutationResult<{ success: boolean; newBalance: number }, Error, { toUsername: string; amount: number; description?: string }> => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ toUsername, amount, description }) => api.transferBalance(toUsername, amount, description),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: queryKeys.users });
+            // Invalidate current user query if we had one for "me"
+        },
+    });
+};
+
+export const useTopUpBalance = (): UseMutationResult<{ success: boolean; newBalance: number }, Error, { targetUsername: string; amount: number; description?: string }> => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ targetUsername, amount, description }) => api.topUpBalance(targetUsername, amount, description),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: queryKeys.users });
         },

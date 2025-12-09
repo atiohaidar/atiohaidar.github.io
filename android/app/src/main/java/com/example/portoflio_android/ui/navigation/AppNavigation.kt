@@ -24,6 +24,8 @@ object Routes {
     const val DISCUSSIONS = "discussions"
     const val PROFILE = "profile"
     const val ANONYMOUS_CHAT = "anonymous_chat"
+    const val TRANSFER = "transfer"
+    const val TOP_UP = "top_up"
 }
 
 /**
@@ -62,6 +64,8 @@ fun AppNavigation(
                 onNavigateToDiscussions = { navController.navigate(Routes.DISCUSSIONS) },
                 onNavigateToProfile = { navController.navigate(Routes.PROFILE) },
                 onNavigateToAnonymousChat = { navController.navigate(Routes.ANONYMOUS_CHAT) },
+                onNavigateToTransfer = { navController.navigate(Routes.TRANSFER) },
+                onNavigateToTopUp = { navController.navigate(Routes.TOP_UP) },
                 onLogout = {
                     navController.navigate(Routes.LOGIN) {
                         popUpTo(Routes.DASHBOARD) { inclusive = true }
@@ -116,6 +120,14 @@ fun AppNavigation(
         
         composable(Routes.ANONYMOUS_CHAT) {
             AnonymousChatScreen(onNavigateBack = { navController.popBackStack() })
+        }
+
+        composable(Routes.TRANSFER) {
+            TransferScreen(onNavigateBack = { navController.popBackStack() })
+        }
+
+        composable(Routes.TOP_UP) {
+            TopUpScreen(onNavigateBack = { navController.popBackStack() })
         }
     }
 }

@@ -25,6 +25,19 @@ class UserRepository @Inject constructor(
             Result.failure(e)
         }
     }
+
+    suspend fun getUser(username: String): Result<User> {
+        return try {
+            val response = userApiService.getUser(username)
+            if (response.isSuccessful && response.body()?.user != null) {
+                Result.success(response.body()!!.user!!)
+            } else {
+                Result.failure(Exception(response.message() ?: "Failed to get user"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
     
     suspend fun createUser(user: UserCreate): Result<User> {
         return try {
@@ -74,6 +87,34 @@ class UserRepository @Inject constructor(
                 Result.success(response.body()!!.data!!)
             } else {
                 Result.failure(Exception(response.message() ?: "Failed to update profile"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun transfer(toUsername: String, amount: Double, description: String?): Result<Unit> {
+        return try {
+            val request = com.example.portoflio_android.data.network.api.TransferRequest(toUsername, amount, description)
+            val response = userApiService.transfer(request)
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception(response.message() ?: "Failed to transfer"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun topUp(targetUsername: String, amount: Double, description: String?): Result<Unit> {
+        return try {
+            val request = com.example.portoflio_android.data.network.api.TopUpRequest(targetUsername, amount, description)
+            val response = userApiService.topUp(request)
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception(response.message() ?: "Failed to top up"))
             }
         } catch (e: Exception) {
             Result.failure(e)

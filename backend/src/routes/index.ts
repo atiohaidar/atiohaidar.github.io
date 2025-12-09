@@ -1,12 +1,12 @@
 import { AuthLogin } from "../controllers/authLogin";
 import { UserController } from "../controllers/user.controller";
 import { TaskController } from "../controllers/task.controller";
-import { 
-	ArticleList, 
-	ArticleGet, 
-	ArticleCreate, 
-	ArticleUpdate, 
-	ArticleDelete 
+import {
+	ArticleList,
+	ArticleGet,
+	ArticleCreate,
+	ArticleUpdate,
+	ArticleDelete
 } from "../controllers/article.controller";
 import {
 	RoomList,
@@ -132,7 +132,12 @@ export const registerRoutes = (openapi: any) => {
 	openapi.get("/api/users/:username", UserController.get, { schema: UserController.getSchema });
 	openapi.put("/api/users/:username", UserController.update, { schema: UserController.updateSchema });
 	openapi.delete("/api/users/:username", UserController.delete, { schema: UserController.deleteSchema });
-	
+
+	// Balance routes
+	openapi.post("/api/users/transfer", UserController.transfer, { schema: UserController.transferSchema });
+	openapi.post("/api/users/topup", UserController.topUp, { schema: UserController.topUpSchema });
+	openapi.get("/api/transactions", UserController.listTransactions, { schema: UserController.transactionListSchema });
+
 	// Self-profile update route (for authenticated users)
 	openapi.put("/api/profile", UserController.updateSelfProfile, { schema: UserController.updateSelfProfileSchema });
 
@@ -246,19 +251,19 @@ export const registerRoutes = (openapi: any) => {
 	openapi.get("/api/events/:eventId", EventGet);
 	openapi.put("/api/events/:eventId", EventUpdate);
 	openapi.delete("/api/events/:eventId", EventDelete);
-	
+
 	// Event attendee routes
 	openapi.get("/api/events/:eventId/attendees", EventAttendeeList);
 	openapi.post("/api/events/register", EventAttendeeRegister);
 	openapi.put("/api/events/:eventId/attendees/:attendeeId/status", EventAttendeeUpdateStatus);
 	openapi.delete("/api/events/:eventId/attendees/:attendeeId", EventAttendeeUnregister);
 	openapi.get("/api/events/:eventId/attendees/:attendeeId/scans", AttendeeWithScansGet);
-	
+
 	// Event admin routes
 	openapi.get("/api/events/:eventId/admins", EventAdminList);
 	openapi.post("/api/events/:eventId/admins", EventAdminAssign);
 	openapi.delete("/api/events/:eventId/admins/:username", EventAdminRemove);
-	
+
 	// Attendance scan routes
 	openapi.post("/api/events/:eventId/scan", AttendanceScanCreate);
 	openapi.get("/api/events/:eventId/scan-history", EventScanHistoryList);

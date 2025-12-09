@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
-import { Text, useTheme, Avatar, ActivityIndicator } from 'react-native-paper';
+import { Text, useTheme, Avatar, ActivityIndicator, Button } from 'react-native-paper';
+import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAuth } from '@/contexts/AuthContext';
 import { useStats } from '@/hooks/useApi';
@@ -83,6 +84,46 @@ export default function HomeScreen() {
       </View>
 
       <View style={styles.statsGrid}>
+        {/* Balance Card */}
+        <GlassCard style={styles.statCard} mode="elevated">
+          <View style={styles.statCardContent}>
+            <Avatar.Icon
+              size={48}
+              icon="wallet"
+              style={[styles.statIcon, { backgroundColor: AppColors.statGreen }]}
+              color="#FFF"
+            />
+            <View style={styles.statTextContainer}>
+              <Text variant="headlineMedium" style={[styles.statValue, { color: theme.colors.onSurface }]}>
+                Rp {(user?.balance ?? 0).toLocaleString('id-ID')}
+              </Text>
+              <Text variant="bodyMedium" style={{ color: theme.colors.onSurface }}>
+                Total Balance
+              </Text>
+            </View>
+            <View style={{ gap: 8 }}>
+              {isAdmin && (
+                <Button
+                  mode="contained"
+                  onPress={() => router.push('/topup')}
+                  style={{ backgroundColor: AppColors.statPurple }}
+                  compact
+                >
+                  Top Up
+                </Button>
+              )}
+              <Button
+                mode="contained"
+                onPress={() => router.push('/transfer')}
+                style={{ backgroundColor: AppColors.statGreen }}
+                compact
+              >
+                Transfer
+              </Button>
+            </View>
+          </View>
+        </GlassCard>
+
         {statCards.map((stat, index) => (
           <GlassCard key={index} style={styles.statCard} mode="elevated">
             <View style={styles.statCardContent}>

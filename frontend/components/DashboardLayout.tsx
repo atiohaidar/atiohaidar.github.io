@@ -90,6 +90,12 @@ const menuItems: MenuItem[] = [
         label: 'User Management',
         icon: '👥',
         path: '/dashboard/users',
+    },
+    {
+        id: 'finance',
+        label: 'Finance',
+        icon: '💰',
+        path: '/dashboard/finance',
         adminOnly: true,
     },
     {
@@ -228,8 +234,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                                 to={item.path}
                                 onClick={() => setIsMobileSidebarOpen(false)}
                                 className={`${navItemBase} ${active
-                                        ? `bg-blue-600/10 text-blue-500 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]`
-                                        : `text-gray-400 hover:bg-white/5 hover:text-gray-200`
+                                    ? `bg-blue-600/10 text-blue-500 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]`
+                                    : `text-gray-400 hover:bg-white/5 hover:text-gray-200`
                                     } ${isSidebarOpen ? 'justify-start' : 'justify-center'
                                     }`}
                                 title={!isSidebarOpen ? item.label : undefined}

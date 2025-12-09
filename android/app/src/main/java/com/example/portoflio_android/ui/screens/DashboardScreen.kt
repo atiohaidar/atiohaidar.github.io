@@ -37,6 +37,9 @@ fun DashboardScreen(
     onNavigateToDiscussions: () -> Unit,
     onNavigateToProfile: () -> Unit,
     onNavigateToAnonymousChat: () -> Unit,
+    onNavigateToAnonymousChat: () -> Unit,
+    onNavigateToTransfer: () -> Unit,
+    onNavigateToTopUp: () -> Unit,
     onLogout: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -110,6 +113,18 @@ fun DashboardScreen(
                         )
                     }
                     
+                    // Balance Card
+                    item {
+                        uiState.user?.let { user ->
+                            BalanceCard(
+                                balance = user.balance,
+                                role = user.role,
+                                onTransferClick = onNavigateToTransfer,
+                                onTopUpClick = onNavigateToTopUp
+                            )
+                        }
+                    }
+
                     // Stats Grid
                     item {
                         uiState.stats?.let { stats ->
@@ -280,6 +295,84 @@ fun DashboardScreen(
             ) {
                 Text(error)
             }
+        }
+    }
+}
+
+@Composable
+private fun BalanceCard(
+    balance: Double,
+    role: com.example.portoflio_android.data.models.UserRole,
+    onTransferClick: () -> Unit,
+    onTopUpClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(24.dp)),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF1E293B).copy(alpha = 0.8f)
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(24.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(
+                            brush = Brush.linearGradient(
+                                colors = listOf(Color(0xFF10B981), Color(0xFF0D9488))
+                            )
+                        )
+                        .padding(12.dp)
+                ) {
+                    Text("💰", fontSize = 24.sp)
+                }
+                
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    if (role == com.example.portoflio_android.data.models.UserRole.ADMIN) {
+                        Button(
+                            onClick = onTopUpClick,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF8B5CF6)
+                            )
+                        ) {
+                            Text("Top Up", fontWeight = FontWeight.Bold)
+                        }
+                    }
+
+                    Button(
+                        onClick = onTransferClick,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF10B981)
+                        )
+                    ) {
+                        Text("Transfer", fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Text(
+                text = "Rp ${java.text.NumberFormat.getNumberInstance(java.util.Locale("id", "ID")).format(balance)}",
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+            
+            Text(
+                "Total Balance",
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color(0xFF94A3B8)
+            )
         }
     }
 }

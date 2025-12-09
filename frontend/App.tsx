@@ -51,6 +51,7 @@ const DashboardEventFormPage = lazy(() => import('./pages/DashboardEventFormPage
 const DashboardEventDetailPage = lazy(() => import('./pages/DashboardEventDetailPage'));
 const DashboardEventScanPage = lazy(() => import('./pages/DashboardEventScanPage'));
 const DashboardEventScanHistoryPage = lazy(() => import('./pages/DashboardEventScanHistoryPage'));
+const FinancePage = lazy(() => import('./pages/FinancePage'));
 const FullscreenAnonymousChatPage = lazy(() => import('./pages/FullscreenAnonymousChatPage'));
 
 const queryClient = new QueryClient({
@@ -86,6 +87,14 @@ const App: React.FC = () => {
                                     element={
                                         <ProtectedRoute requireAdmin>
                                             <DashboardUsersPage />
+                                        </ProtectedRoute>
+                                    }
+                                />
+                                <Route
+                                    path="finance"
+                                    element={
+                                        <ProtectedRoute requireAdmin>
+                                            <FinancePage />
                                         </ProtectedRoute>
                                     }
                                 />

@@ -26,3 +26,4 @@ export 'profile/profile_screen.dart';
 export 'notifications/notifications_screen.dart';
 export 'discussions/discussions_screen.dart';
 export 'discussions/discussion_detail_screen.dart';
+export 'wallet/transfer_screen.dart';

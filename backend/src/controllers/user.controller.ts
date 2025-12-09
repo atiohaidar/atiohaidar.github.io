@@ -1,14 +1,15 @@
 import { Bool, Str } from "chanfana";
 import { z } from "zod";
-import { 
-  listUsers, 
-  getUser, 
-  createUser, 
-  updateUser, 
-  deleteUser 
+import {
+  listUsers,
+  getUser,
+  createUser,
+  updateUser,
+  deleteUser
 } from "../services/users";
 import { ensureAdmin, getTokenPayloadFromRequest } from "../middlewares/auth";
-import { type AppContext, UserPublicSchema, UserCreateSchema, UserUpdateSchema } from "../models/types";
+import { type AppContext, UserPublicSchema, UserCreateSchema, UserUpdateSchema, TransferBalanceSchema, TopUpBalanceSchema, Transaction } from "../models/types";
+import { transferBalance, topUpBalance } from "../services/transactions";
 
 export class UserController {
   // Schema definitions
@@ -306,20 +307,20 @@ export class UserController {
       );
     }
 
-    const data = await UserController.validateData<{ 
-      params: { username: string } 
+    const data = await UserController.validateData<{
+      params: { username: string }
     }>(c, UserController.getSchema);
-    
+
     const { username } = data.params;
     const user = await getUser(c.env.DB, username);
-    
+
     if (!user) {
       return c.json(
         { success: false, message: "Pengguna tidak ditemukan" },
         404
       );
     }
-    
+
     return c.json({ success: true, user });
   }
 
@@ -332,16 +333,16 @@ export class UserController {
       );
     }
 
-    const data = await UserController.validateData<{ 
-      body: { 
-        username: string; 
-        email: string; 
-        password: string; 
+    const data = await UserController.validateData<{
+      body: {
+        username: string;
+        email: string;
+        password: string;
         full_name?: string;
         is_admin?: boolean;
-      } 
+      }
     }>(c, UserController.createSchema);
-    
+
     try {
       const user = await createUser(c.env.DB, data.body);
       return c.json({ success: true, user }, 201);
@@ -360,18 +361,18 @@ export class UserController {
       );
     }
 
-    const data = await UserController.validateData<{ 
+    const data = await UserController.validateData<{
       params: { username: string },
-      body: { 
-        email?: string; 
-        password?: string; 
+      body: {
+        email?: string;
+        password?: string;
         full_name?: string;
         is_admin?: boolean;
       }
     }>(c, UserController.updateSchema);
-    
+
     const { username } = data.params;
-    
+
     try {
       const user = await updateUser(c.env.DB, username, data.body);
       return c.json({ success: true, user });
@@ -391,12 +392,12 @@ export class UserController {
       );
     }
 
-    const data = await UserController.validateData<{ 
-      params: { username: string } 
+    const data = await UserController.validateData<{
+      params: { username: string }
     }>(c, UserController.deleteSchema);
-    
+
     const { username } = data.params;
-    
+
     try {
       const user = await deleteUser(c.env.DB, username);
       return c.json({ success: true, user });
@@ -449,6 +450,78 @@ export class UserController {
     },
   };
 
+  static transferSchema = {
+    tags: ["Users"],
+    summary: "Transfer saldo ke pengguna lain",
+    request: {
+      body: {
+        content: {
+          "application/json": {
+            schema: TransferBalanceSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      "200": {
+        description: "Transfer berhasil",
+        content: {
+          "application/json": {
+            schema: z.object({
+              success: Bool(),
+              newBalance: z.number(),
+            }),
+          },
+        },
+      },
+      "400": {
+        description: "Gagal (saldo kurang / user tidak ditemukan)",
+        content: {
+          "application/json": {
+            schema: z.object({
+              success: Bool(),
+              message: z.string(),
+            }),
+          },
+        },
+      },
+      "401": {
+        description: "Belum login",
+      },
+    },
+  };
+
+  static topUpSchema = {
+    tags: ["Users"],
+    summary: "Top up saldo pengguna (Admin Only)",
+    request: {
+      body: {
+        content: {
+          "application/json": {
+            schema: TopUpBalanceSchema,
+          },
+        },
+      },
+    },
+    responses: {
+      "200": {
+        description: "Top up berhasil",
+        content: {
+          "application/json": {
+            schema: z.object({
+              success: Bool(),
+              newBalance: z.number(),
+            }),
+          },
+        },
+      },
+      "403": {
+        description: "Bukan admin",
+      },
+    },
+  };
+
+
   static async updateSelfProfile(c: AppContext) {
     const payload = await getTokenPayloadFromRequest(c);
     if (!payload) {
@@ -470,6 +543,91 @@ export class UserController {
       return c.json({ success: true, user });
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to update profile";
+      return c.json({ success: false, message }, 400);
+    }
+  }
+
+  static async transfer(c: AppContext) {
+    const payload = await getTokenPayloadFromRequest(c);
+    if (!payload) {
+      return c.json({ success: false, message: "Authentication required" }, 401);
+    }
+
+    const data = await UserController.validateData<{
+      body: z.infer<typeof TransferBalanceSchema>;
+    }>(c, UserController.transferSchema);
+
+    try {
+      const result = await transferBalance(c.env.DB, payload.sub, data.body);
+      return c.json({ success: true, newBalance: result.newBalance });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Transfer failed";
+      return c.json({ success: false, message }, 400);
+    }
+  }
+
+  static async topUp(c: AppContext) {
+    const admin = ensureAdmin(c);
+    if (!admin) {
+      return c.json({ success: false, message: "Admin access required" }, 403);
+    }
+
+    const data = await UserController.validateData<{
+      body: z.infer<typeof TopUpBalanceSchema>;
+    }>(c, UserController.topUpSchema);
+
+    try {
+      const result = await topUpBalance(c.env.DB, data.body);
+      return c.json({ success: true, newBalance: result.newBalance });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Top up failed";
+      return c.json({ success: false, message }, 400);
+    }
+  }
+  static transactionListSchema = {
+    tags: ["Users"],
+    summary: "Dapatkan riwayat transaksi (Admin Only)",
+    responses: {
+      "200": {
+        description: "Daftar transaksi",
+        content: {
+          "application/json": {
+            schema: z.object({
+              success: Bool(),
+              transactions: z.array(z.any()), // Using any for now, should be Transaction schema but need to check types
+            }),
+          },
+        },
+      },
+      "403": {
+        description: "Bukan admin",
+      },
+    },
+  };
+
+  static async listTransactions(c: AppContext) {
+    const admin = ensureAdmin(c);
+    if (!admin) {
+      return c.json({ success: false, message: "Admin access required" }, 403);
+    }
+
+    try {
+      const { getAllTransactions } = await import("../services/transactions");
+
+      const filters = {
+        startDate: c.req.query('startDate'),
+        endDate: c.req.query('endDate'),
+        type: c.req.query('type'),
+        from_username: c.req.query('from_username'),
+        to_username: c.req.query('to_username'),
+        minAmount: c.req.query('minAmount') ? Number(c.req.query('minAmount')) : undefined,
+        maxAmount: c.req.query('maxAmount') ? Number(c.req.query('maxAmount')) : undefined,
+      };
+
+      const transactions = await getAllTransactions(c.env.DB, filters);
+      return c.json({ success: true, transactions });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to fetch transactions";
       return c.json({ success: false, message }, 400);
     }
   }

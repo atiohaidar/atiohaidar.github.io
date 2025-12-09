@@ -212,6 +212,12 @@ class AppRouter {
                 child: FormResponsesScreen(formId: id, formTitle: title));
           },
         ),
+        GoRoute(
+          path: '/transfer',
+          name: 'transfer',
+          builder: (context, state) =>
+              GradientBackground(child: const TransferScreen()),
+        ),
         // Public routes (no auth required)
         GoRoute(
           path: '/public/tickets',
