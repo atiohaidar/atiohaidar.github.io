@@ -26,7 +26,7 @@ class Room extends Equatable {
       name: json['name'] as String,
       capacity: json['capacity'] as int,
       description: json['description'] as String?,
-      available: json['available'] as bool? ?? true,
+      available: _parseBool(json['available'], defaultValue: true),
       createdAt: json['created_at'] as String?,
       updatedAt: json['updated_at'] as String?,
     );
@@ -45,7 +45,8 @@ class Room extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, name, capacity, description, available, createdAt, updatedAt];
+  List<Object?> get props =>
+      [id, name, capacity, description, available, createdAt, updatedAt];
 }
 
 /// Room create request
@@ -97,4 +98,13 @@ class RoomUpdate {
       if (available != null) 'available': available,
     };
   }
+}
+
+/// Helper to parse bool from int (0/1) or bool
+bool _parseBool(dynamic value, {bool defaultValue = false}) {
+  if (value == null) return defaultValue;
+  if (value is bool) return value;
+  if (value is int) return value != 0;
+  if (value is String) return value.toLowerCase() == 'true' || value == '1';
+  return defaultValue;
 }

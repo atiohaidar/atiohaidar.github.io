@@ -193,7 +193,7 @@ class TicketComment extends Equatable {
       commenterType: json['commenter_type'] as String,
       commenterName: json['commenter_name'] as String,
       commentText: json['comment_text'] as String,
-      isInternal: json['is_internal'] as bool? ?? false,
+      isInternal: _parseBool(json['is_internal']),
       createdAt: json['created_at'] as String?,
     );
   }
@@ -353,4 +353,13 @@ class TicketAssign {
       if (notes != null) 'notes': notes,
     };
   }
+}
+
+/// Helper to parse bool from int (0/1) or bool
+bool _parseBool(dynamic value, {bool defaultValue = false}) {
+  if (value == null) return defaultValue;
+  if (value is bool) return value;
+  if (value is int) return value != 0;
+  if (value is String) return value.toLowerCase() == 'true' || value == '1';
+  return defaultValue;
 }

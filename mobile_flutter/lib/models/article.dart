@@ -25,7 +25,7 @@ class Article extends Equatable {
       slug: json['slug'] as String,
       title: json['title'] as String,
       content: json['content'] as String,
-      published: json['published'] as bool? ?? false,
+      published: _parseBool(json['published']),
       owner: json['owner'] as String?,
       createdAt: json['created_at'] as String?,
       updatedAt: json['updated_at'] as String?,
@@ -45,7 +45,8 @@ class Article extends Equatable {
   }
 
   @override
-  List<Object?> get props => [slug, title, content, published, owner, createdAt, updatedAt];
+  List<Object?> get props =>
+      [slug, title, content, published, owner, createdAt, updatedAt];
 }
 
 /// Article create request
@@ -91,4 +92,13 @@ class ArticleUpdate {
       if (published != null) 'published': published,
     };
   }
+}
+
+/// Helper to parse bool from int (0/1) or bool
+bool _parseBool(dynamic value, {bool defaultValue = false}) {
+  if (value == null) return defaultValue;
+  if (value is bool) return value;
+  if (value is int) return value != 0;
+  if (value is String) return value.toLowerCase() == 'true' || value == '1';
+  return defaultValue;
 }

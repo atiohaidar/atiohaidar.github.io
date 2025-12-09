@@ -433,6 +433,9 @@ class _RoomsScreenState extends State<RoomsScreen>
   }
 
   Widget _buildBookingCard(Booking booking, String roomName, bool isDark) {
+    final canCancel = booking.status == BookingStatus.pending ||
+        booking.status == BookingStatus.approved;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: GlassCard(
@@ -482,8 +485,58 @@ class _RoomsScreenState extends State<RoomsScreen>
                 color: isDark ? AppColors.textMuted : Colors.grey.shade600,
               ),
             ),
+            if (canCancel) ...[
+              const SizedBox(height: 12),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton.icon(
+                  onPressed: () => _showCancelBookingDialog(booking),
+                  icon: const Icon(Icons.cancel_outlined, size: 18),
+                  label: const Text('Cancel'),
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.error,
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
+      ),
+    );
+  }
+
+  void _showCancelBookingDialog(Booking booking) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Cancel Booking'),
+        content: const Text('Are you sure you want to cancel this booking?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              final provider = context.read<RoomsProvider>();
+              final success = await provider.cancelBooking(booking.id);
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(success
+                        ? 'Booking cancelled successfully'
+                        : provider.error ?? 'Failed to cancel booking'),
+                    backgroundColor:
+                        success ? AppColors.success : AppColors.error,
+                  ),
+                );
+              }
+            },
+            style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            child: const Text('Yes, Cancel'),
+          ),
+        ],
       ),
     );
   }

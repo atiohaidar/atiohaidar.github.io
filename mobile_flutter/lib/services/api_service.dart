@@ -282,9 +282,10 @@ class ApiService {
 
       final response =
           await ApiClient.get('/tickets', queryParameters: queryParams);
-      final tickets = (response.data['data'] as List)
-          .map((json) => Ticket.fromJson(json))
-          .toList();
+      final data = response.data['data'];
+      if (data == null) return [];
+      final tickets =
+          (data as List).map((json) => Ticket.fromJson(json)).toList();
       return tickets;
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
@@ -338,9 +339,10 @@ class ApiService {
   static Future<List<TicketComment>> getTicketComments(int ticketId) async {
     try {
       final response = await ApiClient.get('/tickets/$ticketId/comments');
-      final comments = (response.data['data'] as List)
-          .map((json) => TicketComment.fromJson(json))
-          .toList();
+      final data = response.data['data'];
+      if (data == null) return [];
+      final comments =
+          (data as List).map((json) => TicketComment.fromJson(json)).toList();
       return comments;
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
@@ -363,9 +365,10 @@ class ApiService {
   static Future<List<TicketCategory>> getTicketCategories() async {
     try {
       final response = await ApiClient.get('/tickets/categories');
-      final categories = (response.data['data'] as List)
-          .map((json) => TicketCategory.fromJson(json))
-          .toList();
+      final data = response.data['data'];
+      if (data == null) return [];
+      final categories =
+          (data as List).map((json) => TicketCategory.fromJson(json)).toList();
       return categories;
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);

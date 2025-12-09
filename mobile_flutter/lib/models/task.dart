@@ -27,7 +27,7 @@ class Task extends Equatable {
       id: json['id'] as int,
       name: json['name'] as String,
       description: json['description'] as String?,
-      completed: json['completed'] as bool? ?? false,
+      completed: _parseBool(json['completed']),
       dueDate: json['due_date'] as String?,
       owner: json['owner'] as String?,
       createdAt: json['created_at'] as String?,
@@ -71,7 +71,8 @@ class Task extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, name, description, completed, dueDate, owner, createdAt, updatedAt];
+  List<Object?> get props =>
+      [id, name, description, completed, dueDate, owner, createdAt, updatedAt];
 }
 
 /// Task create request
@@ -120,4 +121,13 @@ class TaskUpdate {
       if (dueDate != null) 'due_date': dueDate,
     };
   }
+}
+
+/// Helper to parse bool from int (0/1) or bool
+bool _parseBool(dynamic value, {bool defaultValue = false}) {
+  if (value == null) return defaultValue;
+  if (value is bool) return value;
+  if (value is int) return value != 0;
+  if (value is String) return value.toLowerCase() == 'true' || value == '1';
+  return defaultValue;
 }

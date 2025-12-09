@@ -115,6 +115,23 @@ class FormsProvider extends ChangeNotifier {
     }
   }
 
+  /// Update a form
+  Future<bool> updateForm(String id, FormCreate data) async {
+    try {
+      final updatedForm = await ApiService.updateForm(id, data);
+      final index = _forms.indexWhere((f) => f.id == id);
+      if (index != -1) {
+        _forms[index] = updatedForm;
+        notifyListeners();
+      }
+      return true;
+    } on ApiException catch (e) {
+      _error = e.message;
+      notifyListeners();
+      return false;
+    }
+  }
+
   void clearError() {
     _error = null;
     notifyListeners();

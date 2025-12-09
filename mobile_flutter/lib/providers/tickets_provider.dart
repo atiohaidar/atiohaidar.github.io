@@ -50,6 +50,10 @@ class TicketsProvider extends ChangeNotifier {
       _error = e.message;
       _isLoading = false;
       notifyListeners();
+    } catch (e) {
+      _error = 'Parse error: $e';
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
@@ -64,6 +68,10 @@ class TicketsProvider extends ChangeNotifier {
       notifyListeners();
     } on ApiException catch (e) {
       _error = e.message;
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _error = 'Parse error: $e';
       _isLoading = false;
       notifyListeners();
     }
@@ -134,6 +142,10 @@ class TicketsProvider extends ChangeNotifier {
       notifyListeners();
     } on ApiException catch (e) {
       _error = e.message;
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _error = 'Parse error: $e';
       _isLoading = false;
       notifyListeners();
     }

@@ -142,6 +142,104 @@ class _FormsScreenState extends State<FormsScreen> {
     );
   }
 
+  void _showEditFormDialog(FormData form) {
+    final titleController = TextEditingController(text: form.title);
+    final descController = TextEditingController(text: form.description ?? '');
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.darkSurface : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? AppColors.borderMedium
+                          : Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'Edit Form',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? AppColors.textPrimary : AppColors.lightText,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                TextField(
+                  controller: titleController,
+                  decoration: const InputDecoration(
+                    labelText: 'Form Title',
+                    hintText: 'Enter form title',
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: descController,
+                  decoration: const InputDecoration(
+                    labelText: 'Description (optional)',
+                    hintText: 'Enter description',
+                  ),
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (titleController.text.trim().isNotEmpty) {
+                      final provider = context.read<FormsProvider>();
+                      final success = await provider.updateForm(
+                        form.id,
+                        FormCreate(
+                          title: titleController.text.trim(),
+                          description: descController.text.trim().isEmpty
+                              ? null
+                              : descController.text.trim(),
+                          questions: [], // Preserve existing questions on server
+                        ),
+                      );
+
+                      if (success && context.mounted) {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Form updated successfully')),
+                        );
+                      }
+                    }
+                  },
+                  child: const Text('Save Changes'),
+                ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildBody(FormsProvider provider, bool isDark) {
     if (provider.isLoading && provider.forms.isEmpty) {
       return const LoadingIndicator(message: 'Loading forms...');
@@ -202,7 +300,9 @@ class _FormsScreenState extends State<FormsScreen> {
                   color: isDark ? AppColors.textMuted : Colors.grey.shade400,
                 ),
                 onSelected: (value) async {
-                  if (value == 'share') {
+                  if (value == 'edit') {
+                    _showEditFormDialog(form);
+                  } else if (value == 'share') {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Link copied to clipboard')),
                     );
@@ -232,6 +332,16 @@ class _FormsScreenState extends State<FormsScreen> {
                   }
                 },
                 itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: 'edit',
+                    child: Row(
+                      children: [
+                        Icon(Icons.edit, size: 20),
+                        SizedBox(width: 8),
+                        Text('Edit'),
+                      ],
+                    ),
+                  ),
                   const PopupMenuItem(
                     value: 'share',
                     child: Row(

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../config/theme.dart';
 import '../../providers/providers.dart';
+import '../../services/services.dart';
 import '../../widgets/widgets.dart';
 import '../../models/models.dart';
 
@@ -70,6 +71,40 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
         ),
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert),
+            onSelected: (value) {
+              if (value == 'edit') {
+                _showEditTicketDialog(ticket);
+              } else if (value == 'delete') {
+                _showDeleteConfirmation(ticket);
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'edit',
+                child: Row(
+                  children: [
+                    Icon(Icons.edit, size: 20),
+                    SizedBox(width: 8),
+                    Text('Edit'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'delete',
+                child: Row(
+                  children: [
+                    Icon(Icons.delete, size: 20, color: Colors.red),
+                    SizedBox(width: 8),
+                    Text('Delete', style: TextStyle(color: Colors.red)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -90,6 +125,158 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
             ),
           ),
           _buildCommentInput(isDark),
+        ],
+      ),
+    );
+  }
+
+  void _showEditTicketDialog(Ticket ticket) {
+    final titleController = TextEditingController(text: ticket.title);
+    final descController = TextEditingController(text: ticket.description);
+    TicketStatus selectedStatus = ticket.status;
+    TicketPriority selectedPriority = ticket.priority;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => Container(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.darkSurface : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Edit Ticket',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? AppColors.textPrimary : AppColors.lightText,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: titleController,
+                  decoration: const InputDecoration(labelText: 'Title'),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: descController,
+                  decoration: const InputDecoration(labelText: 'Description'),
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<TicketStatus>(
+                  value: selectedStatus,
+                  decoration: const InputDecoration(labelText: 'Status'),
+                  items: TicketStatus.values
+                      .map((s) => DropdownMenuItem(
+                            value: s,
+                            child: Text(s.value.replaceAll('_', ' ')),
+                          ))
+                      .toList(),
+                  onChanged: (v) => setState(() => selectedStatus = v!),
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<TicketPriority>(
+                  value: selectedPriority,
+                  decoration: const InputDecoration(labelText: 'Priority'),
+                  items: TicketPriority.values
+                      .map((p) => DropdownMenuItem(
+                            value: p,
+                            child: Text(p.value),
+                          ))
+                      .toList(),
+                  onChanged: (v) => setState(() => selectedPriority = v!),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      final provider = context.read<TicketsProvider>();
+                      final update = TicketUpdate(
+                        title: titleController.text.trim(),
+                        description: descController.text.trim(),
+                        status: selectedStatus,
+                        priority: selectedPriority,
+                      );
+                      final success =
+                          await provider.updateTicket(ticket.id, update);
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(success
+                                ? 'Ticket updated'
+                                : provider.error ?? 'Update failed'),
+                            backgroundColor:
+                                success ? AppColors.success : AppColors.error,
+                          ),
+                        );
+                      }
+                    },
+                    child: const Text('Save Changes'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showDeleteConfirmation(Ticket ticket) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete Ticket'),
+        content: Text('Are you sure you want to delete ticket #${ticket.id}?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              // Delete ticket via API
+              try {
+                await ApiService.deleteTicket(ticket.id);
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Ticket deleted'),
+                      backgroundColor: AppColors.success,
+                    ),
+                  );
+                  context.pop();
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Failed to delete: $e'),
+                      backgroundColor: AppColors.error,
+                    ),
+                  );
+                }
+              }
+            },
+            style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            child: const Text('Delete'),
+          ),
         ],
       ),
     );

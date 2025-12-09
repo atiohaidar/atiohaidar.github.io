@@ -30,8 +30,8 @@ class Discussion extends Equatable {
       title: json['title'] as String,
       content: json['content'] as String,
       creatorUsername: json['creator_username'] as String?,
-      creatorName: json['creator_name'] as String,
-      isAnonymous: json['is_anonymous'] as bool? ?? false,
+      creatorName: (json['creator_name'] as String?) ?? 'Anonymous',
+      isAnonymous: _parseBool(json['is_anonymous']),
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
       replyCount: json['reply_count'] as int?,
@@ -94,8 +94,8 @@ class DiscussionReply extends Equatable {
       discussionId: json['discussion_id'] as String,
       content: json['content'] as String,
       creatorUsername: json['creator_username'] as String?,
-      creatorName: json['creator_name'] as String,
-      isAnonymous: json['is_anonymous'] as bool? ?? false,
+      creatorName: (json['creator_name'] as String?) ?? 'Anonymous',
+      isAnonymous: _parseBool(json['is_anonymous']),
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
@@ -185,4 +185,13 @@ class DiscussionWithReplies {
           [],
     );
   }
+}
+
+/// Helper to parse bool from int (0/1) or bool
+bool _parseBool(dynamic value, {bool defaultValue = false}) {
+  if (value == null) return defaultValue;
+  if (value is bool) return value;
+  if (value is int) return value != 0;
+  if (value is String) return value.toLowerCase() == 'true' || value == '1';
+  return defaultValue;
 }
