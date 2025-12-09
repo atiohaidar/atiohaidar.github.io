@@ -1,0 +1,453 @@
+package com.example.portoflio_android.ui.screens
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.portoflio_android.data.models.Ticket
+import com.example.portoflio_android.data.models.TicketComment
+import com.example.portoflio_android.data.models.TicketPriority
+import com.example.portoflio_android.data.models.TicketStatus
+import com.example.portoflio_android.ui.viewmodel.TicketsViewModel
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TicketsScreen(
+    viewModel: TicketsViewModel = hiltViewModel(),
+    onNavigateBack: () -> Unit
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF0F172A),
+                        Color(0xFF1E293B)
+                    )
+                )
+            )
+    ) {
+        if (uiState.selectedTicket != null) {
+            TicketDetailView(
+                ticket = uiState.selectedTicket!!,
+                comments = uiState.comments,
+                onBack = { viewModel.clearSelectedTicket() },
+                onAddComment = { viewModel.addComment(uiState.selectedTicket!!.id, it) }
+            )
+        } else {
+            TicketListView(
+                uiState = uiState,
+                viewModel = viewModel,
+                onNavigateBack = onNavigateBack,
+                onSelectTicket = { viewModel.selectTicket(it) }
+            )
+        }
+        
+        // Error Snackbar
+        uiState.error?.let { error ->
+            Snackbar(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(16.dp),
+                containerColor = Color(0xFFEF4444),
+                action = {
+                    TextButton(onClick = { viewModel.clearError() }) {
+                        Text("Dismiss", color = Color.White)
+                    }
+                }
+            ) {
+                Text(error)
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TicketListView(
+    uiState: com.example.portoflio_android.ui.viewmodel.TicketsUiState,
+    viewModel: TicketsViewModel,
+    onNavigateBack: () -> Unit,
+    onSelectTicket: (Ticket) -> Unit
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        "Tickets",
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = Color.White
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { viewModel.loadTickets() }) {
+                        Icon(
+                            Icons.Default.Refresh,
+                            contentDescription = "Refresh",
+                            tint = Color.White
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent
+                )
+            )
+        },
+        containerColor = Color.Transparent
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            // Stats Row
+            uiState.stats?.let { stats ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    StatChip("Open", stats.open, Color(0xFF2563EB), Modifier.weight(1f))
+                    StatChip("In Progress", stats.in_progress, Color(0xFFF59E0B), Modifier.weight(1f))
+                    StatChip("Solved", stats.solved, Color(0xFF10B981), Modifier.weight(1f))
+                }
+            }
+            
+            if (uiState.isLoading && uiState.tickets.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = Color(0xFF2563EB))
+                }
+            } else if (uiState.tickets.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            Icons.Default.ConfirmationNumber,
+                            contentDescription = null,
+                            modifier = Modifier.size(64.dp),
+                            tint = Color(0xFF475569)
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text("No tickets", color = Color(0xFF64748B))
+                    }
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    contentPadding = PaddingValues(vertical = 16.dp)
+                ) {
+                    items(uiState.tickets, key = { it.id }) { ticket ->
+                        TicketCard(
+                            ticket = ticket,
+                            onClick = { onSelectTicket(ticket) }
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun StatChip(label: String, count: Int, color: Color, modifier: Modifier = Modifier) {
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(8.dp),
+        color = color.copy(alpha = 0.2f)
+    ) {
+        Column(
+            modifier = Modifier.padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = count.toString(),
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = color
+            )
+            Text(
+                text = label,
+                fontSize = 10.sp,
+                color = color
+            )
+        }
+    }
+}
+
+@Composable
+private fun TicketCard(
+    ticket: Ticket,
+    onClick: () -> Unit
+) {
+    val statusColor = when (ticket.status) {
+        TicketStatus.OPEN -> Color(0xFF2563EB)
+        TicketStatus.IN_PROGRESS -> Color(0xFFF59E0B)
+        TicketStatus.WAITING -> Color(0xFF7C3AED)
+        TicketStatus.SOLVED -> Color(0xFF10B981)
+    }
+    
+    val priorityColor = when (ticket.priority) {
+        TicketPriority.LOW -> Color(0xFF64748B)
+        TicketPriority.MEDIUM -> Color(0xFFF59E0B)
+        TicketPriority.HIGH -> Color(0xFFEF4444)
+        TicketPriority.CRITICAL -> Color(0xFFDC2626)
+    }
+    
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .clickable(onClick = onClick),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF1E293B)
+        )
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "#${ticket.id} - ${ticket.title}",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = ticket.submitterEmail ?: ticket.submitterName ?: "Anonymous",
+                        fontSize = 12.sp,
+                        color = Color(0xFF64748B)
+                    )
+                }
+                Column(horizontalAlignment = Alignment.End) {
+                    Surface(
+                        shape = RoundedCornerShape(4.dp),
+                        color = statusColor.copy(alpha = 0.2f)
+                    ) {
+                        Text(
+                            text = ticket.status.name.replace("_", " "),
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                            fontSize = 10.sp,
+                            color = statusColor
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Surface(
+                        shape = RoundedCornerShape(4.dp),
+                        color = priorityColor.copy(alpha = 0.2f)
+                    ) {
+                        Text(
+                            text = ticket.priority.name,
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                            fontSize = 10.sp,
+                            color = priorityColor
+                        )
+                    }
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            Text(
+                text = ticket.description,
+                fontSize = 14.sp,
+                color = Color(0xFF94A3B8),
+                maxLines = 2
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TicketDetailView(
+    ticket: Ticket,
+    comments: List<TicketComment>,
+    onBack: () -> Unit,
+    onAddComment: (String) -> Unit
+) {
+    var commentText by remember { mutableStateOf("") }
+    
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        TopAppBar(
+            title = {
+                Text(
+                    "Ticket #${ticket.id}",
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
+                )
+            },
+            navigationIcon = {
+                IconButton(onClick = onBack) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color.White
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = Color.Transparent
+            )
+        )
+        
+        LazyColumn(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            // Ticket Info
+            item {
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFF1E293B))
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = ticket.title,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            text = ticket.description,
+                            fontSize = 14.sp,
+                            color = Color(0xFF94A3B8)
+                        )
+                    }
+                }
+            }
+            
+            // Comments Header
+            item {
+                Text(
+                    "Comments (${comments.size})",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+            
+            // Comments List
+            items(comments) { comment ->
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFF334155)
+                    )
+                ) {
+                    Column(modifier = Modifier.padding(12.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = comment.commenterName,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = Color.White
+                            )
+                            Text(
+                                text = comment.createdAt?.take(10) ?: "",
+                                fontSize = 12.sp,
+                                color = Color(0xFF64748B)
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = comment.commentText,
+                            fontSize = 14.sp,
+                            color = Color(0xFF94A3B8)
+                        )
+                    }
+                }
+            }
+        }
+        
+        // Comment Input
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color(0xFF1E293B))
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            OutlinedTextField(
+                value = commentText,
+                onValueChange = { commentText = it },
+                placeholder = { Text("Add a comment...", color = Color(0xFF64748B)) },
+                modifier = Modifier.weight(1f),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color(0xFF2563EB),
+                    unfocusedBorderColor = Color(0xFF475569),
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
+                ),
+                maxLines = 2
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            IconButton(
+                onClick = {
+                    if (commentText.isNotBlank()) {
+                        onAddComment(commentText)
+                        commentText = ""
+                    }
+                },
+                enabled = commentText.isNotBlank()
+            ) {
+                Icon(
+                    Icons.AutoMirrored.Filled.Send,
+                    contentDescription = "Send",
+                    tint = if (commentText.isNotBlank()) Color(0xFF2563EB) else Color(0xFF475569)
+                )
+            }
+        }
+    }
+}
