@@ -103,10 +103,15 @@ class ChatProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> createConversation(String username) async {
+  Future<void> getOrCreateConversation(String username) async {
     try {
-      final conversation = await ApiService.createConversation(username);
-      _conversations.insert(0, conversation);
+      final conversation = await ApiService.getOrCreateConversation(username);
+      // Check if conversation already exists in list
+      final existingIndex =
+          _conversations.indexWhere((c) => c.id == conversation.id);
+      if (existingIndex == -1) {
+        _conversations.insert(0, conversation);
+      }
       _currentConversationId = conversation.id;
       _messages = [];
       notifyListeners();

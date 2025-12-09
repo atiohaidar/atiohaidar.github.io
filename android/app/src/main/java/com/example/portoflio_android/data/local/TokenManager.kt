@@ -72,6 +72,17 @@ class TokenManager @Inject constructor(
     }
     
     /**
+     * Save updated user data (for profile updates).
+     */
+    suspend fun saveUser(user: User) {
+        context.dataStore.edit { preferences ->
+            preferences[USERNAME_KEY] = user.username
+            preferences[NAME_KEY] = user.name
+            preferences[ROLE_KEY] = user.role.name
+        }
+    }
+    
+    /**
      * Check if user is logged in.
      */
     suspend fun isLoggedIn(): Boolean {

@@ -27,12 +27,9 @@ interface UserApiService {
     @DELETE("/api/users/{username}")
     suspend fun deleteUser(@Path("username") username: String): Response<ApiResponse<User>>
     
-    // Self-profile operations
-    @GET("/api/users/me")
-    suspend fun getCurrentUser(): Response<ApiResponse<User>>
-    
-    @PUT("/api/users/me")
-    suspend fun updateCurrentUser(@Body update: ProfileUpdate): Response<ApiResponse<User>>
+    // Self-profile update (uses /api/profile per backend)
+    @PUT("/api/profile")
+    suspend fun updateProfile(@Body update: ProfileUpdate): Response<ApiResponse<User>>
 }
 
 data class ProfileUpdate(

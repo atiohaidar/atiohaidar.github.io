@@ -282,7 +282,7 @@ class ApiService {
 
       final response =
           await ApiClient.get('/tickets', queryParameters: queryParams);
-      final data = response.data['data'];
+      final data = response.data['tickets'];
       if (data == null) return [];
       final tickets =
           (data as List).map((json) => Ticket.fromJson(json)).toList();
@@ -295,7 +295,7 @@ class ApiService {
   static Future<Ticket> getTicket(int id) async {
     try {
       final response = await ApiClient.get('/tickets/$id');
-      return Ticket.fromJson(response.data['data']);
+      return Ticket.fromJson(response.data['ticket']);
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
     }
@@ -304,7 +304,7 @@ class ApiService {
   static Future<Ticket> createTicket(TicketCreate data) async {
     try {
       final response = await ApiClient.post('/tickets', data: data.toJson());
-      return Ticket.fromJson(response.data['data']);
+      return Ticket.fromJson(response.data['ticket']);
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
     }
@@ -313,7 +313,7 @@ class ApiService {
   static Future<Ticket> updateTicket(int id, TicketUpdate data) async {
     try {
       final response = await ApiClient.put('/tickets/$id', data: data.toJson());
-      return Ticket.fromJson(response.data['data']);
+      return Ticket.fromJson(response.data['ticket']);
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
     }
@@ -330,7 +330,7 @@ class ApiService {
   static Future<TicketStats> getTicketStats() async {
     try {
       final response = await ApiClient.get('/tickets/stats');
-      return TicketStats.fromJson(response.data['data']);
+      return TicketStats.fromJson(response.data['stats']);
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
     }
@@ -339,7 +339,7 @@ class ApiService {
   static Future<List<TicketComment>> getTicketComments(int ticketId) async {
     try {
       final response = await ApiClient.get('/tickets/$ticketId/comments');
-      final data = response.data['data'];
+      final data = response.data['comments'];
       if (data == null) return [];
       final comments =
           (data as List).map((json) => TicketComment.fromJson(json)).toList();
@@ -356,7 +356,7 @@ class ApiService {
         '/tickets/$ticketId/comments',
         data: {'comment_text': comment},
       );
-      return TicketComment.fromJson(response.data['data']);
+      return TicketComment.fromJson(response.data['comment']);
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
     }
@@ -365,7 +365,7 @@ class ApiService {
   static Future<List<TicketCategory>> getTicketCategories() async {
     try {
       final response = await ApiClient.get('/tickets/categories');
-      final data = response.data['data'];
+      final data = response.data['categories'];
       if (data == null) return [];
       final categories =
           (data as List).map((json) => TicketCategory.fromJson(json)).toList();
@@ -380,7 +380,7 @@ class ApiService {
       int ticketId) async {
     try {
       final response = await ApiClient.get('/tickets/$ticketId/assignments');
-      final assignments = (response.data['data'] as List)
+      final assignments = (response.data['assignments'] as List)
           .map((json) => TicketAssignment.fromJson(json))
           .toList();
       return assignments;
@@ -397,7 +397,7 @@ class ApiService {
         '/tickets/$ticketId/assign',
         data: data.toJson(),
       );
-      return TicketAssignment.fromJson(response.data['data']);
+      return TicketAssignment.fromJson(response.data['assignment']);
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
     }
@@ -733,8 +733,9 @@ class ApiService {
   // Chat
   static Future<List<ChatConversation>> getConversations() async {
     try {
-      final response = await ApiClient.get('/chat/conversations');
-      final conversations = (response.data['data'] as List)
+      final response = await ApiClient.get('/conversations');
+      // Backend returns {conversations: [...]} not {data: [...]}
+      final conversations = (response.data['conversations'] as List)
           .map((json) => ChatConversation.fromJson(json))
           .toList();
       return conversations;
@@ -743,11 +744,12 @@ class ApiService {
     }
   }
 
-  static Future<ChatConversation> createConversation(
+  /// Get or create a conversation with another user
+  static Future<ChatConversation> getOrCreateConversation(
       String otherUsername) async {
     try {
-      final response = await ApiClient.post('/chat/conversations',
-          data: {'username': otherUsername});
+      // Backend API: GET /conversations/:username returns existing or creates new
+      final response = await ApiClient.get('/conversations/$otherUsername');
       return ChatConversation.fromJson(response.data['data']);
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
@@ -757,8 +759,9 @@ class ApiService {
   static Future<List<ChatMessage>> getMessages(String conversationId) async {
     try {
       final response =
-          await ApiClient.get('/chat/conversations/$conversationId/messages');
-      final messages = (response.data['data'] as List)
+          await ApiClient.get('/conversations/$conversationId/messages');
+      // Backend returns {messages: [...]} based on standard pattern
+      final messages = (response.data['messages'] as List)
           .map((json) => ChatMessage.fromJson(json))
           .toList();
       // Ensure messages are sorted by date (if API returns them reversed)
@@ -787,7 +790,8 @@ class ApiService {
   static Future<List<ChatGroup>> getGroups() async {
     try {
       final response = await ApiClient.get('/groups');
-      final groups = (response.data['data'] as List)
+      // Backend returns {groups: [...]} based on standard pattern
+      final groups = (response.data['groups'] as List)
           .map((json) => ChatGroup.fromJson(json))
           .toList();
       return groups;
@@ -835,7 +839,8 @@ class ApiService {
   static Future<List<ChatMessage>> getGroupMessages(String groupId) async {
     try {
       final response = await ApiClient.get('/groups/$groupId/messages');
-      final messages = (response.data['data'] as List)
+      // Backend returns {messages: [...]} based on standard pattern
+      final messages = (response.data['messages'] as List)
           .map((json) => ChatMessage.fromJson(json))
           .toList();
       return messages;

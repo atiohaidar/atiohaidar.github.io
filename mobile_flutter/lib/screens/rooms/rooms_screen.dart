@@ -495,7 +495,7 @@ class _RoomsScreenState extends State<RoomsScreen>
                         roomId: room.id,
                         startTime: startTime.toIso8601String(),
                         endTime: endTime.toIso8601String(),
-                        purpose: purposeController.text.trim(),
+                        title: purposeController.text.trim(),
                       ));
 
                       if (success && context.mounted) {
@@ -593,7 +593,7 @@ class _RoomsScreenState extends State<RoomsScreen>
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  '${DateFormat('MMM d, y').format(DateTime.parse(booking.startTime))} - ${DateFormat('HH:mm').format(DateTime.parse(booking.startTime))}',
+                  '${DateFormat('MMM d, y').format(_safeParseDate(booking.startTime))} - ${DateFormat('HH:mm').format(_safeParseDate(booking.startTime))}',
                   style: TextStyle(
                     fontSize: 14,
                     color: isDark
@@ -629,6 +629,22 @@ class _RoomsScreenState extends State<RoomsScreen>
         ),
       ),
     );
+  }
+
+  /// Helper to parse DateTime safely
+  DateTime _safeParseDate(String value) {
+    try {
+      if (value.isEmpty) return DateTime.now();
+      // Handle SQL date format (replace space with T)
+      if (value.contains(' ') && !value.contains('T')) {
+        return DateTime.parse(value.replaceAll(' ', 'T'));
+      }
+      return DateTime.parse(value);
+    } catch (_) {
+      // If parsing fails (e.g. data is '21'), return now as fallback
+      // This prevents the entire UI from crashing
+      return DateTime.now();
+    }
   }
 
   void _showCancelBookingDialog(Booking booking) {

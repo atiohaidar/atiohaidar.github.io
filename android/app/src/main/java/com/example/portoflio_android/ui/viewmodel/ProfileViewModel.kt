@@ -2,6 +2,7 @@ package com.example.portoflio_android.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.portoflio_android.data.local.TokenManager
 import com.example.portoflio_android.data.models.User
 import com.example.portoflio_android.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +22,8 @@ data class ProfileUiState(
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val tokenManager: TokenManager
 ) : ViewModel() {
     
     private val _uiState = MutableStateFlow(ProfileUiState())
@@ -33,21 +35,9 @@ class ProfileViewModel @Inject constructor(
     
     fun loadProfile() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
-            
-            userRepository.getCurrentUser()
-                .onSuccess { user ->
-                    _uiState.value = _uiState.value.copy(
-                        user = user,
-                        isLoading = false
-                    )
-                }
-                .onFailure { exception ->
-                    _uiState.value = _uiState.value.copy(
-                        isLoading = false,
-                        error = exception.message
-                    )
-                }
+            // Get user from TokenManager (stored during login)
+            val user = tokenManager.getUser()
+            _uiState.value = _uiState.value.copy(user = user, isLoading = false)
         }
     }
     
@@ -55,8 +45,10 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isUpdating = true, error = null, updateSuccess = false)
             
-            userRepository.updateCurrentUser(name, password)
+            userRepository.updateProfile(name, password)
                 .onSuccess { user ->
+                    // Update stored user in TokenManager
+                    tokenManager.saveUser(user)
                     _uiState.value = _uiState.value.copy(
                         user = user,
                         isUpdating = false,
@@ -80,3 +72,4 @@ class ProfileViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(updateSuccess = false)
     }
 }
+

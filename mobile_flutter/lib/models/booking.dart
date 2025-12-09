@@ -39,7 +39,8 @@ class Booking extends Equatable {
   final String startTime;
   final String endTime;
   final BookingStatus status;
-  final String? purpose;
+  final String? title;
+  final String? description;
   final String? createdAt;
   final String? updatedAt;
 
@@ -50,10 +51,14 @@ class Booking extends Equatable {
     required this.startTime,
     required this.endTime,
     required this.status,
-    this.purpose,
+    this.title,
+    this.description,
     this.createdAt,
     this.updatedAt,
   });
+
+  // Backwards compatible getter for old code using 'purpose'
+  String? get purpose => title ?? description;
 
   factory Booking.fromJson(Map<String, dynamic> json) {
     return Booking(
@@ -63,7 +68,8 @@ class Booking extends Equatable {
       startTime: json['start_time'] as String,
       endTime: json['end_time'] as String,
       status: BookingStatusExtension.fromString(json['status'] as String),
-      purpose: json['purpose'] as String?,
+      title: json['title'] as String?,
+      description: json['description'] as String?,
       createdAt: json['created_at'] as String?,
       updatedAt: json['updated_at'] as String?,
     );
@@ -77,14 +83,26 @@ class Booking extends Equatable {
       'start_time': startTime,
       'end_time': endTime,
       'status': status.value,
-      if (purpose != null) 'purpose': purpose,
+      if (title != null) 'title': title,
+      if (description != null) 'description': description,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
     };
   }
 
   @override
-  List<Object?> get props => [id, roomId, userUsername, startTime, endTime, status, purpose, createdAt, updatedAt];
+  List<Object?> get props => [
+        id,
+        roomId,
+        userUsername,
+        startTime,
+        endTime,
+        status,
+        title,
+        description,
+        createdAt,
+        updatedAt
+      ];
 }
 
 /// Booking create request
@@ -92,13 +110,15 @@ class BookingCreate {
   final String roomId;
   final String startTime;
   final String endTime;
-  final String? purpose;
+  final String title;
+  final String? description;
 
   const BookingCreate({
     required this.roomId,
     required this.startTime,
     required this.endTime,
-    this.purpose,
+    required this.title,
+    this.description,
   });
 
   Map<String, dynamic> toJson() {
@@ -106,7 +126,8 @@ class BookingCreate {
       'room_id': roomId,
       'start_time': startTime,
       'end_time': endTime,
-      if (purpose != null) 'purpose': purpose,
+      'title': title,
+      if (description != null) 'description': description,
     };
   }
 }

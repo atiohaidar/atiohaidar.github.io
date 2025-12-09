@@ -84,7 +84,10 @@ class RoomRepository @Inject constructor(
     
     suspend fun updateBookingStatus(bookingId: String, status: BookingStatus): Result<Booking> {
         return try {
-            val response = roomApiService.updateBookingStatus(bookingId, BookingUpdate(status))
+            val response = roomApiService.updateBookingStatus(
+                bookingId, 
+                com.example.portoflio_android.data.network.api.BookingStatusUpdate(status.name.lowercase())
+            )
             if (response.isSuccessful && response.body()?.data != null) {
                 Result.success(response.body()!!.data!!)
             } else {

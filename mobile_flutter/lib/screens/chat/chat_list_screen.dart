@@ -312,7 +312,7 @@ class _ChatListScreenState extends State<ChatListScreen>
                 try {
                   await context
                       .read<ChatProvider>()
-                      .createConversation(controller.text.trim());
+                      .getOrCreateConversation(controller.text.trim());
                   if (context.mounted) {
                     Navigator.pop(context);
                     final newConv =

@@ -46,9 +46,19 @@ interface RoomApiService {
     @PUT("/api/bookings/{bookingId}")
     suspend fun updateBookingStatus(
         @Path("bookingId") bookingId: String,
+        @Body update: BookingStatusUpdate
+    ): Response<ApiResponse<Booking>>
+    
+    @PUT("/api/bookings/{bookingId}/edit")
+    suspend fun editBooking(
+        @Path("bookingId") bookingId: String,
         @Body update: BookingUpdate
     ): Response<ApiResponse<Booking>>
     
     @DELETE("/api/bookings/{bookingId}")
     suspend fun cancelBooking(@Path("bookingId") bookingId: String): Response<ApiResponse<Booking>>
 }
+
+data class BookingStatusUpdate(
+    val status: String
+)

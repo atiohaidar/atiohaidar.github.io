@@ -65,9 +65,21 @@ interface TicketApiService {
         @Query("assigned_to") assignedTo: String? = null
     ): Response<ApiResponse<TicketStats>>
     
-    // Public ticket creation
+    // Public ticket creation and access
     @POST("/api/public/tickets")
     suspend fun createPublicTicket(@Body ticket: TicketCreate): Response<ApiResponse<Ticket>>
+    
+    @GET("/api/public/tickets/{token}")
+    suspend fun getPublicTicketByToken(@Path("token") token: String): Response<ApiResponse<Ticket>>
+    
+    @GET("/api/public/tickets/{token}/comments")
+    suspend fun getPublicTicketComments(@Path("token") token: String): Response<ApiResponse<List<TicketComment>>>
+    
+    @POST("/api/public/tickets/{token}/comments")
+    suspend fun addPublicTicketComment(
+        @Path("token") token: String,
+        @Body comment: TicketCommentCreate
+    ): Response<ApiResponse<TicketComment>>
 }
 
 data class TicketCommentCreate(

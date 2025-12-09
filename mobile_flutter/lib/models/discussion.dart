@@ -25,17 +25,25 @@ class Discussion extends Equatable {
   });
 
   factory Discussion.fromJson(Map<String, dynamic> json) {
-    return Discussion(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      content: json['content'] as String,
-      creatorUsername: json['creator_username'] as String?,
-      creatorName: (json['creator_name'] as String?) ?? 'Anonymous',
-      isAnonymous: _parseBool(json['is_anonymous']),
-      createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
-      replyCount: json['reply_count'] as int?,
-    );
+    try {
+      return Discussion(
+        id: json['id']?.toString() ?? '',
+        title: json['title']?.toString() ?? '',
+        content: json['content']?.toString() ?? '',
+        creatorUsername: json['creator_username']?.toString(),
+        creatorName: json['creator_name']?.toString() ?? 'Anonymous',
+        isAnonymous: _parseBool(json['is_anonymous']),
+        createdAt: _parseDateTime(json['created_at']),
+        updatedAt: _parseDateTime(json['updated_at']),
+        replyCount: json['reply_count'] as int?,
+      );
+    } catch (e) {
+      // ignore: avoid_print
+      print('DEBUG: Error parsing Discussion: $e');
+      // ignore: avoid_print
+      print('DEBUG: Discussion JSON: $json');
+      rethrow;
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -89,16 +97,24 @@ class DiscussionReply extends Equatable {
   });
 
   factory DiscussionReply.fromJson(Map<String, dynamic> json) {
-    return DiscussionReply(
-      id: json['id'] as String,
-      discussionId: json['discussion_id'] as String,
-      content: json['content'] as String,
-      creatorUsername: json['creator_username'] as String?,
-      creatorName: (json['creator_name'] as String?) ?? 'Anonymous',
-      isAnonymous: _parseBool(json['is_anonymous']),
-      createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
-    );
+    try {
+      return DiscussionReply(
+        id: json['id']?.toString() ?? '',
+        discussionId: json['discussion_id']?.toString() ?? '',
+        content: json['content']?.toString() ?? '',
+        creatorUsername: json['creator_username']?.toString(),
+        creatorName: json['creator_name']?.toString() ?? 'Anonymous',
+        isAnonymous: _parseBool(json['is_anonymous']),
+        createdAt: _parseDateTime(json['created_at']),
+        updatedAt: _parseDateTime(json['updated_at']),
+      );
+    } catch (e) {
+      // ignore: avoid_print
+      print('DEBUG: Error parsing DiscussionReply: $e');
+      // ignore: avoid_print
+      print('DEBUG: Reply JSON: $json');
+      rethrow;
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -194,4 +210,23 @@ bool _parseBool(dynamic value, {bool defaultValue = false}) {
   if (value is int) return value != 0;
   if (value is String) return value.toLowerCase() == 'true' || value == '1';
   return defaultValue;
+}
+
+/// Helper to parse DateTime safely
+DateTime _parseDateTime(dynamic value) {
+  if (value == null) return DateTime.now();
+  if (value is DateTime) return value;
+  if (value is String) {
+    try {
+      return DateTime.parse(value);
+    } catch (_) {
+      // Try replacing space with T if it's SQL style 'YYYY-MM-DD HH:MM:SS'
+      try {
+        return DateTime.parse(value.replaceAll(' ', 'T'));
+      } catch (_) {
+        return DateTime.now(); // Fallback
+      }
+    }
+  }
+  return DateTime.now();
 }
