@@ -46,7 +46,8 @@ jobs:
         working-directory: ./expojs
         env:
           EXPO_PUBLIC_API_URL: https://backend.atiohaidar.workers.dev
-        run: npx expo export --platform web --output-dir dist
+          EXPO_BASE_URL: /expo
+        run: npx expo export --platform web --output-dir dist --public-url /expo
 
       # --- 3. BUILD REACT FRONTEND ---
       - name: Setup Node.js for Frontend
