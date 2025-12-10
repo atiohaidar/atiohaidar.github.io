@@ -64,4 +64,8 @@ class DashboardViewModel @Inject constructor(
     fun refresh() {
         loadData()
     }
+    
+    fun clearError() {
+        _uiState.value = _uiState.value.copy(error = null)
+    }
 }

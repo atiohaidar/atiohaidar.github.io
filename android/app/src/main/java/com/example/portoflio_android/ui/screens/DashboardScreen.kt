@@ -265,12 +265,28 @@ fun DashboardScreen(
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             QuickActionCard(
+                                title = "Finance",
+                                icon = Icons.Default.AccountBalance,
+                                color = Color(0xFF10B981),
+                                modifier = Modifier.weight(1f),
+                                onClick = onNavigateToTransactionHistory
+                            )
+                            QuickActionCard(
                                 title = "Profile",
                                 icon = Icons.Default.Person,
                                 color = Color(0xFF6366F1),
                                 modifier = Modifier.weight(1f),
                                 onClick = onNavigateToProfile
                             )
+                        }
+                    }
+                    
+                    // Quick Actions - Row 7 (Anonymous Chat - centered)
+                    item {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
                             QuickActionCard(
                                 title = "Anon Chat",
                                 icon = Icons.Default.VisibilityOff,
@@ -278,6 +294,8 @@ fun DashboardScreen(
                                 modifier = Modifier.weight(1f),
                                 onClick = onNavigateToAnonymousChat
                             )
+                            // Empty space for symmetry
+                            Spacer(modifier = Modifier.weight(1f))
                         }
                     }
                     
@@ -286,16 +304,13 @@ fun DashboardScreen(
             }
         }
         
-        // Error Snackbar
+        // Error Dialog
         uiState.error?.let { error ->
-            Snackbar(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(16.dp),
-                containerColor = Color(0xFFEF4444)
-            ) {
-                Text(error)
-            }
+            com.example.portoflio_android.ui.components.ErrorDialog(
+                error = error,
+                onDismiss = { viewModel.clearError() },
+                onRetry = { viewModel.refresh() }
+            )
         }
     }
 }
