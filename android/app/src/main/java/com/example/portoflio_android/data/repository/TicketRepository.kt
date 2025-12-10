@@ -132,5 +132,31 @@ class TicketRepository @Inject constructor(
             Result.failure(e)
         }
     }
+    
+    suspend fun createTicket(ticket: TicketCreate): Result<Ticket> {
+        return try {
+            val response = ticketApiService.createPublicTicket(ticket)
+            if (response.isSuccessful && response.body()?.data != null) {
+                Result.success(response.body()!!.data!!)
+            } else {
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    
+    suspend fun deleteTicket(ticketId: Int): Result<Unit> {
+        return try {
+            val response = ticketApiService.deleteTicket(ticketId)
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
 

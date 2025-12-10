@@ -64,8 +64,4 @@ class DashboardViewModel @Inject constructor(
     fun refresh() {
         loadData()
     }
-    
-    fun refresh() {
-        loadStats()
-    }
 }

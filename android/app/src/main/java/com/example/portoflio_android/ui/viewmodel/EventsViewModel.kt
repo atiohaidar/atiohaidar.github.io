@@ -81,6 +81,47 @@ class EventsViewModel @Inject constructor(
         }
     }
     
+    fun createEvent(title: String, description: String?, eventDate: String, location: String?) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            
+            val eventCreate = com.example.portoflio_android.data.models.EventCreate(
+                title = title,
+                description = description,
+                eventDate = eventDate,
+                location = location
+            )
+            
+            eventRepository.createEvent(eventCreate)
+                .onSuccess {
+                    loadEvents()
+                }
+                .onFailure { exception ->
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = exception.message
+                    )
+                }
+        }
+    }
+    
+    fun deleteEvent(eventId: String) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            
+            eventRepository.deleteEvent(eventId)
+                .onSuccess {
+                    loadEvents()
+                }
+                .onFailure { exception ->
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = exception.message
+                    )
+                }
+        }
+    }
+    
     fun clearError() {
         _uiState.value = _uiState.value.copy(error = null)
     }

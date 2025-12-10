@@ -5,7 +5,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
@@ -314,6 +316,8 @@ private fun TicketDetailView(
 ) {
     var commentText by remember { mutableStateOf("") }
     var showAssignDialog by remember { mutableStateOf(false) }
+    var showEditDialog by remember { mutableStateOf(false) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
     
     Column(
         modifier = Modifier.fillMaxSize()
@@ -336,6 +340,20 @@ private fun TicketDetailView(
                 }
             },
             actions = {
+                IconButton(onClick = { showEditDialog = true }) {
+                    Icon(
+                        Icons.Default.Edit,
+                        contentDescription = "Edit",
+                        tint = Color.White
+                    )
+                }
+                IconButton(onClick = { showDeleteDialog = true }) {
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = "Delete",
+                        tint = Color(0xFFEF4444)
+                    )
+                }
                 IconButton(onClick = { showAssignDialog = true }) {
                     Icon(
                         Icons.Default.PersonAdd,
@@ -465,6 +483,57 @@ private fun TicketDetailView(
         }
     }
     
+    // Edit Ticket Dialog
+    if (showEditDialog) {
+        EditTicketDialog(
+            ticket = ticket,
+            onDismiss = { showEditDialog = false },
+            onConfirm = { title, description, status, priority ->
+                viewModel.updateTicket(
+                    ticket.id,
+                    com.example.portoflio_android.data.models.TicketUpdate(
+                        title = title,
+                        description = description,
+                        status = status,
+                        priority = priority
+                    )
+                )
+                showEditDialog = false
+            }
+        )
+    }
+    
+    // Delete Confirmation Dialog
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text("Delete Ticket?", color = Color.White) },
+            text = {
+                Text(
+                    "Are you sure you want to delete this ticket? This action cannot be undone.",
+                    color = Color(0xFF94A3B8)
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        viewModel.deleteTicket(ticket.id)
+                        showDeleteDialog = false
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444))
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text("Cancel", color = Color(0xFF94A3B8))
+                }
+            },
+            containerColor = Color(0xFF1E293B)
+        )
+    }
+    
     // Assign Dialog
     if (showAssignDialog) {
         AssignTicketDialog(
@@ -476,6 +545,114 @@ private fun TicketDetailView(
             }
         )
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun EditTicketDialog(
+    ticket: Ticket,
+    onDismiss: () -> Unit,
+    onConfirm: (title: String, description: String, status: TicketStatus, priority: TicketPriority) -> Unit
+) {
+    var title by remember { mutableStateOf(ticket.title) }
+    var description by remember { mutableStateOf(ticket.description) }
+    var status by remember { mutableStateOf(ticket.status) }
+    var priority by remember { mutableStateOf(ticket.priority) }
+    
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Edit Ticket", color = Color.White) },
+        text = {
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = { Text("Title") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color(0xFF2563EB),
+                        unfocusedBorderColor = Color(0xFF475569),
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        focusedLabelColor = Color(0xFF2563EB),
+                        unfocusedLabelColor = Color(0xFF94A3B8)
+                    )
+                )
+                
+                Spacer(modifier = Modifier.height(12.dp))
+                
+                OutlinedTextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    label = { Text("Description") },
+                    modifier = Modifier.fillMaxWidth(),
+                    maxLines = 4,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color(0xFF2563EB),
+                        unfocusedBorderColor = Color(0xFF475569),
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White,
+                        focusedLabelColor = Color(0xFF2563EB),
+                        unfocusedLabelColor = Color(0xFF94A3B8)
+                    )
+                )
+                
+                Spacer(modifier = Modifier.height(12.dp))
+                
+                Text("Status", color = Color(0xFF94A3B8), fontSize = 12.sp)
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    TicketStatus.values().forEach { s ->
+                        FilterChip(
+                            selected = status == s,
+                            onClick = { status = s },
+                            label = { Text(s.name.replace("_", " "), fontSize = 10.sp) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = Color(0xFF2563EB),
+                                selectedLabelColor = Color.White
+                            )
+                        )
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(12.dp))
+                
+                Text("Priority", color = Color(0xFF94A3B8), fontSize = 12.sp)
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    TicketPriority.values().forEach { p ->
+                        FilterChip(
+                            selected = priority == p,
+                            onClick = { priority = p },
+                            label = { Text(p.name, fontSize = 10.sp) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = Color(0xFF2563EB),
+                                selectedLabelColor = Color.White
+                            )
+                        )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    if (title.isNotBlank() && description.isNotBlank()) {
+                        onConfirm(title, description, status, priority)
+                    }
+                },
+                enabled = title.isNotBlank() && description.isNotBlank(),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2563EB))
+            ) {
+                Text("Save")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel", color = Color(0xFF94A3B8))
+            }
+        },
+        containerColor = Color(0xFF1E293B)
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

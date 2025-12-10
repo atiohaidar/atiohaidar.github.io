@@ -55,6 +55,19 @@ class EventRepository @Inject constructor(
         }
     }
     
+    suspend fun deleteEvent(eventId: String): Result<Unit> {
+        return try {
+            val response = eventApiService.deleteEvent(eventId)
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    
     suspend fun registerForEvent(eventId: String): Result<EventAttendee> {
         return try {
             val response = eventApiService.registerForEvent(EventAttendeeRegister(eventId))

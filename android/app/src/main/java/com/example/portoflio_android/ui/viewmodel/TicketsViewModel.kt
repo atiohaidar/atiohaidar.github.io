@@ -136,4 +136,63 @@ class TicketsViewModel @Inject constructor(
                 }
         }
     }
+    
+    fun createTicket(ticket: com.example.portoflio_android.data.models.TicketCreate) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            
+            ticketRepository.createTicket(ticket)
+                .onSuccess {
+                    loadTickets()
+                    loadStats()
+                }
+                .onFailure { exception ->
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = exception.message
+                    )
+                }
+        }
+    }
+    
+    fun updateTicket(ticketId: Int, update: com.example.portoflio_android.data.models.TicketUpdate) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            
+            ticketRepository.updateTicket(ticketId, update)
+                .onSuccess { updatedTicket ->
+                    _uiState.value = _uiState.value.copy(
+                        selectedTicket = updatedTicket,
+                        isLoading = false
+                    )
+                    loadTickets()
+                    loadStats()
+                }
+                .onFailure { exception ->
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = exception.message
+                    )
+                }
+        }
+    }
+    
+    fun deleteTicket(ticketId: Int) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            
+            ticketRepository.deleteTicket(ticketId)
+                .onSuccess {
+                    clearSelectedTicket()
+                    loadTickets()
+                    loadStats()
+                }
+                .onFailure { exception: Throwable ->
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = exception.message
+                    )
+                }
+        }
+    }
 }

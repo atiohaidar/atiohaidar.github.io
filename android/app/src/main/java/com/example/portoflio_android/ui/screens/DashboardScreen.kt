@@ -37,7 +37,6 @@ fun DashboardScreen(
     onNavigateToDiscussions: () -> Unit,
     onNavigateToProfile: () -> Unit,
     onNavigateToAnonymousChat: () -> Unit,
-    onNavigateToAnonymousChat: () -> Unit,
     onNavigateToTransfer: () -> Unit,
     onNavigateToTopUp: () -> Unit,
     onLogout: () -> Unit

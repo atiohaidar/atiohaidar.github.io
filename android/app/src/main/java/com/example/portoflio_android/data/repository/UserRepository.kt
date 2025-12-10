@@ -29,8 +29,8 @@ class UserRepository @Inject constructor(
     suspend fun getUser(username: String): Result<User> {
         return try {
             val response = userApiService.getUser(username)
-            if (response.isSuccessful && response.body()?.user != null) {
-                Result.success(response.body()!!.user!!)
+            if (response.isSuccessful && response.body()?.data != null) {
+                Result.success(response.body()!!.data!!)
             } else {
                 Result.failure(Exception(response.message() ?: "Failed to get user"))
             }
