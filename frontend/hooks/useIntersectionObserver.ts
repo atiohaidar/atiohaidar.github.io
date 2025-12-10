@@ -10,21 +10,34 @@ import { useState, useEffect, useRef } from 'react';
  * - `ref`: Ref yang harus dilampirkan ke elemen target.
  * - `isIntersecting`: Boolean yang bernilai `true` setelah delay selesai.
  */
-export const useIntersectionObserver = (options: IntersectionObserverInit, delay: number = 0) => {
+export const useIntersectionObserver = (options: IntersectionObserverInit = { threshold: 0.1 }, delay: number = 0) => {
     const [isIntersecting, setIsIntersecting] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
+    const hasIntersected = useRef(false); // To ensure we only animate once
 
     useEffect(() => {
-        // Set timer untuk menampilkan animasi setelah delay
-        const timer = setTimeout(() => {
-            setIsIntersecting(true);
-        }, delay);
+        const observer = new IntersectionObserver(([entry]) => {
+            if (entry.isIntersecting && !hasIntersected.current) {
+                hasIntersected.current = true;
+                if (delay > 0) {
+                    setTimeout(() => setIsIntersecting(true), delay);
+                } else {
+                    setIsIntersecting(true);
+                }
+                if (ref.current) observer.unobserve(ref.current);
+            }
+        }, options);
+
+        if (ref.current) {
+            observer.observe(ref.current);
+        }
 
         return () => {
-            // Cleanup timer
-            clearTimeout(timer);
+            if (ref.current) {
+                observer.unobserve(ref.current);
+            }
         };
-    }, [delay]);
+    }, [delay, options.threshold]);
 
     return [ref, isIntersecting] as const;
 };

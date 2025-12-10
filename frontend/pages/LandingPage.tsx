@@ -14,6 +14,7 @@ import AnonymousChatModal from '../components/AnonymousChatModal';
 import FormTokenSection from '../components/FormTokenSection';
 import TicketSubmissionSection from '../components/TicketSubmissionSection';
 import TicketTrackingSection from '../components/TicketTrackingSection';
+import ScrollReveal from '../components/ScrollReveal';
 import { getProfile, getAbout, getProjects, getResearch, getExperiences, getEducation } from '../api';
 import { getAuthToken, getStoredUser, clearAuth } from '../apiClient';
 import { COLORS, LAYOUT, PRINT } from '../utils/styles';
@@ -97,12 +98,19 @@ const LandingPage: React.FC = () => {
     const handleNavAction = (action: NavAction) => {
         switch (action) {
             case 'ticketing':
-                setTicketTokenInput('');
-                setIsTicketModalOpen(true);
+                scrollToSection('ticket-tracking');
+                // Small delay to allow scroll to start/complete visually before modal overlay appears (optional, but feels better)
+                setTimeout(() => {
+                    setTicketTokenInput('');
+                    setIsTicketModalOpen(true);
+                }, 300);
                 break;
             case 'form':
-                setFormTokenInput('');
-                setIsFormModalOpen(true);
+                scrollToSection('form-token-section');
+                setTimeout(() => {
+                    setFormTokenInput('');
+                    setIsFormModalOpen(true);
+                }, 300);
                 break;
             case 'anonymousChat':
                 setIsAnonymousChatOpen(true);
@@ -184,25 +192,47 @@ const LandingPage: React.FC = () => {
                 onLogout={handleLogout}
                 onNavAction={handleNavAction}
             />
+
             <main className="mx-auto relative z-10">
-                <Hero
-                    greeting={profile.heroGreeting}
-                    name={profile.name}
-                    tagline={profile.heroTagline}
-                    bio={profile.heroBio}
-                    linkedinUrl={profile.socials.linkedin}
-                />
-                <About data={about} />
-                <Research research={research} />
-                <Portfolio projects={projects} />
-                <ExperienceComponent experiences={experiences} education={education} />
+                <ScrollReveal delay={200}>
+
+
+                    <Hero
+                        greeting={profile.heroGreeting}
+                        name={profile.name}
+                        tagline={profile.heroTagline}
+                        bio={profile.heroBio}
+                        linkedinUrl={profile.socials.linkedin}
+                    />
+                </ScrollReveal>
+
+                <section id="about" className="relative z-10">
+                    <About data={about} />
+                </section>
+
+                <section id="research" className="relative z-10">
+                    <Research research={research} />
+                </section>
+
+                <section id="portfolio" className="relative z-10">
+                    <Portfolio projects={projects} />
+                </section>
+
+                <section id="experience" className="relative z-10">
+                    <ExperienceComponent experiences={experiences} education={education} />
+                </section>
+
                 <ApiDemo />
+
                 <TicketSubmissionSection />
+
                 <TicketTrackingSection
                     prefillToken={prefilledTicketToken}
                     onPrefillConsumed={() => setPrefilledTicketToken(null)}
                 />
+
                 <FormTokenSection />
+
                 <Contact
                     pitch={profile.contactPitch}
                     linkedinUrl={profile.socials.linkedin}

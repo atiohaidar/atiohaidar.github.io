@@ -168,10 +168,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                     h-[100dvh] md:h-[calc(100vh-2rem)] md:my-4 md:ml-4
                     rounded-r-3xl md:rounded-3xl shadow-2xl md:shadow-xl
                     ${glassPanel}
+                    animate-slide-in-left animation-delay-200 opacity-0
                 `}
             >
                 {/* Sidebar Header */}
                 <div className="p-6 flex items-center justify-between">
+                    {/* ... */}
                     {/* Mobile close button */}
                     <button
                         onClick={() => setIsMobileSidebarOpen(false)}
@@ -303,6 +305,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                     ${theme === 'dark' ? 'bg-[#0D111A]/60' : 'bg-[#F3F4F6]/80'}
                     backdrop-blur-sm
                     z-10
+                    animate-fade-in-up animation-delay-500 opacity-0
                 `}
             >
                 {/* Top Header (Floating inside main) */}
