@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getFormByToken, submitFormResponse } from '../lib/api/services';
 import { COLORS, LAYOUT } from '../utils/styles';
+import ParallaxBackground from '../components/ParallaxBackground';
 import type { FormWithQuestions } from '../apiTypes';
 
 const FormFillPage: React.FC = () => {
@@ -26,7 +27,7 @@ const FormFillPage: React.FC = () => {
             try {
                 const data = await getFormByToken(token);
                 setFormData(data);
-                
+
                 // Initialize answers
                 const initialAnswers: Record<string, string> = {};
                 data.questions.forEach((q) => {
@@ -86,8 +87,9 @@ const FormFillPage: React.FC = () => {
 
     if (loading) {
         return (
-            <div className={`min-h-screen ${LAYOUT.FLEX_CENTER} ${COLORS.BG_PRIMARY} ${COLORS.TEXT_ACCENT}`}>
-                <div className="text-center">
+            <div className={`min-h-screen ${LAYOUT.FLEX_CENTER} ${COLORS.BG_PRIMARY} ${COLORS.TEXT_ACCENT} relative overflow-hidden`}>
+                <ParallaxBackground intensity={0.5} />
+                <div className="text-center relative z-10">
                     <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-coral-pink mx-auto mb-4"></div>
                     <p className="text-xl">Memuat formulir...</p>
                 </div>
@@ -97,8 +99,9 @@ const FormFillPage: React.FC = () => {
 
     if (error || !formData) {
         return (
-            <div className={`min-h-screen ${LAYOUT.FLEX_CENTER} ${COLORS.BG_PRIMARY}`}>
-                <div className="text-center px-4">
+            <div className={`min-h-screen ${LAYOUT.FLEX_CENTER} ${COLORS.BG_PRIMARY} relative overflow-hidden`}>
+                <ParallaxBackground intensity={0.5} />
+                <div className="text-center px-4 relative z-10">
                     <h1 className={`text-3xl font-bold ${COLORS.TEXT_PRIMARY} mb-4`}>Error</h1>
                     <p className={`${COLORS.TEXT_SECONDARY} mb-6`}>{error || 'Formulir tidak ditemukan'}</p>
                     <button
@@ -114,8 +117,9 @@ const FormFillPage: React.FC = () => {
 
     if (submitted) {
         return (
-            <div className={`min-h-screen ${LAYOUT.FLEX_CENTER} ${COLORS.BG_PRIMARY}`}>
-                <div className="text-center px-4 max-w-md">
+            <div className={`min-h-screen ${LAYOUT.FLEX_CENTER} ${COLORS.BG_PRIMARY} relative overflow-hidden`}>
+                <ParallaxBackground intensity={0.5} />
+                <div className="text-center px-4 max-w-md relative z-10">
                     <div className="mb-6">
                         <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
                             <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -139,7 +143,8 @@ const FormFillPage: React.FC = () => {
     }
 
     return (
-        <div className={`min-h-screen ${COLORS.BG_PRIMARY} py-12 px-4`}>
+        <div className={`min-h-screen ${COLORS.BG_PRIMARY} py-12 px-4 relative overflow-hidden`}>
+            <ParallaxBackground intensity={0.7} />
             <div className="container mx-auto max-w-3xl">
                 <div className={`${COLORS.BG_SECONDARY} rounded-lg shadow-xl p-8 md:p-12`}>
                     <h1 className={`text-3xl md:text-4xl font-bold ${COLORS.TEXT_PRIMARY} mb-3`}>

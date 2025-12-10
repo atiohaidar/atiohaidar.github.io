@@ -8,6 +8,7 @@ import type { Project } from '../types';
 import { GitHubIcon, ExternalLinkIcon, PostmanIcon, FolderIcon } from './Icons';
 import ScrollReveal from './ScrollReveal';
 import SpotlightCard from './SpotlightCard';
+import TiltCard from './TiltCard';
 
 /**
  * Komponen kartu untuk menampilkan satu proyek.
@@ -33,39 +34,41 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
     };
 
     return (
-        <SpotlightCard className="glass-card h-full rounded-2xl border border-white/10 dark:border-white/5 bg-white/50 dark:bg-slate-900/50 hover:bg-white/60 dark:hover:bg-slate-900/60 transition-colors p-0 overflow-hidden group print:shadow-none print:border print:border-gray-300 print:rounded-none print:bg-transparent print-avoid-break">
-            <div className="p-6 flex flex-col h-full relative z-10">
-                <header className="flex justify-between items-center mb-4 print:hidden">
-                    <FolderIcon className="w-10 h-10 text-accent-blue" />
-                </header>
-                <main className="flex-grow">
-                    <h3 className="text-xl font-poppins font-bold text-light-text dark:text-white mb-2 group-hover:text-accent-blue transition-colors print:text-black">{project.name}</h3>
-                    <p className="text-sm text-light-muted dark:text-gray-300 mb-2 leading-relaxed">{project.description}</p>
-                    <p className="text-sm text-light-muted dark:text-gray-300 leading-relaxed"><span className="font-semibold text-light-text dark:text-white">Kontribusi:</span> {project.contribution}</p>
-                </main>
-                <footer className="mt-4">
-                    <div className="mb-4 space-y-2">
-                        {project.links.map(link => (
-                            <a
-                                key={link.url}
-                                href={link.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center text-sm text-light-muted dark:text-gray-300 hover:text-accent-blue transition-colors duration-300 group/link overflow-hidden mb-1"
-                            >
-                                {getIconForLink(link.type)}
-                                <span className="group-hover/link:underline print:underline">{link.url.replace(/^https?:\/\//, '')}</span>
-                            </a>
-                        ))}
-                    </div>
-                    {project.tech && (
-                        <ul className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-light-muted dark:text-gray-400 pt-4 border-t border-gray-300 dark:border-white/10">
-                            {project.tech.map(t => <li key={t}>{t}</li>)}
-                        </ul>
-                    )}
-                </footer>
-            </div>
-        </SpotlightCard>
+        <TiltCard maxTilt={8} scale={1.02} glare={true} glareMaxOpacity={0.15} className="h-full">
+            <SpotlightCard className="glass-card h-full rounded-2xl border border-white/10 dark:border-white/5 bg-white/50 dark:bg-slate-900/50 hover:bg-white/60 dark:hover:bg-slate-900/60 transition-colors p-0 overflow-hidden group print:shadow-none print:border print:border-gray-300 print:rounded-none print:bg-transparent print-avoid-break">
+                <div className="p-6 flex flex-col h-full relative z-10">
+                    <header className="flex justify-between items-center mb-4 print:hidden">
+                        <FolderIcon className="w-10 h-10 text-accent-blue" />
+                    </header>
+                    <main className="flex-grow">
+                        <h3 className="text-xl font-poppins font-bold text-light-text dark:text-white mb-2 group-hover:text-accent-blue transition-colors print:text-black">{project.name}</h3>
+                        <p className="text-sm text-light-muted dark:text-gray-300 mb-2 leading-relaxed">{project.description}</p>
+                        <p className="text-sm text-light-muted dark:text-gray-300 leading-relaxed"><span className="font-semibold text-light-text dark:text-white">Kontribusi:</span> {project.contribution}</p>
+                    </main>
+                    <footer className="mt-4">
+                        <div className="mb-4 space-y-2">
+                            {project.links.map(link => (
+                                <a
+                                    key={link.url}
+                                    href={link.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center text-sm text-light-muted dark:text-gray-300 hover:text-accent-blue transition-colors duration-300 group/link overflow-hidden mb-1"
+                                >
+                                    {getIconForLink(link.type)}
+                                    <span className="group-hover/link:underline print:underline">{link.url.replace(/^https?:\/\//, '')}</span>
+                                </a>
+                            ))}
+                        </div>
+                        {project.tech && (
+                            <ul className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-light-muted dark:text-gray-400 pt-4 border-t border-gray-300 dark:border-white/10">
+                                {project.tech.map(t => <li key={t}>{t}</li>)}
+                            </ul>
+                        )}
+                    </footer>
+                </div>
+            </SpotlightCard>
+        </TiltCard>
     );
 };
 

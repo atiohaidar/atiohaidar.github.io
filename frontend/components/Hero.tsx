@@ -7,6 +7,8 @@ import { COLORS, LAYOUT, PRINT, SPACING, TYPOGRAPHY } from '../utils/styles';
 import { createAnimationStyle, ANIMATION_DELAYS } from '../utils/animations';
 import { getExternalLinkProps } from '../utils/url';
 import ParticleBackground from './ParticleBackground';
+import LiveClock from './LiveClock';
+import HandwritingText from './HandwritingText';
 
 /**
  * Props untuk komponen Hero.
@@ -45,6 +47,17 @@ const Hero: React.FC<HeroProps> = ({ greeting, name, tagline, bio, linkedinUrl }
                 {/* Content Container - Background is handled by parent/layout */}
                 <div className={`container mx-auto px-6 md:px-16 lg:px-20 relative z-10 text-center`}>
                     <div className="max-w-4xl mx-auto space-y-6">
+                        {/* Live Clock Display */}
+                        <div className="mb-8" style={createAnimationStyle(ANIMATION_DELAYS.HERO.GREETING)}>
+                            <LiveClock
+                                size="lg"
+                                showSeconds={true}
+                                showDate={true}
+                                showDay={true}
+                                className="text-light-text dark:text-white/90"
+                            />
+                        </div>
+
                         <p className={`text-lg md:text-xl font-medium text-accent-blue dark:text-cyan-400 tracking-wide uppercase`} style={createAnimationStyle(ANIMATION_DELAYS.HERO.NAME)}>
                             {greeting}
                         </p>
@@ -95,3 +108,4 @@ const Hero: React.FC<HeroProps> = ({ greeting, name, tagline, bio, linkedinUrl }
 };
 
 export default Hero;
+

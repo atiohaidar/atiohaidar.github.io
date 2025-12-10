@@ -18,6 +18,7 @@ import TicketTrackingSection from '../components/TicketTrackingSection';
 import ScrollReveal from '../components/ScrollReveal';
 import SpyTooltip from '../components/SpyTooltip';
 import { useLandingData } from '../contexts/LandingDataContext';
+import { useMultiParallax } from '../hooks/useParallax';
 import { getAuthToken, getStoredUser, clearAuth } from '../apiClient';
 import { COLORS, LAYOUT, PRINT } from '../utils/styles';
 import type { NavAction } from '../constants';
@@ -28,6 +29,9 @@ const LandingPage: React.FC = () => {
     // Get pre-fetched data from context (fetched during intro animation)
     const { data, loading, error } = useLandingData();
     const { profile, about, projects, research, experiences, education } = data;
+
+    // Parallax effect for background layers
+    const parallax = useMultiParallax();
 
     const [loggedInUser, setLoggedInUser] = useState<string | null>(null);
     const [isAnonymousChatOpen, setIsAnonymousChatOpen] = useState(false);
@@ -134,10 +138,19 @@ const LandingPage: React.FC = () => {
             {/* Global Background Elements */}
             <div className="fixed inset-0 bg-gradient-to-br from-blue-500/5 via-cyan-500/5 to-purple-500/5 -z-10" />
 
-            {/* Animated Orbs (Fixed) */}
-            <div className="fixed top-[20%] right-[10%] w-[500px] h-[500px] bg-accent-blue/20 rounded-full blur-[100px] animate-blob mix-blend-multiply dark:mix-blend-screen opacity-70 -z-10 pointer-events-none" />
-            <div className="fixed bottom-[20%] left-[10%] w-[500px] h-[500px] bg-purple-500/20 rounded-full blur-[100px] animate-blob animation-delay-2000 mix-blend-multiply dark:mix-blend-screen opacity-70 -z-10 pointer-events-none" />
-            <div className="fixed top-[40%] left-[40%] w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-[100px] animate-blob animation-delay-4000 mix-blend-multiply dark:mix-blend-screen opacity-70 -z-10 pointer-events-none" />
+            {/* Animated Orbs with Parallax (Fixed) */}
+            <div
+                className="fixed top-[20%] right-[10%] w-[600px] h-[600px] bg-accent-blue/40 rounded-full blur-[120px] animate-blob mix-blend-multiply dark:mix-blend-screen opacity-90 -z-10 pointer-events-none"
+                style={{ transform: `translateY(${parallax.getOffset(0.05, 'down')}px)` }}
+            />
+            <div
+                className="fixed bottom-[20%] left-[10%] w-[600px] h-[600px] bg-purple-500/40 rounded-full blur-[120px] animate-blob animation-delay-2000 mix-blend-multiply dark:mix-blend-screen opacity-90 -z-10 pointer-events-none"
+                style={{ transform: `translateY(${parallax.getOffset(0.08, 'down')}px)` }}
+            />
+            <div
+                className="fixed top-[40%] left-[40%] w-[600px] h-[600px] bg-cyan-500/40 rounded-full blur-[120px] animate-blob animation-delay-4000 mix-blend-multiply dark:mix-blend-screen opacity-90 -z-10 pointer-events-none"
+                style={{ transform: `translateY(${parallax.getOffset(0.12, 'down')}px)` }}
+            />
 
             {/* Particle Overlay (Optional, keep it subtle) */}
             {/* <div className="fixed inset-0 opacity-20 dark:opacity-30 -z-10 pointer-events-none">
@@ -219,7 +232,7 @@ const LandingPage: React.FC = () => {
                     title="CHAT"
                     items={[
                         { label: 'TYPE', value: 'Anonymous Chat' },
-                        { label: 'CHANNEL', value: 'Realtime WebSocket' },
+                        { label: 'CHANNEL', value: 'Durable Object Cloudflare' },
                         { label: 'PRIVACY', value: 'No Login Required' },
                     ]}
                     targetRef={chatButtonRef}

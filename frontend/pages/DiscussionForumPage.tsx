@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { DASHBOARD_THEME } from '../utils/styles';
 import { useTheme } from '../contexts/ThemeContext';
 import { getStoredUser } from '../apiClient';
+import ParallaxBackground from '../components/ParallaxBackground';
 import {
     getDiscussions,
     createDiscussion,
@@ -94,7 +95,9 @@ const DiscussionForumPage: React.FC = () => {
     };
 
     return (
-        <div className={`min-h-screen ${palette.background}`}>
+        <div className={`min-h-screen ${palette.background} relative overflow-hidden`}>
+            {/* Parallax Background */}
+            <ParallaxBackground intensity={0.8} />
             {/* Header */}
             <div className={`${palette.primary} shadow-lg`}>
                 <div className="container mx-auto px-4 py-6">
@@ -115,11 +118,10 @@ const DiscussionForumPage: React.FC = () => {
                         </div>
                         <button
                             onClick={() => setIsCreateModalOpen(true)}
-                            className={`px-6 py-2 rounded-lg font-medium transition-all shadow-md ${
-                                theme === 'light'
+                            className={`px-6 py-2 rounded-lg font-medium transition-all shadow-md ${theme === 'light'
                                     ? 'bg-[#1F6FEB] text-white hover:bg-[#1A5FCC] focus:ring-2 focus:ring-[#1F6FEB]/40 focus:outline-none'
                                     : `${palette.accent} text-white hover:opacity-90`
-                            }`}
+                                }`}
                         >
                             + New Discussion
                         </button>

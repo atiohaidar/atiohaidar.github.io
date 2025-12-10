@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Login from '../components/Login';
+import ParallaxBackground from '../components/ParallaxBackground';
 import { getAuthToken, getStoredUser } from '../lib/api';
 import { DASHBOARD_THEME } from '../utils/styles';
 import { useTheme } from '../contexts/ThemeContext';
@@ -24,10 +25,8 @@ const LoginPage: React.FC = () => {
 
     return (
         <div className={`min-h-screen w-full relative flex items-center justify-center p-4 bg-light-bg dark:bg-deep-navy overflow-hidden`}>
-            {/* Global Background Elements */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-cyan-500/5 to-indigo-500/5 -z-10" />
-            <div className="absolute top-[20%] right-[10%] w-[500px] h-[500px] bg-blue-500/20 rounded-full blur-[100px] animate-blob mix-blend-multiply dark:mix-blend-screen opacity-70 -z-10" />
-            <div className="absolute bottom-[20%] left-[10%] w-[500px] h-[500px] bg-cyan-500/20 rounded-full blur-[100px] animate-blob animation-delay-2000 mix-blend-multiply dark:mix-blend-screen opacity-70 -z-10" />
+            {/* Parallax Background */}
+            <ParallaxBackground intensity={0.6} />
 
             <header className={`absolute top-0 left-0 right-0 px-6 py-6 flex justify-between items-center z-20`}>
                 <Link to="/" className="flex items-center gap-2 text-light-muted dark:text-light-slate hover:text-accent-blue transition-colors">

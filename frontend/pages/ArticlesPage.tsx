@@ -6,6 +6,7 @@ import type { Components } from 'react-markdown';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import ParallaxBackground from '../components/ParallaxBackground';
 import { listArticles, getArticle } from '../apiService';
 import { getAuthToken, getStoredUser, clearAuth } from '../apiClient';
 import { DASHBOARD_THEME } from '../utils/styles';
@@ -185,8 +186,9 @@ const ArticlesPage: React.FC = () => {
     }
 
     return (
-        <div className={`relative ${COLORS.BG_PRIMARY} transition-colors duration-300`}>
-          
+        <div className={`relative ${COLORS.BG_PRIMARY} transition-colors duration-300 overflow-hidden`}>
+            {/* Parallax Background */}
+            <ParallaxBackground intensity={0.8} />
 
             <main className="mx-auto pt-20 md:pt-24 pb-16">
                 <div className={`container mx-auto ${SPACING.CONTAINER_PADDING}`}>
@@ -228,27 +230,27 @@ const ArticlesPage: React.FC = () => {
                                     {detailError}
                                 </div>
                             ) : (
-                            <article className="bg-white dark:bg-light-navy rounded-xl p-6 md:p-8 lg:p-12 border border-gray-300 dark:border-light-slate/20">
-                                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-light-text dark:text-white mb-3 md:mb-4">
-                                    {selectedArticle.title}
-                                </h1>
-                                <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-light-muted dark:text-soft-gray text-xs md:text-sm mb-6 md:mb-8 pb-4 md:pb-6 border-b border-gray-300 dark:border-light-slate/20">
-                                    <span>📅 {formatDate(selectedArticle.created_at)}</span>
-                                    {selectedArticle.updated_at && selectedArticle.updated_at !== selectedArticle.created_at && (
-                                        <span>✏️ Updated: {formatDate(selectedArticle.updated_at)}</span>
-                                    )}
-                                </div>
+                                <article className="bg-white dark:bg-light-navy rounded-xl p-6 md:p-8 lg:p-12 border border-gray-300 dark:border-light-slate/20">
+                                    <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-light-text dark:text-white mb-3 md:mb-4">
+                                        {selectedArticle.title}
+                                    </h1>
+                                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-light-muted dark:text-soft-gray text-xs md:text-sm mb-6 md:mb-8 pb-4 md:pb-6 border-b border-gray-300 dark:border-light-slate/20">
+                                        <span>📅 {formatDate(selectedArticle.created_at)}</span>
+                                        {selectedArticle.updated_at && selectedArticle.updated_at !== selectedArticle.created_at && (
+                                            <span>✏️ Updated: {formatDate(selectedArticle.updated_at)}</span>
+                                        )}
+                                    </div>
 
-                                <div className="prose dark:prose-invert prose-sm md:prose-base lg:prose-lg max-w-none text-light-text dark:text-light-slate">
-                                    <ReactMarkdown
-                                        remarkPlugins={[remarkGfm]}
-                                        rehypePlugins={[rehypeRaw]}
-                                        components={detailComponents}
-                                    >
-                                        {selectedArticle.content}
-                                    </ReactMarkdown>
-                                </div>
-                            </article>
+                                    <div className="prose dark:prose-invert prose-sm md:prose-base lg:prose-lg max-w-none text-light-text dark:text-light-slate">
+                                        <ReactMarkdown
+                                            remarkPlugins={[remarkGfm]}
+                                            rehypePlugins={[rehypeRaw]}
+                                            components={detailComponents}
+                                        >
+                                            {selectedArticle.content}
+                                        </ReactMarkdown>
+                                    </div>
+                                </article>
                             )}
                         </div>
                     ) : (
@@ -263,7 +265,7 @@ const ArticlesPage: React.FC = () => {
                                     <h2 className="text-xl md:text-2xl font-bold text-light-text dark:text-white mb-2 md:mb-3 group-hover:text-light-accent dark:group-hover:text-accent-blue transition-colors line-clamp-2">
                                         {article.title}
                                     </h2>
-                                    
+
                                     <p className="text-light-muted dark:text-soft-gray text-xs md:text-sm mb-3 md:mb-4">
                                         📅 {formatDate(article.created_at)}
                                     </p>

@@ -8,6 +8,7 @@ import type { ResearchItem } from '../types';
 import { BookOpenIcon, ExternalLinkIcon } from './Icons';
 import ScrollReveal from './ScrollReveal';
 import SpotlightCard from './SpotlightCard';
+import TiltCard from './TiltCard';
 
 /**
  * Props untuk komponen ResearchCard, yang menampilkan satu item penelitian.
@@ -29,32 +30,34 @@ const ResearchCard: React.FC<ResearchCardProps> = ({ item }) => {
     };
 
     return (
-        <SpotlightCard className="bg-white dark:bg-light-navy/50 rounded-2xl shadow-lg border border-gray-200 dark:border-white/5 h-full transition-transform duration-300 hover:-translate-y-1 group print-avoid-break overflow-hidden">
-            <div className="p-6 flex flex-col h-full relative z-10">
-                <main className="flex-grow">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-light-accent dark:text-accent-blue mb-2">
-                        {item.type}
-                    </p>
-                    <h3 className="text-xl font-poppins font-bold text-light-text dark:text-white mb-2 group-hover:text-light-accent dark:group-hover:text-accent-blue transition-colors">{item.title}</h3>
-                    <p className="text-sm text-light-muted dark:text-soft-gray mb-2 leading-relaxed">{item.description}</p>
-                    <p className="text-sm text-light-muted dark:text-soft-gray leading-relaxed"><span className="font-semibold text-light-text dark:text-light-slate">Kontribusi:</span> {item.contribution}</p>
-                </main>
-                <footer className="mt-4 pt-4 border-t border-gray-300 dark:border-soft-gray/20">
-                    {item.links.map(link => (
-                        <a
-                            key={link.url}
-                            href={link.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center text-sm text-light-muted dark:text-soft-gray hover:text-light-accent dark:hover:text-accent-blue transition-colors duration-300 group/link overflow-hidden mb-1"
-                        >
-                            {getIconForLink(link.type)}
-                            <span className="group-hover/link:underline print:underline">{link.url.replace(/^https?:\/\//, '')}</span>
-                        </a>
-                    ))}
-                </footer>
-            </div>
-        </SpotlightCard>
+        <TiltCard maxTilt={8} scale={1.02} glare={true} glareMaxOpacity={0.15} className="h-full">
+            <SpotlightCard className="bg-white dark:bg-light-navy/50 rounded-2xl shadow-lg border border-gray-200 dark:border-white/5 h-full transition-transform duration-300 group print-avoid-break overflow-hidden">
+                <div className="p-6 flex flex-col h-full relative z-10">
+                    <main className="flex-grow">
+                        <p className="text-xs font-semibold uppercase tracking-wider text-light-accent dark:text-accent-blue mb-2">
+                            {item.type}
+                        </p>
+                        <h3 className="text-xl font-poppins font-bold text-light-text dark:text-white mb-2 group-hover:text-light-accent dark:group-hover:text-accent-blue transition-colors">{item.title}</h3>
+                        <p className="text-sm text-light-muted dark:text-soft-gray mb-2 leading-relaxed">{item.description}</p>
+                        <p className="text-sm text-light-muted dark:text-soft-gray leading-relaxed"><span className="font-semibold text-light-text dark:text-light-slate">Kontribusi:</span> {item.contribution}</p>
+                    </main>
+                    <footer className="mt-4 pt-4 border-t border-gray-300 dark:border-soft-gray/20">
+                        {item.links.map(link => (
+                            <a
+                                key={link.url}
+                                href={link.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center text-sm text-light-muted dark:text-soft-gray hover:text-light-accent dark:hover:text-accent-blue transition-colors duration-300 group/link overflow-hidden mb-1"
+                            >
+                                {getIconForLink(link.type)}
+                                <span className="group-hover/link:underline print:underline">{link.url.replace(/^https?:\/\//, '')}</span>
+                            </a>
+                        ))}
+                    </footer>
+                </div>
+            </SpotlightCard>
+        </TiltCard>
     );
 };
 
