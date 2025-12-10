@@ -28,10 +28,12 @@ interface BackendLoaderProps {
     method?: string;
     /** Delay in ms after animation ends before calling onComplete (default: 0) */
     completeDelay?: number;
-    /** Custom HTTP status code to display on success */
-    successStatusCode?: number;
-    /** Custom HTTP status code to display on error */
-    errorStatusCode?: number;
+    /** Actual HTTP status code from response (uses default if not provided) */
+    actualStatusCode?: number;
+    /** Actual request latency in ms (uses simulated if not provided) */
+    actualLatency?: number;
+    /** Server hostname/domain (uses simulated IP if not provided) */
+    serverHost?: string;
 }
 
 type Phase = 'dns' | 'tcp' | 'tls' | 'request' | 'processing' | 'waiting' | 'response' | 'json' | 'session' | 'success' | 'error' | 'exit' | 'complete';
@@ -88,8 +90,9 @@ const BackendLoader: React.FC<BackendLoaderProps> = ({
     endpoint = '/api/endpoint',
     method = 'POST',
     completeDelay = 0,
-    successStatusCode = 200,
-    errorStatusCode = 401,
+    actualStatusCode,
+    actualLatency,
+    serverHost,
 }) => {
     const [phase, setPhase] = useState<Phase>('dns');
     const [progress, setProgress] = useState(0);
@@ -110,18 +113,11 @@ const BackendLoader: React.FC<BackendLoaderProps> = ({
         statusRef.current = status;
     }, [status]);
 
-    // Generate realistic server IP
-    const serverIP = useMemo(() => {
-        return `${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
-    }, []);
+    // Server address - only use if provided (real data only)
+    const serverAddress = serverHost || 'server';
 
-    // Generate fake latency values
-    const latencies = useMemo(() => ({
-        dns: Math.floor(Math.random() * 20) + 10,
-        tcp: Math.floor(Math.random() * 30) + 20,
-        tls: Math.floor(Math.random() * 50) + 40,
-        request: Math.floor(Math.random() * 100) + 50,
-    }), []);
+    // Total latency - only used if provided (real data only)
+    const totalLatency = actualLatency;
 
     // JSON response data
     const jsonResponse = useMemo(() => {
@@ -135,77 +131,56 @@ const BackendLoader: React.FC<BackendLoaderProps> = ({
         setLogs(prev => [...prev.slice(-5), log]); // Keep last 6 logs
     };
 
-    // Phase transitions
+    // Phase transitions - ONLY shows real data, no fake timing breakdown
     useEffect(() => {
         const timers: NodeJS.Timeout[] = [];
 
         const runSequence = async () => {
-            // DNS Resolution
-            addLog(`> Resolving server address...`);
-            setProgress(5);
-            timers.push(setTimeout(() => {
-                addLog(`✓ DNS resolved → ${serverIP}`);
-                setProgress(15);
-                setPhase('tcp');
-            }, 400));
-
-            // TCP Connection
-            timers.push(setTimeout(() => {
-                addLog(`> Establishing TCP connection to ${serverIP}:443...`);
-                setProgress(25);
-            }, 600));
+            // Show server info (real)
+            addLog(`> Connecting to ${serverAddress}...`);
+            setProgress(10);
 
             timers.push(setTimeout(() => {
-                addLog(`✓ TCP connected (${latencies.tcp}ms)`);
-                setProgress(35);
-                setPhase('tls');
-            }, 900));
-
-            // TLS/SSL Handshake
-            timers.push(setTimeout(() => {
-                addLog(`> TLS Handshake...`);
-                setProgress(40);
-            }, 1100));
-
-            timers.push(setTimeout(() => {
-                addLog(`✓ SSL Certificate verified`);
-                setProgress(50);
+                addLog(`✓ Connected to server`);
+                setProgress(30);
                 setPhase('request');
-            }, 1400));
+            }, 500));
 
-            // HTTP Request
+            // HTTP Request (real info)
             timers.push(setTimeout(() => {
                 addLog(`> ${method} ${endpoint} HTTP/1.1`);
-                setProgress(55);
-            }, 1600));
+                setProgress(50);
+            }, 800));
 
             timers.push(setTimeout(() => {
-                addLog(`> Headers: Content-Type: application/json`);
-                addLog(`> Sending request body...`);
+                addLog(`> Sending request...`);
                 setProgress(60);
                 setPhase('processing');
-            }, 1800));
+            }, 1000));
 
-            // Server Processing - wait here for status to change
+            // Wait for actual response
             timers.push(setTimeout(() => {
                 addLog(`⏳ Awaiting server response...`);
                 setProgress(70);
                 setPhase('waiting');
-            }, 2000));
+            }, 1200));
         };
 
         runSequence();
 
         return () => timers.forEach(t => clearTimeout(t));
-    }, [serverIP, latencies, method, endpoint]);
+    }, [serverAddress, method, endpoint]);
 
     // Watch for status change while in waiting phase
     useEffect(() => {
         if (phase === 'waiting') {
             if (status === 'success') {
-                // Success flow
-                setCurrentStatusCode(String(successStatusCode));
-                addLog(`✓ HTTP/1.1 ${successStatusCode} OK`);
+                // Success flow - use actualStatusCode if provided, otherwise default 200
+                const statusCode = actualStatusCode || 200;
+                setCurrentStatusCode(String(statusCode));
+                // Only show latency if we have real data
+                const latencyInfo = totalLatency ? ` (${totalLatency}ms)` : '';
+                addLog(`✓ HTTP/1.1 ${statusCode} OK${latencyInfo}`);
                 setProgress(80);
                 setPhase('response');
 
@@ -236,9 +211,10 @@ const BackendLoader: React.FC<BackendLoaderProps> = ({
                 }, 1800);
 
             } else if (status === 'error') {
-                // Error flow
-                setCurrentStatusCode(String(errorStatusCode));
-                addLog(`✗ HTTP/1.1 ${errorStatusCode} Error`);
+                // Error flow - use actualStatusCode if provided, otherwise default 401
+                const statusCode = actualStatusCode || 401;
+                setCurrentStatusCode(String(statusCode));
+                addLog(`✗ HTTP/1.1 ${statusCode} Error`);
                 setProgress(70);
 
                 setTimeout(() => {
@@ -247,7 +223,7 @@ const BackendLoader: React.FC<BackendLoaderProps> = ({
                 }, 500);
             }
         }
-    }, [phase, status, successStatusCode, errorStatusCode, errorMessage]);
+    }, [phase, status, actualStatusCode, errorMessage, totalLatency]);
 
     // JSON typing animation
     useEffect(() => {
@@ -338,10 +314,10 @@ const BackendLoader: React.FC<BackendLoaderProps> = ({
                                 <div
                                     key={idx}
                                     className={`text-sm font-mono ${log.startsWith('✓') ? 'text-green-400' :
-                                            log.startsWith('✗') ? 'text-red-400' :
-                                                log.startsWith('⏳') ? 'text-yellow-400' :
-                                                    log.startsWith('>') ? 'text-cyan-400' :
-                                                        'text-gray-400'
+                                        log.startsWith('✗') ? 'text-red-400' :
+                                            log.startsWith('⏳') ? 'text-yellow-400' :
+                                                log.startsWith('>') ? 'text-cyan-400' :
+                                                    'text-gray-400'
                                         } animate-fade-in`}
                                 >
                                     {log}

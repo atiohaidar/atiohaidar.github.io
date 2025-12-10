@@ -6,6 +6,10 @@ import { useLogin } from '../hooks/useApi';
 import BackendLoader from './BackendLoader';
 import type { LoginResponse } from '../lib/api/types';
 
+// Get API base URL for server host display
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787';
+const serverHost = new URL(API_BASE_URL).host;
+
 interface LoginProps {
     onLoginSuccess: (userData: LoginResponse) => void;
     /** Delay in ms after login success before calling onLoginSuccess (default: 0 = immediate) */
@@ -19,9 +23,12 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, navigateDelay = 0 }) => {
     const [loaderStatus, setLoaderStatus] = useState<'loading' | 'success' | 'error'>('loading');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [navigationTriggered, setNavigationTriggered] = useState(false);
+    const [actualLatency, setActualLatency] = useState<number | undefined>(undefined);
+    const [actualStatusCode, setActualStatusCode] = useState<number | undefined>(undefined);
     const loginMutation = useLogin();
     const responseRef = useRef<LoginResponse | null>(null);
     const navigateTimerRef = useRef<NodeJS.Timeout | null>(null);
+    const requestStartTime = useRef<number>(0);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -31,9 +38,20 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, navigateDelay = 0 }) => {
         setLoaderStatus('loading');
         setErrorMessage(null);
         setNavigationTriggered(false);
+        setActualLatency(undefined);
+        setActualStatusCode(undefined);
+
+        // Record start time for latency measurement
+        requestStartTime.current = performance.now();
 
         try {
             const response = await loginMutation.mutateAsync({ username, password });
+
+            // Calculate actual latency
+            const latency = Math.round(performance.now() - requestStartTime.current);
+            setActualLatency(latency);
+            setActualStatusCode(200); // Success = 200
+
             // Store response and update status
             responseRef.current = response;
             setLoaderStatus('success');
@@ -45,6 +63,17 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, navigateDelay = 0 }) => {
             }, navigateDelay);
 
         } catch (error) {
+            // Calculate actual latency even for errors
+            const latency = Math.round(performance.now() - requestStartTime.current);
+            setActualLatency(latency);
+
+            // Try to extract status code from error
+            let statusCode = 401; // Default error code
+            if (error && typeof error === 'object' && 'status' in error) {
+                statusCode = (error as { status: number }).status;
+            }
+            setActualStatusCode(statusCode);
+
             // Show error in loader
             setLoaderStatus('error');
             setErrorMessage(error instanceof Error ? error.message : 'Login failed. Please check your credentials.');
@@ -107,7 +136,9 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, navigateDelay = 0 }) => {
                 endpoint="/api/auth/login"
                 method="POST"
                 completeDelay={0}
-                errorStatusCode={401}
+                actualLatency={actualLatency}
+                actualStatusCode={actualStatusCode}
+                serverHost={serverHost}
             />
         );
     }

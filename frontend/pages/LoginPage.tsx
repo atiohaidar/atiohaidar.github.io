@@ -58,7 +58,7 @@ const LoginPage: React.FC = () => {
                 <div className="flex-1 w-full max-w-md">
                     {/* navigateDelay: delay in ms after login success before navigating to dashboard */}
                     {/* Set to 0 for immediate, or higher value to let BackendLoader animation play longer */}
-                    <Login onLoginSuccess={handleLoginSuccess} navigateDelay={3200} />
+                    <Login onLoginSuccess={handleLoginSuccess} navigateDelay={2500} />
                     <div className="text-sm text-center mt-6 space-y-2">
                         <p className="text-light-muted/80 dark:text-soft-gray/60">
                             Belum punya akun?{' '}
