@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.portoflio_android.data.models.*
 import com.example.portoflio_android.data.repository.FormRepository
+import com.example.portoflio_android.data.local.TokenManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,20 +16,30 @@ data class FormsUiState(
     val forms: List<Form> = emptyList(),
     val selectedForm: FormWithQuestions? = null,
     val responses: List<FormResponse> = emptyList(),
+    val currentUser: User? = null,
     val isLoading: Boolean = false,
     val error: String? = null
 )
 
 @HiltViewModel
 class FormsViewModel @Inject constructor(
-    private val repository: FormRepository
+    private val repository: FormRepository,
+    private val tokenManager: TokenManager
 ) : ViewModel() {
     
     private val _uiState = MutableStateFlow(FormsUiState())
     val uiState: StateFlow<FormsUiState> = _uiState.asStateFlow()
     
     init {
+        loadCurrentUser()
         loadForms()
+    }
+    
+    private fun loadCurrentUser() {
+        viewModelScope.launch {
+            val user = tokenManager.getUser()
+            _uiState.value = _uiState.value.copy(currentUser = user)
+        }
     }
     
     fun loadForms() {

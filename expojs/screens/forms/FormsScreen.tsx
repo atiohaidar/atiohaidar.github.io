@@ -11,9 +11,14 @@ export default function FormsScreen() {
   const [forms, setForms] = useState<Form[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const router = useRouter();
   const theme = useTheme();
+
+  // Check if user can modify a form
+  const canModifyForm = (form: Form) => {
+    return isAdmin || form.created_by === user?.username;
+  };
 
   useEffect(() => {
     loadData();
@@ -88,51 +93,56 @@ export default function FormsScreen() {
             </Text>
           </View>
         ) : (
-          forms.map((form) => (
-            <GlassCard
-              key={form.id}
-              style={styles.card}
-              mode="elevated"
-              onPress={() => router.push(`/forms/${form.id}`)}
-            >
-              <Card.Content>
-                <View style={styles.cardHeader}>
-                  <View style={styles.cardInfo}>
-                    <Text variant="titleMedium" style={styles.cardTitle}>
-                      {form.title}
-                    </Text>
-                    {form.description && (
-                      <Text
-                        variant="bodyMedium"
-                        style={{ color: theme.colors.onSurfaceVariant }}
-                        numberOfLines={2}
-                      >
-                        {form.description}
+          forms.map((form) => {
+            const showDelete = canModifyForm(form);
+            return (
+              <GlassCard
+                key={form.id}
+                style={styles.card}
+                mode="elevated"
+                onPress={() => router.push(`/forms/${form.id}`)}
+              >
+                <Card.Content>
+                  <View style={styles.cardHeader}>
+                    <View style={styles.cardInfo}>
+                      <Text variant="titleMedium" style={styles.cardTitle}>
+                        {form.title}
                       </Text>
-                    )}
-                    <View style={styles.cardMeta}>
-                      <Chip icon="clock-outline" compact style={styles.chip}>
-                        {new Date(form.created_at || '').toLocaleDateString()}
-                      </Chip>
+                      {form.description && (
+                        <Text
+                          variant="bodyMedium"
+                          style={{ color: theme.colors.onSurfaceVariant }}
+                          numberOfLines={2}
+                        >
+                          {form.description}
+                        </Text>
+                      )}
+                      <View style={styles.cardMeta}>
+                        <Chip icon="clock-outline" compact style={styles.chip}>
+                          {new Date(form.created_at || '').toLocaleDateString()}
+                        </Chip>
+                      </View>
+                    </View>
+                    <View style={styles.cardActions}>
+                      <IconButton
+                        icon="share-variant"
+                        size={20}
+                        onPress={() => handleShareForm(form)}
+                      />
+                      {showDelete && (
+                        <IconButton
+                          icon="delete"
+                          size={20}
+                          iconColor={theme.colors.error}
+                          onPress={() => handleDeleteForm(form.id)}
+                        />
+                      )}
                     </View>
                   </View>
-                  <View style={styles.cardActions}>
-                    <IconButton
-                      icon="share-variant"
-                      size={20}
-                      onPress={() => handleShareForm(form)}
-                    />
-                    <IconButton
-                      icon="delete"
-                      size={20}
-                      iconColor={theme.colors.error}
-                      onPress={() => handleDeleteForm(form.id)}
-                    />
-                  </View>
-                </View>
-              </Card.Content>
-            </GlassCard>
-          ))
+                </Card.Content>
+              </GlassCard>
+            );
+          })
         )}
       </ScrollView>
 

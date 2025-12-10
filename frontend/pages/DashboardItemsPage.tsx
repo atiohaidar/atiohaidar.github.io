@@ -3,11 +3,19 @@ import { Link } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import { DASHBOARD_THEME } from '../utils/styles';
 import { itemService } from '../lib/api/services';
+import { getStoredUser } from '../apiClient';
 import type { Item } from '../apiTypes';
 
 const DashboardItemsPage: React.FC = () => {
   const { theme } = useTheme();
   const palette = DASHBOARD_THEME[theme];
+  const currentUser = getStoredUser();
+  const isAdmin = currentUser?.role === 'admin';
+
+  // Check if user can edit/delete an item
+  const canModifyItem = (item: Item) => {
+    return isAdmin || item.owner_username === currentUser?.username;
+  };
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -53,7 +61,7 @@ const DashboardItemsPage: React.FC = () => {
   const handleSubmitEdit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingItem) return;
-    
+
     try {
       await itemService.update(editingItem.id, formData);
       setShowEditModal(false);
@@ -67,7 +75,7 @@ const DashboardItemsPage: React.FC = () => {
 
   const handleDelete = async (itemId: string) => {
     if (!confirm('Apakah Anda yakin ingin menghapus barang ini?')) return;
-    
+
     try {
       await itemService.delete(itemId);
       loadItems();
@@ -99,7 +107,7 @@ const DashboardItemsPage: React.FC = () => {
             Kelola barang yang dapat dipinjam
           </p>
         </div>
-        
+
         <div className="flex space-x-3">
           <button
             onClick={() => setShowAddModal(true)}
@@ -165,20 +173,22 @@ const DashboardItemsPage: React.FC = () => {
                   <span className={`text-xs ${palette.panel.textMuted}`}>
                     Pemilik: {item.owner_username}
                   </span>
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => openEditModal(item)}
-                      className={`px-3 py-1 text-xs rounded ${palette.buttons.info}`}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(item.id)}
-                      className="px-3 py-1 text-xs rounded bg-red-500 text-white hover:bg-red-600"
-                    >
-                      Hapus
-                    </button>
-                  </div>
+                  {canModifyItem(item) && (
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => openEditModal(item)}
+                        className={`px-3 py-1 text-xs rounded ${palette.buttons.info}`}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(item.id)}
+                        className="px-3 py-1 text-xs rounded bg-red-500 text-white hover:bg-red-600"
+                      >
+                        Hapus
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

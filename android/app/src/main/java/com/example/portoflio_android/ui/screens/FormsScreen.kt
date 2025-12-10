@@ -156,8 +156,12 @@ private fun FormListView(
                 contentPadding = PaddingValues(vertical = 16.dp)
             ) {
                 items(uiState.forms, key = { it.id }) { form ->
+                    val currentUser = uiState.currentUser
+                    val canModify = currentUser?.role == com.example.portoflio_android.data.models.UserRole.ADMIN ||
+                                    form.createdBy == currentUser?.username
                     FormCard(
                         form = form,
+                        showDeleteButton = canModify,
                         onClick = { onSelectForm(form) },
                         onDelete = { viewModel.deleteForm(form.id) }
                     )
@@ -170,6 +174,7 @@ private fun FormListView(
 @Composable
 private fun FormCard(
     form: Form,
+    showDeleteButton: Boolean = true,
     onClick: () -> Unit,
     onDelete: () -> Unit
 ) {
@@ -227,12 +232,14 @@ private fun FormCard(
                 )
             }
             
-            IconButton(onClick = onDelete) {
-                Icon(
-                    Icons.Default.Delete,
-                    contentDescription = "Delete",
-                    tint = Color(0xFFEF4444)
-                )
+            if (showDeleteButton) {
+                IconButton(onClick = onDelete) {
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = "Delete",
+                        tint = Color(0xFFEF4444)
+                    )
+                }
             }
         }
     }

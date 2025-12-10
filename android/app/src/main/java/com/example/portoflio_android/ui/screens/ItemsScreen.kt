@@ -122,8 +122,12 @@ fun ItemsScreen(
                     contentPadding = PaddingValues(vertical = 16.dp)
                 ) {
                     items(uiState.items, key = { it.id }) { item ->
+                        val currentUser = uiState.currentUser
+                        val canModify = currentUser?.role == com.example.portoflio_android.data.models.UserRole.ADMIN || 
+                                        item.ownerUsername == currentUser?.username
                         ItemCard(
                             item = item,
+                            showDeleteButton = canModify,
                             onDelete = { viewModel.deleteItem(item.id) }
                         )
                     }
@@ -164,6 +168,7 @@ fun ItemsScreen(
 @Composable
 private fun ItemCard(
     item: Item,
+    showDeleteButton: Boolean = true,
     onDelete: () -> Unit
 ) {
     val stockColor = when {
@@ -250,17 +255,19 @@ private fun ItemCard(
                         )
                     }
                 }
-                Spacer(modifier = Modifier.height(4.dp))
-                IconButton(
-                    onClick = onDelete,
-                    modifier = Modifier.size(24.dp)
-                ) {
-                    Icon(
-                        Icons.Default.Delete,
-                        contentDescription = "Delete",
-                        tint = Color(0xFFEF4444),
-                        modifier = Modifier.size(18.dp)
-                    )
+                if (showDeleteButton) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    IconButton(
+                        onClick = onDelete,
+                        modifier = Modifier.size(24.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = "Delete",
+                            tint = Color(0xFFEF4444),
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
                 }
             }
         }

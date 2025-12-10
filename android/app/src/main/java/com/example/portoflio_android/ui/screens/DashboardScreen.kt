@@ -191,6 +191,7 @@ fun DashboardScreen(
                     
                     // Quick Actions - Row 3
                     item {
+                        val user = uiState.user
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -202,13 +203,18 @@ fun DashboardScreen(
                                 modifier = Modifier.weight(1f),
                                 onClick = onNavigateToTickets
                             )
-                            QuickActionCard(
-                                title = "Users",
-                                icon = Icons.Default.People,
-                                color = Color(0xFF06B6D4),
-                                modifier = Modifier.weight(1f),
-                                onClick = onNavigateToUsers
-                            )
+                            // Users menu only visible to admin
+                            if (user?.role == com.example.portoflio_android.data.models.UserRole.ADMIN) {
+                                QuickActionCard(
+                                    title = "Users",
+                                    icon = Icons.Default.People,
+                                    color = Color(0xFF06B6D4),
+                                    modifier = Modifier.weight(1f),
+                                    onClick = onNavigateToUsers
+                                )
+                            } else {
+                                Spacer(modifier = Modifier.weight(1f))
+                            }
                         }
                     }
                     

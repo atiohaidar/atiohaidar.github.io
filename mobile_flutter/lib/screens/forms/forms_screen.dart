@@ -268,13 +268,17 @@ class _FormsScreenState extends State<FormsScreen> {
         separatorBuilder: (context, index) => const SizedBox(height: 16),
         itemBuilder: (context, index) {
           final form = provider.forms[index];
-          return _buildFormCard(form, isDark);
+          final authProvider = context.read<AuthProvider>();
+          final currentUser = authProvider.user;
+          final canModify =
+              authProvider.isAdmin || form.createdBy == currentUser?.username;
+          return _buildFormCard(form, isDark, canModify);
         },
       ),
     );
   }
 
-  Widget _buildFormCard(FormData form, bool isDark) {
+  Widget _buildFormCard(FormData form, bool isDark, bool canModify) {
     return GlassCard(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -332,16 +336,17 @@ class _FormsScreenState extends State<FormsScreen> {
                   }
                 },
                 itemBuilder: (context) => [
-                  const PopupMenuItem(
-                    value: 'edit',
-                    child: Row(
-                      children: [
-                        Icon(Icons.edit, size: 20),
-                        SizedBox(width: 8),
-                        Text('Edit'),
-                      ],
+                  if (canModify)
+                    const PopupMenuItem(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          Icon(Icons.edit, size: 20),
+                          SizedBox(width: 8),
+                          Text('Edit'),
+                        ],
+                      ),
                     ),
-                  ),
                   const PopupMenuItem(
                     value: 'share',
                     child: Row(
@@ -352,17 +357,18 @@ class _FormsScreenState extends State<FormsScreen> {
                       ],
                     ),
                   ),
-                  const PopupMenuItem(
-                    value: 'delete',
-                    child: Row(
-                      children: [
-                        Icon(Icons.delete, size: 20, color: AppColors.error),
-                        SizedBox(width: 8),
-                        Text('Delete',
-                            style: TextStyle(color: AppColors.error)),
-                      ],
+                  if (canModify)
+                    const PopupMenuItem(
+                      value: 'delete',
+                      child: Row(
+                        children: [
+                          Icon(Icons.delete, size: 20, color: AppColors.error),
+                          SizedBox(width: 8),
+                          Text('Delete',
+                              style: TextStyle(color: AppColors.error)),
+                        ],
+                      ),
                     ),
-                  ),
                 ],
               ),
             ],

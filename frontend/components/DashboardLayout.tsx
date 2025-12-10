@@ -90,6 +90,7 @@ const menuItems: MenuItem[] = [
         label: 'User Management',
         icon: '👥',
         path: '/dashboard/users',
+        adminOnly: true,
     },
     {
         id: 'finance',
