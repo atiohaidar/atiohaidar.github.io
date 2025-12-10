@@ -304,8 +304,8 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
     );
 
     return createPortal(
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-            <div className={`${COLORS.BG_SECONDARY} rounded-lg shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden`}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+            <div className="glass-card rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-gray-200 dark:border-white/10">
 
                 <ChatHeader
                     isConnected={isConnected}
@@ -387,7 +387,7 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
             {/* Reset Confirmation Modal */}
             {showResetConfirm && (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-                    <div className={`${COLORS.BG_SECONDARY} ${COLORS.BORDER} relative w-full max-w-md rounded-xl border p-6 shadow-2xl`}>
+                    <div className="glass-card relative w-full max-w-md rounded-2xl border border-gray-200 dark:border-white/10 p-6 shadow-2xl">
                         <button
                             type="button"
                             onClick={() => setShowResetConfirm(false)}

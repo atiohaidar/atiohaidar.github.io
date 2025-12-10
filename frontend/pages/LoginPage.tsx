@@ -3,13 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import Login from '../components/Login';
 import ParallaxBackground from '../components/ParallaxBackground';
 import { getAuthToken, getStoredUser } from '../lib/api';
-import { DASHBOARD_THEME } from '../utils/styles';
-import { useTheme } from '../contexts/ThemeContext';
+import type { LoginResponse } from '../lib/api/types';
 
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
-    const { theme } = useTheme();
-    const palette = DASHBOARD_THEME[theme];
 
     useEffect(() => {
         const token = getAuthToken();
@@ -19,16 +16,18 @@ const LoginPage: React.FC = () => {
         }
     }, [navigate]);
 
-    const handleLoginSuccess = () => {
+    const handleLoginSuccess = (_response: LoginResponse) => {
+        // Login successful - navigate to dashboard
+        // BackendLoader animation is handled inside Login component
         navigate('/dashboard', { replace: true });
     };
 
     return (
-        <div className={`min-h-screen w-full relative flex items-center justify-center p-4 bg-light-bg dark:bg-deep-navy overflow-hidden`}>
+        <div className="min-h-screen w-full relative flex items-center justify-center p-4 bg-light-bg dark:bg-deep-navy overflow-hidden">
             {/* Parallax Background */}
             <ParallaxBackground intensity={0.6} />
 
-            <header className={`absolute top-0 left-0 right-0 px-6 py-6 flex justify-between items-center z-20`}>
+            <header className="absolute top-0 left-0 right-0 px-6 py-6 flex justify-between items-center z-20">
                 <Link to="/" className="flex items-center gap-2 text-light-muted dark:text-light-slate hover:text-accent-blue transition-colors">
                     <span>←</span> Kembali ke Landing Page
                 </Link>
@@ -57,7 +56,9 @@ const LoginPage: React.FC = () => {
                 </div>
 
                 <div className="flex-1 w-full max-w-md">
-                    <Login onLoginSuccess={handleLoginSuccess} />
+                    {/* navigateDelay: delay in ms after login success before navigating to dashboard */}
+                    {/* Set to 0 for immediate, or higher value to let BackendLoader animation play longer */}
+                    <Login onLoginSuccess={handleLoginSuccess} navigateDelay={3200} />
                     <div className="text-sm text-center mt-6 space-y-2">
                         <p className="text-light-muted/80 dark:text-soft-gray/60">
                             Belum punya akun?{' '}

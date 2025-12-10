@@ -1,28 +1,116 @@
 /**
  * @file Login component for API authentication
  */
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useLogin } from '../hooks/useApi';
-import { COLORS } from '../utils/styles';
+import BackendLoader from './BackendLoader';
+import type { LoginResponse } from '../lib/api/types';
 
 interface LoginProps {
-    onLoginSuccess: () => void;
+    onLoginSuccess: (userData: LoginResponse) => void;
+    /** Delay in ms after login success before calling onLoginSuccess (default: 0 = immediate) */
+    navigateDelay?: number;
 }
 
-const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
+const Login: React.FC<LoginProps> = ({ onLoginSuccess, navigateDelay = 0 }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [showLoader, setShowLoader] = useState(false);
+    const [loaderStatus, setLoaderStatus] = useState<'loading' | 'success' | 'error'>('loading');
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [navigationTriggered, setNavigationTriggered] = useState(false);
     const loginMutation = useLogin();
+    const responseRef = useRef<LoginResponse | null>(null);
+    const navigateTimerRef = useRef<NodeJS.Timeout | null>(null);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Show loader IMMEDIATELY when button is clicked
+        setShowLoader(true);
+        setLoaderStatus('loading');
+        setErrorMessage(null);
+        setNavigationTriggered(false);
+
         try {
-            await loginMutation.mutateAsync({ username, password });
-            onLoginSuccess();
+            const response = await loginMutation.mutateAsync({ username, password });
+            // Store response and update status
+            responseRef.current = response;
+            setLoaderStatus('success');
+
+            // Start navigate delay timer immediately after login success
+            // This is INDEPENDENT of BackendLoader animation
+            navigateTimerRef.current = setTimeout(() => {
+                setNavigationTriggered(true);
+            }, navigateDelay);
+
         } catch (error) {
-            // Error is handled by mutation
+            // Show error in loader
+            setLoaderStatus('error');
+            setErrorMessage(error instanceof Error ? error.message : 'Login failed. Please check your credentials.');
         }
     };
+
+    // Navigate when navigateDelay timer completes
+    useEffect(() => {
+        if (navigationTriggered && responseRef.current) {
+            onLoginSuccess(responseRef.current);
+        }
+    }, [navigationTriggered, onLoginSuccess]);
+
+    // Cleanup timer on unmount
+    useEffect(() => {
+        return () => {
+            if (navigateTimerRef.current) {
+                clearTimeout(navigateTimerRef.current);
+            }
+        };
+    }, []);
+
+    const handleLoaderComplete = () => {
+        // BackendLoader animation finished
+        // If navigateDelay already passed, navigate now
+        // Otherwise, wait for navigateDelay timer
+        if (navigationTriggered && responseRef.current) {
+            onLoginSuccess(responseRef.current);
+        }
+    };
+
+    const handleLoaderDismiss = () => {
+        // Called when user dismisses error state - go back to login form
+        setShowLoader(false);
+        setLoaderStatus('loading');
+        setErrorMessage(null);
+        setNavigationTriggered(false);
+        if (navigateTimerRef.current) {
+            clearTimeout(navigateTimerRef.current);
+        }
+    };
+
+    // Show loader when active
+    if (showLoader) {
+        const userData = responseRef.current?.user;
+        return (
+            <BackendLoader
+                status={loaderStatus}
+                onComplete={handleLoaderComplete}
+                onDismiss={handleLoaderDismiss}
+                operationType="login"
+                successMessage={userData ? `Welcome back, ${userData.name}!` : 'Login successful!'}
+                errorMessage={errorMessage}
+                responseData={userData ? {
+                    username: userData.username,
+                    name: userData.name,
+                    role: userData.role,
+                    balance: userData.balance
+                } : undefined}
+                endpoint="/api/auth/login"
+                method="POST"
+                completeDelay={0}
+                errorStatusCode={401}
+            />
+        );
+    }
 
     return (
         <div className="relative overflow-hidden w-full max-w-md mx-auto p-8 rounded-3xl bg-white/70 dark:bg-[#1A2230]/70 backdrop-blur-xl border border-gray-200 dark:border-white/10 shadow-2xl animate-fade-in-up">
@@ -63,29 +151,11 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                         />
                     </div>
 
-                    {loginMutation.isError && (
-                        <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3">
-                            <span className="text-xl">⚠️</span>
-                            <p className="text-red-600 dark:text-red-400 text-sm font-medium">
-                                {loginMutation.error?.message || 'Login failed. Please check your credentials.'}
-                            </p>
-                        </div>
-                    )}
-
                     <button
                         type="submit"
-                        disabled={loginMutation.isPending}
-                        className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:hover:scale-100 disabled:shadow-none mt-2"
+                        className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all mt-2"
                     >
-                        {loginMutation.isPending ? (
-                            <span className="flex items-center justify-center gap-2">
-                                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                Logging in...
-                            </span>
-                        ) : 'Sign In'}
+                        Sign In
                     </button>
                 </form>
 

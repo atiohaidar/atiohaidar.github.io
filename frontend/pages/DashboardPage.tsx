@@ -8,6 +8,7 @@ interface StoredUser {
     username: string;
     name: string;
     role: string;
+    balance?: number;
 }
 
 const DashboardPage: React.FC = () => {

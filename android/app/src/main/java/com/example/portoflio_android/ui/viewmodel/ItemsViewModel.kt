@@ -135,6 +135,7 @@ class ItemsViewModel @Inject constructor(
             repository.updateBorrowingStatus(borrowingId, status)
                 .onSuccess {
                     loadBorrowings()
+                    loadItems() // Refresh items as stock may have changed
                 }
                 .onFailure { error ->
                     _uiState.value = _uiState.value.copy(
@@ -142,6 +143,45 @@ class ItemsViewModel @Inject constructor(
                         isLoading = false
                     )
                 }
+        }
+    }
+    
+    fun createBorrowing(itemId: String, quantity: Int, startDate: String, endDate: String, notes: String?) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+            val borrowingCreate = ItemBorrowingCreate(
+                itemId = itemId,
+                quantity = quantity,
+                startDate = startDate,
+                endDate = endDate,
+                notes = notes
+            )
+            repository.createItemBorrowing(borrowingCreate)
+                .onSuccess {
+                    loadItems()
+                    loadBorrowings()
+                }
+                .onFailure { error ->
+                    _uiState.value = _uiState.value.copy(
+                        error = error.message ?: "Failed to create borrowing request",
+                        isLoading = false
+                    )
+                }
+        }
+    }
+    
+    fun cancelBorrowing(borrowingId: String) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+            try {
+                // Use the API service through repository pattern - for now we use cancelled status approach
+                updateBorrowingStatus(borrowingId, ItemBorrowingStatus.REJECTED)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    error = e.message ?: "Failed to cancel borrowing",
+                    isLoading = false
+                )
+            }
         }
     }
     

@@ -418,6 +418,26 @@
   /* Hint for browser optimization */
 }
 
+/* Zoom IN with blur - like diving into the screen */
+@keyframes cyber-zoom-in-blur {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+    filter: blur(0px);
+  }
+
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+    filter: blur(20px);
+  }
+}
+
+.animate-cyber-zoom-in-blur {
+  animation: cyber-zoom-in-blur 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  will-change: transform, opacity, filter;
+}
+
 /* Staggered Entry Animations */
 @keyframes slide-in-down {
   from {

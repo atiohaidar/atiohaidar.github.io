@@ -21,7 +21,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.portoflio_android.data.models.AttendeeStatus
 import com.example.portoflio_android.data.models.Event
+import com.example.portoflio_android.data.models.EventAttendee
 import com.example.portoflio_android.ui.viewmodel.EventsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,6 +34,10 @@ fun EventsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var showCreateDialog by remember { mutableStateOf(false) }
+    var showDeleteConfirmDialog by remember { mutableStateOf<Event?>(null) }
+    
+    // Bottom sheet for attendees
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     
     Box(
         modifier = Modifier
@@ -126,7 +132,10 @@ fun EventsScreen(
                     items(uiState.events, key = { it.id }) { event ->
                         EventCard(
                             event = event,
-                            onRegister = { viewModel.registerForEvent(event.id) }
+                            canModify = viewModel.canModifyEvent(event),
+                            onRegister = { viewModel.registerForEvent(event.id) },
+                            onViewAttendees = { viewModel.showAttendees(event) },
+                            onDelete = { showDeleteConfirmDialog = event }
                         )
                     }
                 }
@@ -144,6 +153,52 @@ fun EventsScreen(
             )
         }
         
+        // Delete Confirmation Dialog
+        showDeleteConfirmDialog?.let { event ->
+            AlertDialog(
+                onDismissRequest = { showDeleteConfirmDialog = null },
+                title = { Text("Delete Event", color = Color.White) },
+                text = { 
+                    Text(
+                        "Are you sure you want to delete \"${event.title}\"? This action cannot be undone.",
+                        color = Color(0xFF94A3B8)
+                    )
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            viewModel.deleteEvent(event.id)
+                            showDeleteConfirmDialog = null
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444))
+                    ) {
+                        Text("Delete")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showDeleteConfirmDialog = null }) {
+                        Text("Cancel", color = Color(0xFF94A3B8))
+                    }
+                },
+                containerColor = Color(0xFF1E293B)
+            )
+        }
+        
+        // Attendees Bottom Sheet
+        if (uiState.showAttendeesSheet) {
+            ModalBottomSheet(
+                onDismissRequest = { viewModel.hideAttendees() },
+                sheetState = sheetState,
+                containerColor = Color(0xFF1E293B)
+            ) {
+                AttendeesContent(
+                    event = uiState.selectedEvent,
+                    attendees = uiState.attendees,
+                    isLoading = uiState.isLoading
+                )
+            }
+        }
+        
         // Error Dialog
         uiState.error?.let { error ->
             com.example.portoflio_android.ui.components.ErrorDialog(
@@ -151,6 +206,161 @@ fun EventsScreen(
                 onDismiss = { viewModel.clearError() },
                 onRetry = { viewModel.loadEvents() }
             )
+        }
+        
+        // Scan Result Snackbar
+        uiState.scanResult?.let { result ->
+            Snackbar(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(16.dp),
+                containerColor = Color(0xFF10B981),
+                action = {
+                    TextButton(onClick = { viewModel.clearScanResult() }) {
+                        Text("Dismiss", color = Color.White)
+                    }
+                }
+            ) {
+                Text(result)
+            }
+        }
+    }
+}
+
+@Composable
+private fun AttendeesContent(
+    event: Event?,
+    attendees: List<EventAttendee>,
+    isLoading: Boolean
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .padding(bottom = 32.dp)
+    ) {
+        Text(
+            text = event?.title ?: "Attendees",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White
+        )
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        Text(
+            text = "${attendees.size} registered attendees",
+            fontSize = 14.sp,
+            color = Color(0xFF94A3B8)
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = Color(0xFF2563EB))
+            }
+        } else if (attendees.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        Icons.Default.People,
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp),
+                        tint = Color(0xFF475569)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("No attendees yet", color = Color(0xFF64748B))
+                }
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier.heightIn(max = 400.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(attendees, key = { it.id }) { attendee ->
+                    AttendeeCard(attendee = attendee)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun AttendeeCard(attendee: EventAttendee) {
+    val statusColor = when (attendee.status) {
+        AttendeeStatus.REGISTERED -> Color(0xFF2563EB)
+        AttendeeStatus.PRESENT -> Color(0xFF10B981)
+        AttendeeStatus.ABSENT -> Color(0xFFEF4444)
+    }
+    
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF334155)),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(RoundedCornerShape(20.dp))
+                        .background(Color(0xFF475569)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = attendee.userUsername.firstOrNull()?.uppercase() ?: "?",
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                }
+                Spacer(modifier = Modifier.width(12.dp))
+                Column {
+                    Text(
+                        text = attendee.userUsername,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.White
+                    )
+                    attendee.registeredAt?.take(10)?.let { date ->
+                        Text(
+                            text = "Registered: $date",
+                            fontSize = 12.sp,
+                            color = Color(0xFF64748B)
+                        )
+                    }
+                }
+            }
+            
+            Surface(
+                shape = RoundedCornerShape(8.dp),
+                color = statusColor.copy(alpha = 0.2f)
+            ) {
+                Text(
+                    text = attendee.status.name,
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = statusColor
+                )
+            }
         }
     }
 }
@@ -315,7 +525,10 @@ private fun CreateEventDialog(
 @Composable
 private fun EventCard(
     event: Event,
-    onRegister: () -> Unit
+    canModify: Boolean,
+    onRegister: () -> Unit,
+    onViewAttendees: () -> Unit,
+    onDelete: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -326,12 +539,33 @@ private fun EventCard(
         )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = event.title,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = Color.White
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
+                Text(
+                    text = event.title,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White,
+                    modifier = Modifier.weight(1f)
+                )
+                
+                if (canModify) {
+                    IconButton(
+                        onClick = onDelete,
+                        modifier = Modifier.size(32.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.Delete,
+                            contentDescription = "Delete",
+                            tint = Color(0xFFEF4444),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+            }
             
             Spacer(modifier = Modifier.height(12.dp))
             
@@ -344,7 +578,7 @@ private fun EventCard(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = event.eventDate,
+                    text = event.eventDate.take(10),
                     fontSize = 14.sp,
                     color = Color(0xFF94A3B8)
                 )
@@ -390,20 +624,40 @@ private fun EventCard(
                     color = Color(0xFF64748B)
                 )
                 
-                Button(
-                    onClick = onRegister,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF2563EB)
-                    ),
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
-                ) {
-                    Icon(
-                        Icons.Default.PersonAdd,
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text("Register", fontSize = 14.sp)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    // View Attendees Button
+                    OutlinedButton(
+                        onClick = onViewAttendees,
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = Color(0xFF94A3B8)
+                        )
+                    ) {
+                        Icon(
+                            Icons.Default.People,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Attendees", fontSize = 12.sp)
+                    }
+                    
+                    // Register Button
+                    Button(
+                        onClick = onRegister,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF2563EB)
+                        ),
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.PersonAdd,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Register", fontSize = 14.sp)
+                    }
                 }
             }
         }

@@ -151,7 +151,7 @@ const HackerLoader: React.FC<HackerLoaderProps> = ({
                 <div className="h-24 flex flex-col justify-end items-center gap-1">
                     {phase === 'access' && (
                         <div className="text-sm text-green-500 font-bold tracking-[0.2em] animate-bounce mt-2">
-                            WILUJENG SUMPING
+                            ꦮꦶꦭꦸꦗꦺꦁ ꦱꦸꦩ꧀ꦥꦶꦁ
                         </div>
                     )}
                     {logs.map((log, idx) => (
