@@ -6,7 +6,7 @@ import { PRINT } from '../utils/styles';
 import ThemeToggle from './ThemeToggle';
 import type { SocialLinks } from '../types';
 import SpyTooltip from './SpyTooltip';
-import LiveClock from './LiveClock';
+import SessionTimer from './SessionTimer';
 
 interface NavbarProps {
     logoSrc: string;
@@ -18,13 +18,10 @@ interface NavbarProps {
 
 const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogout, onNavAction }) => {
     const logoRef = React.useRef<HTMLDivElement>(null);
-    const clockRef = React.useRef<HTMLDivElement>(null);
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const [isLogoTooltipOpen, setIsLogoTooltipOpen] = useState(false);
-    const [isClockTooltipOpen, setIsClockTooltipOpen] = useState(false);
-    const [currentTime, setCurrentTime] = useState(new Date());
 
     useEffect(() => {
         const handleScroll = () => {
@@ -102,33 +99,8 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
 
                         {/* Right Side Actions */}
                         <div className="hidden md:flex items-center gap-3">
-                            {/* Live Clock with SpyTooltip */}
-                            <div
-                                ref={clockRef}
-                                className="relative px-3 py-1.5 rounded-lg bg-white/5 dark:bg-white/5 border border-gray-200/50 dark:border-white/10 cursor-pointer hover:bg-accent-blue/5 transition-all"
-                                onMouseEnter={() => setIsClockTooltipOpen(true)}
-                                onMouseLeave={() => setIsClockTooltipOpen(false)}
-                            >
-                                <LiveClock
-                                    size="sm"
-                                    showSeconds={true}
-                                    showDate={false}
-                                    showDay={false}
-                                    className="text-light-text dark:text-white/80 font-mono text-xs"
-                                />
-                                <SpyTooltip
-                                    visible={isClockTooltipOpen}
-                                    title="SYSTEM TIME"
-                                    items={[
-                                        { label: 'TIMEZONE', value: 'Asia/Jakarta' },
-                                        { label: 'FORMAT', value: '24-Hour' },
-                                        { label: 'SYNC', value: 'Real-time' },
-                                        { label: 'STATUS', value: '🟢 Online' }
-                                    ]}
-                                    targetRef={clockRef}
-                                    color="#06b6d4"
-                                />
-                            </div>
+                            {/* Session Timer (replaces LiveClock) */}
+                            <SessionTimer />
 
                             {/* Socials Mini */}
                             <div className="flex items-center px-3 border-l border-r border-gray-200 dark:border-white/10 space-x-1">

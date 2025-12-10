@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { DASHBOARD_THEME } from '../utils/styles';
-import { useTheme } from '../contexts/ThemeContext';
-import { getStoredUser } from '../apiClient';
+import { getStoredUser, getAuthToken, clearAuth } from '../apiClient';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import ScrollReveal from '../components/ScrollReveal';
+import { useLandingData } from '../contexts/LandingDataContext';
+import { useMultiParallax } from '../hooks/useParallax';
 import {
     getDiscussion,
     createReply,
@@ -11,12 +14,18 @@ import {
 } from '../services/discussionService';
 
 const DiscussionDetailPage: React.FC = () => {
-    const { theme } = useTheme();
-    const palette = DASHBOARD_THEME[theme];
     const navigate = useNavigate();
     const { discussionId } = useParams<{ discussionId: string }>();
     const user = getStoredUser();
 
+    // Get pre-fetched data from context for Navbar/Footer
+    const { data } = useLandingData();
+    const { profile } = data;
+
+    // Parallax effect for background layers
+    const parallax = useMultiParallax();
+
+    const [loggedInUser, setLoggedInUser] = useState<string | null>(null);
     const [discussion, setDiscussion] = useState<DiscussionWithReplies | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -26,10 +35,24 @@ const DiscussionDetailPage: React.FC = () => {
     const [deleting, setDeleting] = useState(false);
 
     useEffect(() => {
+        const token = getAuthToken();
+        const storedUser = getStoredUser();
+        if (token && storedUser) {
+            setLoggedInUser(storedUser.username);
+        }
+    }, []);
+
+    useEffect(() => {
         if (discussionId) {
             loadDiscussion();
         }
     }, [discussionId]);
+
+    const handleLogout = () => {
+        clearAuth();
+        setLoggedInUser(null);
+        navigate('/', { replace: true });
+    };
 
     const loadDiscussion = async () => {
         if (!discussionId) return;
@@ -117,7 +140,7 @@ const DiscussionDetailPage: React.FC = () => {
         // Simple URL detection and conversion
         const urlRegex = /(https?:\/\/[^\s]+)/g;
         const parts = content.split(urlRegex);
-        
+
         return parts.map((part, index) => {
             if (part.match(urlRegex)) {
                 return (
@@ -126,7 +149,7 @@ const DiscussionDetailPage: React.FC = () => {
                         href={part}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`${palette.accent} hover:underline`}
+                        className="text-accent-blue hover:underline"
                     >
                         {part}
                     </a>
@@ -137,171 +160,222 @@ const DiscussionDetailPage: React.FC = () => {
     };
 
     const canDelete = discussion && user && (
-        user.role === 'admin' || 
+        user.role === 'admin' ||
         (discussion.creator_username && discussion.creator_username === user.username)
     );
 
-    if (loading) {
-        return (
-            <div className={`min-h-screen ${palette.background}`}>
-                <div className="container mx-auto px-4 py-8">
-                    <div className="text-center py-8">
-                        <div className={`text-lg ${palette.textMuted}`}>Loading discussion...</div>
-                    </div>
-                </div>
-            </div>
-        );
-    }
+    // Default profile if data not loaded yet
+    const defaultProfile = {
+        logoSrc: './PP-Tio.jpg',
+        socials: {
+            github: 'https://github.com/atiohaidar',
+            linkedin: 'https://www.linkedin.com/in/atiohaidar/',
+            instagram: 'https://www.instagram.com/tiohaidarhanif'
+        },
+        copyright: '© 2024 Tio Haidar. All rights reserved.'
+    };
 
-    if (error && !discussion) {
-        return (
-            <div className={`min-h-screen ${palette.background}`}>
-                <div className="container mx-auto px-4 py-8">
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                        {error}
-                    </div>
-                    <button
-                        onClick={() => navigate('/discussions')}
-                        className={`${palette.accent} hover:opacity-90 text-white px-4 py-2 rounded-lg`}
-                    >
-                        ← Back to Discussions
-                    </button>
-                </div>
-            </div>
-        );
-    }
+    const activeProfile = profile || defaultProfile;
 
     return (
-        <div className={`min-h-screen ${palette.background}`}>
-            {/* Header */}
-            <div className={`${palette.primary} shadow-lg`}>
-                <div className="container mx-auto px-4 py-6">
-                    <button
-                        onClick={() => navigate('/discussions')}
-                        className={`${palette.text} hover:underline mb-2`}
-                    >
-                        ← Back to Discussions
-                    </button>
-                </div>
-            </div>
+        <div className="relative min-h-screen bg-light-bg dark:bg-deep-navy transition-colors duration-300 overflow-hidden">
+            {/* Global Background Elements */}
+            <div className="fixed inset-0 bg-gradient-to-br from-blue-500/5 via-cyan-500/5 to-purple-500/5 -z-10" />
 
-            {/* Content */}
-            <div className="container mx-auto px-4 py-8 max-w-4xl">
-                {error && (
-                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                        {error}
-                    </div>
-                )}
+            {/* Animated Orbs with Parallax (Fixed) */}
+            <div
+                className="fixed top-[20%] right-[10%] w-[600px] h-[600px] bg-accent-blue/40 rounded-full blur-[120px] animate-blob mix-blend-multiply dark:mix-blend-screen opacity-90 -z-10 pointer-events-none"
+                style={{ transform: `translateY(${parallax.getOffset(0.05, 'down')}px)` }}
+            />
+            <div
+                className="fixed bottom-[20%] left-[10%] w-[600px] h-[600px] bg-purple-500/40 rounded-full blur-[120px] animate-blob animation-delay-2000 mix-blend-multiply dark:mix-blend-screen opacity-90 -z-10 pointer-events-none"
+                style={{ transform: `translateY(${parallax.getOffset(0.08, 'down')}px)` }}
+            />
+            <div
+                className="fixed top-[40%] left-[40%] w-[600px] h-[600px] bg-cyan-500/40 rounded-full blur-[120px] animate-blob animation-delay-4000 mix-blend-multiply dark:mix-blend-screen opacity-90 -z-10 pointer-events-none"
+                style={{ transform: `translateY(${parallax.getOffset(0.12, 'down')}px)` }}
+            />
 
-                {discussion && (
-                    <>
-                        {/* Discussion */}
-                        <div className={`${palette.card} rounded-lg shadow-md p-6 mb-6`}>
-                            <div className="flex justify-between items-start mb-4">
-                                <h1 className={`text-3xl font-bold ${palette.text}`}>
-                                    {discussion.title}
-                                </h1>
-                                {canDelete && (
-                                    <button
-                                        onClick={handleDelete}
-                                        disabled={deleting}
-                                        className="text-red-600 hover:text-red-800 text-sm disabled:opacity-50"
-                                    >
-                                        {deleting ? 'Deleting...' : 'Delete'}
-                                    </button>
-                                )}
-                            </div>
+            {/* Navbar */}
+            <Navbar
+                logoSrc={activeProfile.logoSrc}
+                socials={activeProfile.socials}
+                loggedInUser={loggedInUser}
+                onLogout={handleLogout}
+            />
 
-                            <div className={`${palette.textMuted} text-sm mb-4`}>
-                                By <span className="font-medium">{discussion.creator_name}</span>
-                                {discussion.is_anonymous && (
-                                    <span className="ml-1">(anonymous)</span>
-                                )}
-                                {' • '}
-                                <span>{formatDate(discussion.created_at)}</span>
-                            </div>
+            {/* Main Content */}
+            <main className="mx-auto relative z-10 pt-32 pb-16">
+                <div className="container mx-auto px-6 md:px-12 max-w-4xl">
+                    {/* Back Button */}
+                    <ScrollReveal delay={100}>
+                        <button
+                            onClick={() => navigate('/discussions')}
+                            className="mb-6 flex items-center gap-2 text-light-muted dark:text-slate-400 hover:text-accent-blue transition-colors"
+                        >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Back to Discussions
+                        </button>
+                    </ScrollReveal>
 
-                            <div className={`${palette.text} whitespace-pre-wrap`}>
-                                {renderContentWithLinks(discussion.content)}
-                            </div>
+                    {/* Error Message */}
+                    {error && (
+                        <div className="glass-card border-red-500/30 px-4 py-3 rounded-xl mb-6 text-red-500 text-center">
+                            {error}
                         </div>
+                    )}
 
-                        {/* Replies Section */}
-                        <div className={`${palette.card} rounded-lg shadow-md p-6 mb-6`}>
-                            <h2 className={`text-xl font-bold ${palette.text} mb-4`}>
-                                Replies ({discussion.replies?.length || 0})
-                            </h2>
+                    {/* Loading State */}
+                    {loading ? (
+                        <div className="text-center py-16">
+                            <div className="inline-block w-8 h-8 border-2 border-accent-blue/30 border-t-accent-blue rounded-full animate-spin mb-4" />
+                            <p className="text-light-muted dark:text-soft-gray">Loading discussion...</p>
+                        </div>
+                    ) : !discussion ? (
+                        <div className="glass-card rounded-2xl p-12 text-center">
+                            <div className="text-5xl mb-4">❌</div>
+                            <h3 className="text-xl font-semibold text-light-text dark:text-white mb-2">
+                                Discussion not found
+                            </h3>
+                            <p className="text-light-muted dark:text-soft-gray">
+                                The discussion you're looking for doesn't exist or has been deleted.
+                            </p>
+                        </div>
+                    ) : (
+                        <>
+                            {/* Main Discussion */}
+                            <ScrollReveal delay={150}>
+                                <div className="glass-card rounded-2xl p-6 md:p-8 mb-6">
+                                    <div className="flex justify-between items-start gap-4 mb-4">
+                                        <h1 className="text-2xl md:text-3xl font-bold text-light-text dark:text-white">
+                                            {discussion.title}
+                                        </h1>
+                                        {canDelete && (
+                                            <button
+                                                onClick={handleDelete}
+                                                disabled={deleting}
+                                                className="text-red-500 hover:text-red-600 text-sm font-medium transition-colors disabled:opacity-50 whitespace-nowrap"
+                                            >
+                                                {deleting ? 'Deleting...' : 'Delete'}
+                                            </button>
+                                        )}
+                                    </div>
 
-                            {discussion.replies && discussion.replies.length > 0 ? (
-                                <div className="space-y-4">
-                                    {discussion.replies.map((reply) => (
-                                        <div
-                                            key={reply.id}
-                                            className={`border-l-4 ${palette.inputBorder} pl-4 py-2`}
-                                        >
-                                            <div className={`${palette.textMuted} text-sm mb-2`}>
-                                                <span className="font-medium">{reply.creator_name}</span>
-                                                {reply.is_anonymous && (
-                                                    <span className="ml-1">(anonymous)</span>
-                                                )}
-                                                {' • '}
-                                                <span>{formatDate(reply.created_at)}</span>
-                                            </div>
-                                            <div className={palette.text}>
-                                                {renderContentWithLinks(reply.content)}
-                                            </div>
+                                    <div className="flex items-center gap-3 mb-6 text-sm text-light-muted dark:text-slate-400">
+                                        <span className="w-10 h-10 rounded-full bg-accent-blue/10 flex items-center justify-center text-accent-blue font-bold text-sm">
+                                            {discussion.creator_name.substring(0, 2).toUpperCase()}
+                                        </span>
+                                        <div>
+                                            <span className="font-medium text-light-text dark:text-white">{discussion.creator_name}</span>
+                                            {discussion.is_anonymous && (
+                                                <span className="ml-1 opacity-60">(anonymous)</span>
+                                            )}
+                                            <span className="mx-2">•</span>
+                                            <span>{formatDate(discussion.created_at)}</span>
                                         </div>
-                                    ))}
+                                    </div>
+
+                                    <div className="text-light-text dark:text-soft-gray whitespace-pre-wrap leading-relaxed">
+                                        {renderContentWithLinks(discussion.content)}
+                                    </div>
                                 </div>
-                            ) : (
-                                <p className={`${palette.textMuted} italic`}>
-                                    No replies yet. Be the first to reply!
-                                </p>
-                            )}
-                        </div>
+                            </ScrollReveal>
 
-                        {/* Reply Form */}
-                        <div className={`${palette.card} rounded-lg shadow-md p-6`}>
-                            <h2 className={`text-xl font-bold ${palette.text} mb-4`}>
-                                Post a Reply
-                            </h2>
+                            {/* Replies Section */}
+                            <ScrollReveal delay={200}>
+                                <div className="glass-card rounded-2xl p-6 md:p-8 mb-6">
+                                    <h2 className="text-xl font-bold text-light-text dark:text-white mb-6 flex items-center gap-2">
+                                        <svg className="w-5 h-5 text-accent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                        </svg>
+                                        Replies ({discussion.replies?.length || 0})
+                                    </h2>
 
-                            {!user && (
-                                <div className="mb-4">
-                                    <label className={`block text-sm font-medium ${palette.text} mb-2`}>
-                                        Your Name (optional)
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={replyName}
-                                        onChange={(e) => setReplyName(e.target.value)}
-                                        placeholder="Leave empty to post as Anonymous"
-                                        className={`w-full px-3 py-2 border ${palette.inputBorder} rounded-lg ${palette.input}`}
-                                    />
+                                    {discussion.replies && discussion.replies.length > 0 ? (
+                                        <div className="space-y-4">
+                                            {discussion.replies.map((reply, index) => (
+                                                <div
+                                                    key={reply.id}
+                                                    className="border-l-2 border-accent-blue/30 pl-4 py-3 hover:border-accent-blue transition-colors"
+                                                >
+                                                    <div className="flex items-center gap-2 mb-2 text-sm">
+                                                        <span className="w-7 h-7 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-500 font-bold text-xs">
+                                                            {reply.creator_name.substring(0, 2).toUpperCase()}
+                                                        </span>
+                                                        <span className="font-medium text-light-text dark:text-white">{reply.creator_name}</span>
+                                                        {reply.is_anonymous && (
+                                                            <span className="text-light-muted dark:text-slate-500 text-xs">(anonymous)</span>
+                                                        )}
+                                                        <span className="text-light-muted dark:text-slate-500">•</span>
+                                                        <span className="text-light-muted dark:text-slate-500">{formatDate(reply.created_at)}</span>
+                                                    </div>
+                                                    <div className="text-light-text dark:text-soft-gray pl-9">
+                                                        {renderContentWithLinks(reply.content)}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="text-light-muted dark:text-slate-500 italic text-center py-4">
+                                            No replies yet. Be the first to reply!
+                                        </p>
+                                    )}
                                 </div>
-                            )}
+                            </ScrollReveal>
 
-                            <div className="mb-4">
-                                <textarea
-                                    value={replyContent}
-                                    onChange={(e) => setReplyContent(e.target.value)}
-                                    placeholder="Write your reply... (Links are allowed)"
-                                    rows={4}
-                                    className={`w-full px-3 py-2 border ${palette.inputBorder} rounded-lg ${palette.input}`}
-                                />
-                            </div>
+                            {/* Reply Form */}
+                            <ScrollReveal delay={250}>
+                                <div className="glass-card rounded-2xl p-6 md:p-8">
+                                    <h2 className="text-xl font-bold text-light-text dark:text-white mb-6 flex items-center gap-2">
+                                        <svg className="w-5 h-5 text-accent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                                        </svg>
+                                        Post a Reply
+                                    </h2>
 
-                            <button
-                                onClick={handleReply}
-                                disabled={replying || !replyContent.trim()}
-                                className={`${palette.accent} hover:opacity-90 text-white px-6 py-2 rounded-lg font-medium transition-all disabled:opacity-50`}
-                            >
-                                {replying ? 'Posting...' : 'Post Reply'}
-                            </button>
-                        </div>
-                    </>
-                )}
-            </div>
+                                    {!user && (
+                                        <div className="mb-4">
+                                            <label className="block text-sm font-medium text-light-text dark:text-white mb-2">
+                                                Your Name (optional)
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={replyName}
+                                                onChange={(e) => setReplyName(e.target.value)}
+                                                placeholder="Leave empty to post as Anonymous"
+                                                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-white/10 bg-white/50 dark:bg-white/5 text-light-text dark:text-white placeholder-light-muted dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-accent-blue/50 transition-all"
+                                            />
+                                        </div>
+                                    )}
+
+                                    <div className="mb-4">
+                                        <textarea
+                                            value={replyContent}
+                                            onChange={(e) => setReplyContent(e.target.value)}
+                                            placeholder="Write your reply... (Links are allowed)"
+                                            rows={4}
+                                            className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-white/10 bg-white/50 dark:bg-white/5 text-light-text dark:text-white placeholder-light-muted dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-accent-blue/50 transition-all resize-none"
+                                        />
+                                    </div>
+
+                                    <button
+                                        onClick={handleReply}
+                                        disabled={replying || !replyContent.trim()}
+                                        className="px-6 py-2.5 rounded-full text-sm font-medium bg-accent-blue text-white hover:bg-accent-blue/90 hover:shadow-lg hover:shadow-accent-blue/25 transition-all disabled:opacity-50"
+                                    >
+                                        {replying ? 'Posting...' : 'Post Reply'}
+                                    </button>
+                                </div>
+                            </ScrollReveal>
+                        </>
+                    )}
+                </div>
+            </main>
+
+            {/* Footer */}
+            <Footer socials={activeProfile.socials} copyright={activeProfile.copyright} />
         </div>
     );
 };

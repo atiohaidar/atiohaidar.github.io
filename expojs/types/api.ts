@@ -605,3 +605,29 @@ export interface ScanResponse {
   attendee: EventAttendee;
   isFirstScan: boolean;
 }
+
+// Transaction types (for wallet history)
+export type TransactionType = 'transfer' | 'topup';
+
+export interface Transaction {
+  id: number;
+  type: TransactionType;
+  from_username: string;
+  to_username: string;
+  amount: number;
+  description?: string;
+  created_at: string;
+}
+
+// Notification types
+export type NotificationType = 'message' | 'task' | 'event' | 'ticket' | 'transfer' | 'system';
+
+export interface Notification {
+  id: number;
+  type: NotificationType;
+  title: string;
+  message: string;
+  read: boolean;
+  link?: string;
+  created_at: string;
+}

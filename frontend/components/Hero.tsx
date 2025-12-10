@@ -2,13 +2,12 @@
  * @file Komponen Hero dengan refactored utilities dan particle background
  * Menampilkan perkenalan singkat, nama, tagline, bio, dan tombol CTA.
  */
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { COLORS, LAYOUT, PRINT, SPACING, TYPOGRAPHY } from '../utils/styles';
 import { createAnimationStyle, ANIMATION_DELAYS } from '../utils/animations';
 import { getExternalLinkProps } from '../utils/url';
 import ParticleBackground from './ParticleBackground';
-import LiveClock from './LiveClock';
-import HandwritingText from './HandwritingText';
+import SpyTooltip from './SpyTooltip';
 
 /**
  * Props untuk komponen Hero.
@@ -27,6 +26,9 @@ interface HeroProps {
 }
 
 const Hero: React.FC<HeroProps> = ({ greeting, name, tagline, bio, linkedinUrl }) => {
+    const backendButtonRef = useRef<HTMLAnchorElement>(null);
+    const [isBackendTooltipOpen, setIsBackendTooltipOpen] = useState(false);
+
     return (
         <>
             {/* Header untuk print dengan URL portfolio */}
@@ -47,17 +49,6 @@ const Hero: React.FC<HeroProps> = ({ greeting, name, tagline, bio, linkedinUrl }
                 {/* Content Container - Background is handled by parent/layout */}
                 <div className={`container mx-auto px-6 md:px-16 lg:px-20 relative z-10 text-center`}>
                     <div className="max-w-4xl mx-auto space-y-6">
-                        {/* Live Clock Display */}
-                        <div className="mb-8" style={createAnimationStyle(ANIMATION_DELAYS.HERO.GREETING)}>
-                            <LiveClock
-                                size="lg"
-                                showSeconds={true}
-                                showDate={true}
-                                showDay={true}
-                                className="text-light-text dark:text-white/90"
-                            />
-                        </div>
-
                         <p className={`text-lg md:text-xl font-medium text-accent-blue dark:text-cyan-400 tracking-wide uppercase`} style={createAnimationStyle(ANIMATION_DELAYS.HERO.NAME)}>
                             {greeting}
                         </p>
@@ -87,12 +78,32 @@ const Hero: React.FC<HeroProps> = ({ greeting, name, tagline, bio, linkedinUrl }
                             <a href="#portfolio" className="glass-button px-8 py-4 rounded-full text-lg font-medium text-light-text dark:text-white hover:text-accent-blue hover:border-accent-blue/50">
                                 Lihat Portofolio
                             </a>
-                            <a
-                                href="#backend"
-                                className="px-8 py-4 rounded-full text-lg font-medium bg-accent-blue text-white shadow-lg shadow-accent-blue/30 hover:bg-accent-blue/90 hover:-translate-y-1 transition-all duration-300"
+                            <div
+                                className="relative"
+                                onMouseEnter={() => setIsBackendTooltipOpen(true)}
+                                onMouseLeave={() => setIsBackendTooltipOpen(false)}
                             >
-                                ⚡ Coba Backend
-                            </a>
+                                <a
+                                    ref={backendButtonRef}
+                                    href="#backend"
+                                    className="block px-8 py-4 rounded-full text-lg font-medium bg-accent-blue text-white shadow-lg shadow-accent-blue/30 hover:bg-accent-blue/90 hover:-translate-y-1 transition-all duration-300"
+                                >
+                                    ⚡ Coba Backend
+                                </a>
+                                <SpyTooltip
+                                    visible={isBackendTooltipOpen}
+                                    title="BACKEND DEMO"
+                                    items={[
+                                        { label: 'AKSES', value: 'Login sebagai Admin' },
+                                        { label: 'KELOLA', value: 'Users, Items, Tasks, Forms' },
+                                        { label: 'FINANCE', value: 'Top-up, Transfer, Transaksi' },
+                                        { label: 'BOOKING', value: 'Event & Ruangan' },
+                                        { label: 'SUPPORT', value: 'Ticketing System' },
+                                    ]}
+                                    targetRef={backendButtonRef as React.RefObject<HTMLElement>}
+                                    color="#10b981"
+                                />
+                            </div>
                             <a
                                 href="#form-token"
                                 className="px-8 py-4 rounded-full text-lg font-medium border border-gray-300 dark:border-white/20 hover:bg-white/5 hover:border-accent-blue hover:text-accent-blue transition-all duration-300"

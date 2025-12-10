@@ -538,3 +538,62 @@ export const useSendAnonymousMessage = () => {
     },
   });
 };
+
+// ============================================================================
+// Wallet / Transaction Hooks
+// ============================================================================
+
+export const useTransactionHistory = () => {
+  return useQuery({
+    queryKey: ['transactions'],
+    queryFn: () => ApiService.getTransactionHistory(),
+  });
+};
+
+export const useTransfer = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ to_username, amount, description }: { to_username: string; amount: number; description?: string }) =>
+      ApiService.transferBalance(to_username, amount, description),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.currentUser });
+    },
+  });
+};
+
+export const useTopUp = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ target_username, amount, description }: { target_username: string; amount: number; description?: string }) =>
+      ApiService.topUpBalance(target_username, amount, description),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.users });
+    },
+  });
+};
+
+// ============================================================================
+// Notification Hooks
+// ============================================================================
+
+export const useNotifications = () => {
+  return useQuery({
+    queryKey: ['notifications'],
+    queryFn: () => ApiService.getNotifications(),
+  });
+};
+
+export const useMarkNotificationRead = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => ApiService.markNotificationRead(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
+    },
+  });
+};

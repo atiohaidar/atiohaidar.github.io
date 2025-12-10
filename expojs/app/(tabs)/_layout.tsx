@@ -144,6 +144,36 @@ export default function TabLayout() {
           ),
         }}
       />
+      <Drawer.Screen
+        name="users"
+        options={{
+          title: 'Users',
+          drawerLabel: 'Users (Admin)',
+          drawerIcon: ({ color, size }) => (
+            <IconButton icon="account-group" size={size} iconColor={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="notifications"
+        options={{
+          title: 'Notifications',
+          drawerLabel: 'Notifications',
+          drawerIcon: ({ color, size }) => (
+            <IconButton icon="bell" size={size} iconColor={color} />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="transactions"
+        options={{
+          title: 'Transaction History',
+          drawerLabel: 'Transactions',
+          drawerIcon: ({ color, size }) => (
+            <IconButton icon="history" size={size} iconColor={color} />
+          ),
+        }}
+      />
     </Drawer>
   );
 }
