@@ -10,6 +10,9 @@
 /flutter/* /flutter/index.html 200
 
 # Expo web app - ensure static assets are served correctly
+/_expo/static/js/web/*.js /_expo/static/js/web/:splat 200
+/_expo/static/* /_expo/static/:splat 200
+/_expo/* /_expo/:splat 200
 /expo/*.js /expo/:splat 200
 /expo/*.json /expo/:splat 200
 /expo/assets/* /expo/assets/:splat 200

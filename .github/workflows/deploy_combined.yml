@@ -70,24 +70,19 @@ jobs:
           mkdir deploy_artifact
           # Copy Frontend (Root)
           cp -r frontend/dist/* deploy_artifact/
-          # Copy _redirects to root if exists
+          # Copy _redirects and _headers to root (Cloudflare Pages reads these from root only)
           if [ -f frontend/_redirects ]; then
             cp frontend/_redirects deploy_artifact/
+          fi
+          if [ -f frontend/_headers ]; then
+            cp frontend/_headers deploy_artifact/
           fi
           # Buat folder flutter dan copy hasil Flutter
           mkdir deploy_artifact/flutter
           cp -r mobile_flutter/build/web/* deploy_artifact/flutter/
-          # Copy _headers to flutter folder if exists
-          if [ -f mobile_flutter/web/_headers ]; then
-            cp mobile_flutter/web/_headers deploy_artifact/flutter/
-          fi
           # Buat folder expo dan copy hasil Expo
           mkdir deploy_artifact/expo
           cp -r expojs/dist/* deploy_artifact/expo/
-          # Copy _headers to expo folder if exists
-          if [ -f expojs/_headers ]; then
-            cp expojs/_headers deploy_artifact/expo/
-          fi
 
       # --- 5. DEPLOY TO BRANCH 'deploy' ---
       - name: Deploy to 'deploy' branch

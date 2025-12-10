@@ -1,0 +1,59 @@
+# Flutter Web App Headers
+/flutter/*
+  X-Content-Type-Options: nosniff
+
+/flutter/*.js
+  Content-Type: application/javascript
+
+/flutter/flutter_service_worker.js
+  Content-Type: application/javascript
+
+/flutter/flutter.js
+  Content-Type: application/javascript
+
+/flutter/main.dart.js
+  Content-Type: application/javascript
+
+/flutter/*.json
+  Content-Type: application/json
+
+# Expo Web App Headers
+/expo/*
+  X-Content-Type-Options: nosniff
+
+/expo/*.js
+  Content-Type: application/javascript
+
+/expo/_expo/*
+  X-Content-Type-Options: nosniff
+
+/expo/_expo/static/js/web/*.js
+  Content-Type: application/javascript
+
+/_expo/static/js/web/*.js
+  Content-Type: application/javascript
+
+/_expo/*.js
+  Content-Type: application/javascript
+
+/expo/index.html
+  Content-Type: text/html
+
+/expo/*.json
+  Content-Type: application/json
+
+/expo/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/_expo/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# React Frontend Headers
+/*.js
+  Content-Type: application/javascript
+
+/*.json
+  Content-Type: application/json
+
+/*
+  X-Content-Type-Options: nosniff
