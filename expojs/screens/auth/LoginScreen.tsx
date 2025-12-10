@@ -132,6 +132,29 @@ export default function LoginScreen() {
                   onLogin={handleQuickLogin}
                   onRemove={handleRemoveAccount}
                 />
+
+                {/* Navigation Links */}
+                <View style={styles.linksContainer}>
+                  <View style={styles.linkRow}>
+                    <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
+                      Belum punya akun?{' '}
+                    </Text>
+                    <Text
+                      variant="bodyMedium"
+                      style={{ color: '#22C55E', fontWeight: '600' }}
+                      onPress={() => router.push('/register')}
+                    >
+                      Daftar
+                    </Text>
+                  </View>
+                  <Text
+                    variant="bodyMedium"
+                    style={{ color: '#F59E0B', fontWeight: '600', marginTop: 8 }}
+                    onPress={() => router.push('/forgot-password')}
+                  >
+                    Lupa Password?
+                  </Text>
+                </View>
               </View>
             </View>
           </GlassCard>
@@ -198,5 +221,13 @@ const styles = StyleSheet.create({
   error: {
     marginBottom: 8,
     textAlign: 'center',
+  },
+  linksContainer: {
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  linkRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });

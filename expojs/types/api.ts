@@ -33,6 +33,28 @@ export interface LoginResponse {
   user: User;
 }
 
+export interface RegisterRequest {
+  username: string;
+  name: string;
+  password: string;
+}
+
+export interface RegisterResponse {
+  success: boolean;
+  message: string;
+  user?: User;
+}
+
+export interface ForgotPasswordRequest {
+  username: string;
+  newPassword: string;
+}
+
+export interface ForgotPasswordResponse {
+  success: boolean;
+  message: string;
+}
+
 export interface Task {
   id: number;
   name: string;

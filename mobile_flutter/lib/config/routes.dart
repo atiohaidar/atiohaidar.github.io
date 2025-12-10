@@ -19,6 +19,9 @@ class AppRouter {
       redirect: (context, state) {
         final isAuthenticated = authProvider.isAuthenticated;
         final isLoggingIn = state.matchedLocation == '/login';
+        final isRegistering = state.matchedLocation == '/register';
+        final isForgotPassword = state.matchedLocation == '/forgot-password';
+        final isPublicRoute = isLoggingIn || isRegistering || isForgotPassword;
         final isInitializing = authProvider.state == AuthState.initial ||
             authProvider.state == AuthState.loading;
 
@@ -27,12 +30,12 @@ class AppRouter {
           return null;
         }
 
-        // Redirect to login if not authenticated
+        // Redirect to login if not authenticated and not on public route
         if (!isAuthenticated) {
-          return isLoggingIn ? null : '/login';
+          return isPublicRoute ? null : '/login';
         }
 
-        // Redirect to dashboard if already authenticated
+        // Redirect to dashboard if already authenticated and on login page
         if (isLoggingIn) {
           return '/';
         }
@@ -44,6 +47,16 @@ class AppRouter {
           path: '/login',
           name: 'login',
           builder: (context, state) => const LoginScreen(),
+        ),
+        GoRoute(
+          path: '/register',
+          name: 'register',
+          builder: (context, state) => const RegisterScreen(),
+        ),
+        GoRoute(
+          path: '/forgot-password',
+          name: 'forgot_password',
+          builder: (context, state) => const ForgotPasswordScreen(),
         ),
         GoRoute(
           path: '/',
@@ -217,6 +230,20 @@ class AppRouter {
           name: 'transfer',
           builder: (context, state) =>
               GradientBackground(child: const TransferScreen()),
+        ),
+        GoRoute(
+          path: '/topup',
+          name: 'topup',
+          builder: (context, state) =>
+              GradientBackground(child: const TopUpScreen()),
+        ),
+        GoRoute(
+          path: '/transactions',
+          name: 'transactions',
+          builder: (context, state) => ChangeNotifierProvider(
+            create: (_) => WalletProvider(),
+            child: GradientBackground(child: const TransactionHistoryScreen()),
+          ),
         ),
         // Public routes (no auth required)
         GoRoute(

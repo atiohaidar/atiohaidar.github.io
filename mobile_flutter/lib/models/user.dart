@@ -123,3 +123,83 @@ class UserUpdate {
     };
   }
 }
+
+/// Register request
+class RegisterRequest {
+  final String username;
+  final String name;
+  final String password;
+
+  const RegisterRequest({
+    required this.username,
+    required this.name,
+    required this.password,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'username': username,
+      'name': name,
+      'password': password,
+    };
+  }
+}
+
+/// Register response
+class RegisterResponse {
+  final bool success;
+  final String message;
+  final User? user;
+
+  const RegisterResponse({
+    required this.success,
+    required this.message,
+    this.user,
+  });
+
+  factory RegisterResponse.fromJson(Map<String, dynamic> json) {
+    return RegisterResponse(
+      success: json['success'] as bool,
+      message: json['message'] as String,
+      user: json['user'] != null
+          ? User.fromJson(json['user'] as Map<String, dynamic>)
+          : null,
+    );
+  }
+}
+
+/// Forgot password request
+class ForgotPasswordRequest {
+  final String username;
+  final String newPassword;
+
+  const ForgotPasswordRequest({
+    required this.username,
+    required this.newPassword,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'username': username,
+      'newPassword': newPassword,
+    };
+  }
+}
+
+/// Forgot password response
+class ForgotPasswordResponse {
+  final bool success;
+  final String message;
+
+  const ForgotPasswordResponse({
+    required this.success,
+    required this.message,
+  });
+
+  factory ForgotPasswordResponse.fromJson(Map<String, dynamic> json) {
+    return ForgotPasswordResponse(
+      success: json['success'] as bool,
+      message: json['message'] as String,
+    );
+  }
+}

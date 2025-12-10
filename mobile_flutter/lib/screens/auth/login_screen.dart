@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../config/theme.dart';
 import '../../providers/providers.dart';
@@ -32,7 +33,7 @@ class _LoginScreenState extends State<LoginScreen> {
         _usernameController.text.trim(),
         _passwordController.text,
       );
-      
+
       if (success && mounted) {
         // Navigation will be handled by router based on auth state
       }
@@ -42,7 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    
+
     return Scaffold(
       body: GradientBackground(
         child: SafeArea(
@@ -58,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: 40),
-                    
+
                     // Welcome text
                     Text(
                       'Welcome Back.',
@@ -81,9 +82,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         height: 1.5,
                       ),
                     ),
-                    
+
                     const SizedBox(height: 48),
-                    
+
                     // Login card
                     GlassCard(
                       padding: const EdgeInsets.all(24),
@@ -98,7 +99,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
-                                color: Theme.of(context).brightness == Brightness.dark
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
                                     ? AppColors.textPrimary
                                     : AppColors.lightText,
                               ),
@@ -108,13 +110,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               'Masukkan credentials Anda',
                               style: TextStyle(
                                 fontSize: 14,
-                                color: Theme.of(context).brightness == Brightness.dark
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
                                     ? AppColors.textMuted
                                     : Colors.grey.shade600,
                               ),
                             ),
                             const SizedBox(height: 32),
-                            
+
                             // Username field
                             TextFormField(
                               controller: _usernameController,
@@ -132,7 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                             ),
                             const SizedBox(height: 20),
-                            
+
                             // Password field
                             TextFormField(
                               controller: _passwordController,
@@ -164,7 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               },
                             ),
                             const SizedBox(height: 32),
-                            
+
                             // Error message
                             Consumer<AuthProvider>(
                               builder: (context, auth, _) {
@@ -177,7 +180,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                         color: AppColors.error.withOpacity(0.1),
                                         borderRadius: BorderRadius.circular(8),
                                         border: Border.all(
-                                          color: AppColors.error.withOpacity(0.3),
+                                          color:
+                                              AppColors.error.withOpacity(0.3),
                                         ),
                                       ),
                                       child: Row(
@@ -205,14 +209,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                 return const SizedBox.shrink();
                               },
                             ),
-                            
+
                             // Login button
                             Consumer<AuthProvider>(
                               builder: (context, auth, _) {
                                 return SizedBox(
                                   height: 52,
                                   child: ElevatedButton(
-                                    onPressed: auth.isLoading ? null : _handleLogin,
+                                    onPressed:
+                                        auth.isLoading ? null : _handleLogin,
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppColors.primaryBlue,
                                       foregroundColor: Colors.white,
@@ -227,7 +232,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                             height: 24,
                                             child: CircularProgressIndicator(
                                               strokeWidth: 2,
-                                              valueColor: AlwaysStoppedAnimation<Color>(
+                                              valueColor:
+                                                  AlwaysStoppedAnimation<Color>(
                                                 Colors.white,
                                               ),
                                             ),
@@ -247,21 +253,53 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 24),
-                    
-                    // Footer text
-                    Text(
-                      'Belum punya akun? Hubungi administrator.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? AppColors.textMuted.withOpacity(0.6)
-                            : Colors.grey.shade500,
-                      ),
+
+                    // Footer text with links
+                    Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Belum punya akun? ',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? AppColors.textMuted.withOpacity(0.6)
+                                    : Colors.grey.shade500,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () => context.go('/register'),
+                              child: Text(
+                                'Daftar',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        GestureDetector(
+                          onTap: () => context.go('/forgot-password'),
+                          child: Text(
+                            'Lupa Password?',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.amber,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    
+
                     const SizedBox(height: 40),
                   ],
                 ),

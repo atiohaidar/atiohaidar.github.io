@@ -19,6 +19,20 @@ sealed class AuthState {
     data class Error(val message: String) : AuthState()
 }
 
+sealed class RegisterState {
+    object Idle : RegisterState()
+    object Loading : RegisterState()
+    data class Success(val message: String) : RegisterState()
+    data class Error(val message: String) : RegisterState()
+}
+
+sealed class ForgotPasswordState {
+    object Idle : ForgotPasswordState()
+    object Loading : ForgotPasswordState()
+    data class Success(val message: String) : ForgotPasswordState()
+    data class Error(val message: String) : ForgotPasswordState()
+}
+
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val authRepository: AuthRepository
@@ -26,6 +40,12 @@ class AuthViewModel @Inject constructor(
     
     private val _authState = MutableStateFlow<AuthState>(AuthState.Initial)
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
+    
+    private val _registerState = MutableStateFlow<RegisterState>(RegisterState.Idle)
+    val registerState: StateFlow<RegisterState> = _registerState.asStateFlow()
+    
+    private val _forgotPasswordState = MutableStateFlow<ForgotPasswordState>(ForgotPasswordState.Idle)
+    val forgotPasswordState: StateFlow<ForgotPasswordState> = _forgotPasswordState.asStateFlow()
     
     init {
         checkAuthStatus()
@@ -61,6 +81,54 @@ class AuthViewModel @Inject constructor(
         }
     }
     
+    fun register(username: String, name: String, password: String) {
+        if (username.isBlank() || name.isBlank() || password.isBlank()) {
+            _registerState.value = RegisterState.Error("All fields are required")
+            return
+        }
+        
+        if (password.length < 6) {
+            _registerState.value = RegisterState.Error("Password must be at least 6 characters")
+            return
+        }
+        
+        viewModelScope.launch {
+            _registerState.value = RegisterState.Loading
+            
+            authRepository.register(username, name, password)
+                .onSuccess { response ->
+                    _registerState.value = RegisterState.Success(response.message)
+                }
+                .onFailure { exception ->
+                    _registerState.value = RegisterState.Error(exception.message ?: "Registration failed")
+                }
+        }
+    }
+    
+    fun forgotPassword(username: String, newPassword: String) {
+        if (username.isBlank() || newPassword.isBlank()) {
+            _forgotPasswordState.value = ForgotPasswordState.Error("All fields are required")
+            return
+        }
+        
+        if (newPassword.length < 6) {
+            _forgotPasswordState.value = ForgotPasswordState.Error("Password must be at least 6 characters")
+            return
+        }
+        
+        viewModelScope.launch {
+            _forgotPasswordState.value = ForgotPasswordState.Loading
+            
+            authRepository.forgotPassword(username, newPassword)
+                .onSuccess { response ->
+                    _forgotPasswordState.value = ForgotPasswordState.Success(response.message)
+                }
+                .onFailure { exception ->
+                    _forgotPasswordState.value = ForgotPasswordState.Error(exception.message ?: "Password reset failed")
+                }
+        }
+    }
+    
     fun logout() {
         viewModelScope.launch {
             authRepository.logout()
@@ -72,5 +140,13 @@ class AuthViewModel @Inject constructor(
         if (_authState.value is AuthState.Error) {
             _authState.value = AuthState.Unauthenticated
         }
+    }
+    
+    fun resetRegisterState() {
+        _registerState.value = RegisterState.Idle
+    }
+    
+    fun resetForgotPasswordState() {
+        _forgotPasswordState.value = ForgotPasswordState.Idle
     }
 }

@@ -1,5 +1,7 @@
 // Screens barrel file
 export 'auth/login_screen.dart';
+export 'auth/register_screen.dart';
+export 'auth/forgot_password_screen.dart';
 export 'dashboard/dashboard_screen.dart';
 export 'dashboard/overview_screen.dart';
 export 'tasks/tasks_screen.dart';
@@ -27,3 +29,5 @@ export 'notifications/notifications_screen.dart';
 export 'discussions/discussions_screen.dart';
 export 'discussions/discussion_detail_screen.dart';
 export 'wallet/transfer_screen.dart';
+export 'wallet/topup_screen.dart';
+export 'wallet/transaction_history_screen.dart';

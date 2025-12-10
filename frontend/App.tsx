@@ -21,6 +21,8 @@ const PageLoader: React.FC = () => (
 const LandingPage = lazy(() => import('./pages/LandingPage'));
 const ArticlesPage = lazy(() => import('./pages/ArticlesPage'));
 const LoginPage = lazy(() => import('./pages/LoginPage'));
+const RegisterPage = lazy(() => import('./pages/RegisterPage'));
+const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'));
 const DashboardPage = lazy(() => import('./pages/DashboardPage'));
 const DashboardOverviewPage = lazy(() => import('./pages/DashboardOverviewPage'));
 const DashboardTasksPage = lazy(() => import('./pages/DashboardTasksPage'));
@@ -74,6 +76,8 @@ const App: React.FC = () => {
                             <Route path="/" element={<LandingPage />} />
                             <Route path="/articles" element={<ArticlesPage />} />
                             <Route path="/login" element={<LoginPage />} />
+                            <Route path="/register" element={<RegisterPage />} />
+                            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
                             <Route path="/form/:token" element={<FormFillPage />} />
                             <Route path="/discussions" element={<DiscussionForumPage />} />
                             <Route path="/discussions/:discussionId" element={<DiscussionDetailPage />} />

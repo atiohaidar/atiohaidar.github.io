@@ -59,9 +59,19 @@ const LoginPage: React.FC = () => {
 
                 <div className="flex-1 w-full max-w-md">
                     <Login onLoginSuccess={handleLoginSuccess} />
-                    <p className={`text-sm text-center mt-6 text-light-muted/80 dark:text-soft-gray/60`}>
-                        Belum punya akun? Hubungi administrator.
-                    </p>
+                    <div className="text-sm text-center mt-6 space-y-2">
+                        <p className="text-light-muted/80 dark:text-soft-gray/60">
+                            Belum punya akun?{' '}
+                            <Link to="/register" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">
+                                Daftar di sini
+                            </Link>
+                        </p>
+                        <p className="text-light-muted/80 dark:text-soft-gray/60">
+                            <Link to="/forgot-password" className="text-amber-600 dark:text-amber-400 hover:underline font-medium">
+                                Lupa Password?
+                            </Link>
+                        </p>
+                    </div>
                 </div>
             </main>
         </div>

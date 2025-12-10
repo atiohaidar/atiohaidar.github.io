@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart' hide FormData;
 import '../models/models.dart';
+import '../models/transaction.dart';
 import 'api_client.dart';
 
 /// API service for all backend operations
@@ -63,6 +64,22 @@ class ApiService {
         'amount': amount,
         'description': description,
       });
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  /// Get transactions for current user (admin only can see all)
+  static Future<List<Transaction>> getTransactions({String? type}) async {
+    try {
+      final queryParams = <String, dynamic>{};
+      if (type != null) queryParams['type'] = type;
+
+      final response =
+          await ApiClient.get('/transactions', queryParameters: queryParams);
+      final data = response.data['transactions'];
+      if (data == null) return [];
+      return (data as List).map((json) => Transaction.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ApiException.fromDioError(e);
     }

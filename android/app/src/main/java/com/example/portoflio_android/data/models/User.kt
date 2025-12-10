@@ -42,3 +42,25 @@ data class LoginResponse(
     val token: String,
     val user: User
 )
+
+data class RegisterRequest(
+    val username: String,
+    val name: String,
+    val password: String
+)
+
+data class RegisterResponse(
+    val success: Boolean,
+    val message: String,
+    val user: User?
+)
+
+data class ForgotPasswordRequest(
+    val username: String,
+    val newPassword: String
+)
+
+data class ForgotPasswordResponse(
+    val success: Boolean,
+    val message: String
+)

@@ -181,6 +181,42 @@ class ApiService {
     await AsyncStorage.removeItem('currentUser');
   }
 
+  async register(username: string, name: string, password: string): Promise<Types.RegisterResponse> {
+    try {
+      const response = await this.api.post<Types.ApiResponse<Types.RegisterResponse>>(
+        '/api/auth/register',
+        { username, name, password }
+      );
+      const payload = this.extractResult<Types.RegisterResponse>(response.data, 'data');
+
+      if (payload?.success) {
+        return payload;
+      }
+
+      throw new Error(payload?.message || 'Registration failed');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
+  async forgotPassword(username: string, newPassword: string): Promise<Types.ForgotPasswordResponse> {
+    try {
+      const response = await this.api.post<Types.ApiResponse<Types.ForgotPasswordResponse>>(
+        '/api/auth/forgot-password',
+        { username, newPassword }
+      );
+      const payload = this.extractResult<Types.ForgotPasswordResponse>(response.data, 'data');
+
+      if (payload?.success) {
+        return payload;
+      }
+
+      throw new Error(payload?.message || 'Password reset failed');
+    } catch (error) {
+      this.handleError(error);
+    }
+  }
+
   async getCurrentUser(): Promise<Types.User | null> {
     const userStr = await AsyncStorage.getItem('currentUser');
     return userStr ? JSON.parse(userStr) : null;

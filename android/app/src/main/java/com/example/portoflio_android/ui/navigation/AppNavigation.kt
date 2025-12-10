@@ -11,6 +11,8 @@ import com.example.portoflio_android.ui.screens.*
  */
 object Routes {
     const val LOGIN = "login"
+    const val REGISTER = "register"
+    const val FORGOT_PASSWORD = "forgot_password"
     const val DASHBOARD = "dashboard"
     const val TASKS = "tasks"
     const val ROOMS = "rooms"
@@ -47,7 +49,31 @@ fun AppNavigation(
                     navController.navigate(Routes.DASHBOARD) {
                         popUpTo(Routes.LOGIN) { inclusive = true }
                     }
-                }
+                },
+                onNavigateToRegister = { navController.navigate(Routes.REGISTER) },
+                onNavigateToForgotPassword = { navController.navigate(Routes.FORGOT_PASSWORD) }
+            )
+        }
+        
+        composable(Routes.REGISTER) {
+            RegisterScreen(
+                onRegisterSuccess = {
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(Routes.REGISTER) { inclusive = true }
+                    }
+                },
+                onNavigateToLogin = { navController.popBackStack() }
+            )
+        }
+        
+        composable(Routes.FORGOT_PASSWORD) {
+            ForgotPasswordScreen(
+                onResetSuccess = {
+                    navController.navigate(Routes.LOGIN) {
+                        popUpTo(Routes.FORGOT_PASSWORD) { inclusive = true }
+                    }
+                },
+                onNavigateToLogin = { navController.popBackStack() }
             )
         }
         

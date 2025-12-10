@@ -27,6 +27,40 @@ class AuthService {
     }
   }
 
+  /// Register a new user account
+  Future<RegisterResponse> register(
+      String username, String name, String password) async {
+    try {
+      final response = await ApiClient.post(
+        '/auth/register',
+        data:
+            RegisterRequest(username: username, name: name, password: password)
+                .toJson(),
+      );
+
+      return RegisterResponse.fromJson(response.data);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
+  /// Reset password for a user (simple reset - no email verification)
+  Future<ForgotPasswordResponse> forgotPassword(
+      String username, String newPassword) async {
+    try {
+      final response = await ApiClient.post(
+        '/auth/forgot-password',
+        data:
+            ForgotPasswordRequest(username: username, newPassword: newPassword)
+                .toJson(),
+      );
+
+      return ForgotPasswordResponse.fromJson(response.data);
+    } on DioException catch (e) {
+      throw ApiException.fromDioError(e);
+    }
+  }
+
   /// Logout and clear stored data
   Future<void> logout() async {
     await _storage.clearAll();

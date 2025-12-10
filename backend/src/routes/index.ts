@@ -1,4 +1,6 @@
 import { AuthLogin } from "../controllers/authLogin";
+import { AuthRegister } from "../controllers/authRegister";
+import { AuthForgotPassword } from "../controllers/authForgotPassword";
 import { UserController } from "../controllers/user.controller";
 import { TaskController } from "../controllers/task.controller";
 import {
@@ -122,6 +124,8 @@ export const registerRoutes = (openapi: any) => {
 
 	// Auth routes
 	openapi.post("/api/auth/login", AuthLogin);
+	openapi.post("/api/auth/register", AuthRegister);
+	openapi.post("/api/auth/forgot-password", AuthForgotPassword);
 
 	// Stats routes
 	openapi.get("/api/stats", StatsGet);

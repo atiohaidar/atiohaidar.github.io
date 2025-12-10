@@ -393,19 +393,40 @@ class _DashboardOverviewScreenState extends State<DashboardOverviewScreen> {
                 ),
                 child: const Text('💰', style: TextStyle(fontSize: 24)),
               ),
-              ElevatedButton(
-                onPressed: () => context.push('/transfer'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
+              GestureDetector(
+                onTap: () => context.push('/transactions'),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? Colors.white.withOpacity(0.1)
+                        : Colors.grey.shade200,
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.history,
+                        size: 16,
+                        color: isDark
+                            ? AppColors.textSecondary
+                            : AppColors.lightTextSecondary,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'History',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: isDark
+                              ? AppColors.textSecondary
+                              : AppColors.lightTextSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                child: const Text('Transfer',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
               ),
             ],
           ),
@@ -428,7 +449,78 @@ class _DashboardOverviewScreenState extends State<DashboardOverviewScreen> {
                   isDark ? AppColors.textMuted : AppColors.lightTextSecondary,
             ),
           ),
+          const SizedBox(height: 20),
+          // Action Buttons
+          Row(
+            children: [
+              Expanded(
+                child: _buildWalletAction(
+                  icon: Icons.send,
+                  label: 'Transfer',
+                  color: Colors.blue,
+                  onTap: () => context.push('/transfer'),
+                  isDark: isDark,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildWalletAction(
+                  icon: Icons.add_circle_outline,
+                  label: 'Top Up',
+                  color: Colors.green,
+                  onTap: () => context.push('/topup'),
+                  isDark: isDark,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildWalletAction(
+                  icon: Icons.receipt_long,
+                  label: 'History',
+                  color: Colors.orange,
+                  onTap: () => context.push('/transactions'),
+                  isDark: isDark,
+                ),
+              ),
+            ],
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildWalletAction({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+    required bool isDark,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: color.withOpacity(0.2),
+          ),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 24),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: isDark ? AppColors.textPrimary : AppColors.lightText,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

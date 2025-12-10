@@ -3,6 +3,10 @@ package com.example.portoflio_android.data.repository
 import com.example.portoflio_android.data.local.TokenManager
 import com.example.portoflio_android.data.models.LoginRequest
 import com.example.portoflio_android.data.models.LoginResponse
+import com.example.portoflio_android.data.models.RegisterRequest
+import com.example.portoflio_android.data.models.RegisterResponse
+import com.example.portoflio_android.data.models.ForgotPasswordRequest
+import com.example.portoflio_android.data.models.ForgotPasswordResponse
 import com.example.portoflio_android.data.models.User
 import com.example.portoflio_android.data.network.api.AuthApiService
 import javax.inject.Inject
@@ -34,6 +38,48 @@ class AuthRepository @Inject constructor(
                 }
             } else {
                 Result.failure(Exception(response.message() ?: "Login failed"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    
+    /**
+     * Register a new user account.
+     */
+    suspend fun register(username: String, name: String, password: String): Result<RegisterResponse> {
+        return try {
+            val response = authApiService.register(RegisterRequest(username, name, password))
+            if (response.isSuccessful && response.body() != null) {
+                val registerResponse = response.body()!!
+                if (registerResponse.success) {
+                    Result.success(registerResponse)
+                } else {
+                    Result.failure(Exception(registerResponse.message))
+                }
+            } else {
+                Result.failure(Exception(response.message() ?: "Registration failed"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+    
+    /**
+     * Reset password for a user (simple reset - no email verification).
+     */
+    suspend fun forgotPassword(username: String, newPassword: String): Result<ForgotPasswordResponse> {
+        return try {
+            val response = authApiService.forgotPassword(ForgotPasswordRequest(username, newPassword))
+            if (response.isSuccessful && response.body() != null) {
+                val forgotResponse = response.body()!!
+                if (forgotResponse.success) {
+                    Result.success(forgotResponse)
+                } else {
+                    Result.failure(Exception(forgotResponse.message))
+                }
+            } else {
+                Result.failure(Exception(response.message() ?: "Password reset failed"))
             }
         } catch (e: Exception) {
             Result.failure(e)

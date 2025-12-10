@@ -77,6 +77,20 @@ export const authService = {
             body: JSON.stringify(credentials),
         });
     },
+
+    register: async (data: { username: string; name: string; password: string }): Promise<{ success: boolean; message: string; user: User }> => {
+        return apiFetch<{ success: boolean; message: string; user: User }>('/api/auth/register', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+    },
+
+    forgotPassword: async (data: { username: string; newPassword: string }): Promise<{ success: boolean; message: string }> => {
+        return apiFetch<{ success: boolean; message: string }>('/api/auth/forgot-password', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+    },
 };
 
 // ============================================================================
