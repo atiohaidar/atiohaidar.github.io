@@ -19,6 +19,7 @@ const ensureInitialized = async (db: D1Database) => {
 						name TEXT NOT NULL,
 						description TEXT,
 						stock INTEGER NOT NULL DEFAULT 0 CHECK (stock >= 0),
+						price REAL NOT NULL DEFAULT 0 CHECK (price >= 0),
 						attachment_link TEXT,
 						owner_username TEXT NOT NULL,
 						created_at TEXT DEFAULT CURRENT_TIMESTAMP,
@@ -36,6 +37,13 @@ const ensureInitialized = async (db: D1Database) => {
 				`),
 				db.prepare(`CREATE INDEX IF NOT EXISTS idx_items_owner ON items(owner_username)`),
 			]);
+
+			// Add price column if it doesn't exist (migration)
+			try {
+				await db.prepare("ALTER TABLE items ADD COLUMN price REAL NOT NULL DEFAULT 0").run();
+			} catch (e) {
+				// Column already exists
+			}
 		})();
 	}
 
@@ -48,6 +56,7 @@ const toItem = (row: Record<string, unknown>): ItemRecord => {
 		name: row.name,
 		description: row.description ?? undefined,
 		stock: row.stock,
+		price: row.price ?? 0,
 		attachment_link: row.attachment_link ?? undefined,
 		owner_username: row.owner_username,
 		created_at: row.created_at ?? undefined,
@@ -85,7 +94,7 @@ export const listItems = async (
 	const { ownerUsername, limit = 50, offset = 0 } = options;
 
 	let query =
-		"SELECT id, name, description, stock, attachment_link, owner_username, created_at, updated_at FROM items WHERE 1=1";
+		"SELECT id, name, description, stock, price, attachment_link, owner_username, created_at, updated_at FROM items WHERE 1=1";
 	const bindings: unknown[] = [];
 
 	if (ownerUsername) {
@@ -108,7 +117,7 @@ export const getItem = async (db: D1Database, id: string) => {
 	await ensureInitialized(db);
 	const row = await db
 		.prepare(
-			"SELECT id, name, description, stock, attachment_link, owner_username, created_at, updated_at FROM items WHERE id = ?",
+			"SELECT id, name, description, stock, price, attachment_link, owner_username, created_at, updated_at FROM items WHERE id = ?",
 		)
 		.bind(id)
 		.first();
@@ -132,13 +141,14 @@ export const createItem = async (
 	try {
 		await db
 			.prepare(
-				"INSERT INTO items (id, name, description, stock, attachment_link, owner_username) VALUES (?, ?, ?, ?, ?, ?)",
+				"INSERT INTO items (id, name, description, stock, price, attachment_link, owner_username) VALUES (?, ?, ?, ?, ?, ?, ?)",
 			)
 			.bind(
 				itemId,
 				data.name,
 				data.description ?? null,
 				data.stock,
+				data.price ?? 0,
 				data.attachment_link ?? null,
 				ownerUsername,
 			)
@@ -200,6 +210,11 @@ export const updateItem = async (
 		bindings.push(updates.attachment_link || null);
 	}
 
+	if (updates.price !== undefined) {
+		fields.push("price = ?");
+		bindings.push(updates.price);
+	}
+
 	if (fields.length === 0) {
 		return existing;
 	}
@@ -250,4 +265,77 @@ export const deleteItem = async (
 	}
 
 	return item;
+};
+
+/**
+ * Purchase an item - deduct buyer balance, add to seller balance, reduce stock
+ */
+export const purchaseItem = async (
+	db: D1Database,
+	buyerUsername: string,
+	itemId: string,
+	quantity: number = 1,
+) => {
+	await ensureInitialized(db);
+
+	// Get item
+	const item = await getItem(db, itemId);
+	if (!item) {
+		throw new Error("Barang tidak ditemukan");
+	}
+
+	// Check stock
+	if (item.stock < quantity) {
+		throw new Error("Stok tidak cukup");
+	}
+
+	// Calculate total price
+	const totalPrice = item.price * quantity;
+
+	// Get buyer balance
+	const buyerRow = await db
+		.prepare("SELECT balance FROM users WHERE username = ?")
+		.bind(buyerUsername)
+		.first<{ balance: number }>();
+
+	if (!buyerRow) {
+		throw new Error("User tidak ditemukan");
+	}
+
+	if (buyerRow.balance < totalPrice) {
+		throw new Error("Saldo tidak cukup");
+	}
+
+	// Cannot buy own item
+	if (item.owner_username === buyerUsername) {
+		throw new Error("Tidak bisa membeli barang milik sendiri");
+	}
+
+	// Execute transaction: reduce buyer balance, increase seller balance, reduce stock
+	await db.batch([
+		db.prepare("UPDATE users SET balance = balance - ? WHERE username = ?")
+			.bind(totalPrice, buyerUsername),
+		db.prepare("UPDATE users SET balance = balance + ? WHERE username = ?")
+			.bind(totalPrice, item.owner_username),
+		db.prepare("UPDATE items SET stock = stock - ? WHERE id = ?")
+			.bind(quantity, itemId),
+		db.prepare(`
+			INSERT INTO transactions (from_username, to_username, amount, type, description)
+			VALUES (?, ?, ?, 'transfer', ?)
+		`).bind(buyerUsername, item.owner_username, totalPrice, `Pembelian ${quantity}x ${item.name}`),
+	]);
+
+	// Get updated buyer balance
+	const newBuyerRow = await db
+		.prepare("SELECT balance FROM users WHERE username = ?")
+		.bind(buyerUsername)
+		.first<{ balance: number }>();
+
+	return {
+		success: true,
+		item: item,
+		quantity: quantity,
+		totalPrice: totalPrice,
+		newBalance: newBuyerRow?.balance ?? 0,
+	};
 };

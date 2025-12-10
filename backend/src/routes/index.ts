@@ -68,6 +68,7 @@ import {
 	ItemCreate,
 	ItemUpdate,
 	ItemDelete,
+	ItemPurchase,
 } from "../controllers/item.controller";
 import {
 	ItemBorrowingList,
@@ -216,6 +217,7 @@ export const registerRoutes = (openapi: any) => {
 	openapi.get("/api/items/:itemId", ItemGet);
 	openapi.put("/api/items/:itemId", ItemUpdate);
 	openapi.delete("/api/items/:itemId", ItemDelete);
+	openapi.post("/api/items/purchase", ItemPurchase);
 
 	// Item borrowing routes
 	openapi.get("/api/item-borrowings", ItemBorrowingList);

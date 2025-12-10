@@ -1,10 +1,11 @@
-import { OpenAPIRoute, Str, Bool } from "chanfana";
+import { OpenAPIRoute, Str, Bool, Num } from "chanfana";
 import { z } from "zod";
 import {
 	type AppContext,
 	Item,
 	ItemCreateSchema,
 	ItemUpdateSchema,
+	ItemPurchaseSchema,
 } from "../models/types";
 import {
 	listItems,
@@ -12,6 +13,7 @@ import {
 	createItem,
 	updateItem,
 	deleteItem,
+	purchaseItem,
 } from "../services/items";
 import { ensureAdmin, getTokenPayloadFromRequest } from "../middlewares/auth";
 
@@ -309,6 +311,75 @@ export class ItemDelete extends OpenAPIRoute {
 				}
 				if (error.message.includes("tidak memiliki izin")) {
 					return c.json({ success: false, message: error.message }, 403);
+				}
+				return c.json({ success: false, message: error.message }, 400);
+			}
+			throw error;
+		}
+	}
+}
+
+// Purchase an item
+export class ItemPurchase extends OpenAPIRoute {
+	schema = {
+		tags: ["Items"],
+		summary: "Purchase an item using balance",
+		request: {
+			body: {
+				content: {
+					"application/json": {
+						schema: ItemPurchaseSchema,
+					},
+				},
+			},
+		},
+		responses: {
+			"200": {
+				description: "Purchase successful",
+				content: {
+					"application/json": {
+						schema: z.object({
+							success: Bool(),
+							item: Item,
+							quantity: Num({ example: 1 }),
+							totalPrice: Num({ example: 100 }),
+							newBalance: Num({ example: 900 }),
+						}),
+					},
+				},
+			},
+			"400": {
+				description: "Purchase failed - insufficient balance or stock",
+			},
+			"401": {
+				description: "Unauthorized",
+			},
+			"404": {
+				description: "Item not found",
+			},
+		},
+	};
+
+	async handle(c: AppContext) {
+		const payload = await getTokenPayloadFromRequest(c);
+		if (!payload) {
+			return c.json({ success: false, message: "Unauthorized" }, 401);
+		}
+
+		const data = await this.getValidatedData<typeof this.schema>();
+
+		try {
+			const result = await purchaseItem(
+				c.env.DB,
+				payload.sub,
+				data.body.item_id,
+				data.body.quantity ?? 1,
+			);
+			return c.json(result);
+		} catch (error) {
+			if (error instanceof Error) {
+				if (error.message.includes("tidak ditemukan")) {
+					return c.json({ success: false, message: error.message }, 404);
 				}
 				return c.json({ success: false, message: error.message }, 400);
 			}

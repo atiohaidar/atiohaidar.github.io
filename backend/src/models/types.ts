@@ -332,6 +332,7 @@ export const Item = z.object({
 	name: Str({ example: "Proyektor Epson" }),
 	description: Str({ required: false, example: "Proyektor untuk presentasi" }),
 	stock: z.number({ description: "Available stock quantity" }).int().nonnegative(),
+	price: z.number({ description: "Price per item" }).nonnegative().default(0),
 	attachment_link: Str({ required: false, example: "https://example.com/manual.pdf" }),
 	owner_username: Str({ example: "user" }),
 	created_at: Str({ required: false }),
@@ -342,6 +343,7 @@ export const ItemCreateSchema = z.object({
 	name: Str({ example: "Proyektor Epson" }),
 	description: Str({ required: false }),
 	stock: z.number().int().positive(),
+	price: z.number().nonnegative().default(0),
 	attachment_link: Str({ required: false }),
 });
 
@@ -350,11 +352,18 @@ export const ItemUpdateSchema = z
 		name: Str({ required: false }),
 		description: Str({ required: false }),
 		stock: z.number().int().nonnegative().optional(),
+		price: z.number().nonnegative().optional(),
 		attachment_link: Str({ required: false }),
 	})
 	.refine((data) => Object.keys(data).length > 0, {
 		message: "Minimal satu field harus diisi",
 	});
+
+// Item purchase schema
+export const ItemPurchaseSchema = z.object({
+	item_id: Str({ example: "item-001" }),
+	quantity: z.number().int().positive().default(1),
+});
 
 // ItemBorrowing schemas
 export const ItemBorrowingStatusSchema = z.enum([
