@@ -11,6 +11,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     
     steps:
       - name: Checkout code
@@ -21,7 +22,11 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-          cache: 'gradle'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-read-only: false
 
       - name: Grant execute permission for gradlew
         working-directory: ./android
@@ -29,35 +34,29 @@ jobs:
 
       - name: Build Debug APK
         working-directory: ./android
-        run: ./gradlew assembleDebug
-
-      - name: Build Release APK
-        working-directory: ./android
-        run: ./gradlew assembleRelease
+        run: |
+          ./gradlew clean assembleDebug --no-daemon --stacktrace --info
+        timeout-minutes: 20
 
       - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug
+          name: app-debug-${{ github.sha }}
           path: android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
-
-      - name: Upload Release APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-release
-          path: android/app/build/outputs/apk/release/app-release-unsigned.apk
-          retention-days: 30
+          if-no-files-found: error
 
       - name: Create Release
-        if: github.event_name == 'push'
-        uses: softprops/action-gh-release@v1
+        if: github.event_name == 'push' && success()
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: android-v${{ github.run_number }}
-          name: Android Build ${{ github.run_number }}
-          files: |
-            android/app/build/outputs/apk/debug/app-debug.apk
-            android/app/build/outputs/apk/release/app-release-unsigned.apk
+          name: Android Debug Build ${{ github.run_number }}
+          body: |
+            Android Debug APK
+            Commit: ${{ github.sha }}
+            Branch: ${{ github.ref_name }}
+          files: android/app/build/outputs/apk/debug/app-debug.apk
           draft: false
           prerelease: true
         env:
