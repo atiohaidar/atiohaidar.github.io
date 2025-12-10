@@ -5,6 +5,7 @@ import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from './contexts/ThemeContext';
+import { LandingDataProvider } from './contexts/LandingDataContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import HackerLoader from './components/HackerLoader';
 
@@ -70,7 +71,14 @@ const queryClient = new QueryClient({
 const App: React.FC = () => {
     // Cinematic Intro State
     const [introComplete, setIntroComplete] = React.useState(false);
+    const [earlyMount, setEarlyMount] = React.useState(false); // Start mounting content early
     const [isEntryAnimComplete, setIsEntryAnimComplete] = React.useState(false);
+    const [dataReady, setDataReady] = React.useState(false);
+
+    // Callback when landing data is fetched
+    const handleDataReady = React.useCallback((ready: boolean) => {
+        setDataReady(ready);
+    }, []);
 
     React.useEffect(() => {
         if (introComplete) {
@@ -85,110 +93,123 @@ const App: React.FC = () => {
     return (
         <ThemeProvider>
             <QueryClientProvider client={queryClient}>
-                <BrowserRouter>
-                    {/* Cinematic Splash Screen */}
-                    {!introComplete && (
-                        <HackerLoader onComplete={() => setIntroComplete(true)} />
-                    )}
+                {/* Start fetching landing data immediately */}
+                <LandingDataProvider onDataReady={handleDataReady}>
+                    <BrowserRouter>
+                        {/* Cinematic Splash Screen - waits for data */}
+                        {!introComplete && (
+                            <HackerLoader
+                                onComplete={() => setIntroComplete(true)}
+                                onEarlyLoad={() => setEarlyMount(true)}
+                                earlyLoadOffset={1250} // Start mounting content 100ms before intro ends
+                                waitForData={dataReady}
+                            />
+                        )}
 
-                    {/* Main Content (Visible after intro) */}
-                    {introComplete && (
-                        <div
-                            className={isEntryAnimComplete ? "" : "animate-fade-in-up"}
-                        >
-                            <Suspense fallback={<PageLoader />}>
-                                <Routes>
-                                    <Route path="/" element={<LandingPage />} />
-                                    <Route path="/articles" element={<ArticlesPage />} />
-                                    <Route path="/login" element={<LoginPage />} />
-                                    <Route path="/register" element={<RegisterPage />} />
-                                    <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-                                    <Route path="/form/:token" element={<FormFillPage />} />
-                                    <Route path="/discussions" element={<DiscussionForumPage />} />
-                                    <Route path="/discussions/:discussionId" element={<DiscussionDetailPage />} />
-                                    <Route path="/fullscreen-chat" element={<FullscreenAnonymousChatPage />} />
-                                    <Route path="/dashboard" element={<DashboardPage />}>
-                                        <Route index element={<DashboardOverviewPage />} />
-                                        <Route path="tasks" element={<DashboardTasksPage />} />
-                                        <Route path="chat" element={<DashboardChatPage />} />
-                                        <Route
-                                            path="users"
-                                            element={
-                                                <ProtectedRoute requireAdmin>
-                                                    <DashboardUsersPage />
-                                                </ProtectedRoute>
-                                            }
-                                        />
-                                        <Route
-                                            path="finance"
-                                            element={
-                                                <ProtectedRoute requireAdmin>
-                                                    <FinancePage />
-                                                </ProtectedRoute>
-                                            }
-                                        />
-                                        <Route path="articles">
-                                            <Route index element={<DashboardArticlesPage />} />
-                                            <Route path="new" element={<ArticleCreatePage />} />
-                                            <Route path=":slug/edit" element={<ArticleEditPage />} />
+                        {/* Main Content (Start mounting early, visible after intro) */}
+                        {(earlyMount || introComplete) && (
+                            <div
+                                className={isEntryAnimComplete ? "" : "animate-fade-in-up"}
+                                style={{
+                                    visibility: introComplete ? 'visible' : 'hidden',
+                                    position: introComplete ? 'relative' : 'absolute',
+                                    inset: introComplete ? undefined : 0
+                                }}
+                            >
+                                <Suspense fallback={<PageLoader />}>
+                                    <Routes>
+                                        <Route path="/" element={<LandingPage />} />
+                                        <Route path="/articles" element={<ArticlesPage />} />
+                                        <Route path="/login" element={<LoginPage />} />
+                                        <Route path="/register" element={<RegisterPage />} />
+                                        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+                                        <Route path="/form/:token" element={<FormFillPage />} />
+                                        <Route path="/discussions" element={<DiscussionForumPage />} />
+                                        <Route path="/discussions/:discussionId" element={<DiscussionDetailPage />} />
+                                        <Route path="/fullscreen-chat" element={<FullscreenAnonymousChatPage />} />
+                                        <Route path="/dashboard" element={<DashboardPage />}>
+                                            <Route index element={<DashboardOverviewPage />} />
+                                            <Route path="tasks" element={<DashboardTasksPage />} />
+                                            <Route path="chat" element={<DashboardChatPage />} />
+                                            <Route
+                                                path="users"
+                                                element={
+                                                    <ProtectedRoute requireAdmin>
+                                                        <DashboardUsersPage />
+                                                    </ProtectedRoute>
+                                                }
+                                            />
+                                            <Route
+                                                path="finance"
+                                                element={
+                                                    <ProtectedRoute requireAdmin>
+                                                        <FinancePage />
+                                                    </ProtectedRoute>
+                                                }
+                                            />
+                                            <Route path="articles">
+                                                <Route index element={<DashboardArticlesPage />} />
+                                                <Route path="new" element={<ArticleCreatePage />} />
+                                                <Route path=":slug/edit" element={<ArticleEditPage />} />
+                                            </Route>
+                                            <Route
+                                                path="rooms"
+                                                element={
+                                                    <ProtectedRoute>
+                                                        <DashboardRoomsPage />
+                                                    </ProtectedRoute>
+                                                }
+                                            />
+                                            <Route
+                                                path="rooms/:roomId"
+                                                element={
+                                                    <ProtectedRoute>
+                                                        <DashboardRoomDetailPage />
+                                                    </ProtectedRoute>
+                                                }
+                                            />
+                                            <Route
+                                                path="rooms/new"
+                                                element={
+                                                    <ProtectedRoute requireAdmin>
+                                                        <DashboardRoomFormPage />
+                                                    </ProtectedRoute>
+                                                }
+                                            />
+                                            <Route
+                                                path="rooms/:roomId/edit"
+                                                element={
+                                                    <ProtectedRoute requireAdmin>
+                                                        <DashboardRoomFormPage />
+                                                    </ProtectedRoute>
+                                                }
+                                            />
+                                            <Route path="bookings" element={<DashboardBookingsPage />} />
+                                            <Route path="bookings/new" element={<DashboardBookingFormPage />} />
+                                            <Route path="bookings/:bookingId" element={<DashboardBookingDetailPage />} />
+                                            <Route path="forms" element={<DashboardFormsPage />} />
+                                            <Route path="forms/new" element={<DashboardFormEditorPage />} />
+                                            <Route path="forms/:formId/edit" element={<DashboardFormEditorPage />} />
+                                            <Route path="forms/:formId/responses" element={<DashboardFormResponsesPage />} />
+                                            <Route path="forms/:formId/responses/:responseId" element={<DashboardFormResponseDetailPage />} />
+                                            <Route path="items" element={<DashboardItemsPage />} />
+                                            <Route path="item-borrowings" element={<DashboardItemBorrowingsPage />} />
+                                            <Route path="tickets" element={<DashboardTicketsPage />} />
+                                            <Route path="tickets/:ticketId" element={<DashboardTicketDetailPage />} />
+                                            <Route path="events" element={<DashboardEventsPage />} />
+                                            <Route path="events/new" element={<DashboardEventFormPage />} />
+                                            <Route path="events/:eventId" element={<DashboardEventDetailPage />} />
+                                            <Route path="events/:eventId/edit" element={<DashboardEventFormPage />} />
+                                            <Route path="events/:eventId/scan" element={<DashboardEventScanPage />} />
+                                            <Route path="events/:eventId/history" element={<DashboardEventScanHistoryPage />} />
                                         </Route>
-                                        <Route
-                                            path="rooms"
-                                            element={
-                                                <ProtectedRoute>
-                                                    <DashboardRoomsPage />
-                                                </ProtectedRoute>
-                                            }
-                                        />
-                                        <Route
-                                            path="rooms/:roomId"
-                                            element={
-                                                <ProtectedRoute>
-                                                    <DashboardRoomDetailPage />
-                                                </ProtectedRoute>
-                                            }
-                                        />
-                                        <Route
-                                            path="rooms/new"
-                                            element={
-                                                <ProtectedRoute requireAdmin>
-                                                    <DashboardRoomFormPage />
-                                                </ProtectedRoute>
-                                            }
-                                        />
-                                        <Route
-                                            path="rooms/:roomId/edit"
-                                            element={
-                                                <ProtectedRoute requireAdmin>
-                                                    <DashboardRoomFormPage />
-                                                </ProtectedRoute>
-                                            }
-                                        />
-                                        <Route path="bookings" element={<DashboardBookingsPage />} />
-                                        <Route path="bookings/new" element={<DashboardBookingFormPage />} />
-                                        <Route path="bookings/:bookingId" element={<DashboardBookingDetailPage />} />
-                                        <Route path="forms" element={<DashboardFormsPage />} />
-                                        <Route path="forms/new" element={<DashboardFormEditorPage />} />
-                                        <Route path="forms/:formId/edit" element={<DashboardFormEditorPage />} />
-                                        <Route path="forms/:formId/responses" element={<DashboardFormResponsesPage />} />
-                                        <Route path="forms/:formId/responses/:responseId" element={<DashboardFormResponseDetailPage />} />
-                                        <Route path="items" element={<DashboardItemsPage />} />
-                                        <Route path="item-borrowings" element={<DashboardItemBorrowingsPage />} />
-                                        <Route path="tickets" element={<DashboardTicketsPage />} />
-                                        <Route path="tickets/:ticketId" element={<DashboardTicketDetailPage />} />
-                                        <Route path="events" element={<DashboardEventsPage />} />
-                                        <Route path="events/new" element={<DashboardEventFormPage />} />
-                                        <Route path="events/:eventId" element={<DashboardEventDetailPage />} />
-                                        <Route path="events/:eventId/edit" element={<DashboardEventFormPage />} />
-                                        <Route path="events/:eventId/scan" element={<DashboardEventScanPage />} />
-                                        <Route path="events/:eventId/history" element={<DashboardEventScanHistoryPage />} />
-                                    </Route>
-                                    <Route path="*" element={<Navigate to="/" replace />} />
-                                </Routes>
-                            </Suspense>
-                        </div>
-                    )}
-                </BrowserRouter>
+                                        <Route path="*" element={<Navigate to="/" replace />} />
+                                    </Routes>
+                                </Suspense>
+                            </div>
+                        )}
+                    </BrowserRouter>
+                </LandingDataProvider>
             </QueryClientProvider>
         </ThemeProvider>
     );

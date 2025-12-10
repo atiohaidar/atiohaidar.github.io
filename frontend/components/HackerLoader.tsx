@@ -1,22 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-const HackerLoader: React.FC<{ onComplete?: () => void }> = ({ onComplete }) => {
+interface HackerLoaderProps {
+    onComplete?: () => void;
+    /** Called slightly before onComplete (default: 100ms before) for early content mount */
+    onEarlyLoad?: () => void;
+    /** Milliseconds before onComplete to fire onEarlyLoad (default: 100) */
+    earlyLoadOffset?: number;
+    /** If true, the loader will wait for this to be true before completing */
+    waitForData?: boolean;
+}
+
+const HackerLoader: React.FC<HackerLoaderProps> = ({
+    onComplete,
+    onEarlyLoad,
+    earlyLoadOffset = 100,
+    waitForData = true
+}) => {
     const [text, setText] = useState('');
     const [progress, setProgress] = useState(0);
-    const [phase, setPhase] = useState<'init' | 'decoding' | 'access' | 'exit' | 'complete'>('init');
+    const [phase, setPhase] = useState<'init' | 'decoding' | 'access' | 'waiting' | 'exit' | 'complete'>('init');
     const [logs, setLogs] = useState<string[]>([]);
 
+    // Track if animation has finished its sequence
+    const animationDoneRef = useRef(false);
+
     // Matrix characters
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&[]{}<>';
-    const targetText = 'ATIO HAIDAR';
+    const chars = 'CUMANVIBECODERBIASA';
+    const targetText = 'KAMU SIAPA';
 
     const identityLogs = [
-        "INITIALIZING CONNECTION...",
+        "MASIH BELAJAR...",
+        "DALAM PROSES...",
         "IDENTITY CONFIRMED: VIBE CODER",
-        "SPECIALIZATION: FULL STACK",
-        "ESTABLISHING SECURE LINK...",
-        "ENCRYPTING SESSION...",
-        "ACCESS_TOKEN: VERIFIED"
+        "SPECIALIZATION: SEMOGA PALUGADA",
+        "PEJUANG AKHIRAT...",
+        "PASSWORD: JANGAN DIKASIH TAU"
     ];
 
     useEffect(() => {
@@ -58,7 +76,7 @@ const HackerLoader: React.FC<{ onComplete?: () => void }> = ({ onComplete }) => 
                 }
 
                 iteration += 1 / 4;
-            }, 50); // Increased from 30ms to 50ms for performance
+            }, 50);
 
             return () => clearInterval(interval);
         }
@@ -67,21 +85,44 @@ const HackerLoader: React.FC<{ onComplete?: () => void }> = ({ onComplete }) => 
     useEffect(() => {
         if (phase === 'access') {
             const timer = setTimeout(() => {
-                setPhase('exit'); // Trigger exit animation
+                animationDoneRef.current = true;
+                // If data is ready, proceed to exit. Otherwise wait.
+                if (waitForData) {
+                    setPhase('exit');
+                } else {
+                    setPhase('waiting');
+                }
             }, 1000);
             return () => clearTimeout(timer);
         }
-    }, [phase]);
+    }, [phase, waitForData]);
+
+    // Watch for data becoming ready while in waiting phase
+    useEffect(() => {
+        if (phase === 'waiting' && waitForData) {
+            setPhase('exit');
+        }
+    }, [phase, waitForData]);
 
     useEffect(() => {
         if (phase === 'exit') {
-            const timer = setTimeout(() => {
+            // Fire early load callback before complete (for smoother content transition)
+            const exitDuration = 800; // ms - matches animate-cyber-zoom-out
+            const earlyTimer = setTimeout(() => {
+                if (onEarlyLoad) onEarlyLoad();
+            }, exitDuration - earlyLoadOffset);
+
+            const completeTimer = setTimeout(() => {
                 setPhase('complete');
                 if (onComplete) onComplete();
-            }, 800); // Wait for zoom out animation
-            return () => clearTimeout(timer);
+            }, exitDuration);
+
+            return () => {
+                clearTimeout(earlyTimer);
+                clearTimeout(completeTimer);
+            };
         }
-    }, [phase, onComplete]);
+    }, [phase, onComplete, onEarlyLoad, earlyLoadOffset]);
 
     if (phase === 'complete') return null;
 
@@ -108,16 +149,17 @@ const HackerLoader: React.FC<{ onComplete?: () => void }> = ({ onComplete }) => 
 
                 {/* Status Text & Logs */}
                 <div className="h-24 flex flex-col justify-end items-center gap-1">
+                    {phase === 'access' && (
+                        <div className="text-sm text-green-500 font-bold tracking-[0.2em] animate-bounce mt-2">
+                            WILUJENG SUMPING
+                        </div>
+                    )}
                     {logs.map((log, idx) => (
                         <div key={idx} className="text-xs text-cyan-500/80 font-bold tracking-widest animate-type-in">
                             {'>'} {log}
                         </div>
                     ))}
-                    {phase === 'access' && (
-                        <div className="text-sm text-green-500 font-bold tracking-[0.2em] animate-bounce mt-2">
-                            ACCESS GRANTED
-                        </div>
-                    )}
+
                 </div>
             </div>
 

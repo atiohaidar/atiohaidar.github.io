@@ -17,29 +17,18 @@ import TicketSubmissionSection from '../components/TicketSubmissionSection';
 import TicketTrackingSection from '../components/TicketTrackingSection';
 import ScrollReveal from '../components/ScrollReveal';
 import SpyTooltip from '../components/SpyTooltip';
-import { getProfile, getAbout, getProjects, getResearch, getExperiences, getEducation } from '../api';
+import { useLandingData } from '../contexts/LandingDataContext';
 import { getAuthToken, getStoredUser, clearAuth } from '../apiClient';
 import { COLORS, LAYOUT, PRINT } from '../utils/styles';
 import type { NavAction } from '../constants';
-import type {
-    Profile,
-    About as AboutType,
-    Project,
-    ResearchItem,
-    Experience,
-    Education,
-} from '../types';
 
 const LandingPage: React.FC = () => {
     const navigate = useNavigate();
-    const [profile, setProfile] = useState<Profile | null>(null);
-    const [about, setAbout] = useState<AboutType | null>(null);
-    const [projects, setProjects] = useState<Project[]>([]);
-    const [research, setResearch] = useState<ResearchItem[]>([]);
-    const [experiences, setExperiences] = useState<Experience[]>([]);
-    const [education, setEducation] = useState<Education[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+
+    // Get pre-fetched data from context (fetched during intro animation)
+    const { data, loading, error } = useLandingData();
+    const { profile, about, projects, research, experiences, education } = data;
+
     const [loggedInUser, setLoggedInUser] = useState<string | null>(null);
     const [isAnonymousChatOpen, setIsAnonymousChatOpen] = useState(false);
     const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
@@ -56,34 +45,6 @@ const LandingPage: React.FC = () => {
         if (token && storedUser) {
             setLoggedInUser(storedUser.username);
         }
-    }, []);
-
-    useEffect(() => {
-        const loadData = async () => {
-            try {
-                const [profileData, aboutData, projectsData, researchData, experiencesData, educationData] = await Promise.all([
-                    getProfile(),
-                    getAbout(),
-                    getProjects(),
-                    getResearch(),
-                    getExperiences(),
-                    getEducation(),
-                ]);
-                setProfile(profileData);
-                setAbout(aboutData);
-                setProjects(projectsData);
-                setResearch(researchData);
-                setExperiences(experiencesData);
-                setEducation(educationData);
-            } catch (err) {
-                setError('Gagal memuat data portofolio. Silakan coba lagi nanti.');
-                console.error(err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        loadData();
     }, []);
 
     const handleLogout = () => {
@@ -154,13 +115,7 @@ const LandingPage: React.FC = () => {
         navigate(`/form/${trimmed}`);
     };
 
-    if (loading) {
-        return (
-            <div className={`min-h-screen ${LAYOUT.FLEX_CENTER} ${COLORS.BG_PRIMARY} ${COLORS.TEXT_ACCENT} text-xl font-poppins`}>
-                Memuat Portofolio...
-            </div>
-        );
-    }
+    // Note: Loading is now handled by intro animation - no loading screen needed here
 
     if (error) {
         return (
