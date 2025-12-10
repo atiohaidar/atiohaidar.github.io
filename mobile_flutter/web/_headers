@@ -1,0 +1,17 @@
+/flutter/*
+  X-Content-Type-Options: nosniff
+
+/flutter/*.js
+  Content-Type: application/javascript
+
+/flutter/flutter_service_worker.js
+  Content-Type: application/javascript
+
+/flutter/flutter.js
+  Content-Type: application/javascript
+
+/flutter/main.dart.js
+  Content-Type: application/javascript
+
+/flutter/*.json
+  Content-Type: application/json
