@@ -155,21 +155,13 @@ fun RoomsScreen(
             )
         }
         
-        // Error Snackbar
+        // Error Dialog
         uiState.error?.let { error ->
-            Snackbar(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(16.dp),
-                containerColor = Color(0xFFEF4444),
-                action = {
-                    TextButton(onClick = { viewModel.clearError() }) {
-                        Text("Dismiss", color = Color.White)
-                    }
-                }
-            ) {
-                Text(error)
-            }
+            com.example.portoflio_android.ui.components.ErrorDialog(
+                error = error,
+                onDismiss = { viewModel.clearError() },
+                onRetry = { viewModel.refresh() }
+            )
         }
     }
 }
@@ -437,6 +429,13 @@ private fun CreateBookingDialog(
     var showStartDatePicker by remember { mutableStateOf(false) }
     var showEndDatePicker by remember { mutableStateOf(false) }
     
+    // Validation
+    val dateError = when {
+        startDate != null && startDate!! < System.currentTimeMillis() -> "Start time cannot be in the past"
+        startDate != null && endDate != null && startDate!! >= endDate!! -> "End time must be after start time"
+        else -> null
+    }
+    
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Book Room", color = Color.White) },
@@ -448,6 +447,15 @@ private fun CreateBookingDialog(
                     color = Color(0xFF94A3B8),
                     modifier = Modifier.padding(bottom = 12.dp)
                 )
+                
+                if (dateError != null) {
+                    Text(
+                        dateError,
+                        fontSize = 12.sp,
+                        color = Color(0xFFEF4444),
+                        modifier = Modifier.padding(bottom = 12.dp)
+                    )
+                }
                 
                 OutlinedButton(
                     onClick = { showStartDatePicker = true },
@@ -503,17 +511,17 @@ private fun CreateBookingDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    if (startDate != null && endDate != null) {
+                    if (startDate != null && endDate != null && dateError == null) {
                         val dateFormat = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.getDefault())
                         onConfirm(
                             roomId,
                             dateFormat.format(java.util.Date(startDate!!)),
                             dateFormat.format(java.util.Date(endDate!!)),
-                            purpose.ifBlank { null }
+                            purpose.trim().ifBlank { null }
                         )
                     }
                 },
-                enabled = startDate != null && endDate != null,
+                enabled = startDate != null && endDate != null && dateError == null,
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2563EB))
             ) {
                 Text("Book")

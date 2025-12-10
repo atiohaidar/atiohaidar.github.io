@@ -144,21 +144,13 @@ fun EventsScreen(
             )
         }
         
-        // Error Snackbar
+        // Error Dialog
         uiState.error?.let { error ->
-            Snackbar(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(16.dp),
-                containerColor = Color(0xFFEF4444),
-                action = {
-                    TextButton(onClick = { viewModel.clearError() }) {
-                        Text("Dismiss", color = Color.White)
-                    }
-                }
-            ) {
-                Text(error)
-            }
+            com.example.portoflio_android.ui.components.ErrorDialog(
+                error = error,
+                onDismiss = { viewModel.clearError() },
+                onRetry = { viewModel.loadEvents() }
+            )
         }
     }
 }
@@ -175,6 +167,10 @@ private fun CreateEventDialog(
     var selectedDate by remember { mutableStateOf<Long?>(null) }
     var showDatePicker by remember { mutableStateOf(false) }
     
+    // Validation errors
+    val titleError = if (title.isNotBlank() && title.length < 3) "Title must be at least 3 characters" else null
+    val dateError = if (selectedDate != null && selectedDate!! < System.currentTimeMillis()) "Date cannot be in the past" else null
+    
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Create Event", color = Color.White) },
@@ -183,16 +179,19 @@ private fun CreateEventDialog(
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
-                    label = { Text("Event Title") },
+                    label = { Text("Event Title *") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
+                    isError = titleError != null,
+                    supportingText = titleError?.let { { Text(it, color = Color(0xFFEF4444)) } },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color(0xFF2563EB),
                         unfocusedBorderColor = Color(0xFF475569),
                         focusedTextColor = Color.White,
                         unfocusedTextColor = Color.White,
                         focusedLabelColor = Color(0xFF2563EB),
-                        unfocusedLabelColor = Color(0xFF94A3B8)
+                        unfocusedLabelColor = Color(0xFF94A3B8),
+                        errorBorderColor = Color(0xFFEF4444)
                     )
                 )
                 
@@ -255,18 +254,18 @@ private fun CreateEventDialog(
         confirmButton = {
             Button(
                 onClick = {
-                    if (title.isNotBlank() && selectedDate != null) {
+                    if (title.isNotBlank() && selectedDate != null && titleError == null && dateError == null) {
                         val dateStr = java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.getDefault())
                             .format(java.util.Date(selectedDate!!))
                         onConfirm(
-                            title,
-                            description.ifBlank { null },
+                            title.trim(),
+                            description.trim().ifBlank { null },
                             dateStr,
-                            location.ifBlank { null }
+                            location.trim().ifBlank { null }
                         )
                     }
                 },
-                enabled = title.isNotBlank() && selectedDate != null,
+                enabled = title.isNotBlank() && title.length >= 3 && selectedDate != null && titleError == null && dateError == null,
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2563EB))
             ) {
                 Text("Create")

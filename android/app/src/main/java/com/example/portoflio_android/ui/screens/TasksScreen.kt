@@ -157,21 +157,13 @@ fun TasksScreen(
             )
         }
         
-        // Error Snackbar
+        // Error Dialog
         uiState.error?.let { error ->
-            Snackbar(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(16.dp),
-                containerColor = Color(0xFFEF4444),
-                action = {
-                    TextButton(onClick = { viewModel.clearError() }) {
-                        Text("Dismiss", color = Color.White)
-                    }
-                }
-            ) {
-                Text(error)
-            }
+            com.example.portoflio_android.ui.components.ErrorDialog(
+                error = error,
+                onDismiss = { viewModel.clearError() },
+                onRetry = { viewModel.loadTasks() }
+            )
         }
     }
 }
