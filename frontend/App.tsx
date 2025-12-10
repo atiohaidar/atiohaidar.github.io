@@ -72,6 +72,16 @@ const App: React.FC = () => {
     const [introComplete, setIntroComplete] = React.useState(false);
     const [isEntryAnimComplete, setIsEntryAnimComplete] = React.useState(false);
 
+    React.useEffect(() => {
+        if (introComplete) {
+            // Wait for animation (800ms) + small buffer to ensure it touches 0 before removing
+            const timer = setTimeout(() => {
+                setIsEntryAnimComplete(true);
+            }, 900);
+            return () => clearTimeout(timer);
+        }
+    }, [introComplete]);
+
     return (
         <ThemeProvider>
             <QueryClientProvider client={queryClient}>
@@ -85,7 +95,6 @@ const App: React.FC = () => {
                     {introComplete && (
                         <div
                             className={isEntryAnimComplete ? "" : "animate-fade-in-up"}
-                            onAnimationEnd={() => setIsEntryAnimComplete(true)}
                         >
                             <Suspense fallback={<PageLoader />}>
                                 <Routes>

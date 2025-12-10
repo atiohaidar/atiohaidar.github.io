@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { COLORS, LAYOUT } from '../utils/styles';
 import { listTicketCategories, submitTicket } from '../lib/api/services';
 import type { TicketCategory, TicketCreate, TicketPriority } from '../apiTypes';
@@ -46,7 +47,7 @@ const TicketSubmissionSection: React.FC = () => {
                 token: response.ticket.token,
             });
             setShowTokenModal(true);
-            
+
             // Reset form
             setFormData({
                 title: '',
@@ -220,7 +221,7 @@ const TicketSubmissionSection: React.FC = () => {
             </div>
 
             {/* Token Modal */}
-            {showTokenModal && submitResult?.success && submitResult.token && (
+            {showTokenModal && submitResult?.success && submitResult.token && createPortal(
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100] p-4">
                     <div className={`${COLORS.BG_SECONDARY} rounded-lg p-8 max-w-md w-full shadow-2xl`}>
                         <h3 className={`text-2xl font-bold ${COLORS.TEXT_PRIMARY} mb-4 text-center`}>
@@ -244,7 +245,8 @@ const TicketSubmissionSection: React.FC = () => {
                             Tutup
                         </button>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </section>
     );

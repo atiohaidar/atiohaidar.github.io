@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Hero from '../components/Hero';
@@ -15,6 +16,7 @@ import FormTokenSection from '../components/FormTokenSection';
 import TicketSubmissionSection from '../components/TicketSubmissionSection';
 import TicketTrackingSection from '../components/TicketTrackingSection';
 import ScrollReveal from '../components/ScrollReveal';
+import SpyTooltip from '../components/SpyTooltip';
 import { getProfile, getAbout, getProjects, getResearch, getExperiences, getEducation } from '../api';
 import { getAuthToken, getStoredUser, clearAuth } from '../apiClient';
 import { COLORS, LAYOUT, PRINT } from '../utils/styles';
@@ -45,6 +47,8 @@ const LandingPage: React.FC = () => {
     const [prefilledTicketToken, setPrefilledTicketToken] = useState<string | null>(null);
     const [isFormModalOpen, setIsFormModalOpen] = useState(false);
     const [formTokenInput, setFormTokenInput] = useState('');
+    const [isChatTooltipOpen, setIsChatTooltipOpen] = useState(false);
+    const chatButtonRef = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
         const token = getAuthToken();
@@ -242,13 +246,31 @@ const LandingPage: React.FC = () => {
             <PrintButton />
 
             {/* Anonymous Chat Button */}
-            <button
-                onClick={() => setIsAnonymousChatOpen(true)}
-                className={`fixed bottom-4 right-4 md:bottom-6 md:right-6 ${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ON_ACCENT} p-3 md:p-4 rounded-full shadow-lg hover:opacity-90 transition-opacity z-[60]`}
-                title="Open Anonymous Chat"
+            <div
+                className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-[60] print:hidden"
+                onMouseEnter={() => setIsChatTooltipOpen(true)}
+                onMouseLeave={() => setIsChatTooltipOpen(false)}
             >
-                <span className="text-xl md:text-2xl">💬</span>
-            </button>
+                <button
+                    ref={chatButtonRef}
+                    onClick={() => setIsAnonymousChatOpen(true)}
+                    className={`relative ${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ON_ACCENT} p-3 md:p-4 rounded-full shadow-lg hover:opacity-90 transition-opacity`}
+                >
+                    <span className="text-xl md:text-2xl">💬</span>
+                </button>
+
+                <SpyTooltip
+                    visible={isChatTooltipOpen}
+                    title="CHAT"
+                    items={[
+                        { label: 'TYPE', value: 'Anonymous Chat' },
+                        { label: 'CHANNEL', value: 'Realtime WebSocket' },
+                        { label: 'PRIVACY', value: 'No Login Required' },
+                    ]}
+                    targetRef={chatButtonRef}
+                    color="#f59e0b"
+                />
+            </div>
 
             {/* Anonymous Chat Modal */}
             <AnonymousChatModal
@@ -257,7 +279,7 @@ const LandingPage: React.FC = () => {
             />
 
             {/* Ticket Tracking Modal */}
-            {isTicketModalOpen && (
+            {isTicketModalOpen && createPortal(
                 <div
                     className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
                     onClick={() => setIsTicketModalOpen(false)}
@@ -311,11 +333,12 @@ const LandingPage: React.FC = () => {
                             </div>
                         </form>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
 
             {/* Form Token Modal */}
-            {isFormModalOpen && (
+            {isFormModalOpen && createPortal(
                 <div
                     className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
                     onClick={() => setIsFormModalOpen(false)}
@@ -360,7 +383,8 @@ const LandingPage: React.FC = () => {
                             </button>
                         </form>
                     </div>
-                </div>
+                </div>,
+                document.body
             )}
         </div>
     );
