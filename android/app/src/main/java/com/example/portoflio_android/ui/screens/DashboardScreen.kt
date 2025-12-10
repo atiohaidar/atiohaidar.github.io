@@ -39,6 +39,7 @@ fun DashboardScreen(
     onNavigateToAnonymousChat: () -> Unit,
     onNavigateToTransfer: () -> Unit,
     onNavigateToTopUp: () -> Unit,
+    onNavigateToTransactionHistory: () -> Unit,
     onLogout: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -119,7 +120,8 @@ fun DashboardScreen(
                                 balance = user.balance,
                                 role = user.role,
                                 onTransferClick = onNavigateToTransfer,
-                                onTopUpClick = onNavigateToTopUp
+                                onTopUpClick = onNavigateToTopUp,
+                                onHistoryClick = onNavigateToTransactionHistory
                             )
                         }
                     }
@@ -303,7 +305,8 @@ private fun BalanceCard(
     balance: Double,
     role: com.example.portoflio_android.data.models.UserRole,
     onTransferClick: () -> Unit,
-    onTopUpClick: () -> Unit
+    onTopUpClick: () -> Unit,
+    onHistoryClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -372,6 +375,27 @@ private fun BalanceCard(
                 fontWeight = FontWeight.Medium,
                 color = Color(0xFF94A3B8)
             )
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            // Transaction History Button
+            TextButton(
+                onClick = onHistoryClick,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(
+                    Icons.Default.History,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp),
+                    tint = Color(0xFF10B981)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    "View Transaction History",
+                    color = Color(0xFF10B981),
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
         }
     }
 }

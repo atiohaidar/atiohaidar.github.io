@@ -141,6 +141,12 @@ object NetworkModule {
     fun provideAnonymousChatApiService(retrofit: Retrofit): AnonymousChatApiService {
         return retrofit.create(AnonymousChatApiService::class.java)
     }
+    
+    @Provides
+    @Singleton
+    fun provideTransactionApiService(retrofit: Retrofit): TransactionApiService {
+        return retrofit.create(TransactionApiService::class.java)
+    }
 }
 
 

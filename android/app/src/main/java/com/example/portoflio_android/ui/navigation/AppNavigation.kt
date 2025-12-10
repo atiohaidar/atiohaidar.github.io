@@ -26,6 +26,7 @@ object Routes {
     const val ANONYMOUS_CHAT = "anonymous_chat"
     const val TRANSFER = "transfer"
     const val TOP_UP = "top_up"
+    const val TRANSACTION_HISTORY = "transaction_history"
 }
 
 /**
@@ -66,6 +67,7 @@ fun AppNavigation(
                 onNavigateToAnonymousChat = { navController.navigate(Routes.ANONYMOUS_CHAT) },
                 onNavigateToTransfer = { navController.navigate(Routes.TRANSFER) },
                 onNavigateToTopUp = { navController.navigate(Routes.TOP_UP) },
+                onNavigateToTransactionHistory = { navController.navigate(Routes.TRANSACTION_HISTORY) },
                 onLogout = {
                     navController.navigate(Routes.LOGIN) {
                         popUpTo(Routes.DASHBOARD) { inclusive = true }
@@ -128,6 +130,10 @@ fun AppNavigation(
 
         composable(Routes.TOP_UP) {
             TopUpScreen(onNavigateBack = { navController.popBackStack() })
+        }
+        
+        composable(Routes.TRANSACTION_HISTORY) {
+            TransactionHistoryScreen(onNavigateBack = { navController.popBackStack() })
         }
     }
 }
