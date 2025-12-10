@@ -5,6 +5,7 @@ import { GitHubIcon, LinkedInIcon, InstagramIcon } from './Icons';
 import { PRINT } from '../utils/styles';
 import ThemeToggle from './ThemeToggle';
 import type { SocialLinks } from '../types';
+import SpyTooltip from './SpyTooltip';
 
 interface NavbarProps {
     logoSrc: string;
@@ -15,9 +16,11 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogout, onNavAction }) => {
+    const logoRef = React.useRef<HTMLDivElement>(null);
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+    const [isLogoTooltipOpen, setIsLogoTooltipOpen] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -47,11 +50,29 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
                 <div className={`rounded-full transition-all duration-300 ${isScrolled ? 'glass-panel px-6 py-3' : 'bg-transparent py-2'}`}>
                     <div className="flex items-center justify-between">
                         {/* Logo section */}
-                        <div className="flex items-center gap-4">
+                        <div
+                            ref={logoRef}
+                            className="flex items-center gap-4 relative"
+                            onMouseEnter={() => setIsLogoTooltipOpen(true)}
+                            onMouseLeave={() => setIsLogoTooltipOpen(false)}
+                            onClick={() => setIsLogoTooltipOpen(!isLogoTooltipOpen)}
+                        >
                             <a href="#hero" className="block relative group">
                                 <div className="absolute inset-0 bg-accent-blue/20 rounded-full blur-md group-hover:blur-lg transition-all duration-300 opacity-0 group-hover:opacity-100" />
                                 <img src={logoSrc} alt="Logo" className="relative h-10 w-10 rounded-full object-cover border-2 border-transparent group-hover:border-accent-blue/50 transition-all duration-300" />
                             </a>
+
+                            <SpyTooltip
+                                visible={isLogoTooltipOpen}
+                                title="IDENTITY"
+                                items={[
+                                    { label: 'CODENAME', value: 'Tio Haidar' },
+                                    { label: 'ROLE', value: 'Software Dev' },
+                                    { label: 'STATUS', value: 'Active' },
+                                    { label: 'LOC', value: 'Bandung, ID' }
+                                ]}
+                                targetRef={logoRef}
+                            />
                         </div>
 
                         {/* Desktop Nav */}

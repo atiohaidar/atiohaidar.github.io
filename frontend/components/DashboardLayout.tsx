@@ -4,6 +4,7 @@ import { useLogout } from '../hooks/useApi';
 import { DASHBOARD_THEME } from '../utils/styles';
 import { useTheme } from '../contexts/ThemeContext';
 import ThemeToggle from './ThemeToggle';
+import SpyTooltip from './SpyTooltip';
 
 interface StoredUser {
     username: string;
@@ -113,6 +114,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
     const logout = useLogout();
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+    const [isLogoTooltipOpen, setIsLogoTooltipOpen] = useState(false);
+    const logoRef = React.useRef<HTMLDivElement>(null);
     const { theme } = useTheme();
     const palette = DASHBOARD_THEME[theme];
     const baseText = theme === 'light' ? 'text-[#1A2136]' : 'text-white';
@@ -178,7 +181,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                     </button>
 
                     {/* Logo Area */}
-                    <div className={`flex items-center gap-3 ${!isSidebarOpen && 'md:justify-center w-full'}`}>
+                    <div
+                        ref={logoRef}
+                        className={`flex items-center gap-3 relative ${!isSidebarOpen && 'md:justify-center w-full'}`}
+                        onMouseEnter={() => setIsLogoTooltipOpen(true)}
+                        onMouseLeave={() => setIsLogoTooltipOpen(false)}
+                        onClick={() => setIsLogoTooltipOpen(!isLogoTooltipOpen)}
+                    >
                         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-500/20">
                             A
                         </div>
@@ -187,6 +196,17 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                                 AtioHaidar
                             </h2>
                         </div>
+
+                        <SpyTooltip
+                            visible={isLogoTooltipOpen}
+                            title="SYSTEM"
+                            items={[
+                                { label: 'APP', value: 'Dashboard' },
+                                { label: 'VER', value: 'v2.5.0' },
+                                { label: 'SEC', value: 'Encrypted' }
+                            ]}
+                            targetRef={logoRef}
+                        />
                     </div>
 
                     {/* Desktop toggle */}
