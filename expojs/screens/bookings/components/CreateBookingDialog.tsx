@@ -1,6 +1,7 @@
 import React from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { Dialog, Button, TextInput, Text } from 'react-native-paper';
+import { DatePickerInput } from '@/components/DatePickerInput';
 
 import { Room } from '@/types/api';
 
@@ -68,23 +69,23 @@ const CreateBookingDialog: React.FC<CreateBookingDialogProps> = ({
             style={styles.input}
             disabled={loading}
           />
-          <TextInput
-            label="Start Time * (YYYY-MM-DDTHH:MM:SSZ)"
+          <DatePickerInput
+            label="Start Time *"
             value={formData.start_time}
-            onChangeText={(text) => onChange({ start_time: text })}
-            mode="outlined"
+            onChange={(datetime) => onChange({ start_time: datetime })}
+            mode="datetime"
             style={styles.input}
-            placeholder="2024-12-31T09:00:00Z"
             disabled={loading}
+            minimumDate={new Date()}
           />
-          <TextInput
-            label="End Time * (YYYY-MM-DDTHH:MM:SSZ)"
+          <DatePickerInput
+            label="End Time *"
             value={formData.end_time}
-            onChangeText={(text) => onChange({ end_time: text })}
-            mode="outlined"
+            onChange={(datetime) => onChange({ end_time: datetime })}
+            mode="datetime"
             style={styles.input}
-            placeholder="2024-12-31T11:00:00Z"
             disabled={loading}
+            minimumDate={formData.start_time ? new Date(formData.start_time) : new Date()}
           />
         </ScrollView>
       </Dialog.ScrollArea>

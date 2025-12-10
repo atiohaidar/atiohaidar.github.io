@@ -3,6 +3,7 @@ import { View, Text, FlatList, TouchableOpacity, RefreshControl, StyleSheet } fr
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { IconButton, Surface, Chip } from 'react-native-paper';
+import { GlassCard } from '@/components/GlassCard';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import apiService from '@/services/api';
@@ -64,7 +65,7 @@ export default function EventsListScreen() {
         onPress={() => router.push(`/events/${item.id}`)}
         style={styles.cardTouchable}
       >
-        <Surface style={[styles.card, { backgroundColor: colors.card }]} elevation={1}>
+        <GlassCard style={[styles.card, { backgroundColor: 'transparent' }]} mode="elevated">
           <View style={styles.cardHeader}>
             <View style={styles.cardTitleContainer}>
               <Text style={[styles.cardTitle, { color: colors.text }]} numberOfLines={2}>
@@ -117,7 +118,7 @@ export default function EventsListScreen() {
               </Text>
             </View>
           )}
-        </Surface>
+        </GlassCard>
       </TouchableOpacity>
     );
   };

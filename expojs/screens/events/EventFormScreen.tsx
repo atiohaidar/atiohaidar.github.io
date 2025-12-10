@@ -15,6 +15,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import apiService from '@/services/api';
 import { Event, EventCreate, EventUpdate } from '@/types/api';
+import { DatePickerInput } from '@/components/DatePickerInput';
 
 export default function EventFormScreen() {
   const router = useRouter();
@@ -123,22 +124,6 @@ export default function EventFormScreen() {
     }
   };
 
-  // Helper to format date for datetime-local input
-  const formatDateForInput = (isoDate: string): string => {
-    if (!isoDate) return '';
-    try {
-      const date = new Date(isoDate);
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      return `${year}-${month}-${day}T${hours}:${minutes}`;
-    } catch {
-      return '';
-    }
-  };
-
   if (isEditMode && loadingEvent) {
     return (
       <View style={[styles.container, styles.centerContainer, { backgroundColor: colors.background }]}>
@@ -196,31 +181,17 @@ export default function EventFormScreen() {
               />
             </View>
 
-            {/* Event Date - Note: For simplicity, using text input with placeholder */}
+            {/* Event Date - Using DatePickerInput */}
             <View style={styles.fieldContainer}>
-              <TextInput
+              <DatePickerInput
                 label="Tanggal dan Waktu *"
-                value={formData.event_date ? formatDateForInput(formData.event_date) : ''}
-                onChangeText={(value) => {
-                  // Convert from datetime-local format to ISO
-                  try {
-                    const date = new Date(value);
-                    if (!isNaN(date.getTime())) {
-                      handleChange('event_date', date.toISOString());
-                    }
-                  } catch {
-                    handleChange('event_date', value);
-                  }
-                }}
-                error={!!errors.event_date}
+                value={formData.event_date}
+                onChange={(value) => handleChange('event_date', value)}
+                mode="datetime"
                 disabled={isSubmitting}
-                mode="outlined"
-                placeholder="YYYY-MM-DDTHH:MM (contoh: 2024-12-31T14:00)"
+                minimumDate={isEditMode ? undefined : new Date()}
               />
               {errors.event_date && <Text style={styles.errorText}>{errors.event_date}</Text>}
-              <Text style={[styles.helperText, { color: colors.secondaryText }]}>
-                Format: YYYY-MM-DDTHH:MM (contoh: 2024-12-31T14:00)
-              </Text>
             </View>
 
             {/* Location */}

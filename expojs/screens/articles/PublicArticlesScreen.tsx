@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   Chip,
 } from 'react-native-paper';
+import { GlassCard } from '@/components/GlassCard';
 import ApiService from '@/services/api';
 import { Article } from '@/types/api';
 
@@ -57,16 +58,16 @@ export default function PublicArticlesScreen() {
         </Text>
 
         {articles.length === 0 ? (
-          <Card style={styles.emptyCard}>
+          <GlassCard style={styles.emptyCard}>
             <Card.Content>
               <Text variant="bodyLarge" style={styles.emptyText}>
                 No published articles yet.
               </Text>
             </Card.Content>
-          </Card>
+          </GlassCard>
         ) : (
           articles.map((article) => (
-            <Card key={article.slug} style={styles.articleCard} mode="elevated">
+            <GlassCard key={article.slug} style={styles.articleCard} mode="elevated">
               <Card.Content>
                 <View style={styles.articleInfo}>
                   <Text variant="titleLarge" style={styles.articleTitle}>
@@ -93,7 +94,7 @@ export default function PublicArticlesScreen() {
                   </View>
                 </View>
               </Card.Content>
-            </Card>
+            </GlassCard>
           ))
         )}
       </ScrollView>

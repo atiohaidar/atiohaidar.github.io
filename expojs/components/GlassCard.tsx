@@ -18,8 +18,8 @@ export const GlassCard: React.FC<GlassCardProps> = ({ children, style, mode = 'e
 
     // Dynamic styles based on theme
     const glassStyles = {
-        backgroundColor: theme.dark ? 'rgba(30, 30, 30, 0.6)' : 'rgba(255, 255, 255, 0.8)',
-        borderColor: theme.dark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.05)',
+        backgroundColor: theme.dark ? 'rgba(30, 41, 59, 0.4)' : 'rgba(255, 255, 255, 0.7)', // #1e293b with 0.4 opacity
+        borderColor: theme.dark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.5)',
         borderWidth: 1,
     };
 

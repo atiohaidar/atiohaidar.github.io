@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   Divider,
 } from 'react-native-paper';
+import { GlassCard } from '@/components/GlassCard';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import ApiService from '@/services/api';
 import { FormCreate, FormUpdate } from '@/types/api';
@@ -175,7 +176,7 @@ export default function FormEditorScreen() {
 
   return (
     <ScrollView style={styles.container}>
-      <Card style={styles.card} mode="elevated">
+      <GlassCard style={styles.card} mode="elevated">
         <Card.Content>
           <Text variant="headlineSmall" style={styles.title}>
             {isEditMode ? 'Edit Form' : 'Create New Form'}
@@ -199,16 +200,16 @@ export default function FormEditorScreen() {
             style={styles.input}
           />
         </Card.Content>
-      </Card>
+      </GlassCard>
 
-      <Card style={styles.card} mode="elevated">
+      <GlassCard style={styles.card} mode="elevated">
         <Card.Content>
           <Text variant="titleMedium" style={styles.sectionTitle}>
             Questions
           </Text>
 
           {questions.map((question, index) => (
-            <Card key={index} style={styles.questionCard} mode="outlined">
+            <GlassCard key={index} style={styles.questionCard} mode="outlined">
               <Card.Content>
                 <View style={styles.questionHeader}>
                   <Text variant="labelLarge">Question {index + 1}</Text>
@@ -243,7 +244,7 @@ export default function FormEditorScreen() {
                   numberOfLines={2}
                 />
               </Card.Content>
-            </Card>
+            </GlassCard>
           ))}
 
           <Button
@@ -255,7 +256,7 @@ export default function FormEditorScreen() {
             Add Question
           </Button>
         </Card.Content>
-      </Card>
+      </GlassCard>
 
       <View style={styles.actions}>
         <Button

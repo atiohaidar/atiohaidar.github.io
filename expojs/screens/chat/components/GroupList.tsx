@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Avatar, Card, Chip, Text, useTheme } from 'react-native-paper';
+import { GlassCard } from '@/components/GlassCard';
 import type { GroupChat } from '@/types/api';
 
 interface GroupListProps {
@@ -13,13 +14,13 @@ export function GroupList({ groups, onSelect }: GroupListProps) {
 
   if (groups.length === 0) {
     return (
-      <Card style={styles.emptyCard}>
+      <GlassCard style={styles.emptyCard}>
         <Card.Content>
           <Text variant="bodyLarge" style={styles.emptyText}>
             No groups yet. Create your first group!
           </Text>
         </Card.Content>
-      </Card>
+      </GlassCard>
     );
   }
 
@@ -28,7 +29,7 @@ export function GroupList({ groups, onSelect }: GroupListProps) {
       {groups.map((group) => {
         const isAnonymous = group.id === 'anonymous';
         return (
-          <Card
+          <GlassCard
             key={group.id}
             style={styles.chatCard}
             mode="elevated"
@@ -67,7 +68,7 @@ export function GroupList({ groups, onSelect }: GroupListProps) {
                 </View>
               </View>
             </Card.Content>
-          </Card>
+          </GlassCard>
         );
       })}
     </View>

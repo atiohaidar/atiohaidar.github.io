@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Portal, Dialog, TextInput, Checkbox, Text, Button } from 'react-native-paper';
 import type { Task } from '@/types/api';
+import { DatePickerInput } from '@/components/DatePickerInput';
 
 export interface TaskFormState {
   name: string;
@@ -52,14 +53,13 @@ export function TaskFormDialog({
             style={styles.input}
             disabled={isSubmitting}
           />
-          <TextInput
-            label="Due Date (YYYY-MM-DD)"
+          <DatePickerInput
+            label="Due Date"
             value={formData.due_date}
-            onChangeText={(text) => onChange({ due_date: text })}
-            mode="outlined"
-            style={styles.input}
-            placeholder="2024-12-31"
+            onChange={(date) => onChange({ due_date: date })}
+            mode="date"
             disabled={isSubmitting}
+            style={styles.input}
           />
           <View style={styles.checkboxRow}>
             <Checkbox

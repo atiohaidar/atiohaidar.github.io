@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Card, Text, Chip, Divider, Button, useTheme } from 'react-native-paper';
+import { GlassCard } from '@/components/GlassCard';
 import { Ticket } from '@/types/api';
 
 interface TicketCardProps {
@@ -36,7 +37,7 @@ const TicketCard: React.FC<TicketCardProps> = ({
   const priorityColor = priorityColors[ticket.priority] ?? theme.colors.secondary;
 
   return (
-    <Card style={styles.card} mode="elevated" onPress={() => onPress(ticket)}>
+    <GlassCard style={styles.card} mode="elevated" onPress={() => onPress(ticket)}>
       <Card.Content>
         <View style={styles.header}>
           <View style={styles.info}>
@@ -112,7 +113,7 @@ const TicketCard: React.FC<TicketCardProps> = ({
           </>
         )}
       </Card.Content>
-    </Card>
+    </GlassCard>
   );
 };
 

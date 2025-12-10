@@ -14,6 +14,7 @@ import {
   Menu,
   SegmentedButtons,
 } from 'react-native-paper';
+import { GlassCard } from '@/components/GlassCard';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 import ApiService from '@/services/api';
@@ -207,7 +208,7 @@ export default function TicketDetailScreen() {
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     >
       {/* Header Card */}
-      <Card style={styles.card} mode="elevated">
+      <GlassCard style={styles.card} mode="elevated">
         <Card.Content>
           <View style={styles.headerRow}>
             <Text variant="headlineSmall" style={styles.ticketId}>
@@ -350,11 +351,11 @@ export default function TicketDetailScreen() {
             </>
           )}
         </Card.Content>
-      </Card>
+      </GlassCard>
 
       {/* Assignment Section */}
       {isAdmin && !editMode && (
-        <Card style={styles.card} mode="elevated">
+        <GlassCard style={styles.card} mode="elevated">
           <Card.Content>
             <Text variant="titleMedium" style={styles.sectionTitle}>
               Assignment
@@ -404,11 +405,11 @@ export default function TicketDetailScreen() {
               </>
             )}
           </Card.Content>
-        </Card>
+        </GlassCard>
       )}
 
       {/* Comments Section */}
-      <Card style={styles.card} mode="elevated">
+      <GlassCard style={styles.card} mode="elevated">
         <Card.Content>
           <Text variant="titleMedium" style={styles.sectionTitle}>
             Comments ({comments.length})
@@ -463,7 +464,7 @@ export default function TicketDetailScreen() {
             Add Comment
           </Button>
         </Card.Content>
-      </Card>
+      </GlassCard>
     </ScrollView>
   );
 }

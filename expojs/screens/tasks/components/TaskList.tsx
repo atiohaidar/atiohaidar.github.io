@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Card, Text, Checkbox, IconButton, Chip, useTheme } from 'react-native-paper';
+import { Text, Checkbox, IconButton, Chip, useTheme } from 'react-native-paper';
+import { GlassCard } from '@/components/GlassCard';
 import type { Task } from '@/types/api';
+import { Card } from 'react-native-paper'; // Keep only if specifically needed, but replacing with GlassCard mostly
 
 export interface TaskListProps {
   tasks: Task[];
@@ -16,20 +18,20 @@ export function TaskList({ tasks, canEdit, onToggleComplete, onEdit, onDelete }:
 
   if (tasks.length === 0) {
     return (
-      <Card style={styles.emptyCard}>
+      <GlassCard style={styles.emptyCard}>
         <Card.Content>
           <Text variant="bodyLarge" style={styles.emptyText}>
             No tasks yet. Create your first task!
           </Text>
         </Card.Content>
-      </Card>
+      </GlassCard>
     );
   }
 
   return (
     <View style={styles.list}>
       {tasks.map((task) => (
-        <Card key={task.id} style={styles.taskCard} mode="elevated">
+        <GlassCard key={task.id} style={styles.taskCard} mode="elevated">
           <Card.Content>
             <View style={styles.taskHeader}>
               <View style={styles.taskTitleRow}>
@@ -72,7 +74,7 @@ export function TaskList({ tasks, canEdit, onToggleComplete, onEdit, onDelete }:
               ) : null}
             </View>
           </Card.Content>
-        </Card>
+        </GlassCard>
       ))}
     </View>
   );

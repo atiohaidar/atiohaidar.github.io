@@ -43,7 +43,7 @@ function RootLayoutNav() {
 
   // Global Background Gradient Colors
   const gradientColors = colorScheme === 'dark'
-    ? ['#222222', '#1E40AF', '#222222'] as const // Deep Navy -> Blue -> Deep Navy
+    ? ['#0f172a', '#172554', '#0f172a'] as const // deep-navy -> blue-950 -> deep-navy
     : ['#F5F5F5', '#E0F2FE', '#F5F5F5'] as const; // Light Gray -> Light Blue -> Light Gray
 
   return (

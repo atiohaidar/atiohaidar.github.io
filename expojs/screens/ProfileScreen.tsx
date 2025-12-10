@@ -4,6 +4,7 @@ import { Card, Text, Button, ActivityIndicator, Divider } from 'react-native-pap
 import { useAuth } from '@/contexts/AuthContext';
 import { useUpdateSelfProfile } from '@/hooks/useApi';
 import { AppColors } from '@/constants/colors';
+import { GlassCard } from '@/components/GlassCard';
 import { ProfileHeader } from './profile/components/ProfileHeader';
 import { ProfileInfoSection } from './profile/components/ProfileInfoSection';
 import { PasswordSection } from './profile/components/PasswordSection';
@@ -113,7 +114,7 @@ export default function ProfileScreen() {
 
   return (
     <ScrollView style={styles.container}>
-      <Card style={styles.card} mode="elevated">
+      <GlassCard style={styles.card} mode="elevated">
         <Card.Content>
           <ProfileHeader user={user} />
 
@@ -189,9 +190,9 @@ export default function ProfileScreen() {
             )}
           </View>
         </Card.Content>
-      </Card>
+      </GlassCard>
 
-      <Card style={styles.card} mode="elevated">
+      <GlassCard style={styles.card} mode="elevated">
         <Card.Content>
           <Text variant="titleMedium" style={styles.sectionTitle}>
             Account Information
@@ -213,7 +214,7 @@ export default function ProfileScreen() {
             </Text>
           </View>
         </Card.Content>
-      </Card>
+      </GlassCard>
     </ScrollView>
   );
 }

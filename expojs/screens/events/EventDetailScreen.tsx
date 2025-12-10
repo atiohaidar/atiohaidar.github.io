@@ -11,7 +11,8 @@ import {
 } from 'react-native';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { Surface, IconButton, Button } from 'react-native-paper';
+import { IconButton, Button } from 'react-native-paper';
+import { GlassCard } from '@/components/GlassCard';
 import QRCode from 'react-native-qrcode-svg';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
@@ -254,7 +255,7 @@ export default function EventDetailScreen() {
         </View>
 
         {/* Event Info */}
-        <Surface style={[styles.section, { backgroundColor: colors.card }]}>
+        <GlassCard style={styles.section}>
           {event.description && (
             <Text style={[styles.description, { color: colors.text }]}>{event.description}</Text>
           )}
@@ -280,29 +281,29 @@ export default function EventDetailScreen() {
               </View>
             )}
           </View>
-        </Surface>
+        </GlassCard>
 
         {/* Stats */}
         <View style={styles.statsContainer}>
-          <Surface style={[styles.statCard, { backgroundColor: colors.card }]}>
+          <GlassCard style={styles.statCard}>
             <Text style={[styles.statLabel, { color: colors.secondaryText }]}>
               Total Pendaftar
             </Text>
             <Text style={[styles.statValue, { color: colors.text }]}>{stats.total}</Text>
-          </Surface>
-          <Surface style={[styles.statCard, { backgroundColor: colors.card }]}>
+          </GlassCard>
+          <GlassCard style={styles.statCard}>
             <Text style={[styles.statLabel, { color: colors.secondaryText }]}>Hadir</Text>
             <Text style={[styles.statValue, { color: '#10b981' }]}>{stats.present}</Text>
-          </Surface>
-          <Surface style={[styles.statCard, { backgroundColor: colors.card }]}>
+          </GlassCard>
+          <GlassCard style={styles.statCard}>
             <Text style={[styles.statLabel, { color: colors.secondaryText }]}>Belum Hadir</Text>
             <Text style={[styles.statValue, { color: '#f59e0b' }]}>{stats.registered}</Text>
-          </Surface>
+          </GlassCard>
         </View>
 
         {/* Attendees List (for managers) */}
         {canManage && attendees && attendees.length > 0 && (
-          <Surface style={[styles.section, { backgroundColor: colors.card }]}>
+          <GlassCard style={styles.section}>
             <Text style={[styles.sectionTitle, { color: colors.text }]}>
               Daftar Peserta ({attendees.length})
             </Text>
@@ -338,7 +339,7 @@ export default function EventDetailScreen() {
                 dan {attendees.length - 5} peserta lainnya...
               </Text>
             )}
-          </Surface>
+          </GlassCard>
         )}
 
         {/* Delete Button (admin only) */}
@@ -360,7 +361,7 @@ export default function EventDetailScreen() {
       {/* QR Code Modal */}
       <Modal visible={showQRModal} transparent animationType="fade">
         <View style={styles.modalOverlay}>
-          <Surface style={[styles.modalContent, { backgroundColor: colors.card }]}>
+          <GlassCard style={styles.modalContent}>
             <Text style={[styles.modalTitle, { color: colors.text }]}>QR Code Kehadiran</Text>
             {selectedAttendee && (
               <>
@@ -388,7 +389,7 @@ export default function EventDetailScreen() {
                 </View>
               </>
             )}
-          </Surface>
+          </GlassCard>
         </View>
       </Modal>
     </View>

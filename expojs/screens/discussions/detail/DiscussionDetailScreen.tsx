@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   IconButton,
 } from 'react-native-paper';
+import { GlassCard } from '@/components/GlassCard';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 import ApiService from '@/services/api';
@@ -141,7 +142,7 @@ export default function DiscussionDetailScreen() {
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     >
       {/* Main Discussion Card */}
-      <Card style={styles.card} mode="elevated">
+      <GlassCard style={styles.card} mode="elevated">
         <Card.Content>
           <View style={styles.headerRow}>
             <Text variant="headlineSmall" style={styles.title}>
@@ -174,10 +175,10 @@ export default function DiscussionDetailScreen() {
             </Chip>
           </View>
         </Card.Content>
-      </Card>
+      </GlassCard>
 
       {/* Replies Section */}
-      <Card style={styles.card} mode="elevated">
+      <GlassCard style={styles.card} mode="elevated">
         <Card.Content>
           <Text variant="titleMedium" style={styles.sectionTitle}>
             Replies ({discussion.replies.length})
@@ -206,10 +207,10 @@ export default function DiscussionDetailScreen() {
             ))
           )}
         </Card.Content>
-      </Card>
+      </GlassCard>
 
       {/* Reply Form */}
-      <Card style={styles.card} mode="elevated">
+      <GlassCard style={styles.card} mode="elevated">
         <Card.Content>
           <Text variant="titleMedium" style={styles.sectionTitle}>
             Post a Reply
@@ -245,7 +246,7 @@ export default function DiscussionDetailScreen() {
             Post Reply
           </Button>
         </Card.Content>
-      </Card>
+      </GlassCard>
     </ScrollView>
   );
 }

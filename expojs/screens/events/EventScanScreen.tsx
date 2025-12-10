@@ -12,6 +12,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { CameraView, Camera } from 'expo-camera';
 import { Button, TextInput, Surface } from 'react-native-paper';
+import { GlassCard } from '@/components/GlassCard';
 import * as Location from 'expo-location';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
@@ -108,10 +109,10 @@ export default function EventScanScreen() {
 
   const handleBarcodeScanned = ({ data }: { data: string }) => {
     if (!isScanning) return;
-    
+
     // Stop scanning temporarily
     setIsScanning(false);
-    
+
     // Show confirmation modal
     setPendingToken(data);
     setShowConfirmModal(true);
@@ -257,7 +258,7 @@ export default function EventScanScreen() {
 
       {/* Manual Input */}
       {showManualInput && (
-        <Surface style={[styles.manualInputSection, { backgroundColor: colors.card }]}>
+        <GlassCard style={styles.manualInputSection}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Input Token Manual</Text>
           <TextInput
             value={manualToken}
@@ -274,13 +275,13 @@ export default function EventScanScreen() {
           >
             Verifikasi Token
           </Button>
-        </Surface>
+        </GlassCard>
       )}
 
       {/* Confirmation Modal */}
       <Modal visible={showConfirmModal} transparent animationType="fade">
         <View style={styles.modalOverlay}>
-          <Surface style={[styles.modalContent, { backgroundColor: colors.card }]}>
+          <GlassCard style={styles.modalContent}>
             <Text style={[styles.modalTitle, { color: colors.text }]}>Verifikasi Kehadiran</Text>
 
             {(() => {
@@ -315,8 +316,8 @@ export default function EventScanScreen() {
                         {attendee.status === 'present'
                           ? 'Hadir'
                           : attendee.status === 'absent'
-                          ? 'Tidak Hadir'
-                          : 'Terdaftar'}
+                            ? 'Tidak Hadir'
+                            : 'Terdaftar'}
                       </Text>
                     </View>
                   </View>
@@ -357,7 +358,7 @@ export default function EventScanScreen() {
                 </>
               );
             })()}
-          </Surface>
+          </GlassCard>
         </View>
       </Modal>
     </View>

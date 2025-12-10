@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Card, Text } from 'react-native-paper';
+import { GlassCard } from '@/components/GlassCard';
 import { Article } from '@/types/api';
 import ArticleCard, { ArticleScope } from './ArticleCard';
 
@@ -32,13 +33,13 @@ const ArticleSection: React.FC<ArticleSectionProps> = ({
       </Text>
 
       {articles.length === 0 ? (
-        <Card style={styles.emptyCard}>
+        <GlassCard style={styles.emptyCard}>
           <Card.Content>
             <Text variant="bodyLarge" style={styles.emptyText}>
               {emptyMessage}
             </Text>
           </Card.Content>
-        </Card>
+        </GlassCard>
       ) : (
         articles.map((article) => (
           <ArticleCard

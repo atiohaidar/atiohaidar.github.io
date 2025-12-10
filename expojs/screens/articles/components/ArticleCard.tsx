@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Card, Text, Chip, IconButton, useTheme } from 'react-native-paper';
+import { GlassCard } from '@/components/GlassCard';
 import { Article } from '@/types/api';
 
 export type ArticleScope = 'private' | 'public';
@@ -39,7 +40,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   const showStatusChip = scope === 'private';
 
   return (
-    <Card style={styles.card} mode="elevated" onPress={() => onPress(article)}>
+    <GlassCard style={styles.card} mode="elevated" onPress={() => onPress(article)}>
       <Card.Content>
         <View style={styles.header}>
           <View style={styles.info}>
@@ -83,7 +84,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
           )}
         </View>
       </Card.Content>
-    </Card>
+    </GlassCard>
   );
 };
 

@@ -41,6 +41,17 @@ export default defineConfig(({ mode }) => {
           },
         },
       },
-    }
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ['react', 'react-dom', 'react-router-dom'],
+            d3: ['d3'],
+            particles: ['@tsparticles/engine', '@tsparticles/react', '@tsparticles/slim'],
+          },
+        },
+      },
+    },
   };
 });

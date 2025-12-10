@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, RefreshControl, Alert } from 'react-native';
 import { Text, FAB, ActivityIndicator, Card, Chip, IconButton, useTheme } from 'react-native-paper';
+import { GlassCard } from '@/components/GlassCard';
 import { useAuth } from '@/contexts/AuthContext';
 import ApiService from '@/services/api';
 import { Form } from '@/types/api';
@@ -88,7 +89,7 @@ export default function FormsScreen() {
           </View>
         ) : (
           forms.map((form) => (
-            <Card
+            <GlassCard
               key={form.id}
               style={styles.card}
               mode="elevated"
@@ -130,7 +131,7 @@ export default function FormsScreen() {
                   </View>
                 </View>
               </Card.Content>
-            </Card>
+            </GlassCard>
           ))
         )}
       </ScrollView>

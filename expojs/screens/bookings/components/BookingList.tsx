@@ -1,6 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { Text, Card } from 'react-native-paper';
+import { GlassCard } from '@/components/GlassCard';
 
 import { Booking, Room } from '@/types/api';
 import BookingCard from './BookingCard';
@@ -26,13 +27,13 @@ const BookingList: React.FC<BookingListProps> = ({
 
   if (bookings.length === 0) {
     return (
-      <Card style={{ marginTop: 20 }}>
+      <GlassCard style={{ marginTop: 20 }}>
         <Card.Content>
           <Text variant="bodyLarge" style={{ textAlign: 'center', opacity: 0.6 }}>
             No bookings yet. Reserve a room!
           </Text>
         </Card.Content>
-      </Card>
+      </GlassCard>
     );
   }
 

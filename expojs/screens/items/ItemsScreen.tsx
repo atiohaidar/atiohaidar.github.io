@@ -13,6 +13,7 @@ import {
   Dialog,
   TextInput,
 } from 'react-native-paper';
+import { GlassCard } from '@/components/GlassCard';
 import { useAuth } from '@/contexts/AuthContext';
 import ApiService from '@/services/api';
 import { Item, ItemCreate } from '@/types/api';
@@ -126,7 +127,7 @@ export default function ItemsScreen() {
           </View>
         ) : (
           items.map((item) => (
-            <Card key={item.id} style={styles.card} mode="elevated">
+            <GlassCard key={item.id} style={styles.card} mode="elevated">
               <Card.Content>
                 <View style={styles.cardHeader}>
                   <View style={styles.cardInfo}>
@@ -183,7 +184,7 @@ export default function ItemsScreen() {
                   </View>
                 )}
               </Card.Content>
-            </Card>
+            </GlassCard>
           ))
         )}
       </ScrollView>

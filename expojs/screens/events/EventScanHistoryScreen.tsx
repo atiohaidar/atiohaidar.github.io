@@ -10,7 +10,8 @@ import {
 } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
-import { Surface, TextInput, Chip } from 'react-native-paper';
+import { TextInput, Chip } from 'react-native-paper';
+import { GlassCard } from '@/components/GlassCard';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { Colors } from '@/constants/theme';
 import apiService from '@/services/api';
@@ -95,7 +96,7 @@ export default function EventScanHistoryScreen() {
   };
 
   const renderScanItem = ({ item }: { item: EventScanHistory }) => (
-    <Surface style={[styles.scanItem, { backgroundColor: colors.card }]} elevation={1}>
+    <GlassCard style={styles.scanItem} mode="elevated">
       <View style={styles.scanHeader}>
         <Text style={[styles.scanUser, { color: colors.text }]}>{item.attendee_username}</Text>
         <View
@@ -146,7 +147,7 @@ export default function EventScanHistoryScreen() {
           </TouchableOpacity>
         )}
       </View>
-    </Surface>
+    </GlassCard>
   );
 
   return (
@@ -163,22 +164,22 @@ export default function EventScanHistoryScreen() {
 
       {/* Stats */}
       <View style={styles.statsContainer}>
-        <Surface style={[styles.statCard, { backgroundColor: colors.card }]}>
+        <GlassCard style={styles.statCard}>
           <Text style={[styles.statValue, { color: colors.text }]}>{stats.total}</Text>
           <Text style={[styles.statLabel, { color: colors.secondaryText }]}>Total Scan</Text>
-        </Surface>
-        <Surface style={[styles.statCard, { backgroundColor: colors.card }]}>
+        </GlassCard>
+        <GlassCard style={styles.statCard}>
           <Text style={[styles.statValue, { color: colors.text }]}>{stats.unique}</Text>
           <Text style={[styles.statLabel, { color: colors.secondaryText }]}>Peserta Unik</Text>
-        </Surface>
-        <Surface style={[styles.statCard, { backgroundColor: colors.card }]}>
+        </GlassCard>
+        <GlassCard style={styles.statCard}>
           <Text style={[styles.statValue, { color: '#10b981' }]}>{stats.present}</Text>
           <Text style={[styles.statLabel, { color: colors.secondaryText }]}>Hadir</Text>
-        </Surface>
+        </GlassCard>
       </View>
 
       {/* Filters */}
-      <Surface style={[styles.filterSection, { backgroundColor: colors.card }]}>
+      <GlassCard style={styles.filterSection}>
         <TextInput
           value={searchQuery}
           onChangeText={setSearchQuery}
@@ -218,7 +219,7 @@ export default function EventScanHistoryScreen() {
             </ScrollView>
           </View>
         )}
-      </Surface>
+      </GlassCard>
 
       {/* Scan History List */}
       {isLoading ? (

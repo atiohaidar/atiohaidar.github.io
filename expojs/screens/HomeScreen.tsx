@@ -10,9 +10,13 @@ import { GlassCard } from '@/components/GlassCard';
 
 export default function HomeScreen() {
   const { data: stats, isLoading, refetch, isRefetching } = useStats();
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, refreshUser } = useAuth();
   const theme = useTheme();
   const insets = useSafeAreaInsets();
+
+  const handleRefresh = async () => {
+    await Promise.all([refetch(), refreshUser()]);
+  };
 
   if (isLoading) {
     return (
@@ -71,7 +75,7 @@ export default function HomeScreen() {
       style={styles.container}
       contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
       refreshControl={
-        <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} tintColor={theme.colors.onSurface} />
+        <RefreshControl refreshing={isRefetching} onRefresh={handleRefresh} tintColor={theme.colors.onSurface} />
       }
     >
       <View style={styles.header}>

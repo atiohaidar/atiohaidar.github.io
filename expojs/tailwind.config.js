@@ -46,7 +46,18 @@ module.exports = {
         glass: {
           border: 'rgba(255, 255, 255, 0.1)',
           surface: 'rgba(30, 30, 30, 0.6)',
-        }
+        },
+        // Frontend Color Palette
+        'deep-navy': '#0f172a',
+        'light-navy': '#1e293b',
+        'accent-blue': '#3b82f6',
+        'soft-gray': '#94a3b8',
+        'light-slate': '#cbd5e1',
+        'light-bg': '#f8fafc',
+        'light-card': '#ffffff',
+        'light-accent': '#2563EB',
+        'light-text': '#0f172a',
+        'light-muted': '#64748b',
       },
     },
   },

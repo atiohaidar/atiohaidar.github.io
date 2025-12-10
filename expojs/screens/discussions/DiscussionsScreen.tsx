@@ -13,6 +13,7 @@ import {
   Button,
   TextInput,
 } from 'react-native-paper';
+import { GlassCard } from '@/components/GlassCard';
 import { useAuth } from '@/contexts/AuthContext';
 import ApiService from '@/services/api';
 import { Discussion, DiscussionCreate } from '@/types/api';
@@ -124,7 +125,7 @@ export default function DiscussionsScreen() {
           </View>
         ) : (
           discussions.map((discussion) => (
-            <Card
+            <GlassCard
               key={discussion.id}
               style={styles.card}
               mode="elevated"
@@ -165,7 +166,7 @@ export default function DiscussionsScreen() {
                   )}
                 </View>
               </Card.Content>
-            </Card>
+            </GlassCard>
           ))
         )}
       </ScrollView>

@@ -9,6 +9,7 @@ import {
   useTheme,
   Divider,
 } from 'react-native-paper';
+import { GlassCard } from '@/components/GlassCard';
 import { useAuth } from '@/contexts/AuthContext';
 import ApiService from '@/services/api';
 import { ItemBorrowing, ItemBorrowingStatus } from '@/types/api';
@@ -115,7 +116,7 @@ export default function ItemBorrowingsScreen() {
               borrowing.status === 'pending';
 
             return (
-              <Card key={borrowing.id} style={styles.card} mode="elevated">
+              <GlassCard key={borrowing.id} style={styles.card} mode="elevated">
                 <Card.Content>
                   <Text variant="titleMedium" style={styles.cardTitle}>
                     Item ID: {borrowing.item_id}
@@ -201,7 +202,7 @@ export default function ItemBorrowingsScreen() {
                     </>
                   )}
                 </Card.Content>
-              </Card>
+              </GlassCard>
             );
           })
         )}

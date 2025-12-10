@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Avatar, Card, Text, useTheme } from 'react-native-paper';
+import { GlassCard } from '@/components/GlassCard';
 import type { Conversation } from '@/types/api';
 
 interface ConversationListProps {
@@ -14,13 +15,13 @@ export function ConversationList({ conversations, currentUsername, onSelect }: C
 
   if (conversations.length === 0) {
     return (
-      <Card style={styles.emptyCard}>
+      <GlassCard style={styles.emptyCard}>
         <Card.Content>
           <Text variant="bodyLarge" style={styles.emptyText}>
             No conversations yet.
           </Text>
         </Card.Content>
-      </Card>
+      </GlassCard>
     );
   }
 
@@ -31,7 +32,7 @@ export function ConversationList({ conversations, currentUsername, onSelect }: C
         const updatedAt = conv.updated_at ? new Date(conv.updated_at).toLocaleDateString() : 'No messages';
 
         return (
-          <Card
+          <GlassCard
             key={conv.id}
             style={styles.chatCard}
             mode="elevated"
@@ -54,7 +55,7 @@ export function ConversationList({ conversations, currentUsername, onSelect }: C
                 </View>
               </View>
             </Card.Content>
-          </Card>
+          </GlassCard>
         );
       })}
     </View>

@@ -9,6 +9,8 @@ import {
   ActivityIndicator,
   Chip,
 } from 'react-native-paper';
+import { GlassCard } from '@/components/GlassCard';
+import { DatePickerInput } from '@/components/DatePickerInput';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 import ApiService from '@/services/api';
@@ -103,14 +105,14 @@ export default function BorrowItemScreen() {
 
   return (
     <ScrollView style={styles.container}>
-      <Card style={styles.card} mode="elevated">
+      <GlassCard style={styles.card} mode="elevated">
         <Card.Content>
           <Text variant="headlineSmall" style={styles.title}>
             Borrow Item
           </Text>
 
           {/* Item Info */}
-          <Card style={styles.itemCard} mode="outlined">
+          <GlassCard style={styles.itemCard} mode="outlined">
             <Card.Content>
               <Text variant="titleMedium" style={styles.itemName}>
                 {item.name}
@@ -132,7 +134,7 @@ export default function BorrowItemScreen() {
                 </Chip>
               </View>
             </Card.Content>
-          </Card>
+          </GlassCard>
 
           {/* Borrowing Form */}
           <TextInput
@@ -147,22 +149,22 @@ export default function BorrowItemScreen() {
             right={<TextInput.Affix text={`/ ${item.stock}`} />}
           />
 
-          <TextInput
-            label="Start Date * (YYYY-MM-DD)"
+          <DatePickerInput
+            label="Start Date *"
             value={formData.start_date}
-            onChangeText={(text) => setFormData({ ...formData, start_date: text })}
-            mode="outlined"
-            placeholder="2024-01-15"
+            onChange={(date) => setFormData({ ...formData, start_date: date })}
+            mode="date"
             style={styles.input}
+            minimumDate={new Date()}
           />
 
-          <TextInput
-            label="End Date * (YYYY-MM-DD)"
+          <DatePickerInput
+            label="End Date *"
             value={formData.end_date}
-            onChangeText={(text) => setFormData({ ...formData, end_date: text })}
-            mode="outlined"
-            placeholder="2024-01-20"
+            onChange={(date) => setFormData({ ...formData, end_date: date })}
+            mode="date"
             style={styles.input}
+            minimumDate={formData.start_date ? new Date(formData.start_date) : new Date()}
           />
 
           <TextInput
@@ -203,7 +205,7 @@ export default function BorrowItemScreen() {
             </Button>
           </View>
         </Card.Content>
-      </Card>
+      </GlassCard>
     </ScrollView>
   );
 }
