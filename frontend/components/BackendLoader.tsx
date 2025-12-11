@@ -378,7 +378,10 @@ const BackendLoader: React.FC<BackendLoaderProps> = ({
                             <p className="text-red-400 text-sm mb-3">{errorMessage}</p>
                         )}
                         <button
-                            onClick={onDismiss}
+                            onClick={() => {
+                                if (onDismiss) onDismiss();
+                                setPhase('exit');
+                            }}
                             className="px-5 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 rounded-lg text-red-400 text-sm font-medium transition-all hover:scale-105"
                         >
                             Try Again

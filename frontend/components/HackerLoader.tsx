@@ -25,15 +25,15 @@ const HackerLoader: React.FC<HackerLoaderProps> = ({
     const animationDoneRef = useRef(false);
 
     // Matrix characters
-    const chars = 'CUMANVIBECODERBIASA';
-    const targetText = 'KAMU SIAPA';
+    const chars = 'TIOHAIDARHANIF';
+    const targetText = 'SIAPA AKU';
 
     const identityLogs = [
         "MASIH BELAJAR...",
         "DALAM PROSES...",
         "IDENTITY CONFIRMED: VIBE CODER",
         "SPECIALIZATION: SEMOGA PALUGADA",
-        "PEJUANG AKHIRAT...",
+        "YOK BISA YOK",
         "PASSWORD: JANGAN DIKASIH TAU"
     ];
 

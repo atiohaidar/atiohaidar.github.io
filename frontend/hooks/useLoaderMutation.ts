@@ -37,8 +37,8 @@ export function useLoaderMutation<TData = unknown, TError = unknown, TVariables 
                     title: loader.title,
                     subtitle: loader.subtitle,
                     successMessage: loader.successMessage, // Early set, but updated later
-                    endpoint: loader.endpoint || '/api/action',
-                    method: loader.method || 'POST',
+                    endpoint: loader.endpoint || '-',
+                    method: loader.method || '-',
                     serverHost,
                     isSecure,
                     completeDelay: 800, // Consistent delay for UX
@@ -54,10 +54,13 @@ export function useLoaderMutation<TData = unknown, TError = unknown, TVariables 
         onSuccess: (data, variables, context, ...args) => {
             if (loader) {
                 const latency = Math.round(performance.now() - startTimeRef.current);
+                // Try to get status from data (injected by apiFetch) or default to 200
+                const statusCode = (data as any)?.__status || "-";
+
                 updateLoader({
                     status: 'success',
                     actualLatency: latency,
-                    actualStatusCode: 200, // Assuming success is 200/201
+                    actualStatusCode: statusCode,
                     successMessage: loader.successMessage || 'Operation successful'
                 });
             }
@@ -72,12 +75,17 @@ export function useLoaderMutation<TData = unknown, TError = unknown, TVariables 
                 const latency = Math.round(performance.now() - startTimeRef.current);
                 const errorObj = error as any;
                 const errorMessage = errorObj?.response?.data?.message ||
+                    errorObj?.data?.message ||
                     (error instanceof Error ? error.message : 'Operation failed');
+
+                const statusCode = errorObj?.status ||
+                    errorObj?.response?.status ||
+                    500;
 
                 updateLoader({
                     status: 'error',
                     actualLatency: latency,
-                    actualStatusCode: errorObj?.response?.status || 500,
+                    actualStatusCode: statusCode,
                     errorMessage: errorMessage
                 });
             }
