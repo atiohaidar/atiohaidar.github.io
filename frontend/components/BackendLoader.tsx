@@ -230,16 +230,14 @@ const BackendLoader: React.FC<BackendLoaderProps> = ({
             <div
                 className={`absolute top-1/4 left-1/4 w-64 h-64 ${isError ? 'bg-red-500/5' : 'bg-green-500/5'} rounded-full blur-3xl`}
                 style={{
-                    animation: 'scaleIn 0.8s ease-out forwards',
-                    animationDelay: '0.2s',
+                    animation: 'scaleIn 0.8s ease-out 0.2s forwards',
                     opacity: 0,
                 }}
             />
             <div
                 className={`absolute bottom-1/4 right-1/4 w-64 h-64 ${isError ? 'bg-orange-500/5' : 'bg-cyan-500/5'} rounded-full blur-3xl`}
                 style={{
-                    animation: 'scaleIn 0.8s ease-out forwards',
-                    animationDelay: '0.3s',
+                    animation: 'scaleIn 0.8s ease-out 0.3s forwards',
                     opacity: 0,
                 }}
             />
@@ -250,8 +248,7 @@ const BackendLoader: React.FC<BackendLoaderProps> = ({
                 style={{
                     animation: phase === 'exit'
                         ? 'slideDownOut 0.5s ease-in forwards'
-                        : 'slideDownFadeIn 0.5s ease-out forwards',
-                    animationDelay: phase === 'exit' ? '0s' : '0.1s',
+                        : 'slideDownFadeIn 0.5s ease-out 0.1s forwards',
                     opacity: phase === 'exit' ? 1 : 0,
                     transform: phase === 'exit' ? 'translateY(0)' : 'translateY(-30px)',
                 }}
@@ -260,8 +257,7 @@ const BackendLoader: React.FC<BackendLoaderProps> = ({
                 <div
                     className="text-center mb-6"
                     style={{
-                        animation: phase !== 'exit' ? 'slideDownFadeIn 0.5s ease-out forwards' : undefined,
-                        animationDelay: '0.2s',
+                        animation: phase !== 'exit' ? 'slideDownFadeIn 0.5s ease-out 0.2s forwards' : undefined,
                         opacity: phase === 'exit' ? 1 : 0,
                     }}
                 >
@@ -287,8 +283,7 @@ const BackendLoader: React.FC<BackendLoaderProps> = ({
                 <div
                     className={`bg-[#1a1a2e] rounded-lg border ${isError ? 'border-red-700/50' : 'border-gray-700/50'} shadow-2xl overflow-hidden`}
                     style={{
-                        animation: phase !== 'exit' ? 'slideDownFadeIn 0.6s ease-out forwards' : undefined,
-                        animationDelay: '0.3s',
+                        animation: phase !== 'exit' ? 'slideDownFadeIn 0.6s ease-out 0.3s forwards' : undefined,
                         opacity: phase === 'exit' ? 1 : 0,
                     }}
                 >
@@ -345,8 +340,7 @@ const BackendLoader: React.FC<BackendLoaderProps> = ({
                 <div
                     className="mt-4"
                     style={{
-                        animation: phase !== 'exit' ? 'slideDownFadeIn 0.5s ease-out forwards' : undefined,
-                        animationDelay: '0.4s',
+                        animation: phase !== 'exit' ? 'slideDownFadeIn 0.5s ease-out 0.4s forwards' : undefined,
                         opacity: phase === 'exit' ? 1 : 0,
                     }}
                 >

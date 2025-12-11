@@ -166,7 +166,13 @@ export const useTopUpBalance = (): UseMutationResult<{ success: boolean; newBala
     });
 };
 
-// ... (skip tasks queries)
+// Task hooks
+export const useTasks = (params?: { page?: number; isCompleted?: boolean }): UseQueryResult<Task[], Error> => {
+    return useQuery({
+        queryKey: [...queryKeys.tasks, params],
+        queryFn: () => api.listTasks(params),
+    });
+};
 
 export const useCreateTask = (): UseMutationResult<Task, Error, TaskCreate> => {
     const queryClient = useQueryClient();
