@@ -1,19 +1,28 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { roomService } from '../services/roomService';
 import { bookingService } from '../services/bookingService';
-import type { Room, BookingCreate } from '../types/booking';
+import type { BookingCreate } from '../types/booking';
+import type { Room } from '../types/room';
+import { useBackendLoader } from '../contexts/BackendLoaderContext';
 
 const BookingForm: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const preselectedRoomId = searchParams.get('roomId');
-  
+  const { showLoader, updateLoader } = useBackendLoader();
+
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(false);
   const [roomsLoading, setRoomsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
+  // Server info helpers for loader
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787';
+  const parsedUrl = new URL(API_BASE_URL);
+  const serverHost = parsedUrl.host;
+  const isSecure = parsedUrl.protocol === 'https:';
+
   const [formData, setFormData] = useState<BookingCreate>({
     room_id: preselectedRoomId || '',
     title: '',
@@ -31,12 +40,12 @@ const BookingForm: React.FC = () => {
       setRoomsLoading(true);
       const data = await roomService.getRooms(true); // Only available rooms
       setRooms(data);
-      
+
       // If preselected room is not available, clear it
       if (preselectedRoomId && !data.find(r => r.id === preselectedRoomId)) {
         setFormData(prev => ({ ...prev, room_id: '' }));
       }
-      
+
       setError(null);
     } catch (err) {
       setError('Gagal memuat daftar ruangan');
@@ -48,7 +57,7 @@ const BookingForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Basic validation
     if (!formData.room_id || !formData.title || !formData.start_time || !formData.end_time) {
       setError('Semua field wajib diisi');
@@ -58,12 +67,12 @@ const BookingForm: React.FC = () => {
     // Validate dates
     const startTime = new Date(formData.start_time);
     const endTime = new Date(formData.end_time);
-    
+
     if (startTime >= endTime) {
       setError('Waktu selesai harus setelah waktu mulai');
       return;
     }
-    
+
     if (startTime <= new Date()) {
       setError('Waktu mulai harus di masa depan');
       return;
@@ -71,16 +80,45 @@ const BookingForm: React.FC = () => {
 
     setLoading(true);
     setError(null);
+    const requestStartTime = performance.now();
+
+    showLoader({
+      title: "Submitting Booking",
+      subtitle: "Requesting room reservation",
+      endpoint: "/api/bookings",
+      method: "POST",
+      serverHost,
+      isSecure,
+      completeDelay: 800
+    });
 
     try {
       const booking = await bookingService.createBooking(formData);
-      navigate(`/dashboard/bookings/${booking.id}`, { 
-        state: { message: 'Booking berhasil dibuat!' } 
+
+      const latency = Math.round(performance.now() - requestStartTime);
+
+      updateLoader({
+        status: 'success',
+        actualLatency: latency,
+        actualStatusCode: 201, // Created
+        successMessage: "Booking submitted successfully"
+      });
+
+      navigate(`/dashboard/bookings/${booking.id}`, {
+        state: { message: 'Booking berhasil dibuat!' }
       });
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Gagal membuat booking');
-    } finally {
       setLoading(false);
+      const latency = Math.round(performance.now() - requestStartTime);
+      const errMsg = err?.response?.data?.message || err?.message || 'Gagal membuat booking';
+
+      updateLoader({
+        status: 'error',
+        actualLatency: latency,
+        actualStatusCode: err?.response?.status || 500,
+        errorMessage: errMsg
+      });
+      setError(errMsg);
     }
   };
 
@@ -159,7 +197,7 @@ const BookingForm: React.FC = () => {
                   </option>
                 ))}
               </select>
-              
+
               {selectedRoom && (
                 <div className="mt-3 p-3 bg-deep-navy/50 rounded-lg">
                   <div className="text-sm text-soft-gray">
@@ -260,7 +298,7 @@ const BookingForm: React.FC = () => {
               >
                 {loading ? 'Memproses...' : 'Ajukan Booking'}
               </button>
-              
+
               <button
                 type="button"
                 onClick={() => navigate('/dashboard/rooms')}

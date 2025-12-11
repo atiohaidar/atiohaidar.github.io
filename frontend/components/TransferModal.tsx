@@ -38,14 +38,12 @@ const TransferModal: React.FC<TransferModalProps> = ({ isOpen, onClose, currentB
             { toUsername, amount: amountNum, description },
             {
                 onSuccess: (data) => {
-                    setSuccessMessage(`Berhasil transfer ${amountNum} ke ${toUsername}. Sisa saldo: ${data.newBalance}`);
-                    setTimeout(() => {
-                        onClose();
-                        setAmount('');
-                        setToUsername('');
-                        setDescription('');
-                        setSuccessMessage(null);
-                    }, 2000);
+                    // Close modal immediately, let the overlay show success
+                    onClose();
+                    setAmount('');
+                    setToUsername('');
+                    setDescription('');
+                    setSuccessMessage(null);
                 },
                 onError: (err) => {
                     setError(err.message || 'Transfer gagal');

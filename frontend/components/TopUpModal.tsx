@@ -32,14 +32,12 @@ const TopUpModal: React.FC<TopUpModalProps> = ({ isOpen, onClose }) => {
             { targetUsername, amount: amountNum, description },
             {
                 onSuccess: (data) => {
-                    setSuccessMessage(`Berhasil top up ${amountNum} ke ${targetUsername}. Saldo baru: ${data.newBalance}`);
-                    setTimeout(() => {
-                        onClose();
-                        setAmount('');
-                        setTargetUsername('');
-                        setDescription('');
-                        setSuccessMessage(null);
-                    }, 2000);
+                    // Close modal immediately, let the overlay show success
+                    onClose();
+                    setAmount('');
+                    setTargetUsername('');
+                    setDescription('');
+                    setSuccessMessage(null);
                 },
                 onError: (err) => {
                     setError(err.message || 'Top up gagal');

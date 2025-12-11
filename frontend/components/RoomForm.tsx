@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { roomService } from '../services/roomService';
 import type { Room, RoomCreate, RoomUpdate } from '../types/room';
 import { DASHBOARD_THEME } from '../utils/styles';
 import { useTheme } from '../contexts/ThemeContext';
+import { useBackendLoader } from '../contexts/BackendLoaderContext';
 
 interface RoomFormProps {
   isEdit?: boolean;
@@ -14,16 +15,26 @@ const RoomForm: React.FC<RoomFormProps> = ({ isEdit = false }) => {
   const navigate = useNavigate();
   const { theme } = useTheme();
   const palette = DASHBOARD_THEME[theme];
+  const { showLoader, updateLoader } = useBackendLoader();
+
+  // Local loading state for button UI
   const [loading, setLoading] = useState(false);
+  // Local loading only for initial fetch
   const [initialLoading, setInitialLoading] = useState(isEdit);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [formData, setFormData] = useState<RoomCreate>({
     name: '',
     capacity: 1,
     description: '',
     available: true
   });
+
+  // Server info helpers for loader
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787';
+  const parsedUrl = new URL(API_BASE_URL);
+  const serverHost = parsedUrl.host;
+  const isSecure = parsedUrl.protocol === 'https:';
 
   useEffect(() => {
     if (isEdit && roomId) {
@@ -54,6 +65,17 @@ const RoomForm: React.FC<RoomFormProps> = ({ isEdit = false }) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    const startTime = performance.now();
+
+    showLoader({
+      title: isEdit ? "Updating Room" : "Creating Room",
+      subtitle: isEdit ? "Saving changes to database" : "Allocating new space",
+      endpoint: isEdit ? `/api/rooms/${roomId}` : "/api/rooms",
+      method: isEdit ? "PUT" : "POST",
+      serverHost,
+      isSecure,
+      completeDelay: 500
+    });
 
     try {
       if (isEdit && roomId) {
@@ -67,18 +89,36 @@ const RoomForm: React.FC<RoomFormProps> = ({ isEdit = false }) => {
         // Create new room
         await roomService.createRoom(formData);
       }
-      
+
+      const latency = Math.round(performance.now() - startTime);
+
+      updateLoader({
+        status: 'success',
+        actualLatency: latency,
+        actualStatusCode: 200,
+        successMessage: isEdit ? "Room updated successfully" : "Room created successfully"
+      });
+
+      // Navigate after short delay handling by loader animation
       navigate('/dashboard/rooms');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Gagal menyimpan ruangan');
-    } finally {
       setLoading(false);
+      const latency = Math.round(performance.now() - startTime);
+      const errMsg = err.response?.data?.message || 'Gagal menyimpan ruangan';
+
+      updateLoader({
+        status: 'error',
+        actualLatency: latency,
+        actualStatusCode: err.response?.status || 500,
+        errorMessage: errMsg
+      });
+      setError(errMsg);
     }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
-    
+
     if (type === 'checkbox') {
       const checked = (e.target as HTMLInputElement).checked;
       setFormData(prev => ({
@@ -207,7 +247,7 @@ const RoomForm: React.FC<RoomFormProps> = ({ isEdit = false }) => {
             >
               {loading ? 'Menyimpan...' : (isEdit ? 'Perbarui Ruangan' : 'Simpan Ruangan')}
             </button>
-            
+
             <button
               type="button"
               onClick={() => navigate('/rooms')}
