@@ -8,7 +8,9 @@ import type { LoginResponse } from '../lib/api/types';
 
 // Get API base URL for server host display
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787';
-const serverHost = new URL(API_BASE_URL).host;
+const parsedUrl = new URL(API_BASE_URL);
+const serverHost = parsedUrl.host;
+const isSecure = parsedUrl.protocol === 'https:';
 
 interface LoginProps {
     onLoginSuccess: (userData: LoginResponse) => void;
@@ -124,8 +126,9 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, navigateDelay = 0 }) => {
                 status={loaderStatus}
                 onComplete={handleLoaderComplete}
                 onDismiss={handleLoaderDismiss}
-                operationType="login"
-                successMessage={userData ? `Welcome back, ${userData.name}!` : 'Login successful!'}
+                title="Authenticating"
+                subtitle="Verifying your credentials"
+                successMessage={userData ? `Welcome back, ${userData.name}!` : undefined}
                 errorMessage={errorMessage}
                 responseData={userData ? {
                     username: userData.username,
@@ -139,6 +142,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, navigateDelay = 0 }) => {
                 actualLatency={actualLatency}
                 actualStatusCode={actualStatusCode}
                 serverHost={serverHost}
+                isSecure={isSecure}
             />
         );
     }

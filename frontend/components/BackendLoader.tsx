@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 
 type LoaderStatus = 'loading' | 'success' | 'error';
-type OperationType = 'login' | 'logout' | 'fetch' | 'upload' | 'submit' | 'delete' | 'custom';
 
 interface BackendLoaderProps {
     /** Current status of the operation */
@@ -10,17 +9,15 @@ interface BackendLoaderProps {
     onComplete?: () => void;
     /** Called when user dismisses error state */
     onDismiss?: () => void;
-    /** Type of operation for customized messages */
-    operationType?: OperationType;
-    /** Custom title (overrides operationType default) */
+    /** Custom title for this operation */
     title?: string;
-    /** Custom subtitle (overrides operationType default) */
+    /** Optional subtitle for additional context */
     subtitle?: string;
-    /** Success message to display */
+    /** Success message to display (from real response) */
     successMessage?: string;
-    /** Error message to display */
+    /** Error message to display (from real error) */
     errorMessage?: string | null;
-    /** Response data to display in JSON animation (any object) */
+    /** Response data to display in JSON (real data from API) */
     responseData?: Record<string, unknown>;
     /** API endpoint that was called */
     endpoint?: string;
@@ -28,219 +25,157 @@ interface BackendLoaderProps {
     method?: string;
     /** Delay in ms after animation ends before calling onComplete (default: 0) */
     completeDelay?: number;
-    /** Actual HTTP status code from response (uses default if not provided) */
+    /** Actual HTTP status code from response */
     actualStatusCode?: number;
-    /** Actual request latency in ms (uses simulated if not provided) */
+    /** Actual request latency in ms */
     actualLatency?: number;
-    /** Server hostname/domain (uses simulated IP if not provided) */
+    /** Server hostname/domain */
     serverHost?: string;
+    /** Whether connection is secure (HTTPS) */
+    isSecure?: boolean;
 }
 
-type Phase = 'dns' | 'tcp' | 'tls' | 'request' | 'processing' | 'waiting' | 'response' | 'json' | 'session' | 'success' | 'error' | 'exit' | 'complete';
-
-// Default titles/subtitles based on operation type
-const operationDefaults: Record<OperationType, { title: string; subtitle: string; successMessage: string }> = {
-    login: {
-        title: 'Authenticating',
-        subtitle: 'Establishing secure connection...',
-        successMessage: 'Login successful!'
-    },
-    logout: {
-        title: 'Signing Out',
-        subtitle: 'Terminating session...',
-        successMessage: 'Signed out successfully!'
-    },
-    fetch: {
-        title: 'Fetching Data',
-        subtitle: 'Retrieving from server...',
-        successMessage: 'Data loaded successfully!'
-    },
-    upload: {
-        title: 'Uploading',
-        subtitle: 'Sending data to server...',
-        successMessage: 'Upload complete!'
-    },
-    submit: {
-        title: 'Submitting',
-        subtitle: 'Processing your request...',
-        successMessage: 'Submission successful!'
-    },
-    delete: {
-        title: 'Deleting',
-        subtitle: 'Removing data...',
-        successMessage: 'Deleted successfully!'
-    },
-    custom: {
-        title: 'Processing',
-        subtitle: 'Please wait...',
-        successMessage: 'Operation complete!'
-    },
-};
+type Phase = 'connecting' | 'requesting' | 'waiting' | 'response' | 'json' | 'done' | 'error' | 'exit' | 'complete';
 
 const BackendLoader: React.FC<BackendLoaderProps> = ({
     status,
     onComplete,
     onDismiss,
-    operationType = 'custom',
-    title,
+    title = 'Processing',
     subtitle,
     successMessage,
     errorMessage,
     responseData,
-    endpoint = '/api/endpoint',
-    method = 'POST',
+    endpoint,
+    method,
     completeDelay = 0,
     actualStatusCode,
     actualLatency,
     serverHost,
+    isSecure,
 }) => {
-    const [phase, setPhase] = useState<Phase>('dns');
-    const [progress, setProgress] = useState(0);
+    const [phase, setPhase] = useState<Phase>('connecting');
     const [logs, setLogs] = useState<string[]>([]);
     const [jsonText, setJsonText] = useState('');
-    const [currentStatusCode, setCurrentStatusCode] = useState('');
     const animationDoneRef = useRef(false);
-    const statusRef = useRef(status);
 
-    // Get defaults based on operation type
-    const defaults = operationDefaults[operationType];
-    const displayTitle = title || defaults.title;
-    const displaySubtitle = subtitle || defaults.subtitle;
-    const displaySuccessMessage = successMessage || defaults.successMessage;
+    // Determine if secure based on prop or serverHost
+    const isSecureConnection = isSecure ?? (serverHost?.startsWith('https://') || serverHost?.includes('localhost') === false);
 
-    // Keep status ref updated
-    useEffect(() => {
-        statusRef.current = status;
-    }, [status]);
-
-    // Server address - only use if provided (real data only)
-    const serverAddress = serverHost || 'server';
-
-    // Total latency - only used if provided (real data only)
-    const totalLatency = actualLatency;
-
-    // JSON response data
+    // JSON response data - only show if we have real data
     const jsonResponse = useMemo(() => {
         if (responseData) {
-            return { success: true, ...responseData };
+            return responseData;
         }
-        return { success: true, message: displaySuccessMessage };
-    }, [responseData, displaySuccessMessage]);
+        return null;
+    }, [responseData]);
 
     const addLog = (log: string) => {
-        setLogs(prev => [...prev.slice(-5), log]); // Keep last 6 logs
+        setLogs(prev => [...prev.slice(-6), log]);
     };
 
-    // Phase transitions - ONLY shows real data, no fake timing breakdown
+    // Initial connection phase
     useEffect(() => {
         const timers: NodeJS.Timeout[] = [];
 
-        const runSequence = async () => {
-            // Show server info (real)
-            addLog(`> Connecting to ${serverAddress}...`);
-            setProgress(10);
+        // Only log what we actually know
+        if (serverHost) {
+            addLog(`> Connecting to ${serverHost}...`);
+        }
 
-            timers.push(setTimeout(() => {
-                addLog(`✓ Connected to server`);
-                setProgress(30);
-                setPhase('request');
-            }, 500));
+        timers.push(setTimeout(() => {
+            setPhase('requesting');
+        }, 300));
 
-            // HTTP Request (real info)
-            timers.push(setTimeout(() => {
-                addLog(`> ${method} ${endpoint} HTTP/1.1`);
-                setProgress(50);
-            }, 800));
-
-            timers.push(setTimeout(() => {
-                addLog(`> Sending request...`);
-                setProgress(60);
-                setPhase('processing');
-            }, 1000));
-
-            // Wait for actual response
-            timers.push(setTimeout(() => {
-                addLog(`⏳ Awaiting server response...`);
-                setProgress(70);
-                setPhase('waiting');
-            }, 1200));
-        };
-
-        runSequence();
+        // Show request info if we have it
+        timers.push(setTimeout(() => {
+            if (method && endpoint) {
+                addLog(`> ${method} ${endpoint}`);
+            }
+            addLog(`⏳ Waiting for response...`);
+            setPhase('waiting');
+        }, 600));
 
         return () => timers.forEach(t => clearTimeout(t));
-    }, [serverAddress, method, endpoint]);
+    }, [serverHost, method, endpoint]);
 
     // Watch for status change while in waiting phase
     useEffect(() => {
         if (phase === 'waiting') {
             if (status === 'success') {
-                // Success flow - use actualStatusCode if provided, otherwise default 200
-                const statusCode = actualStatusCode || 200;
-                setCurrentStatusCode(String(statusCode));
-                // Only show latency if we have real data
-                const latencyInfo = totalLatency ? ` (${totalLatency}ms)` : '';
-                addLog(`✓ HTTP/1.1 ${statusCode} OK${latencyInfo}`);
-                setProgress(80);
+                // Build response log with real data only
+                let responseLog = '✓';
+                if (actualStatusCode) {
+                    responseLog += ` HTTP ${actualStatusCode}`;
+                }
+                if (actualLatency) {
+                    responseLog += ` (${actualLatency}ms)`;
+                }
+                if (!actualStatusCode && !actualLatency) {
+                    responseLog += ' Response received';
+                }
+                addLog(responseLog);
                 setPhase('response');
 
-                // Continue to JSON parsing
-                setTimeout(() => {
-                    setPhase('json');
-                    setProgress(85);
-                }, 200);
-
-                // Session storage
-                setTimeout(() => {
-                    addLog(`> Processing response...`);
-                    setProgress(95);
-                    setPhase('session');
-                }, 1000);
-
-                // Success
-                setTimeout(() => {
-                    addLog(`✓ Operation completed`);
-                    setProgress(100);
-                    setPhase('success');
-                }, 1300);
-
-                // Exit
-                setTimeout(() => {
-                    animationDoneRef.current = true;
-                    setPhase('exit');
-                }, 1800);
+                // Show JSON if we have real response data
+                if (jsonResponse) {
+                    setTimeout(() => {
+                        setPhase('json');
+                    }, 200);
+                } else {
+                    setTimeout(() => {
+                        setPhase('done');
+                    }, 200);
+                }
 
             } else if (status === 'error') {
-                // Error flow - use actualStatusCode if provided, otherwise default 401
-                const statusCode = actualStatusCode || 401;
-                setCurrentStatusCode(String(statusCode));
-                addLog(`✗ HTTP/1.1 ${statusCode} Error`);
-                setProgress(70);
-
-                setTimeout(() => {
-                    addLog(`✗ ${errorMessage || 'Request failed'}`);
-                    setPhase('error');
-                }, 500);
+                // Show error with real data
+                let errorLog = '✗';
+                if (actualStatusCode) {
+                    errorLog += ` HTTP ${actualStatusCode}`;
+                }
+                if (errorMessage) {
+                    errorLog += ` - ${errorMessage}`;
+                } else {
+                    errorLog += ' Request failed';
+                }
+                addLog(errorLog);
+                setPhase('error');
             }
         }
-    }, [phase, status, actualStatusCode, errorMessage, totalLatency]);
+    }, [phase, status, actualStatusCode, actualLatency, errorMessage, jsonResponse]);
 
-    // JSON typing animation
+    // Transition from json to done
     useEffect(() => {
-        if (phase === 'json') {
+        if (phase === 'json' && jsonResponse) {
             const fullJson = JSON.stringify(jsonResponse, null, 2);
             let idx = 0;
             const interval = setInterval(() => {
                 if (idx < fullJson.length) {
                     setJsonText(fullJson.substring(0, idx + 1));
-                    idx += 3;
+                    idx += 4;
                 } else {
                     clearInterval(interval);
+                    setTimeout(() => {
+                        addLog('✓ Complete');
+                        setPhase('done');
+                    }, 300);
                 }
-            }, 15);
+            }, 10);
             return () => clearInterval(interval);
         }
     }, [phase, jsonResponse]);
+
+    // Done phase - trigger exit
+    useEffect(() => {
+        if (phase === 'done') {
+            const timer = setTimeout(() => {
+                animationDoneRef.current = true;
+                setPhase('exit');
+            }, 500);
+            return () => clearTimeout(timer);
+        }
+    }, [phase]);
 
     // Exit phase handling
     useEffect(() => {
@@ -257,59 +192,71 @@ const BackendLoader: React.FC<BackendLoaderProps> = ({
 
     if (phase === 'complete') return null;
 
+    // Calculate progress based on phase
+    const getProgress = () => {
+        switch (phase) {
+            case 'connecting': return 20;
+            case 'requesting': return 40;
+            case 'waiting': return 60;
+            case 'response': return 75;
+            case 'json': return 85;
+            case 'done': return 100;
+            case 'exit': return 100;
+            case 'error': return 60;
+            default: return 0;
+        }
+    };
+
+    const isError = phase === 'error';
+
     return (
         <div
             className={`
-                fixed inset-0 bg-black/20 backdrop-blur-md z-[9999] flex flex-col items-center justify-center font-mono overflow-hidden
+                fixed inset-0 bg-black/30 backdrop-blur-md z-[9999] flex flex-col items-center justify-center font-mono overflow-hidden
                 ${phase === 'exit' ? 'animate-cyber-zoom-in-blur' : ''}
             `}
         >
-            {/* Background Grid Pattern */}
-            <div className="absolute inset-0 opacity-10">
-                <div className="absolute inset-0" style={{
-                    backgroundImage: `
-                        linear-gradient(rgba(0,255,136,0.1) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(0,255,136,0.1) 1px, transparent 1px)
-                    `,
-                    backgroundSize: '50px 50px'
-                }} />
-            </div>
+            {/* Subtle background orbs */}
+            <div className={`absolute top-1/4 left-1/4 w-64 h-64 ${isError ? 'bg-red-500/5' : 'bg-green-500/5'} rounded-full blur-3xl`} />
+            <div className={`absolute bottom-1/4 right-1/4 w-64 h-64 ${isError ? 'bg-orange-500/5' : 'bg-cyan-500/5'} rounded-full blur-3xl`} />
 
-            {/* Animated orbs */}
-            <div className={`absolute top-1/4 left-1/4 w-64 h-64 ${phase === 'error' ? 'bg-red-500/10' : 'bg-green-500/10'} rounded-full blur-3xl animate-pulse`} />
-            <div className={`absolute bottom-1/4 right-1/4 w-64 h-64 ${phase === 'error' ? 'bg-orange-500/10' : 'bg-cyan-500/10'} rounded-full blur-3xl animate-pulse`} style={{ animationDelay: '0.5s' }} />
-
-            <div className="relative z-10 w-full max-w-2xl px-6">
-                {/* Header */}
-                <div className="text-center mb-8">
-                    <div className={`inline-flex items-center gap-2 px-4 py-2 ${phase === 'error' ? 'bg-red-500/10 border-red-500/30' : 'bg-green-500/10 border-green-500/30'} border rounded-full mb-4`}>
-                        <span className={`w-2 h-2 ${phase === 'error' ? 'bg-red-500' : 'bg-green-500'} rounded-full animate-pulse`}></span>
-                        <span className={`${phase === 'error' ? 'text-red-400' : 'text-green-400'} text-sm font-medium`}>
-                            {phase === 'error' ? 'CONNECTION ERROR' : 'SECURE CONNECTION'}
-                        </span>
-                    </div>
-                    <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-                        {phase === 'error' ? 'Error' : displayTitle}<span className="animate-pulse">...</span>
+            <div className="relative z-10 w-full max-w-xl px-6">
+                {/* Header - Title from props */}
+                <div className="text-center mb-6">
+                    {/* Connection status badge - only show if we know */}
+                    {isSecureConnection !== undefined && (
+                        <div className={`inline-flex items-center gap-2 px-3 py-1.5 ${isError ? 'bg-red-500/10 border-red-500/30' : 'bg-green-500/10 border-green-500/30'} border rounded-full mb-3`}>
+                            <span className={`w-2 h-2 ${isError ? 'bg-red-500' : 'bg-green-500'} rounded-full ${phase !== 'done' && phase !== 'exit' && phase !== 'error' ? 'animate-pulse' : ''}`}></span>
+                            <span className={`${isError ? 'text-red-400' : 'text-green-400'} text-xs font-medium`}>
+                                {isError ? 'ERROR' : (isSecureConnection ? 'HTTPS' : 'HTTP')}
+                            </span>
+                        </div>
+                    )}
+                    <h1 className="text-2xl md:text-3xl font-bold text-white">
+                        {title}
+                        {phase !== 'done' && phase !== 'exit' && phase !== 'error' && <span className="animate-pulse">...</span>}
                     </h1>
-                    <p className="text-gray-400 text-sm">{phase === 'error' ? errorMessage : displaySubtitle}</p>
+                    {subtitle && (
+                        <p className="text-gray-400 text-sm mt-1">{subtitle}</p>
+                    )}
                 </div>
 
                 {/* Terminal Window */}
-                <div className={`bg-[#1a1a2e] rounded-lg border ${phase === 'error' ? 'border-red-700/50' : 'border-gray-700/50'} shadow-2xl overflow-hidden`}>
+                <div className={`bg-[#1a1a2e] rounded-lg border ${isError ? 'border-red-700/50' : 'border-gray-700/50'} shadow-2xl overflow-hidden`}>
                     {/* Terminal Header */}
-                    <div className="flex items-center gap-2 px-4 py-3 bg-[#0d0d15] border-b border-gray-700/50">
-                        <div className="flex gap-2">
-                            <div className={`w-3 h-3 rounded-full ${phase === 'error' ? 'bg-red-500' : 'bg-red-500'}`}></div>
-                            <div className={`w-3 h-3 rounded-full ${phase === 'error' ? 'bg-orange-500' : 'bg-yellow-500'}`}></div>
-                            <div className={`w-3 h-3 rounded-full ${phase === 'error' ? 'bg-gray-500' : 'bg-green-500'}`}></div>
+                    <div className="flex items-center gap-2 px-4 py-2.5 bg-[#0d0d15] border-b border-gray-700/50">
+                        <div className="flex gap-1.5">
+                            <div className="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+                            <div className="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
+                            <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
                         </div>
-                        <span className="ml-4 text-gray-500 text-sm">backend-connection</span>
+                        {serverHost && <span className="ml-3 text-gray-500 text-xs">{serverHost}</span>}
                     </div>
 
                     {/* Terminal Body */}
-                    <div className="p-4 h-72 overflow-hidden">
+                    <div className="p-4 min-h-[200px] max-h-[300px] overflow-auto">
                         {/* Logs */}
-                        <div className="space-y-1 mb-4">
+                        <div className="space-y-1">
                             {logs.map((log, idx) => (
                                 <div
                                     key={idx}
@@ -318,89 +265,59 @@ const BackendLoader: React.FC<BackendLoaderProps> = ({
                                             log.startsWith('⏳') ? 'text-yellow-400' :
                                                 log.startsWith('>') ? 'text-cyan-400' :
                                                     'text-gray-400'
-                                        } animate-fade-in`}
+                                        }`}
                                 >
                                     {log}
                                 </div>
                             ))}
                         </div>
 
-                        {/* JSON Response Display */}
-                        {(phase === 'json' || phase === 'session' || phase === 'success' || phase === 'exit') && (
-                            <div className="mt-4 p-3 bg-black/30 rounded border border-green-500/20">
-                                <div className="text-xs text-gray-500 mb-2">Response Body:</div>
+                        {/* JSON Response Display - only if we have real data */}
+                        {(phase === 'json' || phase === 'done' || phase === 'exit') && jsonText && (
+                            <div className="mt-3 p-2 bg-black/30 rounded border border-green-500/20">
                                 <pre className="text-green-400 text-xs overflow-hidden whitespace-pre-wrap">
                                     {jsonText}
-                                    <span className="animate-pulse">▌</span>
+                                    {phase === 'json' && <span className="animate-pulse">▌</span>}
                                 </pre>
-                            </div>
-                        )}
-
-                        {/* HTTP Status Badge */}
-                        {currentStatusCode && (
-                            <div className={`absolute top-4 right-4 flex items-center gap-2 px-3 py-1 ${phase === 'error' ? 'bg-red-500/20 border-red-500/30' : 'bg-green-500/20 border-green-500/30'
-                                } border rounded`}>
-                                <span className={`${phase === 'error' ? 'text-red-400' : 'text-green-400'} text-sm font-bold`}>
-                                    HTTP {currentStatusCode}
-                                </span>
-                                <span className={`${phase === 'error' ? 'text-red-400' : 'text-green-400'} text-sm`}>
-                                    {phase === 'error' ? 'ERROR' : 'OK'}
-                                </span>
                             </div>
                         )}
                     </div>
                 </div>
 
-                {/* Progress Bar */}
-                <div className="mt-6">
-                    <div className="flex justify-between text-xs text-gray-500 mb-2">
-                        <span>Progress</span>
-                        <span>{Math.round(progress)}%</span>
-                    </div>
-                    <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
+                {/* Progress Bar - simulated but honest about it */}
+                <div className="mt-4">
+                    <div className="h-1.5 bg-gray-800 rounded-full overflow-hidden">
                         <div
-                            className={`h-full ${phase === 'error' ? 'bg-gradient-to-r from-red-500 to-orange-400' : 'bg-gradient-to-r from-green-500 to-cyan-400'} transition-all duration-300 ease-out`}
-                            style={{ width: `${progress}%` }}
+                            className={`h-full ${isError ? 'bg-red-500' : 'bg-gradient-to-r from-green-500 to-cyan-400'} transition-all duration-300 ease-out`}
+                            style={{ width: `${getProgress()}%` }}
                         />
                     </div>
                 </div>
 
-                {/* Success Message - stays visible during exit for smooth animation */}
-                {(phase === 'success' || phase === 'exit') && (
-                    <div className="mt-6 text-center animate-fade-in">
-                        <p className="text-2xl text-green-400 font-bold">
-                            {displaySuccessMessage} 🎉
+                {/* Success Message - only show if provided */}
+                {(phase === 'done' || phase === 'exit') && successMessage && (
+                    <div className="mt-4 text-center">
+                        <p className="text-lg text-green-400 font-medium">
+                            {successMessage}
                         </p>
-                        <p className="text-gray-500 text-sm mt-2">Redirecting...</p>
                     </div>
                 )}
 
                 {/* Error Message with Dismiss Button */}
                 {phase === 'error' && (
-                    <div className="mt-6 text-center animate-fade-in">
-                        <p className="text-2xl text-red-400 font-bold">
-                            Operation Failed ❌
-                        </p>
-                        <p className="text-gray-400 text-sm mt-2 mb-4">{errorMessage}</p>
+                    <div className="mt-4 text-center">
+                        {errorMessage && (
+                            <p className="text-red-400 text-sm mb-3">{errorMessage}</p>
+                        )}
                         <button
                             onClick={onDismiss}
-                            className="px-6 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 rounded-lg text-red-400 font-medium transition-all hover:scale-105"
+                            className="px-5 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 rounded-lg text-red-400 text-sm font-medium transition-all"
                         >
                             Try Again
                         </button>
                     </div>
                 )}
             </div>
-
-            {/* Scanline Effect */}
-            <div
-                className="absolute inset-0 pointer-events-none z-20"
-                style={{
-                    background: 'linear-gradient(transparent 50%, rgba(0,0,0,0.5) 50%)',
-                    backgroundSize: '100% 4px',
-                    opacity: 0.3
-                }}
-            />
         </div>
     );
 };
