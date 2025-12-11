@@ -212,17 +212,59 @@ const BackendLoader: React.FC<BackendLoaderProps> = ({
     return (
         <div
             className={`
-                fixed inset-0 bg-black/30 backdrop-blur-md z-[9999] flex flex-col items-center justify-center font-mono overflow-hidden
-                ${phase === 'exit' ? 'animate-cyber-zoom-in-blur' : ''}
+                fixed inset-0 z-[9999] flex flex-col items-center justify-center font-mono overflow-hidden
             `}
+            style={{
+                animation: phase === 'exit' ? 'slideDownFadeOut 0.6s ease-in forwards' : 'fadeIn 0.4s ease-out forwards',
+            }}
         >
-            {/* Subtle background orbs */}
-            <div className={`absolute top-1/4 left-1/4 w-64 h-64 ${isError ? 'bg-red-500/5' : 'bg-green-500/5'} rounded-full blur-3xl`} />
-            <div className={`absolute bottom-1/4 right-1/4 w-64 h-64 ${isError ? 'bg-orange-500/5' : 'bg-cyan-500/5'} rounded-full blur-3xl`} />
+            {/* Backdrop with fade-in */}
+            <div
+                className="absolute inset-0 bg-black/80 backdrop-blur-xl"
+                style={{
+                    animation: 'fadeIn 0.5s ease-out forwards',
+                }}
+            />
 
-            <div className="relative z-10 w-full max-w-xl px-6">
+            {/* Subtle background orbs with scale animation */}
+            <div
+                className={`absolute top-1/4 left-1/4 w-64 h-64 ${isError ? 'bg-red-500/5' : 'bg-green-500/5'} rounded-full blur-3xl`}
+                style={{
+                    animation: 'scaleIn 0.8s ease-out forwards',
+                    animationDelay: '0.2s',
+                    opacity: 0,
+                }}
+            />
+            <div
+                className={`absolute bottom-1/4 right-1/4 w-64 h-64 ${isError ? 'bg-orange-500/5' : 'bg-cyan-500/5'} rounded-full blur-3xl`}
+                style={{
+                    animation: 'scaleIn 0.8s ease-out forwards',
+                    animationDelay: '0.3s',
+                    opacity: 0,
+                }}
+            />
+
+            {/* Main content with slide-down animation */}
+            <div
+                className="relative z-10 w-full max-w-xl px-6"
+                style={{
+                    animation: phase === 'exit'
+                        ? 'slideDownOut 0.5s ease-in forwards'
+                        : 'slideDownFadeIn 0.5s ease-out forwards',
+                    animationDelay: phase === 'exit' ? '0s' : '0.1s',
+                    opacity: phase === 'exit' ? 1 : 0,
+                    transform: phase === 'exit' ? 'translateY(0)' : 'translateY(-30px)',
+                }}
+            >
                 {/* Header - Title from props */}
-                <div className="text-center mb-6">
+                <div
+                    className="text-center mb-6"
+                    style={{
+                        animation: phase !== 'exit' ? 'slideDownFadeIn 0.5s ease-out forwards' : undefined,
+                        animationDelay: '0.2s',
+                        opacity: phase === 'exit' ? 1 : 0,
+                    }}
+                >
                     {/* Connection status badge - only show if we know */}
                     {isSecureConnection !== undefined && (
                         <div className={`inline-flex items-center gap-2 px-3 py-1.5 ${isError ? 'bg-red-500/10 border-red-500/30' : 'bg-green-500/10 border-green-500/30'} border rounded-full mb-3`}>
@@ -241,8 +283,15 @@ const BackendLoader: React.FC<BackendLoaderProps> = ({
                     )}
                 </div>
 
-                {/* Terminal Window */}
-                <div className={`bg-[#1a1a2e] rounded-lg border ${isError ? 'border-red-700/50' : 'border-gray-700/50'} shadow-2xl overflow-hidden`}>
+                {/* Terminal Window with slide-down */}
+                <div
+                    className={`bg-[#1a1a2e] rounded-lg border ${isError ? 'border-red-700/50' : 'border-gray-700/50'} shadow-2xl overflow-hidden`}
+                    style={{
+                        animation: phase !== 'exit' ? 'slideDownFadeIn 0.6s ease-out forwards' : undefined,
+                        animationDelay: '0.3s',
+                        opacity: phase === 'exit' ? 1 : 0,
+                    }}
+                >
                     {/* Terminal Header */}
                     <div className="flex items-center gap-2 px-4 py-2.5 bg-[#0d0d15] border-b border-gray-700/50">
                         <div className="flex gap-1.5">
@@ -266,6 +315,9 @@ const BackendLoader: React.FC<BackendLoaderProps> = ({
                                                 log.startsWith('>') ? 'text-cyan-400' :
                                                     'text-gray-400'
                                         }`}
+                                    style={{
+                                        animation: 'slideInFromLeft 0.3s ease-out forwards',
+                                    }}
                                 >
                                     {log}
                                 </div>
@@ -274,7 +326,12 @@ const BackendLoader: React.FC<BackendLoaderProps> = ({
 
                         {/* JSON Response Display - only if we have real data */}
                         {(phase === 'json' || phase === 'done' || phase === 'exit') && jsonText && (
-                            <div className="mt-3 p-2 bg-black/30 rounded border border-green-500/20">
+                            <div
+                                className="mt-3 p-2 bg-black/30 rounded border border-green-500/20"
+                                style={{
+                                    animation: 'slideUpFadeIn 0.4s ease-out forwards',
+                                }}
+                            >
                                 <pre className="text-green-400 text-xs overflow-hidden whitespace-pre-wrap">
                                     {jsonText}
                                     {phase === 'json' && <span className="animate-pulse">▌</span>}
@@ -284,8 +341,15 @@ const BackendLoader: React.FC<BackendLoaderProps> = ({
                     </div>
                 </div>
 
-                {/* Progress Bar - simulated but honest about it */}
-                <div className="mt-4">
+                {/* Progress Bar */}
+                <div
+                    className="mt-4"
+                    style={{
+                        animation: phase !== 'exit' ? 'slideDownFadeIn 0.5s ease-out forwards' : undefined,
+                        animationDelay: '0.4s',
+                        opacity: phase === 'exit' ? 1 : 0,
+                    }}
+                >
                     <div className="h-1.5 bg-gray-800 rounded-full overflow-hidden">
                         <div
                             className={`h-full ${isError ? 'bg-red-500' : 'bg-gradient-to-r from-green-500 to-cyan-400'} transition-all duration-300 ease-out`}
@@ -296,7 +360,12 @@ const BackendLoader: React.FC<BackendLoaderProps> = ({
 
                 {/* Success Message - only show if provided */}
                 {(phase === 'done' || phase === 'exit') && successMessage && (
-                    <div className="mt-4 text-center">
+                    <div
+                        className="mt-4 text-center"
+                        style={{
+                            animation: 'scaleIn 0.4s ease-out forwards',
+                        }}
+                    >
                         <p className="text-lg text-green-400 font-medium">
                             {successMessage}
                         </p>
@@ -305,19 +374,88 @@ const BackendLoader: React.FC<BackendLoaderProps> = ({
 
                 {/* Error Message with Dismiss Button */}
                 {phase === 'error' && (
-                    <div className="mt-4 text-center">
+                    <div
+                        className="mt-4 text-center"
+                        style={{
+                            animation: 'shakeIn 0.5s ease-out forwards',
+                        }}
+                    >
                         {errorMessage && (
                             <p className="text-red-400 text-sm mb-3">{errorMessage}</p>
                         )}
                         <button
                             onClick={onDismiss}
-                            className="px-5 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 rounded-lg text-red-400 text-sm font-medium transition-all"
+                            className="px-5 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 rounded-lg text-red-400 text-sm font-medium transition-all hover:scale-105"
                         >
                             Try Again
                         </button>
                     </div>
                 )}
             </div>
+
+            {/* Inline keyframes for animations */}
+            <style>{`
+                @keyframes fadeIn {
+                    from { opacity: 0; }
+                    to { opacity: 1; }
+                }
+                @keyframes slideDownFadeIn {
+                    from { 
+                        opacity: 0; 
+                        transform: translateY(-30px); 
+                    }
+                    to { 
+                        opacity: 1; 
+                        transform: translateY(0); 
+                    }
+                }
+                @keyframes slideDownFadeOut {
+                    from { 
+                        opacity: 1; 
+                    }
+                    to { 
+                        opacity: 0; 
+                    }
+                }
+                @keyframes slideDownOut {
+                    from { 
+                        opacity: 1; 
+                        transform: translateY(0); 
+                    }
+                    to { 
+                        opacity: 0; 
+                        transform: translateY(50px); 
+                    }
+                }
+                @keyframes scaleIn {
+                    from { 
+                        opacity: 0; 
+                        transform: scale(0.8); 
+                    }
+                    to { 
+                        opacity: 1; 
+                        transform: scale(1); 
+                    }
+                }
+                @keyframes slideInFromLeft {
+                    from { 
+                        opacity: 0; 
+                        transform: translateX(-10px); 
+                    }
+                    to { 
+                        opacity: 1; 
+                        transform: translateX(0); 
+                    }
+                }
+                @keyframes shakeIn {
+                    0% { transform: translateX(-5px); opacity: 0; }
+                    20% { transform: translateX(5px); }
+                    40% { transform: translateX(-3px); }
+                    60% { transform: translateX(3px); }
+                    80% { transform: translateX(-1px); }
+                    100% { transform: translateX(0); opacity: 1; }
+                }
+            `}</style>
         </div>
     );
 };
