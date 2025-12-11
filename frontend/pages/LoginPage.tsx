@@ -1,16 +1,18 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Login from '../components/Login';
 import ParallaxBackground from '../components/ParallaxBackground';
+import ThemeToggle from '../components/ThemeToggle';
 import { getAuthToken, getStoredUser } from '../lib/api';
 import type { LoginResponse } from '../lib/api/types';
-
 import TypewriterText from '../components/TypewriterText';
 
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        setMounted(true);
         const token = getAuthToken();
         const storedUser = getStoredUser();
         if (token && storedUser) {
@@ -19,68 +21,105 @@ const LoginPage: React.FC = () => {
     }, [navigate]);
 
     const handleLoginSuccess = (_response: LoginResponse) => {
-        // Login successful - navigate to dashboard
-        // BackendLoader animation is handled inside Login component
         navigate('/dashboard', { replace: true });
     };
 
     return (
-        <div className="min-h-screen w-full relative flex items-center justify-center p-4 bg-light-bg dark:bg-deep-navy overflow-hidden">
+        <div className="min-h-screen w-full relative flex flex-col bg-light-bg dark:bg-deep-navy overflow-hidden">
             {/* Parallax Background */}
             <ParallaxBackground intensity={0.6} />
 
-            <header className="absolute top-0 left-0 right-0 px-6 py-6 flex justify-between items-center z-20">
-                <Link to="/" className="flex items-center gap-2 text-light-muted dark:text-light-slate hover:text-accent-blue transition-colors">
-                    <span>←</span> Kembali ke Landing Page
+            {/* Header */}
+            <header className="relative px-6 py-5 flex justify-between items-center z-20">
+                <Link
+                    to="/"
+                    className="flex items-center gap-3 text-light-text dark:text-white hover:text-accent-blue dark:hover:text-accent-blue transition-all duration-300 group"
+                >
+                    <span className="w-8 h-8 rounded-full bg-accent-blue/20 flex items-center justify-center text-accent-blue group-hover:bg-accent-blue group-hover:text-white transition-all duration-300">
+                        ←
+                    </span>
+                    <span className="hidden sm:inline font-medium">Kembali</span>
                 </Link>
+
+                <div className="flex items-center gap-4">
+                    <ThemeToggle />
+                </div>
             </header>
 
-            <main className="w-full max-w-6xl flex flex-col lg:flex-row gap-12 items-center z-10">
-                <div className="flex-1 space-y-6 text-center lg:text-left">
-                    <h1 className="text-4xl lg:text-5xl font-bold text-light-text dark:text-white min-h-[3.5rem] lg:min-h-[4rem]">
-                        <TypewriterText
-                            texts={["ꦮꦶꦭꦸꦗꦺꦁ ꦱꦸꦩ꧀ꦥꦶꦁ", "Selamat Datang", "Welcome", "مرحبا"]}
-                            typingSpeed={100}
-                            deletingSpeed={50}
-                            delayBetween={1000} // Cepat ganti
-                        />
-                    </h1>
-                    <p className="text-lg py-5 text-light-muted dark:text-soft-gray leading-relaxed max-w-lg mx-auto lg:mx-0">
-                        Ini untuk masuk ke dashboard untuk ngakses lebih banyak backend yang udah dibuat
-                    </p>
-                    <div className="hidden lg:flex gap-4 pt-4">
-                        <div className="flex -space-x-3">
-                            {[1, 2, 3].map(i => (
-                                <div key={i} className="w-10 h-10 rounded-full bg-gray-200 dark:bg-white/10 border-2 border-white dark:border-deep-navy flex items-center justify-center text-xs font-bold text-gray-500 dark:text-gray-300">
-                                    {i}
-                                </div>
-                            ))}
+            {/* Main Content */}
+            <main className={`flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8 z-10 transition-all duration-700 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                <div className="w-full max-w-6xl flex flex-col lg:flex-row gap-8 lg:gap-12 items-center">
+                    {/* Left Section - Welcome Text */}
+                    <div className="flex-1 space-y-6 text-center lg:text-left">
+                        <div className="space-y-2">
+                            <p className="text-accent-blue font-mono text-sm tracking-wider uppercase">
+                                Authentication Portal
+                            </p>
+                            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-light-text dark:text-white min-h-[2.5rem] sm:min-h-[3.5rem] lg:min-h-[4rem]">
+                                <TypewriterText
+                                    texts={["ꦮꦶꦭꦸꦗꦺꦁ ꦱꦸꦩ꧀ꦥꦶꦁ", "Selamat Datang", "Welcome", "مرحبا"]}
+                                    typingSpeed={100}
+                                    deletingSpeed={50}
+                                    delayBetween={1000}
+                                />
+                            </h1>
                         </div>
-                        <div className="flex items-center text-sm text-light-muted dark:text-soft-gray">
-                            <span className="font-bold text-accent-blue mr-1">Entah berapa</span> users yang join
+
+                        <p className="text-base sm:text-lg text-light-muted dark:text-soft-gray leading-relaxed max-w-lg mx-auto lg:mx-0">
+                            Masuk ke dashboard untuk mengakses lebih banyak fitur backend yang sudah tersedia
+                        </p>
+
+                        {/* Stats/Features Cards - Desktop Only */}
+                        <div className="hidden lg:grid grid-cols-3 gap-4 pt-6">
+                            <div className="glass-panel p-4 rounded-xl text-center group hover:scale-105 transition-transform duration-300">
+                                <div className="text-2xl font-bold text-accent-blue">10+</div>
+                                <div className="text-xs text-light-muted dark:text-soft-gray mt-1">API Endpoints</div>
+                            </div>
+                            <div className="glass-panel p-4 rounded-xl text-center group hover:scale-105 transition-transform duration-300">
+                                <div className="text-2xl font-bold text-green-500">24/7</div>
+                                <div className="text-xs text-light-muted dark:text-soft-gray mt-1">Availability</div>
+                            </div>
+                            <div className="glass-panel p-4 rounded-xl text-center group hover:scale-105 transition-transform duration-300">
+                                <div className="text-2xl font-bold text-purple-500">∞</div>
+                                <div className="text-xs text-light-muted dark:text-soft-gray mt-1">Possibilities</div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div className="flex-1 w-full max-w-md">
-                    {/* navigateDelay: delay in ms after login success before navigating to dashboard */}
-                    {/* Set to 0 for immediate, or higher value to let BackendLoader animation play longer */}
-                    <Login onLoginSuccess={handleLoginSuccess} navigateDelay={1000} />
-                    <div className="text-sm text-center mt-6 space-y-2">
-                        <p className="text-light-muted/80 dark:text-soft-gray/60">
-                            Belum punya akun?{' '}
-                            <Link to="/register" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">
-                                Daftar di sini
-                            </Link>
-                        </p>
-                        <p className="text-light-muted/80 dark:text-soft-gray/60">
-                            <Link to="/forgot-password" className="text-amber-600 dark:text-amber-400 hover:underline font-medium">
-                                Lupa Password?
-                            </Link>
-                        </p>
+                    {/* Right Section - Login Form */}
+                    <div className="flex-1 w-full max-w-md">
+                        {/* Login component has its own glass-panel styling */}
+                        <Login onLoginSuccess={handleLoginSuccess} navigateDelay={1000} />
+
+                        <div className="text-sm text-center mt-6 space-y-3">
+                            <p className="text-light-muted/80 dark:text-soft-gray/60">
+                                Belum punya akun?{' '}
+                                <Link
+                                    to="/register"
+                                    className="text-accent-blue hover:text-accent-blue/80 hover:underline font-medium transition-colors"
+                                >
+                                    Daftar di sini
+                                </Link>
+                            </p>
+                            <p className="text-light-muted/80 dark:text-soft-gray/60">
+                                <Link
+                                    to="/forgot-password"
+                                    className="text-amber-500 dark:text-amber-400 hover:underline font-medium transition-colors"
+                                >
+                                    Lupa Password?
+                                </Link>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </main>
+
+            {/* Footer */}
+            <footer className="relative z-20 py-4 px-6 text-center">
+                <p className="text-xs text-light-muted/60 dark:text-soft-gray/40">
+                    © {new Date().getFullYear()} Tio Haidar. Built with ❤️
+                </p>
+            </footer>
         </div>
     );
 };

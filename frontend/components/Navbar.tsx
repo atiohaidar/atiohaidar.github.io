@@ -160,6 +160,11 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
                             )}
                         </div>
 
+                        {/* Mobile Session Timer - shows between logo and hamburger */}
+                        <div className="md:hidden flex-1 flex justify-center">
+                            <SessionTimer />
+                        </div>
+
                         {/* Mobile Menu Button */}
                         <div className="md:hidden">
                             <button
@@ -219,6 +224,11 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
                     </nav>
 
                     <div className="mt-auto pt-6 border-t border-gray-200 dark:border-white/10 space-y-4">
+                        {/* Session Timer for Mobile */}
+                        <div className="flex justify-center py-2">
+                            <SessionTimer />
+                        </div>
+
                         <div className="flex gap-4 justify-center py-4">
                             <a href={socials.github} className="p-3 rounded-full bg-white/5 hover:bg-white/10 transition-colors">
                                 <GitHubIcon className="w-5 h-5 dark:text-white" />
