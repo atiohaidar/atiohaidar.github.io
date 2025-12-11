@@ -281,7 +281,7 @@ const LandingPage: React.FC = () => {
                                     value={ticketTokenInput}
                                     onChange={(e) => setTicketTokenInput(e.target.value)}
                                     placeholder="Contoh: TKT-ABC12345"
-                                    className={`w-full px-4 py-3 rounded-lg border ${COLORS.BORDER} ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} focus:outline-none focus:ring-2 focus:ring-coral-pink`}
+                                    className={`w-full px-4 py-3 rounded-lg border ${COLORS.BORDER} ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} focus:outline-none focus:ring-2 focus:ring-accent-blue`}
                                 />
                             </div>
                             <div className="flex flex-col gap-3 sm:flex-row">
@@ -340,7 +340,7 @@ const LandingPage: React.FC = () => {
                                     value={formTokenInput}
                                     onChange={(e) => setFormTokenInput(e.target.value)}
                                     placeholder="Masukkan token formulir"
-                                    className={`w-full px-4 py-3 rounded-lg border ${COLORS.BORDER} ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} focus:outline-none focus:ring-2 focus:ring-coral-pink`}
+                                    className={`w-full px-4 py-3 rounded-lg border ${COLORS.BORDER} ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} focus:outline-none focus:ring-2 focus:ring-accent-blue`}
                                 />
                             </div>
                             <button

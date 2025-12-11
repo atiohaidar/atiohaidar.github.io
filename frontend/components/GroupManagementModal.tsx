@@ -191,7 +191,7 @@ const GroupManagementModal: React.FC<GroupManagementModalProps> = ({ isOpen, onC
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
             <div className={`${palette.surface} rounded-lg shadow-2xl max-w-4xl w-full max-h-[80vh] flex flex-col`}>
                 {/* Header */}
                 <div className={`p-4 ${palette.sidebar.border} flex justify-between items-center`}>
@@ -207,21 +207,19 @@ const GroupManagementModal: React.FC<GroupManagementModalProps> = ({ isOpen, onC
                 {/* Tabs */}
                 <div className={`flex ${palette.sidebar.border}`}>
                     <button
-                        className={`flex-1 py-3 px-4 font-medium transition-colors ${
-                            activeTab === 'create'
+                        className={`flex-1 py-3 px-4 font-medium transition-colors ${activeTab === 'create'
                                 ? `${palette.button.primary} text-white`
                                 : `${palette.sidebar.textMuted} hover:${palette.sidebar.hover}`
-                        }`}
+                            }`}
                         onClick={() => setActiveTab('create')}
                     >
                         Create Group
                     </button>
                     <button
-                        className={`flex-1 py-3 px-4 font-medium transition-colors ${
-                            activeTab === 'manage'
+                        className={`flex-1 py-3 px-4 font-medium transition-colors ${activeTab === 'manage'
                                 ? `${palette.button.primary} text-white`
                                 : `${palette.sidebar.textMuted} hover:${palette.sidebar.hover}`
-                        }`}
+                            }`}
                         onClick={() => setActiveTab('manage')}
                     >
                         Manage Groups
@@ -281,11 +279,10 @@ const GroupManagementModal: React.FC<GroupManagementModalProps> = ({ isOpen, onC
                                             {groups.map((group) => (
                                                 <div
                                                     key={group.id}
-                                                    className={`p-3 rounded cursor-pointer transition-colors ${
-                                                        selectedGroup === group.id
+                                                    className={`p-3 rounded cursor-pointer transition-colors ${selectedGroup === group.id
                                                             ? palette.sidebar.active
                                                             : `${palette.surface} hover:${palette.sidebar.hover}`
-                                                    }`}
+                                                        }`}
                                                     onClick={() => setSelectedGroup(group.id)}
                                                 >
                                                     <div className="font-medium">{group.name}</div>

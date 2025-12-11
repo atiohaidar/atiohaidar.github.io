@@ -30,7 +30,7 @@ const DashboardTicketDetailPage: React.FC = () => {
     const [newComment, setNewComment] = useState('');
     const [isInternalComment, setIsInternalComment] = useState(false);
     const [isSubmittingComment, setIsSubmittingComment] = useState(false);
-    
+
     const [assignTo, setAssignTo] = useState('');
     const [assignNotes, setAssignNotes] = useState('');
     const [isAssigning, setIsAssigning] = useState(false);
@@ -133,7 +133,11 @@ const DashboardTicketDetailPage: React.FC = () => {
 
         setIsUpdating(true);
         try {
-            const updatedTicket = await updateTicket(ticket.id, editData);
+            const updatedTicket = await updateTicket(ticket.id, {
+                ...editData,
+                status: editData.status as any,
+                priority: editData.priority as any
+            });
             setTicket(updatedTicket);
             setEditMode(false);
         } catch (err) {
@@ -278,7 +282,7 @@ const DashboardTicketDetailPage: React.FC = () => {
                                         type="text"
                                         value={editData.title}
                                         onChange={(e) => setEditData({ ...editData, title: e.target.value })}
-                                        className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-coral-pink`}
+                                        className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue`}
                                         required
                                     />
                                 </div>
@@ -291,7 +295,7 @@ const DashboardTicketDetailPage: React.FC = () => {
                                         value={editData.description}
                                         onChange={(e) => setEditData({ ...editData, description: e.target.value })}
                                         rows={6}
-                                        className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-coral-pink resize-none`}
+                                        className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue resize-none`}
                                         required
                                     />
                                 </div>
@@ -304,7 +308,7 @@ const DashboardTicketDetailPage: React.FC = () => {
                                         <select
                                             value={editData.category_id}
                                             onChange={(e) => setEditData({ ...editData, category_id: Number(e.target.value) })}
-                                            className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-coral-pink`}
+                                            className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue`}
                                         >
                                             {categories.map((cat) => (
                                                 <option key={cat.id} value={cat.id}>
@@ -321,7 +325,7 @@ const DashboardTicketDetailPage: React.FC = () => {
                                         <select
                                             value={editData.status}
                                             onChange={(e) => setEditData({ ...editData, status: e.target.value })}
-                                            className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-coral-pink`}
+                                            className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue`}
                                         >
                                             <option value="open">Terbuka</option>
                                             <option value="in_progress">Dalam Proses</option>
@@ -338,7 +342,7 @@ const DashboardTicketDetailPage: React.FC = () => {
                                     <select
                                         value={editData.priority}
                                         onChange={(e) => setEditData({ ...editData, priority: e.target.value })}
-                                        className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-coral-pink`}
+                                        className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue`}
                                     >
                                         <option value="low">Rendah</option>
                                         <option value="medium">Sedang</option>
@@ -422,7 +426,7 @@ const DashboardTicketDetailPage: React.FC = () => {
                                         placeholder="Tulis komentar..."
                                         required
                                         rows={4}
-                                        className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-coral-pink resize-none`}
+                                        className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue resize-none`}
                                     />
                                 </div>
                                 <div className="flex items-center gap-4">
@@ -468,7 +472,7 @@ const DashboardTicketDetailPage: React.FC = () => {
                                         value={assignTo}
                                         onChange={(e) => setAssignTo(e.target.value)}
                                         required
-                                        className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-coral-pink`}
+                                        className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue`}
                                     >
                                         <option value="">Pilih user...</option>
                                         {users.map((user) => (
@@ -488,7 +492,7 @@ const DashboardTicketDetailPage: React.FC = () => {
                                         onChange={(e) => setAssignNotes(e.target.value)}
                                         placeholder="Catatan untuk penugasan..."
                                         rows={3}
-                                        className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-coral-pink resize-none`}
+                                        className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue resize-none`}
                                     />
                                 </div>
 

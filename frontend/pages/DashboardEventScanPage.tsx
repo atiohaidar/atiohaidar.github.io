@@ -164,7 +164,7 @@ const DashboardEventScanPage: React.FC = () => {
     const handleScanSuccess = (token: string) => {
         // Stop scanning temporarily
         setIsScanning(false);
-        
+
         // Show confirmation modal
         setPendingToken(token);
         setShowConfirmModal(true);
@@ -227,9 +227,8 @@ const DashboardEventScanPage: React.FC = () => {
 
                 {/* Last scan notification */}
                 {lastScan && (
-                    <div className={`mb-6 p-4 rounded-lg border ${
-                        lastScan.isFirstScan ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
-                    }`}>
+                    <div className={`mb-6 p-4 rounded-lg border ${lastScan.isFirstScan ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
+                        }`}>
                         <p className={`font-semibold ${lastScan.isFirstScan ? 'text-green-600 dark:text-green-400' : 'text-blue-600 dark:text-blue-400'}`}>
                             {lastScan.isFirstScan ? '✅ Scan pertama - Status diubah ke HADIR' : '✅ Scan berhasil dicatat'}
                         </p>
@@ -270,9 +269,8 @@ const DashboardEventScanPage: React.FC = () => {
                     <div
                         id="qr-reader"
                         ref={scannerRef}
-                        className={`w-full rounded-lg overflow-hidden mb-4 ${
-                            isScanning ? 'block' : 'hidden'
-                        }`}
+                        className={`w-full rounded-lg overflow-hidden mb-4 ${isScanning ? 'block' : 'hidden'
+                            }`}
                         style={{ maxWidth: '500px', margin: '0 auto' }}
                     />
 
@@ -281,17 +279,16 @@ const DashboardEventScanPage: React.FC = () => {
                         <button
                             onClick={toggleScanning}
                             disabled={cameras.length === 0}
-                            className={`flex-1 px-6 py-3 rounded-lg transition-colors ${
-                                isScanning
-                                    ? 'bg-red-500 text-white hover:bg-red-600'
-                                    : `${COLORS.BG_ACCENT} ${COLORS.TEXT_ACCENT_CONTRAST} hover:opacity-90`
-                            } disabled:opacity-50 disabled:cursor-not-allowed`}
+                            className={`flex-1 px-6 py-3 rounded-lg transition-colors ${isScanning
+                                ? 'bg-red-500 text-white hover:bg-red-600'
+                                : `${COLORS.BG_ACCENT} ${COLORS.TEXT_ON_ACCENT} hover:opacity-90`
+                                } disabled:opacity-50 disabled:cursor-not-allowed`}
                         >
                             {isScanning ? 'Stop Scanner' : 'Mulai Scanner'}
                         </button>
                         <button
                             onClick={() => setShowManualInput(!showManualInput)}
-                            className={`px-6 py-3 ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} rounded-lg border ${COLORS.BORDER} hover:${COLORS.BG_HOVER}`}
+                            className={`px-6 py-3 ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} rounded-lg border ${COLORS.BORDER} hover:bg-gray-100 dark:hover:bg-white/10`}
                         >
                             Input Manual
                         </button>
@@ -317,7 +314,7 @@ const DashboardEventScanPage: React.FC = () => {
                             <button
                                 type="submit"
                                 disabled={!manualToken.trim() || scanMutation.isPending}
-                                className={`w-full px-6 py-3 ${COLORS.BG_ACCENT} ${COLORS.TEXT_ACCENT_CONTRAST} rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed`}
+                                className={`w-full px-6 py-3 ${COLORS.BG_ACCENT} ${COLORS.TEXT_ON_ACCENT} rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed`}
                             >
                                 {scanMutation.isPending ? 'Memproses...' : 'Verifikasi Token'}
                             </button>
@@ -327,12 +324,12 @@ const DashboardEventScanPage: React.FC = () => {
 
                 {/* Confirmation Modal */}
                 {showConfirmModal && pendingToken && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
                         <div className={`${COLORS.BG_SECONDARY} p-6 rounded-lg max-w-md w-full`}>
                             <h3 className={`text-xl font-bold ${COLORS.TEXT_PRIMARY} mb-4`}>
                                 Verifikasi Kehadiran
                             </h3>
-                            
+
                             {(() => {
                                 const attendee = getAttendeeInfo(pendingToken);
                                 if (!attendee) {
@@ -369,7 +366,7 @@ const DashboardEventScanPage: React.FC = () => {
                                                     </p>
                                                 </div>
                                             </div>
-                                            
+
                                             {attendee.status === 'present' && (
                                                 <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded">
                                                     <p className="text-sm text-blue-600 dark:text-blue-400">

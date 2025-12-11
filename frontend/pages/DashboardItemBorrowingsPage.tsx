@@ -63,7 +63,7 @@ const DashboardItemBorrowingsPage: React.FC = () => {
   const handleUpdateStatus = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedBorrowing) return;
-    
+
     try {
       await itemBorrowingService.updateStatus(selectedBorrowing.id, statusFormData);
       setShowStatusModal(false);
@@ -77,7 +77,7 @@ const DashboardItemBorrowingsPage: React.FC = () => {
 
   const handleCancel = async (borrowingId: string) => {
     if (!confirm('Apakah Anda yakin ingin membatalkan peminjaman ini?')) return;
-    
+
     try {
       await itemBorrowingService.cancel(borrowingId);
       loadData();
@@ -136,7 +136,7 @@ const DashboardItemBorrowingsPage: React.FC = () => {
             Kelola peminjaman barang
           </p>
         </div>
-        
+
         <div className="flex space-x-3">
           <button
             onClick={() => setShowAddModal(true)}
@@ -230,7 +230,7 @@ const DashboardItemBorrowingsPage: React.FC = () => {
 
       {/* Add Borrowing Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
           <div className={`${palette.panel.bg} rounded-lg p-6 max-w-md w-full mx-4`}>
             <h3 className={`text-lg font-semibold mb-4 ${palette.panel.text}`}>
               Pinjam Barang
@@ -243,7 +243,7 @@ const DashboardItemBorrowingsPage: React.FC = () => {
                 <select
                   value={formData.item_id}
                   onChange={(e) => setFormData({ ...formData, item_id: e.target.value })}
-                  className={`w-full px-3 py-2 border rounded-lg ${palette.input.bg} ${palette.input.border} ${palette.input.text}`}
+                  className={`w-full px-3 py-2 border rounded-lg ${palette.input}`}
                   required
                 >
                   <option value="">Pilih Barang</option>
@@ -263,7 +263,7 @@ const DashboardItemBorrowingsPage: React.FC = () => {
                   min="1"
                   value={formData.quantity}
                   onChange={(e) => setFormData({ ...formData, quantity: parseInt(e.target.value, 10) })}
-                  className={`w-full px-3 py-2 border rounded-lg ${palette.input.bg} ${palette.input.border} ${palette.input.text}`}
+                  className={`w-full px-3 py-2 border rounded-lg ${palette.input}`}
                   required
                 />
               </div>
@@ -275,7 +275,7 @@ const DashboardItemBorrowingsPage: React.FC = () => {
                   type="date"
                   value={formData.start_date}
                   onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-                  className={`w-full px-3 py-2 border rounded-lg ${palette.input.bg} ${palette.input.border} ${palette.input.text}`}
+                  className={`w-full px-3 py-2 border rounded-lg ${palette.input}`}
                   required
                 />
               </div>
@@ -287,7 +287,7 @@ const DashboardItemBorrowingsPage: React.FC = () => {
                   type="date"
                   value={formData.end_date}
                   onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
-                  className={`w-full px-3 py-2 border rounded-lg ${palette.input.bg} ${palette.input.border} ${palette.input.text}`}
+                  className={`w-full px-3 py-2 border rounded-lg ${palette.input}`}
                   required
                 />
               </div>
@@ -298,7 +298,7 @@ const DashboardItemBorrowingsPage: React.FC = () => {
                 <textarea
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  className={`w-full px-3 py-2 border rounded-lg ${palette.input.bg} ${palette.input.border} ${palette.input.text}`}
+                  className={`w-full px-3 py-2 border rounded-lg ${palette.input}`}
                   rows={3}
                 />
               </div>
@@ -327,7 +327,7 @@ const DashboardItemBorrowingsPage: React.FC = () => {
 
       {/* Status Update Modal */}
       {showStatusModal && selectedBorrowing && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
           <div className={`${palette.panel.bg} rounded-lg p-6 max-w-md w-full mx-4`}>
             <h3 className={`text-lg font-semibold mb-4 ${palette.panel.text}`}>
               Update Status Peminjaman
@@ -340,7 +340,7 @@ const DashboardItemBorrowingsPage: React.FC = () => {
                 <select
                   value={statusFormData.status}
                   onChange={(e) => setStatusFormData({ ...statusFormData, status: e.target.value as ItemBorrowingStatus })}
-                  className={`w-full px-3 py-2 border rounded-lg ${palette.input.bg} ${palette.input.border} ${palette.input.text}`}
+                  className={`w-full px-3 py-2 border rounded-lg ${palette.input}`}
                   required
                 >
                   <option value="pending">Menunggu</option>
@@ -358,7 +358,7 @@ const DashboardItemBorrowingsPage: React.FC = () => {
                 <textarea
                   value={statusFormData.notes}
                   onChange={(e) => setStatusFormData({ ...statusFormData, notes: e.target.value })}
-                  className={`w-full px-3 py-2 border rounded-lg ${palette.input.bg} ${palette.input.border} ${palette.input.text}`}
+                  className={`w-full px-3 py-2 border rounded-lg ${palette.input}`}
                   rows={3}
                 />
               </div>

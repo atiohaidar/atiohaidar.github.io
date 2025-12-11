@@ -344,7 +344,7 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                 {selectedChat && chatType ? (
                     <>
                         {/* Chat Header */}
-                        <div className={`flex-shrink-0 p-3 ${palette.sidebar.border} flex justify-between items-center ${theme === 'dark' ? 'bg-[#1f2c34]' : 'bg-[#f0f2f5]'}`}>
+                        <div className={`flex-shrink-0 p-3 ${palette.header.border} flex justify-between items-center ${palette.header.bg} backdrop-blur-md`}>
                             <div className="flex items-center gap-3 flex-1 min-w-0">
                                 <button
                                     onClick={() => setIsMobileChatListOpen(true)}
@@ -373,7 +373,7 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                         </div>
 
                         {/* Messages */}
-                        <div className="flex-1 h-[calc(100vh-280px)] overflow-y-auto p-4 space-y-2" style={{ backgroundColor: theme === 'dark' ? '#0a1014' : '#e5ddd5' }}>
+                        <div className={`flex-1 h-[calc(100vh-280px)] overflow-y-auto p-4 space-y-2 ${palette.contentBg}`}>
                             {error && (
                                 <div className="bg-red-500 text-white p-3 rounded">
                                     {error}
@@ -423,7 +423,7 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                         </div>
 
                         {/* Message Input */}
-                        <div className={`flex-shrink-0 p-3 ${palette.sidebar.border}`} style={{ backgroundColor: theme === 'dark' ? '#1f2c34' : '#f0f2f5' }}>
+                        <div className={`flex-shrink-0 p-3 ${palette.header.border} ${theme === 'dark' ? 'bg-[#1f2c34]' : 'bg-[#f0f2f5]'}`}>
                             {replyTo && (
                                 <div className={`mb-2 p-2 rounded-lg ${theme === 'dark' ? 'bg-[#2a3942]' : 'bg-white'} flex justify-between items-start border-l-4 border-[#3B82F6]`}>
                                     <div className="flex-1">
@@ -466,7 +466,7 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                         </div>
                     </>
                 ) : (
-                    <div className="flex-1 flex items-center justify-center" style={{ backgroundColor: theme === 'dark' ? '#0a1014' : '#e5ddd5' }}>
+                    <div className={`flex-1 flex items-center justify-center ${palette.contentBg}`}>
                         <div className={`text-center ${palette.sidebar.textMuted}`}>
                             <div className="text-6xl mb-4">💬</div>
                             <div className="text-lg font-medium mb-2">Chattingan</div>

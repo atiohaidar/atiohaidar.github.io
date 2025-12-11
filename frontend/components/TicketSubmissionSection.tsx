@@ -172,7 +172,7 @@ const TicketSubmissionSection: React.FC = () => {
                                     value={formData.submitter_name || ''}
                                     onChange={handleChange}
                                     placeholder="Nama Anda"
-                                    className={`w-full px-4 py-3 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-coral-pink`}
+                                    className={`w-full px-4 py-3 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue`}
                                 />
                             </div>
 
@@ -187,7 +187,7 @@ const TicketSubmissionSection: React.FC = () => {
                                     value={formData.submitter_email || ''}
                                     onChange={handleChange}
                                     placeholder="email@example.com"
-                                    className={`w-full px-4 py-3 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-coral-pink`}
+                                    className={`w-full px-4 py-3 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue`}
                                 />
                             </div>
                         </div>
@@ -203,7 +203,7 @@ const TicketSubmissionSection: React.FC = () => {
                                     value={formData.category_id}
                                     onChange={handleChange}
                                     required
-                                    className={`w-full px-4 py-3 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-coral-pink`}
+                                    className={`w-full px-4 py-3 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue`}
                                 >
                                     {categories.map(cat => (
                                         <option key={cat.id} value={cat.id}>{cat.name}</option>
@@ -221,7 +221,7 @@ const TicketSubmissionSection: React.FC = () => {
                                     value={formData.priority}
                                     onChange={handleChange}
                                     required
-                                    className={`w-full px-4 py-3 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-coral-pink`}
+                                    className={`w-full px-4 py-3 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue`}
                                 >
                                     <option value="low">Rendah</option>
                                     <option value="medium">Sedang</option>
@@ -243,7 +243,7 @@ const TicketSubmissionSection: React.FC = () => {
                                 onChange={handleChange}
                                 placeholder="Ringkasan singkat keluhan Anda"
                                 required
-                                className={`w-full px-4 py-3 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-coral-pink`}
+                                className={`w-full px-4 py-3 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue`}
                             />
                         </div>
 
@@ -259,7 +259,7 @@ const TicketSubmissionSection: React.FC = () => {
                                 placeholder="Jelaskan keluhan Anda secara detail..."
                                 required
                                 rows={6}
-                                className={`w-full px-4 py-3 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-coral-pink resize-none`}
+                                className={`w-full px-4 py-3 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue resize-none`}
                             />
                         </div>
 
@@ -274,7 +274,7 @@ const TicketSubmissionSection: React.FC = () => {
                                 value={formData.reference_link || ''}
                                 onChange={handleChange}
                                 placeholder="https://example.com/screenshot atau link terkait"
-                                className={`w-full px-4 py-3 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-coral-pink`}
+                                className={`w-full px-4 py-3 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue`}
                             />
                         </div>
 
@@ -291,7 +291,7 @@ const TicketSubmissionSection: React.FC = () => {
 
             {/* Token Modal */}
             {showTokenModal && submitResult?.success && submitResult.token && createPortal(
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[100] p-4">
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
                     <div className={`${COLORS.BG_SECONDARY} rounded-lg p-8 max-w-md w-full shadow-2xl`}>
                         <h3 className={`text-2xl font-bold ${COLORS.TEXT_PRIMARY} mb-4 text-center`}>
                             Keluhan Berhasil Dikirim! ✅

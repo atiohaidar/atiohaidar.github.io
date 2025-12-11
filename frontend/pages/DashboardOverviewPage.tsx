@@ -113,7 +113,7 @@ const DashboardOverviewPage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Balance Card */}
                 <div
-                    className={`relative group p-6 rounded-2xl border ${theme === 'dark' ? 'bg-[#1A2230]/60 border-white/5' : 'bg-white/60 border-gray-100'} backdrop-blur-xl shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl overflow-hidden`}
+                    className={`relative group p-6 rounded-2xl ${palette.panel.bg} ${palette.panel.border} shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl overflow-hidden`}
                 >
                     <div className={`absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-gradient-to-br from-green-500 to-emerald-400 opacity-20 blur-2xl group-hover:opacity-40 transition-opacity`} />
 
@@ -155,7 +155,7 @@ const DashboardOverviewPage: React.FC = () => {
                 {stats.map((stat, index) => (
                     <div
                         key={index}
-                        className={`relative group p-6 rounded-2xl border ${theme === 'dark' ? 'bg-[#1A2230]/60 border-white/5' : 'bg-white/60 border-gray-100'} backdrop-blur-xl shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl overflow-hidden`}
+                        className={`relative group p-6 rounded-2xl ${palette.panel.bg} ${palette.panel.border} shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl overflow-hidden`}
                     >
                         <div className={`absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-gradient-to-br ${stat.color} opacity-20 blur-2xl group-hover:opacity-40 transition-opacity`} />
 
@@ -189,7 +189,7 @@ const DashboardOverviewPage: React.FC = () => {
             {/* Main Content Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Visual Chart / Large Widget */}
-                <div className={`lg:col-span-2 p-6 rounded-3xl border ${theme === 'dark' ? 'bg-[#1A2230]/60 border-white/5' : 'bg-white/60 border-gray-100'} backdrop-blur-xl shadow-xl`}>
+                <div className={`lg:col-span-2 p-6 rounded-3xl ${palette.panel.bg} ${palette.panel.border} shadow-xl`}>
                     <div className="flex justify-between items-center mb-6">
                         <h2 className={`text-xl font-bold ${palette.panel.text}`}>Productivity Overview</h2>
                         <select className={`bg-transparent border-none text-sm font-medium ${palette.panel.textMuted} focus:ring-0 cursor-pointer`}>
@@ -204,7 +204,7 @@ const DashboardOverviewPage: React.FC = () => {
                 </div>
 
                 {/* Recent Activity */}
-                <div className={`p-6 rounded-3xl border ${theme === 'dark' ? 'bg-[#1A2230]/60 border-white/5' : 'bg-white/60 border-gray-100'} backdrop-blur-xl shadow-xl`}>
+                <div className={`p-6 rounded-3xl ${palette.panel.bg} ${palette.panel.border} shadow-xl`}>
                     <h2 className={`text-xl font-bold ${palette.panel.text} mb-6`}>Recent Activity</h2>
                     <div className="space-y-6">
                         {recentActivities.length > 0 ? (

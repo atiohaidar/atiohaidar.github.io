@@ -58,7 +58,7 @@ const DashboardFormsPage: React.FC = () => {
         return (
             <div className="flex justify-center items-center min-h-96">
                 <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-coral-pink mx-auto mb-4"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-blue mx-auto mb-4"></div>
                     <p className={COLORS.TEXT_SECONDARY}>Memuat formulir...</p>
                 </div>
             </div>
@@ -123,7 +123,7 @@ const DashboardFormsPage: React.FC = () => {
                                         </code>
                                         <button
                                             onClick={() => copyTokenToClipboard(form.token)}
-                                            className="text-coral-pink hover:text-coral-pink/80 transition-colors"
+                                            className="text-accent-blue hover:text-accent-blue/80 transition-colors"
                                             title="Salin token"
                                         >
                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

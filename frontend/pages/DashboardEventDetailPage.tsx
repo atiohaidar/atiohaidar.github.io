@@ -53,7 +53,7 @@ const DashboardEventDetailPage: React.FC = () => {
     // Check if current user is registered
     const currentUserAttendee = attendees?.find(a => a.user_username === user?.username);
     const isRegistered = !!currentUserAttendee;
-    
+
     // Check if current user is admin/creator
     const isCreator = user?.username === event?.created_by;
     const isAdmin = user?.role === 'admin';
@@ -192,7 +192,7 @@ const DashboardEventDetailPage: React.FC = () => {
         return (
             <div className={`min-h-screen ${COLORS.BG_PRIMARY} p-6`}>
                 <div className={`${COLORS.BG_SECONDARY} p-8 rounded-lg border ${COLORS.BORDER} text-center`}>
-                    <p className={COLORS.TEXT_ERROR}>Acara tidak ditemukan</p>
+                    <p className="text-red-500">Acara tidak ditemukan</p>
                 </div>
             </div>
         );
@@ -215,7 +215,7 @@ const DashboardEventDetailPage: React.FC = () => {
                     >
                         ← Kembali ke Daftar Acara
                     </button>
-                    
+
                     <div className="flex justify-between items-start flex-wrap gap-4">
                         <div>
                             <h1 className={`text-3xl font-bold ${COLORS.TEXT_PRIMARY} mb-2`}>
@@ -253,7 +253,7 @@ const DashboardEventDetailPage: React.FC = () => {
                             {isRegistered && currentUserAttendee && (
                                 <button
                                     onClick={() => handleShowQR(currentUserAttendee)}
-                                    className={`px-4 py-2 ${COLORS.BG_ACCENT} ${COLORS.TEXT_ACCENT_CONTRAST} rounded-lg hover:opacity-90 transition-opacity`}
+                                    className={`px-4 py-2 ${COLORS.BG_ACCENT} ${COLORS.TEXT_ON_ACCENT} rounded-lg hover:opacity-90 transition-opacity`}
                                 >
                                     Lihat QR Code Saya
                                 </button>
@@ -262,7 +262,7 @@ const DashboardEventDetailPage: React.FC = () => {
                                 <>
                                     <Link
                                         to={`/dashboard/events/${eventId}/edit`}
-                                        className={`px-4 py-2 ${COLORS.BG_SECONDARY} ${COLORS.TEXT_PRIMARY} rounded-lg hover:${COLORS.BG_HOVER} border ${COLORS.BORDER}`}
+                                        className={`px-4 py-2 ${COLORS.BG_SECONDARY} ${COLORS.TEXT_PRIMARY} rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 border ${COLORS.BORDER}`}
                                     >
                                         Edit
                                     </Link>
@@ -341,7 +341,7 @@ const DashboardEventDetailPage: React.FC = () => {
                             <h2 className={`text-xl font-bold ${COLORS.TEXT_PRIMARY} mb-4`}>
                                 Daftar Peserta ({attendees?.length || 0})
                             </h2>
-                            
+
                             {!attendees || attendees.length === 0 ? (
                                 <p className={`${COLORS.TEXT_SECONDARY} text-center py-8`}>
                                     Belum ada peserta yang mendaftar
@@ -366,7 +366,7 @@ const DashboardEventDetailPage: React.FC = () => {
                                                     {getStatusText(attendee.status)}
                                                 </span>
                                             </div>
-                                            
+
                                             <div className="flex gap-2 mt-3">
                                                 <button
                                                     onClick={() => handleShowQR(attendee)}
@@ -413,7 +413,7 @@ const DashboardEventDetailPage: React.FC = () => {
                                         + Tambah Admin
                                     </button>
                                 </div>
-                                
+
                                 {!admins || admins.length === 0 ? (
                                     <p className={`${COLORS.TEXT_SECONDARY} text-center py-8`}>
                                         Belum ada admin yang ditugaskan
@@ -451,7 +451,7 @@ const DashboardEventDetailPage: React.FC = () => {
 
                 {/* Delete Confirmation Modal */}
                 {showDeleteConfirm && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
                         <div className={`${COLORS.BG_SECONDARY} p-6 rounded-lg max-w-md w-full`}>
                             <h3 className={`text-xl font-bold ${COLORS.TEXT_PRIMARY} mb-4`}>
                                 Hapus Acara?
@@ -483,7 +483,7 @@ const DashboardEventDetailPage: React.FC = () => {
 
                 {/* QR Code Modal */}
                 {showQRModal && selectedAttendee && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
                         <div className={`${COLORS.BG_SECONDARY} p-6 rounded-lg max-w-md w-full`}>
                             <h3 className={`text-xl font-bold ${COLORS.TEXT_PRIMARY} mb-4`}>
                                 QR Code Kehadiran
@@ -512,7 +512,7 @@ const DashboardEventDetailPage: React.FC = () => {
                                 </button>
                                 <button
                                     onClick={handleDownloadQR}
-                                    className={`flex-1 px-4 py-2 ${COLORS.BG_ACCENT} ${COLORS.TEXT_ACCENT_CONTRAST} rounded-lg hover:opacity-90`}
+                                    className={`flex-1 px-4 py-2 ${COLORS.BG_ACCENT} ${COLORS.TEXT_ON_ACCENT} rounded-lg hover:opacity-90`}
                                 >
                                     Download
                                 </button>
@@ -523,7 +523,7 @@ const DashboardEventDetailPage: React.FC = () => {
 
                 {/* Add Admin Modal */}
                 {showAdminModal && (
-                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
                         <div className={`${COLORS.BG_SECONDARY} p-6 rounded-lg max-w-md w-full`}>
                             <h3 className={`text-xl font-bold ${COLORS.TEXT_PRIMARY} mb-4`}>
                                 Tambah Admin Acara

@@ -198,7 +198,7 @@ const DashboardItemsPage: React.FC = () => {
 
       {/* Add Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
           <div className={`${palette.panel.bg} rounded-lg p-6 max-w-md w-full mx-4`}>
             <h3 className={`text-lg font-semibold mb-4 ${palette.panel.text}`}>
               Tambah Barang Baru
@@ -212,7 +212,7 @@ const DashboardItemsPage: React.FC = () => {
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className={`w-full px-3 py-2 border rounded-lg ${palette.input.bg} ${palette.input.border} ${palette.input.text}`}
+                  className={`w-full px-3 py-2 border rounded-lg ${palette.input}`}
                   required
                 />
               </div>
@@ -223,7 +223,7 @@ const DashboardItemsPage: React.FC = () => {
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className={`w-full px-3 py-2 border rounded-lg ${palette.input.bg} ${palette.input.border} ${palette.input.text}`}
+                  className={`w-full px-3 py-2 border rounded-lg ${palette.input}`}
                   rows={3}
                 />
               </div>
@@ -236,7 +236,7 @@ const DashboardItemsPage: React.FC = () => {
                   min="1"
                   value={formData.stock}
                   onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value, 10) })}
-                  className={`w-full px-3 py-2 border rounded-lg ${palette.input.bg} ${palette.input.border} ${palette.input.text}`}
+                  className={`w-full px-3 py-2 border rounded-lg ${palette.input}`}
                   required
                 />
               </div>
@@ -248,7 +248,7 @@ const DashboardItemsPage: React.FC = () => {
                   type="url"
                   value={formData.attachment_link}
                   onChange={(e) => setFormData({ ...formData, attachment_link: e.target.value })}
-                  className={`w-full px-3 py-2 border rounded-lg ${palette.input.bg} ${palette.input.border} ${palette.input.text}`}
+                  className={`w-full px-3 py-2 border rounded-lg ${palette.input}`}
                   placeholder="https://example.com/manual.pdf"
                 />
               </div>
@@ -277,7 +277,7 @@ const DashboardItemsPage: React.FC = () => {
 
       {/* Edit Modal */}
       {showEditModal && editingItem && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
           <div className={`${palette.panel.bg} rounded-lg p-6 max-w-md w-full mx-4`}>
             <h3 className={`text-lg font-semibold mb-4 ${palette.panel.text}`}>
               Edit Barang
@@ -291,7 +291,7 @@ const DashboardItemsPage: React.FC = () => {
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className={`w-full px-3 py-2 border rounded-lg ${palette.input.bg} ${palette.input.border} ${palette.input.text}`}
+                  className={`w-full px-3 py-2 border rounded-lg ${palette.input}`}
                   required
                 />
               </div>
@@ -302,7 +302,7 @@ const DashboardItemsPage: React.FC = () => {
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className={`w-full px-3 py-2 border rounded-lg ${palette.input.bg} ${palette.input.border} ${palette.input.text}`}
+                  className={`w-full px-3 py-2 border rounded-lg ${palette.input}`}
                   rows={3}
                 />
               </div>
@@ -315,7 +315,7 @@ const DashboardItemsPage: React.FC = () => {
                   min="1"
                   value={formData.stock}
                   onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value, 10) })}
-                  className={`w-full px-3 py-2 border rounded-lg ${palette.input.bg} ${palette.input.border} ${palette.input.text}`}
+                  className={`w-full px-3 py-2 border rounded-lg ${palette.input}`}
                   required
                 />
               </div>
@@ -327,7 +327,7 @@ const DashboardItemsPage: React.FC = () => {
                   type="url"
                   value={formData.attachment_link}
                   onChange={(e) => setFormData({ ...formData, attachment_link: e.target.value })}
-                  className={`w-full px-3 py-2 border rounded-lg ${palette.input.bg} ${palette.input.border} ${palette.input.text}`}
+                  className={`w-full px-3 py-2 border rounded-lg ${palette.input}`}
                   placeholder="https://example.com/manual.pdf"
                 />
               </div>

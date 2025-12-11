@@ -166,7 +166,7 @@ const DashboardTicketsPage: React.FC = () => {
                         <select
                             value={filters.status}
                             onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-                            className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-coral-pink`}
+                            className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue`}
                         >
                             <option value="">Semua Status</option>
                             <option value="open">Terbuka</option>
@@ -183,7 +183,7 @@ const DashboardTicketsPage: React.FC = () => {
                         <select
                             value={filters.categoryId}
                             onChange={(e) => setFilters({ ...filters, categoryId: e.target.value })}
-                            className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-coral-pink`}
+                            className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue`}
                         >
                             <option value="">Semua Kategori</option>
                             {categories.map((cat) => (
@@ -203,7 +203,7 @@ const DashboardTicketsPage: React.FC = () => {
                             value={filters.searchQuery}
                             onChange={(e) => setFilters({ ...filters, searchQuery: e.target.value })}
                             placeholder="Cari tiket..."
-                            className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-coral-pink`}
+                            className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue`}
                         />
                     </div>
                 </div>
@@ -255,7 +255,7 @@ const DashboardTicketsPage: React.FC = () => {
                                 {tickets.map((ticket) => (
                                     <tr
                                         key={ticket.id}
-                                        className={`border-b ${COLORS.BORDER} hover:bg-opacity-50 hover:${COLORS.BG_PRIMARY} cursor-pointer transition-colors`}
+                                        className={`border-b ${COLORS.BORDER} hover:bg-gray-50 dark:hover:bg-white/5 cursor-pointer transition-colors`}
                                         onClick={() => navigate(`/dashboard/tickets/${ticket.id}`)}
                                     >
                                         <td className={`px-6 py-4 text-sm ${COLORS.TEXT_PRIMARY} font-mono`}>

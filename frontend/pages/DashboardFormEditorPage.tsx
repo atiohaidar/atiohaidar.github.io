@@ -158,7 +158,7 @@ const DashboardFormEditorPage: React.FC = () => {
         return (
             <div className="flex justify-center items-center min-h-96">
                 <div className="text-center">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-coral-pink mx-auto mb-4"></div>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-blue mx-auto mb-4"></div>
                     <p className={COLORS.TEXT_SECONDARY}>Memuat formulir...</p>
                 </div>
             </div>
@@ -187,7 +187,7 @@ const DashboardFormEditorPage: React.FC = () => {
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
                                 placeholder="Masukkan judul formulir"
-                                className={`w-full px-4 py-3 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-coral-pink`}
+                                className={`w-full px-4 py-3 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue`}
                                 required
                             />
                         </div>
@@ -201,7 +201,7 @@ const DashboardFormEditorPage: React.FC = () => {
                                 onChange={(e) => setDescription(e.target.value)}
                                 placeholder="Masukkan deskripsi formulir"
                                 rows={3}
-                                className={`w-full px-4 py-3 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-coral-pink resize-none`}
+                                className={`w-full px-4 py-3 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue resize-none`}
                             />
                         </div>
                     </div>
@@ -233,7 +233,7 @@ const DashboardFormEditorPage: React.FC = () => {
                                             type="button"
                                             onClick={() => handleMoveQuestion(index, 'up')}
                                             disabled={index === 0}
-                                            className="text-gray-400 hover:text-coral-pink disabled:opacity-30 disabled:cursor-not-allowed"
+                                            className="text-gray-400 hover:text-accent-blue disabled:opacity-30 disabled:cursor-not-allowed"
                                             title="Pindah ke atas"
                                         >
                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -244,7 +244,7 @@ const DashboardFormEditorPage: React.FC = () => {
                                             type="button"
                                             onClick={() => handleMoveQuestion(index, 'down')}
                                             disabled={index === questions.length - 1}
-                                            className="text-gray-400 hover:text-coral-pink disabled:opacity-30 disabled:cursor-not-allowed"
+                                            className="text-gray-400 hover:text-accent-blue disabled:opacity-30 disabled:cursor-not-allowed"
                                             title="Pindah ke bawah"
                                         >
                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -262,7 +262,7 @@ const DashboardFormEditorPage: React.FC = () => {
                                             onChange={(e) => handleQuestionChange(index, e.target.value)}
                                             placeholder="Masukkan pertanyaan"
                                             rows={3}
-                                            className={`w-full px-4 py-3 rounded-lg ${COLORS.BG_SECONDARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-coral-pink resize-none`}
+                                            className={`w-full px-4 py-3 rounded-lg ${COLORS.BG_SECONDARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue resize-none`}
                                             required
                                         />
                                     </div>

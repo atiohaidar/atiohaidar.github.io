@@ -34,7 +34,7 @@ const FormTokenSection: React.FC = () => {
                                 value={token}
                                 onChange={(e) => setToken(e.target.value)}
                                 placeholder="Masukkan token formulir"
-                                className={`w-full px-4 py-3 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-coral-pink`}
+                                className={`w-full px-4 py-3 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue`}
                                 required
                             />
                         </div>

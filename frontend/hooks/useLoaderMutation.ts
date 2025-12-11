@@ -22,7 +22,10 @@ export function useLoaderMutation<TData = unknown, TError = unknown, TVariables 
     const { loader, onMutate, onSuccess, onError, ...mutationOptions } = options;
 
     // Get API base URL for server host display
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787';
+    let API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787';
+    if (loader?.endpoint?.startsWith('http')) {
+        API_BASE_URL = loader.endpoint;
+    }
     const parsedUrl = new URL(API_BASE_URL);
     const serverHost = parsedUrl.host;
     const isSecure = parsedUrl.protocol === 'https:';

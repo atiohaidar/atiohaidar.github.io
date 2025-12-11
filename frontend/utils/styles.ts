@@ -35,8 +35,8 @@ export const TYPOGRAPHY = {
 export const COLORS = {
   // Backgrounds
   BG_PRIMARY: 'bg-light-bg dark:bg-deep-navy',
-  BG_SECONDARY: 'bg-light-card dark:bg-light-navy',
-  PANEL: 'bg-white dark:bg-[#2B303A]',
+  BG_SECONDARY: 'bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm shadow-sm',
+  PANEL: 'bg-white/80 dark:bg-[#2B303A]/90 backdrop-blur-sm',
 
   // Text colors
   TEXT_PRIMARY: 'text-light-text dark:text-white',
@@ -209,8 +209,8 @@ export const DASHBOARD_THEME: Record<DashboardThemeMode, DashboardThemeConfig> =
       subtitle: 'text-[#8E9CB3]',
     },
     panel: {
-      bg: 'bg-[#1A2230]',
-      border: 'border border-[#2F3542]',
+      bg: 'bg-[#1A2230]/80 backdrop-blur-md',
+      border: 'border border-[#2F3542]/50',
       text: 'text-white',
       textMuted: 'text-[#A8B4CC]',
       divider: 'border-[#2F3542]',
@@ -222,16 +222,16 @@ export const DASHBOARD_THEME: Record<DashboardThemeMode, DashboardThemeConfig> =
       info: 'bg-status-info/20 text-status-info',
     },
     buttons: {
-      primary: 'bg-[#2563EB] text-white hover:bg-[#2563EB]/90',
-      secondary: 'bg-[#1F2633] text-[#CED7EA] hover:bg-[#252E3D]',
+      primary: 'bg-[#2563EB] text-white hover:bg-[#2563EB]/90 shadow-lg shadow-blue-500/30',
+      secondary: 'bg-[#1F2633]/80 text-[#CED7EA] hover:bg-[#252E3D]',
       ghost: 'border border-[#2F3542] text-[#8E9CB3] hover:border-[#2563EB] hover:text-[#2563EB]',
       success: 'bg-status-success text-white hover:bg-status-success-dark',
       danger: 'bg-status-danger text-white hover:bg-status-danger-dark',
       warning: 'bg-status-warning text-white hover:bg-status-warning-dark',
       info: 'bg-status-info text-white hover:bg-status-info/90',
     },
-    surface: 'bg-[#1A2230] text-white',
-    input: 'bg-[#1F2633] border border-[#2F3542] text-white focus:border-[#2563EB] focus:ring-[#2563EB]/20',
+    surface: 'bg-[#1A2230]/80 text-white backdrop-blur-sm',
+    input: 'bg-[#1F2633]/50 border border-[#2F3542] text-white focus:border-[#2563EB] focus:ring-[#2563EB]/20 placeholder-gray-500',
     listDivider: 'border-[#2F3542]',
     button: {
       primary: 'bg-[#2563EB]',

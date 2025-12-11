@@ -139,7 +139,7 @@ const TicketTrackingSection: React.FC<TicketTrackingSectionProps> = ({ prefillTo
                                     value={token}
                                     onChange={(e) => setToken(e.target.value)}
                                     placeholder="Contoh: TKT-ABC12345"
-                                    className={`flex-1 px-4 py-3 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-coral-pink`}
+                                    className={`flex-1 px-4 py-3 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue`}
                                     required
                                 />
                                 <button
@@ -251,7 +251,7 @@ const TicketTrackingSection: React.FC<TicketTrackingSectionProps> = ({ prefillTo
                                                 value={commenterName}
                                                 onChange={(e) => setCommenterName(e.target.value)}
                                                 placeholder={ticket.submitter_name || 'Guest'}
-                                                className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_SECONDARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-coral-pink`}
+                                                className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_SECONDARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue`}
                                             />
                                         </div>
                                         <div>
@@ -265,7 +265,7 @@ const TicketTrackingSection: React.FC<TicketTrackingSectionProps> = ({ prefillTo
                                                 placeholder="Tambahkan informasi atau pertanyaan..."
                                                 required
                                                 rows={4}
-                                                className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_SECONDARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-coral-pink resize-none`}
+                                                className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_SECONDARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue resize-none`}
                                             />
                                         </div>
                                         <button
