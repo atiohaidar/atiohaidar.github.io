@@ -1,0 +1,23 @@
+[
+    {
+        "logoSrc": "./al-fath.jpg",
+        "name": "LDK Al-Fath",
+        "participation": [
+            "Anggota Al-Fatih 2021",
+            "PJ Responsi Al-Fath FIF 2022",
+            "Anggota Encode Islah 2022"
+        ],
+        "start-date": "2021",
+        "end-date": "2025"
+    },
+    {
+        "logoSrc": "./telyu.jpg",
+        "name": "Telkom University",
+        "participation": [
+            "Mahasiswa S1 RPL",
+            "Anggota Kelas SE-45-02"
+        ],
+        "start-date": "2021",
+        "end-date": "2025"
+    }
+]
