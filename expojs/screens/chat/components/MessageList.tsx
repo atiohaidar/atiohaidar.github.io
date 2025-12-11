@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import type { RefObject } from 'react';
-import { ScrollView, View, StyleSheet, RefreshControl } from 'react-native';
+import { ScrollView, View, StyleSheet, RefreshControl, FlatList } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
 import type { Message } from '@/types/api';
 import { MessageBubble } from './MessageBubble';
@@ -11,11 +11,11 @@ interface MessageListProps {
   onReload: () => void;
   currentUsername?: string;
   currentSenderId?: string; // For anonymous chat
-  scrollRef?: RefObject<ScrollView | null>;
+  scrollRef?: RefObject<FlatList<Message> | null>;
 }
 
 export function MessageList({ messages, loading, onReload, currentUsername, currentSenderId, scrollRef }: MessageListProps) {
-  const fallbackRef = useRef<ScrollView | null>(null);
+  const fallbackRef = useRef<FlatList<Message> | null>(null);
   const ref = useMemo(() => scrollRef ?? fallbackRef, [scrollRef]);
 
   // Sort messages so newest is at the bottom
@@ -23,7 +23,7 @@ export function MessageList({ messages, loading, onReload, currentUsername, curr
     return [...messages].sort((a, b) => {
       const timeA = a.created_at ? new Date(a.created_at).getTime() : 0;
       const timeB = b.created_at ? new Date(b.created_at).getTime() : 0;
-      return timeA - timeB; // Ascending order (oldest first, newest last)
+      return timeA - timeB; // Ascending order
     });
   }, [messages]);
 
@@ -33,11 +33,25 @@ export function MessageList({ messages, loading, onReload, currentUsername, curr
     }
 
     const timer = setTimeout(() => {
-      ref.current?.scrollToEnd({ animated: true });
+      ref?.current?.scrollToEnd({ animated: true });
     }, 120);
 
     return () => clearTimeout(timer);
   }, [loading, messages, ref]);
+
+  // Render item function
+  const renderItem = ({ item: msg }: { item: Message }) => {
+    const isOwn = msg.sender_id
+      ? msg.sender_id === currentSenderId
+      : msg.sender_username === currentUsername;
+
+    return (
+      <MessageBubble
+        message={msg}
+        isOwn={isOwn}
+      />
+    );
+  };
 
   return (
     <View style={styles.container}>
@@ -51,28 +65,17 @@ export function MessageList({ messages, loading, onReload, currentUsername, curr
           <Text style={styles.placeholderText}>No messages yet. Say hello!</Text>
         </View>
       ) : (
-        <ScrollView
+        <FlatList
           ref={ref}
+          data={sortedMessages}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id.toString()}
           style={styles.scrollView}
           contentContainerStyle={styles.contentContainer}
           refreshControl={<RefreshControl refreshing={loading} onRefresh={onReload} />}
-        >
-          {sortedMessages.map((msg) => {
-            // Check if message is from current user
-            // For anonymous chat, use sender_id; for regular chat, use sender_username
-            const isOwn = msg.sender_id 
-              ? msg.sender_id === currentSenderId
-              : msg.sender_username === currentUsername;
-            
-            return (
-              <MessageBubble
-                key={msg.id}
-                message={msg}
-                isOwn={isOwn}
-              />
-            );
-          })}
-        </ScrollView>
+          onContentSizeChange={() => ref?.current?.scrollToEnd({ animated: true })}
+          onLayout={() => ref?.current?.scrollToEnd({ animated: true })}
+        />
       )}
     </View>
   );

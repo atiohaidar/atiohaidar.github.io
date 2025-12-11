@@ -286,7 +286,9 @@ const SpyTooltip: React.FC<SpyTooltipProps> = ({
                                 key={idx}
                                 className="flex justify-between items-center gap-6"
                                 style={{
-                                    animation: showContent ? `type-in 0.4s forwards` : 'none',
+                                    animationName: showContent ? 'type-in' : 'none',
+                                    animationDuration: '0.4s',
+                                    animationFillMode: 'forwards',
                                     animationDelay: `${idx * 100}ms`,
                                     opacity: 0
                                 }}

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import * as d3 from 'd3';
+import { useTheme } from '../contexts/ThemeContext';
+import { DASHBOARD_THEME } from '../utils/styles';
 
 interface Transaction {
     id: number;
@@ -14,6 +16,9 @@ interface Transaction {
 
 const FinancePage = () => {
     const { user, token } = useAuth();
+    const { theme } = useTheme();
+    const palette = DASHBOARD_THEME[theme];
+
     const [transactions, setTransactions] = useState<Transaction[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [stats, setStats] = useState({
@@ -52,7 +57,6 @@ const FinancePage = () => {
             if (data.success && data.transactions) {
                 setTransactions(data.transactions);
                 calculateStats(data.transactions);
-                renderChart(data.transactions);
             }
         } catch (error) {
             console.error("Failed to fetch transactions", error);
@@ -72,6 +76,11 @@ const FinancePage = () => {
         return () => clearTimeout(timer);
     }, [filters, token]);
 
+    // Re-render chart when transactions or theme changes
+    useEffect(() => {
+        renderChart(transactions);
+    }, [transactions, theme]);
+
     const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFilters(prev => ({ ...prev, [name]: value }));
@@ -88,8 +97,16 @@ const FinancePage = () => {
         // Clear previous chart
         d3.select("#chart-container").selectAll("*").remove();
 
+        const chartTextColor = theme === 'dark' ? '#94a3b8' : '#64748B'; // slate-400 / slate-500
+        const gridColor = theme === 'dark' ? '#334155' : '#E2E8F0'; // slate-700 / slate-200
+        const tooltipBgClass = theme === 'dark' ? 'bg-slate-800' : 'bg-white';
+        const tooltipTextClass = theme === 'dark' ? 'text-white' : 'text-slate-800';
+
         if (txs.length === 0) {
-            d3.select("#chart-container").append("div").attr("class", "text-slate-500 p-4").text("No data to display");
+            d3.select("#chart-container")
+                .append("div")
+                .attr("class", `p-4 ${palette.panel.textMuted}`)
+                .text("No data to display");
             return;
         }
 
@@ -124,25 +141,25 @@ const FinancePage = () => {
             .attr("transform", `translate(0,${height})`)
             .call(d3.axisBottom(x).ticks(5).tickSize(-height).tickFormat(() => ""))
             .selectAll(".tick line")
-            .attr("stroke", "#334155")
-            .attr("stroke-opacity", 0.2);
+            .attr("stroke", gridColor)
+            .attr("stroke-opacity", 0.5);
 
         svg.append("g")
             .attr("class", "grid")
             .call(d3.axisLeft(y).ticks(5).tickSize(-width).tickFormat(() => ""))
             .selectAll(".tick line")
-            .attr("stroke", "#334155")
-            .attr("stroke-opacity", 0.2);
+            .attr("stroke", gridColor)
+            .attr("stroke-opacity", 0.5);
 
         // Axes
         svg.append("g")
             .attr("transform", `translate(0,${height})`)
             .call(d3.axisBottom(x).ticks(5))
-            .attr("color", "#94a3b8");
+            .attr("color", chartTextColor);
 
         svg.append("g")
             .call(d3.axisLeft(y).ticks(5))
-            .attr("color", "#94a3b8");
+            .attr("color", chartTextColor);
 
         // Area & Line
         const area = d3.area<{ date: Date; volume: number }>()
@@ -181,8 +198,10 @@ const FinancePage = () => {
         gradient.append("stop").attr("offset", "100%").attr("stop-color", "#10B981").attr("stop-opacity", 0);
 
         // Tooltip interaction overlay
+        // Use a persistent container or remove prev one
+        d3.select("body").selectAll(".finance-tooltip").remove();
         const tooltip = d3.select("body").append("div")
-            .attr("class", "absolute z-50 bg-slate-800 text-white text-xs p-2 rounded shadow-lg pointer-events-none opacity-0 transition-opacity");
+            .attr("class", `finance-tooltip absolute z-50 ${tooltipBgClass} ${tooltipTextClass} text-xs p-2 rounded shadow-lg pointer-events-none opacity-0 transition-opacity border ${theme === 'dark' ? 'border-slate-700' : 'border-slate-200'}`);
 
         svg.selectAll(".dot")
             .data(data)
@@ -191,7 +210,7 @@ const FinancePage = () => {
             .attr("cx", d => x(d.date))
             .attr("cy", d => y(d.volume))
             .attr("fill", "#10B981")
-            .attr("stroke", "#020617")
+            .attr("stroke", theme === 'dark' ? "#020617" : "#ffffff")
             .attr("stroke-width", 2)
             .on("mouseover", (event, d) => {
                 tooltip.transition().duration(200).style("opacity", .9);
@@ -211,39 +230,39 @@ const FinancePage = () => {
     }
 
     return (
-        <div className="min-h-screen bg-slate-950 text-white p-8">
+        <div className={`min-h-screen ${palette.appBg} ${palette.panel.text} p-8`}>
             <h1 className="text-3xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-500">Admin Finance Dashboard</h1>
 
             {/* Filters Section */}
-            <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800 backdrop-blur-sm mb-8">
-                <h3 className="text-sm font-semibold text-slate-400 mb-4 uppercase tracking-wider">Filters</h3>
+            <div className={`${palette.panel.bg} p-6 rounded-2xl ${palette.panel.border} backdrop-blur-sm mb-8 shadow-sm`}>
+                <h3 className={`text-sm font-semibold ${palette.panel.textMuted} mb-4 uppercase tracking-wider`}>Filters</h3>
                 <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-7 gap-4">
                     <div className="md:col-span-2">
-                        <label className="block text-xs text-slate-500 mb-1">Date Range</label>
+                        <label className={`block text-xs ${palette.panel.textMuted} mb-1`}>Date Range</label>
                         <div className="flex gap-2">
                             <input
                                 type="date"
                                 name="startDate"
                                 value={filters.startDate}
                                 onChange={handleFilterChange}
-                                className="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-slate-300 focus:outline-none focus:border-emerald-500"
+                                className={`w-full ${palette.input} rounded px-3 py-2 text-sm focus:outline-none`}
                             />
                             <input
                                 type="date"
                                 name="endDate"
                                 value={filters.endDate}
                                 onChange={handleFilterChange}
-                                className="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-slate-300 focus:outline-none focus:border-emerald-500"
+                                className={`w-full ${palette.input} rounded px-3 py-2 text-sm focus:outline-none`}
                             />
                         </div>
                     </div>
                     <div>
-                        <label className="block text-xs text-slate-500 mb-1">Type</label>
+                        <label className={`block text-xs ${palette.panel.textMuted} mb-1`}>Type</label>
                         <select
                             name="type"
                             value={filters.type}
                             onChange={handleFilterChange}
-                            className="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-slate-300 focus:outline-none focus:border-emerald-500"
+                            className={`w-full ${palette.input} rounded px-3 py-2 text-sm focus:outline-none`}
                         >
                             <option value="all">All Types</option>
                             <option value="transfer">Transfer</option>
@@ -251,7 +270,7 @@ const FinancePage = () => {
                         </select>
                     </div>
                     <div className="md:col-span-2">
-                        <label className="block text-xs text-slate-500 mb-1">Users</label>
+                        <label className={`block text-xs ${palette.panel.textMuted} mb-1`}>Users</label>
                         <div className="flex gap-2">
                             <input
                                 type="text"
@@ -259,7 +278,7 @@ const FinancePage = () => {
                                 placeholder="Sender Username"
                                 value={filters.from_username}
                                 onChange={handleFilterChange}
-                                className="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-slate-300 focus:outline-none focus:border-emerald-500 placeholder-slate-600"
+                                className={`w-full ${palette.input} rounded px-3 py-2 text-sm focus:outline-none`}
                             />
                             <input
                                 type="text"
@@ -267,12 +286,12 @@ const FinancePage = () => {
                                 placeholder="Receiver Username"
                                 value={filters.to_username}
                                 onChange={handleFilterChange}
-                                className="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-slate-300 focus:outline-none focus:border-emerald-500 placeholder-slate-600"
+                                className={`w-full ${palette.input} rounded px-3 py-2 text-sm focus:outline-none`}
                             />
                         </div>
                     </div>
                     <div className="md:col-span-2">
-                        <label className="block text-xs text-slate-500 mb-1">Amount Range</label>
+                        <label className={`block text-xs ${palette.panel.textMuted} mb-1`}>Amount Range</label>
                         <div className="flex gap-2">
                             <input
                                 type="number"
@@ -280,7 +299,7 @@ const FinancePage = () => {
                                 placeholder="Min"
                                 value={filters.minAmount}
                                 onChange={handleFilterChange}
-                                className="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-slate-300 focus:outline-none focus:border-emerald-500 placeholder-slate-600"
+                                className={`w-full ${palette.input} rounded px-3 py-2 text-sm focus:outline-none`}
                             />
                             <input
                                 type="number"
@@ -288,7 +307,7 @@ const FinancePage = () => {
                                 placeholder="Max"
                                 value={filters.maxAmount}
                                 onChange={handleFilterChange}
-                                className="w-full bg-slate-800 border border-slate-700 rounded px-3 py-2 text-sm text-slate-300 focus:outline-none focus:border-emerald-500 placeholder-slate-600"
+                                className={`w-full ${palette.input} rounded px-3 py-2 text-sm focus:outline-none`}
                             />
                         </div>
                     </div>
@@ -297,34 +316,34 @@ const FinancePage = () => {
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800 backdrop-blur-sm">
-                    <h3 className="text-slate-400 text-sm font-medium mb-2">Total Transaction Volume</h3>
-                    <p className="text-3xl font-bold text-white">Rp {stats.totalVolume.toLocaleString()}</p>
+                <div className={`${palette.panel.bg} p-6 rounded-2xl ${palette.panel.border} backdrop-blur-sm shadow-sm`}>
+                    <h3 className={`${palette.panel.textMuted} text-sm font-medium mb-2`}>Total Transaction Volume</h3>
+                    <p className={`text-3xl font-bold ${palette.panel.text}`}>Rp {stats.totalVolume.toLocaleString()}</p>
                 </div>
-                <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800 backdrop-blur-sm">
-                    <h3 className="text-slate-400 text-sm font-medium mb-2">Total Top Ups</h3>
+                <div className={`${palette.panel.bg} p-6 rounded-2xl ${palette.panel.border} backdrop-blur-sm shadow-sm`}>
+                    <h3 className={`${palette.panel.textMuted} text-sm font-medium mb-2`}>Total Top Ups</h3>
                     <p className="text-3xl font-bold text-emerald-400">+ Rp {stats.totalTopUp.toLocaleString()}</p>
                 </div>
-                <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800 backdrop-blur-sm">
-                    <h3 className="text-slate-400 text-sm font-medium mb-2">Total Transfers</h3>
+                <div className={`${palette.panel.bg} p-6 rounded-2xl ${palette.panel.border} backdrop-blur-sm shadow-sm`}>
+                    <h3 className={`${palette.panel.textMuted} text-sm font-medium mb-2`}>Total Transfers</h3>
                     <p className="text-3xl font-bold text-blue-400">↔ Rp {stats.totalTransfer.toLocaleString()}</p>
                 </div>
             </div>
 
             {/* Chart */}
-            <div className="bg-slate-900/50 p-6 rounded-2xl border border-slate-800 backdrop-blur-sm mb-8">
-                <h3 className="text-xl font-bold mb-6">Transaction Volume Trend</h3>
+            <div className={`${palette.panel.bg} p-6 rounded-2xl ${palette.panel.border} backdrop-blur-sm mb-8 shadow-sm`}>
+                <h3 className={`text-xl font-bold mb-6 ${palette.panel.text}`}>Transaction Volume Trend</h3>
                 <div id="chart-container" className="overflow-x-auto flex justify-center"></div>
             </div>
 
             {/* Transaction Table */}
-            <div className="bg-slate-900/50 rounded-2xl border border-slate-800 overflow-hidden">
-                <div className="p-6 border-b border-slate-800 sticky top-0 bg-slate-900/90 backdrop-blur z-10">
-                    <h3 className="text-xl font-bold">Recent Transactions</h3>
+            <div className={`${palette.panel.bg} rounded-2xl ${palette.panel.border} overflow-hidden shadow-sm`}>
+                <div className={`p-6 border-b ${palette.panel.divider} sticky top-0 ${palette.panel.bg} z-10`}>
+                    <h3 className={`text-xl font-bold ${palette.panel.text}`}>Recent Transactions</h3>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
-                        <thead className="bg-slate-800/50 text-slate-400 text-xs uppercase tracking-wider">
+                        <thead className={`${theme === 'dark' ? 'bg-slate-800/50' : 'bg-gray-100/50'} ${palette.panel.textMuted} text-xs uppercase tracking-wider`}>
                             <tr>
                                 <th className="p-4 font-medium">ID</th>
                                 <th className="p-4 font-medium">Date</th>
@@ -335,15 +354,15 @@ const FinancePage = () => {
                                 <th className="p-4 font-medium">Status</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-800 text-sm text-slate-300">
+                        <tbody className={`divide-y ${palette.panel.divider} text-sm ${palette.panel.text}`}>
                             {isLoading ? (
                                 <tr><td colSpan={7} className="p-8 text-center">Loading transactions...</td></tr>
                             ) : transactions.length === 0 ? (
-                                <tr><td colSpan={7} className="p-8 text-center text-slate-500">No transactions found</td></tr>
+                                <tr><td colSpan={7} className={`p-8 text-center ${palette.panel.textMuted}`}>No transactions found</td></tr>
                             ) : (
                                 transactions.map(tx => (
-                                    <tr key={tx.id} className="hover:bg-slate-800/30 transition-colors">
-                                        <td className="p-4 text-slate-500">#{tx.id}</td>
+                                    <tr key={tx.id} className="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                                        <td className={`p-4 ${palette.panel.textMuted}`}>#{tx.id}</td>
                                         <td className="p-4 whitespace-nowrap">{new Date(tx.created_at).toLocaleString()}</td>
                                         <td className="p-4">
                                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${tx.type === 'topup'
@@ -355,7 +374,7 @@ const FinancePage = () => {
                                         </td>
                                         <td className="p-4">{tx.from_username || '-'}</td>
                                         <td className="p-4">{tx.to_username}</td>
-                                        <td className="p-4 text-right font-medium text-white">
+                                        <td className={`p-4 text-right font-medium ${palette.panel.text}`}>
                                             Rp {tx.amount.toLocaleString()}
                                         </td>
                                         <td className="p-4">

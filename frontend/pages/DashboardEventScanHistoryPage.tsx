@@ -41,7 +41,7 @@ const DashboardEventScanHistoryPage: React.FC = () => {
     // Filter scan history
     const filteredScans = useMemo(() => {
         if (!scanHistory) return [];
-        
+
         return scanHistory.filter(scan => {
             // Search filter
             if (searchQuery) {
@@ -198,9 +198,9 @@ const DashboardEventScanHistoryPage: React.FC = () => {
             .attr('stroke', 'white')
             .attr('stroke-width', 2)
             .style('cursor', 'pointer')
-            .on('mouseenter', function(event, d) {
+            .on('mouseenter', function (event, d) {
                 d3.select(this).attr('r', 6);
-                
+
                 const tooltip = g.append('g')
                     .attr('class', 'tooltip')
                     .attr('transform', `translate(${x(d.time)},${y(d.count) - 20})`);
@@ -220,7 +220,7 @@ const DashboardEventScanHistoryPage: React.FC = () => {
                     .attr('font-size', '12px')
                     .text(`${d.count} scan${d.count > 1 ? 's' : ''}`);
             })
-            .on('mouseleave', function() {
+            .on('mouseleave', function () {
                 d3.select(this).attr('r', 4);
                 g.selectAll('.tooltip').remove();
             });
@@ -280,7 +280,7 @@ const DashboardEventScanHistoryPage: React.FC = () => {
                 {/* Filters */}
                 <div className={`${COLORS.BG_SECONDARY} p-6 rounded-lg border ${COLORS.BORDER} mb-6`}>
                     <h2 className={`text-xl font-bold ${COLORS.TEXT_PRIMARY} mb-4`}>Filter</h2>
-                    
+
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
                         {/* Search */}
                         <div>
@@ -333,7 +333,7 @@ const DashboardEventScanHistoryPage: React.FC = () => {
                         <div className="flex items-end">
                             <button
                                 onClick={handleResetTimeRange}
-                                className={`w-full px-4 py-2 ${COLORS.BG_ACCENT} ${COLORS.TEXT_ACCENT_CONTRAST} rounded-lg hover:opacity-90`}
+                                className={`w-full px-4 py-2 ${COLORS.BG_ACCENT} ${COLORS.TEXT_ON_ACCENT} rounded-lg hover:opacity-90`}
                             >
                                 Reset Filter
                             </button>
@@ -389,8 +389,7 @@ const DashboardEventScanHistoryPage: React.FC = () => {
                     ) : (
                         <svg
                             ref={chartRef}
-                            className="w-full"
-                            style={{ height: '400px' }}
+                            className="w-full h-[400px]"
                         />
                     )}
                 </div>
@@ -423,7 +422,7 @@ const DashboardEventScanHistoryPage: React.FC = () => {
                                 </thead>
                                 <tbody>
                                     {filteredScans.map((scan, index) => (
-                                        <tr key={scan.id} className={`border-b ${COLORS.BORDER} hover:${COLORS.BG_HOVER}`}>
+                                        <tr key={scan.id} className={`border-b ${COLORS.BORDER} hover:bg-gray-50 dark:hover:bg-white/5 transition-colors`}>
                                             <td className={`py-3 px-4 ${COLORS.TEXT_PRIMARY}`}>
                                                 {scan.attendee_username}
                                             </td>
@@ -448,11 +447,10 @@ const DashboardEventScanHistoryPage: React.FC = () => {
                                                 )}
                                             </td>
                                             <td className={`py-3 px-4`}>
-                                                <span className={`px-2 py-1 rounded text-xs ${
-                                                    scan.attendee_status === 'present' 
-                                                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                                                        : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
-                                                }`}>
+                                                <span className={`px-2 py-1 rounded text-xs ${scan.attendee_status === 'present'
+                                                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                                                    : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+                                                    }`}>
                                                     {scan.attendee_status === 'present' ? 'Hadir' : 'Terdaftar'}
                                                 </span>
                                             </td>

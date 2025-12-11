@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
-import { Text, FAB, ActivityIndicator, Portal } from 'react-native-paper';
+import { View, StyleSheet, SectionList, RefreshControl } from 'react-native';
+import { Text, FAB, ActivityIndicator, Portal, Card } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
 import ApiService from '@/services/api';
 import { Article, ArticleCreate, ArticleUpdate } from '@/types/api';
-import ArticleSection from './components/ArticleSection';
+import ArticleCard, { ArticleScope } from './components/ArticleCard';
+import { GlassCard } from '@/components/GlassCard';
 import ArticleFormDialog, { ArticleFormData } from './components/ArticleFormDialog';
 
 export default function ArticlesScreen() {
@@ -152,45 +153,55 @@ export default function ArticlesScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        style={styles.scrollView}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-      >
-        <Text variant="headlineMedium" style={styles.title}>
-          Articles
-        </Text>
-
-        <ArticleSection
-          title="Your Articles"
-          articles={ownArticles}
-          scope="private"
-          emptyMessage="No articles yet. Create your first article!"
-          onArticlePress={(article) =>
-            router.push({
-              pathname: '/article/[slug]',
-              params: { slug: article.slug, scope: 'private' },
-            })
-          }
-          canEdit={canEdit}
-          onEdit={openEditDialog}
-          onDelete={handleDelete}
-        />
-
-        <View style={styles.sectionSpacing}>
-          <ArticleSection
-            title="Published Articles"
-            articles={publicArticles}
-            scope="public"
-            emptyMessage="No additional published articles available."
-            onArticlePress={(article) =>
+      <SectionList
+        sections={[
+          { title: 'Your Articles', data: ownArticles, scope: 'private' as const, emptyMessage: 'No articles yet. Create your first article!' },
+          { title: 'Published Articles', data: publicArticles, scope: 'public' as const, emptyMessage: 'No additional published articles available.' },
+        ]}
+        keyExtractor={(item) => item.slug}
+        renderItem={({ item, section }) => (
+          <ArticleCard
+            article={item}
+            scope={section.scope}
+            onPress={(article) =>
               router.push({
                 pathname: '/article/[slug]',
-                params: { slug: article.slug, scope: 'public' },
+                params: { slug: article.slug, scope: section.scope },
               })
             }
+            canEdit={canEdit(item)}
+            onEdit={openEditDialog}
+            onDelete={handleDelete}
           />
-        </View>
-      </ScrollView>
+        )}
+        renderSectionHeader={({ section: { title } }) => (
+          <Text variant="titleMedium" style={styles.sectionTitle}>
+            {title}
+          </Text>
+        )}
+        renderSectionFooter={({ section }) => {
+          if (section.data.length === 0) {
+            return (
+              <GlassCard style={styles.emptyCard}>
+                <Card.Content>
+                  <Text variant="bodyLarge" style={styles.emptyText}>
+                    {section.emptyMessage}
+                  </Text>
+                </Card.Content>
+              </GlassCard>
+            );
+          }
+          return <View style={styles.sectionSpacing} />;
+        }}
+        contentContainerStyle={styles.listContent}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        ListHeaderComponent={
+          <Text variant="headlineMedium" style={styles.title}>
+            Articles
+          </Text>
+        }
+        stickySectionHeadersEnabled={false}
+      />
 
       <FAB icon="plus" style={styles.fab} onPress={openCreateDialog} label="New Article" />
 
@@ -218,20 +229,33 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  scrollView: {
-    flex: 1,
+  listContent: {
     padding: 16,
+    paddingBottom: 80,
   },
   title: {
     fontWeight: 'bold',
     marginBottom: 16,
   },
+  sectionTitle: {
+    fontWeight: '600',
+    marginBottom: 12,
+    marginTop: 12,
+  },
   sectionSpacing: {
-    marginTop: 24,
+    height: 12,
   },
   fab: {
     position: 'absolute',
     right: 16,
     bottom: 16,
+  },
+  emptyCard: {
+    marginTop: 8,
+    marginBottom: 24,
+  },
+  emptyText: {
+    textAlign: 'center',
+    opacity: 0.6,
   },
 });

@@ -6,11 +6,16 @@ import type { BookingCreate } from '../types/booking';
 import type { Room } from '../types/room';
 import { useBackendLoader } from '../contexts/BackendLoaderContext';
 
+import { useTheme } from '../contexts/ThemeContext';
+import { DASHBOARD_THEME } from '../utils/styles';
+
 const BookingForm: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const preselectedRoomId = searchParams.get('roomId');
   const { showLoader, updateLoader } = useBackendLoader();
+  const { theme } = useTheme();
+  const palette = DASHBOARD_THEME[theme];
 
   const [rooms, setRooms] = useState<Room[]>([]);
   const [loading, setLoading] = useState(false);
@@ -153,25 +158,25 @@ const BookingForm: React.FC = () => {
   return (
     <div className="max-w-2xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Booking Ruangan</h1>
-        <p className="text-soft-gray">
+        <h1 className={`text-3xl font-bold ${palette.panel.text} mb-2`}>Booking Ruangan</h1>
+        <p className={palette.panel.textMuted}>
           Isi formulir berikut untuk memesan ruangan
         </p>
       </div>
 
-      <div className="bg-light-navy border border-soft-gray/20 rounded-lg p-8">
+      <div className={`${palette.panel.bg} ${palette.panel.border} rounded-lg p-8 backdrop-blur-sm shadow-sm`}>
         {error && (
-          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
-            <div className="text-red-400 text-sm">{error}</div>
+          <div className={`mb-6 p-4 ${palette.badges.danger} rounded-lg`}>
+            <div className="text-sm">{error}</div>
           </div>
         )}
 
         {rooms.length === 0 ? (
           <div className="text-center py-8">
-            <div className="text-soft-gray mb-4">Tidak ada ruangan tersedia untuk booking</div>
+            <div className={`${palette.panel.textMuted} mb-4`}>Tidak ada ruangan tersedia untuk booking</div>
             <button
               onClick={() => navigate('/dashboard/rooms')}
-              className="px-4 py-2 bg-accent-blue text-white rounded hover:bg-blue-600 transition-colors"
+              className={`px-4 py-2 ${palette.buttons.primary} rounded transition-colors`}
             >
               Lihat Ruangan
             </button>
@@ -180,7 +185,7 @@ const BookingForm: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Ruangan */}
             <div>
-              <label className="block text-sm font-medium text-white mb-2">
+              <label className={`block text-sm font-medium ${palette.panel.text} mb-2`}>
                 Pilih Ruangan *
               </label>
               <select
@@ -188,7 +193,7 @@ const BookingForm: React.FC = () => {
                 value={formData.room_id}
                 onChange={handleInputChange}
                 required
-                className="w-full px-4 py-3 bg-deep-navy border border-soft-gray/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                className={`w-full px-4 py-3 ${palette.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-blue`}
               >
                 <option value="">-- Pilih Ruangan --</option>
                 {rooms.map((room) => (
@@ -199,9 +204,9 @@ const BookingForm: React.FC = () => {
               </select>
 
               {selectedRoom && (
-                <div className="mt-3 p-3 bg-deep-navy/50 rounded-lg">
-                  <div className="text-sm text-soft-gray">
-                    <div className="font-medium text-white mb-1">Informasi Ruangan:</div>
+                <div className={`mt-3 p-3 ${palette.surface} rounded-lg ${palette.panel.border} border`}>
+                  <div className={`text-sm ${palette.panel.textMuted}`}>
+                    <div className={`font-medium ${palette.panel.text} mb-1`}>Informasi Ruangan:</div>
                     <div>Kapasitas: {selectedRoom.capacity} orang</div>
                     {selectedRoom.description && (
                       <div className="mt-1">{selectedRoom.description}</div>
@@ -213,7 +218,7 @@ const BookingForm: React.FC = () => {
 
             {/* Judul Booking */}
             <div>
-              <label className="block text-sm font-medium text-white mb-2">
+              <label className={`block text-sm font-medium ${palette.panel.text} mb-2`}>
                 Judul Booking *
               </label>
               <input
@@ -223,14 +228,14 @@ const BookingForm: React.FC = () => {
                 onChange={handleInputChange}
                 required
                 maxLength={100}
-                className="w-full px-4 py-3 bg-deep-navy border border-soft-gray/20 rounded-lg text-white placeholder-soft-gray/50 focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                className={`w-full px-4 py-3 ${palette.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-blue`}
                 placeholder="Contoh: Meeting Tim Development"
               />
             </div>
 
             {/* Deskripsi */}
             <div>
-              <label className="block text-sm font-medium text-white mb-2">
+              <label className={`block text-sm font-medium ${palette.panel.text} mb-2`}>
                 Deskripsi
               </label>
               <textarea
@@ -239,14 +244,14 @@ const BookingForm: React.FC = () => {
                 onChange={handleInputChange}
                 rows={3}
                 maxLength={500}
-                className="w-full px-4 py-3 bg-deep-navy border border-soft-gray/20 rounded-lg text-white placeholder-soft-gray/50 focus:outline-none focus:ring-2 focus:ring-accent-blue resize-vertical"
+                className={`w-full px-4 py-3 ${palette.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-blue resize-vertical`}
                 placeholder="Agenda atau informasi tambahan tentang booking"
               />
             </div>
 
             {/* Waktu Mulai */}
             <div>
-              <label className="block text-sm font-medium text-white mb-2">
+              <label className={`block text-sm font-medium ${palette.panel.text} mb-2`}>
                 Waktu Mulai *
               </label>
               <input
@@ -256,13 +261,13 @@ const BookingForm: React.FC = () => {
                 onChange={handleInputChange}
                 required
                 min={setMinimumDateTime()}
-                className="w-full px-4 py-3 bg-deep-navy border border-soft-gray/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                className={`w-full px-4 py-3 ${palette.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-blue`}
               />
             </div>
 
             {/* Waktu Selesai */}
             <div>
-              <label className="block text-sm font-medium text-white mb-2">
+              <label className={`block text-sm font-medium ${palette.panel.text} mb-2`}>
                 Waktu Selesai *
               </label>
               <input
@@ -272,15 +277,15 @@ const BookingForm: React.FC = () => {
                 onChange={handleInputChange}
                 required
                 min={formData.start_time || setMinimumDateTime()}
-                className="w-full px-4 py-3 bg-deep-navy border border-soft-gray/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                className={`w-full px-4 py-3 ${palette.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-blue`}
               />
             </div>
 
             {/* Informasi */}
-            <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-              <div className="text-sm text-blue-400">
+            <div className={`p-4 ${palette.badges.info} rounded-lg`}>
+              <div className="text-sm">
                 <div className="font-medium mb-1">ℹ️ Informasi:</div>
-                <ul className="space-y-1 text-xs">
+                <ul className="space-y-1 text-xs opacity-90">
                   <li>• Booking akan diajukan dalam status "Menunggu Persetujuan"</li>
                   <li>• Admin akan memreview dan menyetujui booking Anda</li>
                   <li>• Anda dapat membatalkan booking sewaktu-waktu</li>
@@ -294,7 +299,7 @@ const BookingForm: React.FC = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 px-6 py-3 bg-accent-blue text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className={`flex-1 px-6 py-3 ${palette.buttons.primary} rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors`}
               >
                 {loading ? 'Memproses...' : 'Ajukan Booking'}
               </button>
@@ -302,7 +307,7 @@ const BookingForm: React.FC = () => {
               <button
                 type="button"
                 onClick={() => navigate('/dashboard/rooms')}
-                className="flex-1 px-6 py-3 border border-soft-gray text-soft-gray rounded-lg hover:border-accent-blue hover:text-accent-blue transition-colors"
+                className={`flex-1 px-6 py-3 ${palette.buttons.ghost} rounded-lg transition-colors`}
               >
                 Batal
               </button>

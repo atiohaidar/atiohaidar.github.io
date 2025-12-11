@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { bookingService } from '../services/bookingService';
 import type { Booking, BookingStatus } from '../types/booking';
+import { useTheme } from '../contexts/ThemeContext';
+import { DASHBOARD_THEME } from '../utils/styles';
 
 interface BookingListProps {
   userRole?: 'admin' | 'member';
@@ -9,11 +11,14 @@ interface BookingListProps {
   roomId?: string;
 }
 
-const BookingList: React.FC<BookingListProps> = ({ 
+const BookingList: React.FC<BookingListProps> = ({
   userRole = 'member',
   showFilters = true,
-  roomId 
+  roomId
 }) => {
+  const { theme } = useTheme();
+  const palette = DASHBOARD_THEME[theme];
+
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,15 +50,15 @@ const BookingList: React.FC<BookingListProps> = ({
 
   const getStatusBadge = (status: BookingStatus) => {
     const statusConfig = {
-      pending: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'Menunggu' },
-      approved: { bg: 'bg-green-100', text: 'text-green-800', label: 'Disetujui' },
-      rejected: { bg: 'bg-red-100', text: 'text-red-800', label: 'Ditolak' },
-      cancelled: { bg: 'bg-gray-100', text: 'text-gray-800', label: 'Dibatalkan' }
+      pending: { className: palette.badges.warning, label: 'Menunggu' },
+      approved: { className: palette.badges.success, label: 'Disetujui' },
+      rejected: { className: palette.badges.danger, label: 'Ditolak' },
+      cancelled: { className: palette.badges.info, label: 'Dibatalkan' } // using info/muted for cancelled
     };
 
     const config = statusConfig[status];
     return (
-      <span className={`px-2 py-1 text-xs font-medium ${config.bg} ${config.text} rounded-full`}>
+      <span className={`px-2 py-1 text-xs font-medium rounded-full ${config.className}`}>
         {config.label}
       </span>
     );
@@ -118,17 +123,17 @@ const BookingList: React.FC<BookingListProps> = ({
     <div className="space-y-6">
       {/* Filters */}
       {showFilters && (
-        <div className="bg-light-navy border border-soft-gray/20 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Filter</h3>
+        <div className={`${palette.panel.bg} ${palette.panel.border} rounded-lg p-6`}>
+          <h3 className={`text-lg font-semibold ${palette.panel.text} mb-4`}>Filter</h3>
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-soft-gray mb-2">
+              <label className={`block text-sm font-medium ${palette.panel.textMuted} mb-2`}>
                 Status
               </label>
               <select
                 value={filters.status}
                 onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-                className="w-full px-4 py-2 bg-deep-navy border border-soft-gray/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                className={`w-full px-4 py-2 ${palette.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-blue`}
               >
                 <option value="">Semua Status</option>
                 <option value="pending">Menunggu</option>
@@ -137,10 +142,10 @@ const BookingList: React.FC<BookingListProps> = ({
                 <option value="cancelled">Dibatalkan</option>
               </select>
             </div>
-            
+
             {userRole === 'admin' && (
               <div>
-                <label className="block text-sm font-medium text-soft-gray mb-2">
+                <label className={`block text-sm font-medium ${palette.panel.textMuted} mb-2`}>
                   ID Ruangan
                 </label>
                 <input
@@ -148,7 +153,7 @@ const BookingList: React.FC<BookingListProps> = ({
                   value={filters.roomId}
                   onChange={(e) => setFilters({ ...filters, roomId: e.target.value })}
                   placeholder="Masukkan ID ruangan"
-                  className="w-full px-4 py-2 bg-deep-navy border border-soft-gray/20 rounded-lg text-white placeholder-soft-gray/50 focus:outline-none focus:ring-2 focus:ring-accent-blue"
+                  className={`w-full px-4 py-2 ${palette.input} rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-blue`}
                 />
               </div>
             )}
@@ -161,12 +166,12 @@ const BookingList: React.FC<BookingListProps> = ({
         {bookings.map((booking) => (
           <div
             key={booking.id}
-            className="bg-light-navy border border-soft-gray/20 rounded-lg p-6 hover:border-accent-blue/50 transition-all duration-300"
+            className={`${palette.panel.bg} ${palette.panel.border} rounded-lg p-6 hover:shadow-md transition-all duration-300`}
           >
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-white mb-2">{booking.title}</h3>
-                <div className="grid md:grid-cols-2 gap-2 text-sm text-soft-gray">
+                <h3 className={`text-lg font-semibold ${palette.panel.text} mb-2`}>{booking.title}</h3>
+                <div className={`grid md:grid-cols-2 gap-2 text-sm ${palette.panel.textMuted}`}>
                   <div className="flex items-center">
                     <svg className="w-4 h-4 mr-2 text-accent-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -192,27 +197,27 @@ const BookingList: React.FC<BookingListProps> = ({
                     {formatDate(booking.end_time)}
                   </div>
                 </div>
-                
+
                 {booking.description && (
-                  <p className="mt-3 text-sm text-soft-gray">{booking.description}</p>
+                  <p className={`mt-3 text-sm ${palette.panel.textMuted}`}>{booking.description}</p>
                 )}
               </div>
-              
+
               <div className="flex flex-col items-end space-y-3 mt-4 md:mt-0 md:ml-6">
                 {getStatusBadge(booking.status)}
-                
+
                 <div className="flex space-x-2">
                   <Link
                     to={`/dashboard/bookings/${booking.id}`}
-                    className="px-3 py-1 text-sm border border-soft-gray text-soft-gray rounded hover:border-accent-blue hover:text-accent-blue transition-colors"
+                    className={`px-3 py-1 text-sm ${palette.buttons.ghost} rounded transition-colors`}
                   >
                     Detail
                   </Link>
-                  
+
                   {(userRole === 'admin' || booking.status === 'pending') && (
                     <button
                       onClick={() => handleCancelBooking(booking.id)}
-                      className="px-3 py-1 text-sm text-red-400 rounded hover:bg-red-500/10 transition-colors"
+                      className={`px-3 py-1 text-sm ${palette.buttons.danger} rounded transition-colors`}
                     >
                       Batalkan
                     </button>

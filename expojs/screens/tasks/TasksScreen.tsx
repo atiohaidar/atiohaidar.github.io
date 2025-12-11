@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, RefreshControl, Alert } from 'react-native';
-import { Text, FAB, ActivityIndicator } from 'react-native-paper';
+import { View, StyleSheet, FlatList, RefreshControl, Alert } from 'react-native';
+import { Text, FAB, ActivityIndicator, Card } from 'react-native-paper';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTasks, useUpdateTask, useDeleteTask, useCreateTask } from '@/hooks/useApi';
 import { Task, TaskCreate, TaskUpdate } from '@/types/api';
-import TaskList from './components/TaskList';
+import { TaskCard } from './components/TaskCard';
+import { GlassCard } from '@/components/GlassCard';
 import TaskFormDialog, { TaskFormState } from './components/TaskFormDialog';
 
 export default function TasksScreen() {
@@ -131,24 +132,35 @@ export default function TasksScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        style={styles.scrollView}
-        refreshControl={
-          <RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} />
+      <FlatList
+        data={tasks}
+        renderItem={({ item }) => (
+          <TaskCard
+            task={item}
+            canEdit={canEdit(item)}
+            onToggleComplete={handleToggleComplete}
+            onEdit={openEditDialog}
+            onDelete={handleDelete}
+          />
+        )}
+        keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={styles.listContent}
+        refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={() => refetch()} />}
+        ListHeaderComponent={
+          <Text variant="headlineMedium" style={styles.title}>
+            My Tasks
+          </Text>
         }
-      >
-        <Text variant="headlineMedium" style={styles.title}>
-          My Tasks
-        </Text>
-
-        <TaskList
-          tasks={tasks}
-          canEdit={canEdit}
-          onToggleComplete={handleToggleComplete}
-          onEdit={openEditDialog}
-          onDelete={handleDelete}
-        />
-      </ScrollView>
+        ListEmptyComponent={
+          <GlassCard style={styles.emptyCard}>
+            <Card.Content>
+              <Text variant="bodyLarge" style={styles.emptyText}>
+                No tasks yet. Create your first task!
+              </Text>
+            </Card.Content>
+          </GlassCard>
+        }
+      />
 
       <FAB
         icon="plus"
@@ -179,9 +191,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  scrollView: {
-    flex: 1,
+  listContent: {
     padding: 16,
+    paddingBottom: 80, // Space for FAB
   },
   title: {
     fontWeight: 'bold',
@@ -191,5 +203,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 16,
     bottom: 16,
+  },
+  emptyCard: {
+    marginTop: 20,
+  },
+  emptyText: {
+    textAlign: 'center',
+    opacity: 0.6,
   },
 });

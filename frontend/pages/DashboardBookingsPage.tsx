@@ -3,12 +3,13 @@ import { Link } from 'react-router-dom';
 import BookingList from '../components/BookingList';
 import { useTheme } from '../contexts/ThemeContext';
 import { DASHBOARD_THEME } from '../utils/styles';
+import { useAuth } from '../hooks/useAuth';
 
 const DashboardBookingsPage: React.FC = () => {
-  const userRole = 'admin'; // This should come from auth context in dashboard
+  const { user } = useAuth();
   const { theme } = useTheme();
   const palette = DASHBOARD_THEME[theme];
-  
+
   return (
     <div>
       {/* Header */}
@@ -21,11 +22,11 @@ const DashboardBookingsPage: React.FC = () => {
             Kelola dan pantau status booking ruangan
           </p>
         </div>
-        
+
         <div className="flex space-x-3">
           <Link
             to="/dashboard/bookings/new"
-            className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${palette.buttons.info}`}
+            className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${palette.buttons.primary}`}
           >
             + Booking Baru
           </Link>
@@ -33,11 +34,12 @@ const DashboardBookingsPage: React.FC = () => {
       </div>
 
       {/* Booking List */}
-      <div className={`${palette.panel.bg} ${palette.panel.border} rounded-lg p-6`}>
-        <BookingList userRole={userRole} />
+      <div className={`${palette.panel.bg} ${palette.panel.border} rounded-lg p-6 backdrop-blur-sm shadow-sm`}>
+        <BookingList userRole={user?.role as 'admin' | 'member'} />
       </div>
     </div>
   );
 };
+
 
 export default DashboardBookingsPage;

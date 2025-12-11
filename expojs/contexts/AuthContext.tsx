@@ -59,7 +59,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [user?.username]);
 
-  const login = async (credentials: LoginRequest) => {
+  const login = useCallback(async (credentials: LoginRequest) => {
     try {
       const response = await ApiService.login(credentials);
       setUser(response.user);
@@ -70,32 +70,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } catch (error) {
       throw error;
     }
-  };
+  }, []);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       await ApiService.logout();
       setUser(null);
     } catch (error) {
       console.error('Logout failed:', error);
     }
-  };
+  }, []);
 
   const isAuthenticated = user !== null;
   const isAdmin = user?.role === 'admin';
 
+  const value = React.useMemo(() => ({
+    user,
+    loading,
+    login,
+    logout,
+    refreshUser,
+    isAuthenticated,
+    isAdmin,
+  }), [user, loading, login, logout, refreshUser, isAuthenticated, isAdmin]);
+
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        loading,
-        login,
-        logout,
-        refreshUser,
-        isAuthenticated,
-        isAdmin,
-      }}
-    >
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

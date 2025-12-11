@@ -6,6 +6,7 @@ import {
   ScrollView,
   StyleSheet,
   View,
+  FlatList,
 } from 'react-native';
 import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -53,7 +54,7 @@ export default function ChatDetailScreen() {
   const [sending, setSending] = useState(false);
   const [senderId, setSenderId] = useState<string>('');
 
-  const messagesRef = useRef<ScrollView | null>(null);
+  const messagesRef = useRef<FlatList<Message> | null>(null);
 
   const SENDER_ID_KEY = '@anonymous_sender_id';
 
@@ -220,8 +221,8 @@ export default function ChatDetailScreen() {
   const keyboardBehavior: 'height' | 'padding' | undefined = Platform.OS === 'ios'
     ? 'padding'
     : Platform.OS === 'android'
-    ? 'height'
-    : undefined;
+      ? 'height'
+      : undefined;
 
   if (!chatType || !id) {
     return (

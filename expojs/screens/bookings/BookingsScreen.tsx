@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
-import { Text, FAB, ActivityIndicator, Portal } from 'react-native-paper';
+import { View, StyleSheet, FlatList, RefreshControl } from 'react-native';
+import { Text, FAB, ActivityIndicator, Portal, Card } from 'react-native-paper';
 import { useAuth } from '@/contexts/AuthContext';
 import ApiService from '@/services/api';
 import { Booking, BookingCreate, Room } from '@/types/api';
-import BookingList from './components/BookingList';
+import BookingCard from './components/BookingCard';
+import { GlassCard } from '@/components/GlassCard';
 import CreateBookingDialog from './components/CreateBookingDialog';
 
 export default function BookingsScreen() {
@@ -125,22 +126,36 @@ export default function BookingsScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        style={styles.scrollView}
+      <FlatList
+        data={bookings}
+        renderItem={({ item }) => (
+          <BookingCard
+            booking={item}
+            roomName={rooms.find((r) => r.id === item.room_id)?.name ?? item.room_id}
+            isAdmin={isAdmin}
+            currentUsername={user?.username}
+            onUpdateStatus={handleUpdateStatus}
+            onCancel={handleCancel}
+          />
+        )}
+        keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={styles.listContent}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-      >
-        <Text variant="headlineMedium" style={styles.title}>
-          Room Bookings
-        </Text>
-        <BookingList
-          bookings={bookings}
-          rooms={rooms}
-          isAdmin={isAdmin}
-          currentUsername={user?.username}
-          onUpdateStatus={handleUpdateStatus}
-          onCancel={handleCancel}
-        />
-      </ScrollView>
+        ListHeaderComponent={
+          <Text variant="headlineMedium" style={styles.title}>
+            Room Bookings
+          </Text>
+        }
+        ListEmptyComponent={
+          <GlassCard style={styles.emptyCard}>
+            <Card.Content>
+              <Text variant="bodyLarge" style={styles.emptyText}>
+                No bookings yet. Reserve a room!
+              </Text>
+            </Card.Content>
+          </GlassCard>
+        }
+      />
 
       <FAB icon="plus" style={styles.fab} onPress={openCreateDialog} label="New Booking" />
 
@@ -168,9 +183,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  scrollView: {
-    flex: 1,
+  listContent: {
     padding: 16,
+    paddingBottom: 80,
   },
   title: {
     fontWeight: 'bold',
@@ -180,5 +195,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 16,
     bottom: 16,
+  },
+  emptyCard: {
+    marginTop: 20,
+  },
+  emptyText: {
+    textAlign: 'center',
+    opacity: 0.6,
   },
 });

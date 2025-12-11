@@ -218,14 +218,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                 {/* Sidebar Header */}
                 <div className="p-6 flex items-center justify-between">
                     {/* ... */}
-                    {/* Mobile close button */}
-                    <button
-                        onClick={() => setIsMobileSidebarOpen(false)}
-                        className={`md:hidden text-2xl ${palette.sidebar.toggleIcon}`}
-                    >
-                        ✕
-                    </button>
-
                     {/* Logo Area */}
                     <div
                         ref={logoRef}
@@ -264,6 +256,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                             ◀
                         </button>
                     )}
+
+                    {/* Mobile close button (Moved to right) */}
+                    <button
+                        onClick={() => setIsMobileSidebarOpen(false)}
+                        className={`md:hidden text-2xl p-2 relative z-50 rounded-lg hover:bg-white/10 ${palette.sidebar.toggleIcon}`}
+                    >
+                        ✕
+                    </button>
                 </div>
 
                 {/* Collapsed Toggle (Centered) */}

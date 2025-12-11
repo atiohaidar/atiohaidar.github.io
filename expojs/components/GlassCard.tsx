@@ -17,11 +17,11 @@ export const GlassCard: React.FC<GlassCardProps> = ({ children, style, mode = 'e
     const theme = useTheme();
 
     // Dynamic styles based on theme
-    const glassStyles = {
+    const glassStyles = React.useMemo(() => ({
         backgroundColor: theme.dark ? 'rgba(30, 41, 59, 0.4)' : 'rgba(255, 255, 255, 0.7)', // #1e293b with 0.4 opacity
         borderColor: theme.dark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.5)',
         borderWidth: 1,
-    };
+    }), [theme.dark]);
 
     const cardElevation = mode === 'elevated' ? (theme.dark ? 0 : 2) : undefined;
 
