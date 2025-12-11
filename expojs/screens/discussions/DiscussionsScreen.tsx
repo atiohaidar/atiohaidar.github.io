@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, RefreshControl, Alert } from 'react-native';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { View, StyleSheet, FlatList, RefreshControl, Alert, ScrollView } from 'react-native';
 import {
   Text,
   FAB,
@@ -19,6 +19,65 @@ import ApiService from '@/services/api';
 import { Discussion, DiscussionCreate } from '@/types/api';
 import { useRouter } from 'expo-router';
 
+// Memoized Discussion Card Component
+const DiscussionCard = React.memo(({
+  discussion,
+  canDelete,
+  onPress,
+  onDelete,
+}: {
+  discussion: Discussion;
+  canDelete: boolean;
+  onPress: (id: string) => void;
+  onDelete: (id: string) => void;
+}) => {
+  const theme = useTheme();
+
+  return (
+    <GlassCard
+      style={styles.card}
+      mode="elevated"
+      onPress={() => onPress(discussion.id)}
+    >
+      <Card.Content>
+        <View style={styles.cardHeader}>
+          <View style={styles.cardInfo}>
+            <Text variant="titleMedium" style={styles.cardTitle}>
+              {discussion.title}
+            </Text>
+            <Text
+              variant="bodyMedium"
+              style={{ color: theme.colors.onSurfaceVariant }}
+              numberOfLines={2}
+            >
+              {discussion.content}
+            </Text>
+            <View style={styles.cardMeta}>
+              <Chip icon="account" compact style={styles.chip}>
+                {discussion.creator_name}
+              </Chip>
+              <Chip icon="comment-multiple" compact style={styles.chip}>
+                {discussion.reply_count} replies
+              </Chip>
+              <Chip icon="clock-outline" compact style={styles.chip}>
+                {new Date(discussion.created_at || '').toLocaleDateString()}
+              </Chip>
+            </View>
+          </View>
+          {canDelete && (
+            <IconButton
+              icon="delete"
+              size={20}
+              iconColor={theme.colors.error}
+              onPress={() => onDelete(discussion.id)}
+            />
+          )}
+        </View>
+      </Card.Content>
+    </GlassCard>
+  );
+});
+
 export default function DiscussionsScreen() {
   const [discussions, setDiscussions] = useState<Discussion[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,13 +91,12 @@ export default function DiscussionsScreen() {
   });
   const { user } = useAuth();
   const router = useRouter();
-  const theme = useTheme();
 
   useEffect(() => {
     loadData();
   }, []);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       const discussionsData = await ApiService.listDiscussions();
       setDiscussions(discussionsData);
@@ -49,14 +107,14 @@ export default function DiscussionsScreen() {
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, []);
 
-  const onRefresh = () => {
+  const onRefresh = useCallback(() => {
     setRefreshing(true);
     loadData();
-  };
+  }, [loadData]);
 
-  const handleCreateDiscussion = async () => {
+  const handleCreateDiscussion = useCallback(async () => {
     if (!formData.title.trim() || !formData.content.trim()) {
       Alert.alert('Error', 'Title and content are required');
       return;
@@ -65,7 +123,7 @@ export default function DiscussionsScreen() {
     setFormLoading(true);
     try {
       const newDiscussion = await ApiService.createDiscussion(formData);
-      setDiscussions([newDiscussion, ...discussions]);
+      setDiscussions((prev) => [newDiscussion, ...prev]);
       setDialogVisible(false);
       setFormData({
         title: '',
@@ -79,9 +137,9 @@ export default function DiscussionsScreen() {
     } finally {
       setFormLoading(false);
     }
-  };
+  }, [formData]);
 
-  const handleDeleteDiscussion = async (discussionId: string) => {
+  const handleDeleteDiscussion = useCallback((discussionId: string) => {
     Alert.alert('Delete Discussion', 'Are you sure you want to delete this discussion?', [
       { text: 'Cancel', style: 'cancel' },
       {
@@ -90,7 +148,7 @@ export default function DiscussionsScreen() {
         onPress: async () => {
           try {
             await ApiService.deleteDiscussion(discussionId);
-            setDiscussions(discussions.filter((d) => d.id !== discussionId));
+            setDiscussions((prev) => prev.filter((d) => d.id !== discussionId));
             Alert.alert('Success', 'Discussion deleted successfully');
           } catch (error: any) {
             console.error('Failed to delete discussion:', error);
@@ -99,7 +157,35 @@ export default function DiscussionsScreen() {
         },
       },
     ]);
-  };
+  }, []);
+
+  const handleDiscussionPress = useCallback((discussionId: string) => {
+    router.push(`/discussions/${discussionId}`);
+  }, [router]);
+
+  const canDeleteDiscussion = useCallback((discussion: Discussion) => {
+    return discussion.creator_username === user?.username || user?.role === 'admin';
+  }, [user?.username, user?.role]);
+
+  const renderItem = useCallback(({ item }: { item: Discussion }) => (
+    <DiscussionCard
+      discussion={item}
+      canDelete={canDeleteDiscussion(item)}
+      onPress={handleDiscussionPress}
+      onDelete={handleDeleteDiscussion}
+    />
+  ), [canDeleteDiscussion, handleDiscussionPress, handleDeleteDiscussion]);
+
+  const keyExtractor = useCallback((item: Discussion) => item.id, []);
+
+  const ListEmptyComponent = useMemo(() => (
+    <View style={styles.emptyContainer}>
+      <Text variant="bodyLarge">No discussions yet</Text>
+      <Text variant="bodyMedium" style={styles.emptySubtext}>
+        Start a discussion to engage with the community
+      </Text>
+    </View>
+  ), []);
 
   if (loading) {
     return (
@@ -112,64 +198,18 @@ export default function DiscussionsScreen() {
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        style={styles.scrollView}
+      <FlatList
+        data={discussions}
+        renderItem={renderItem}
+        keyExtractor={keyExtractor}
+        contentContainerStyle={styles.listContent}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-      >
-        {discussions.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <Text variant="bodyLarge">No discussions yet</Text>
-            <Text variant="bodyMedium" style={styles.emptySubtext}>
-              Start a discussion to engage with the community
-            </Text>
-          </View>
-        ) : (
-          discussions.map((discussion) => (
-            <GlassCard
-              key={discussion.id}
-              style={styles.card}
-              mode="elevated"
-              onPress={() => router.push(`/discussions/${discussion.id}`)}
-            >
-              <Card.Content>
-                <View style={styles.cardHeader}>
-                  <View style={styles.cardInfo}>
-                    <Text variant="titleMedium" style={styles.cardTitle}>
-                      {discussion.title}
-                    </Text>
-                    <Text
-                      variant="bodyMedium"
-                      style={{ color: theme.colors.onSurfaceVariant }}
-                      numberOfLines={2}
-                    >
-                      {discussion.content}
-                    </Text>
-                    <View style={styles.cardMeta}>
-                      <Chip icon="account" compact style={styles.chip}>
-                        {discussion.creator_name}
-                      </Chip>
-                      <Chip icon="comment-multiple" compact style={styles.chip}>
-                        {discussion.reply_count} replies
-                      </Chip>
-                      <Chip icon="clock-outline" compact style={styles.chip}>
-                        {new Date(discussion.created_at || '').toLocaleDateString()}
-                      </Chip>
-                    </View>
-                  </View>
-                  {(discussion.creator_username === user?.username || user?.role === 'admin') && (
-                    <IconButton
-                      icon="delete"
-                      size={20}
-                      iconColor={theme.colors.error}
-                      onPress={() => handleDeleteDiscussion(discussion.id)}
-                    />
-                  )}
-                </View>
-              </Card.Content>
-            </GlassCard>
-          ))
-        )}
-      </ScrollView>
+        ListEmptyComponent={ListEmptyComponent}
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={10}
+        windowSize={5}
+        initialNumToRender={10}
+      />
 
       <Portal>
         <Dialog
@@ -248,9 +288,9 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 12,
   },
-  scrollView: {
-    flex: 1,
+  listContent: {
     padding: 16,
+    flexGrow: 1,
   },
   emptyContainer: {
     flex: 1,

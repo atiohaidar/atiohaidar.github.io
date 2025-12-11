@@ -8,7 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const { logout } = useAuth();
+  const { logout, isAdmin } = useAuth();
 
   return (
     <Drawer
@@ -144,6 +144,7 @@ export default function TabLayout() {
           ),
         }}
       />
+      {/* Admin-only menu: Users Management */}
       <Drawer.Screen
         name="users"
         options={{
@@ -152,6 +153,8 @@ export default function TabLayout() {
           drawerIcon: ({ color, size }) => (
             <IconButton icon="account-group" size={size} iconColor={color} />
           ),
+          // Hide from drawer for non-admin users
+          drawerItemStyle: isAdmin ? undefined : { display: 'none' },
         }}
       />
       <Drawer.Screen

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { View, Text, FlatList, TouchableOpacity, RefreshControl, StyleSheet } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
@@ -24,23 +24,21 @@ export default function EventsListScreen() {
     queryFn: () => apiService.listEvents(),
   });
 
-  const filterEvents = (eventsList: Event[] | undefined): Event[] => {
-    if (!eventsList) return [];
+  const filteredEvents = useMemo(() => {
+    if (!events) return [];
     const now = new Date();
 
     switch (filter) {
       case 'upcoming':
-        return eventsList.filter(e => new Date(e.event_date) >= now);
+        return events.filter(e => new Date(e.event_date) >= now);
       case 'past':
-        return eventsList.filter(e => new Date(e.event_date) < now);
+        return events.filter(e => new Date(e.event_date) < now);
       default:
-        return eventsList;
+        return events;
     }
-  };
+  }, [events, filter]);
 
-  const filteredEvents = filterEvents(events);
-
-  const formatDate = (dateString: string) => {
+  const formatDate = useCallback((dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('id-ID', {
       weekday: 'long',
@@ -50,7 +48,7 @@ export default function EventsListScreen() {
       hour: '2-digit',
       minute: '2-digit',
     });
-  };
+  }, []);
 
   const isUpcoming = (dateString: string) => {
     return new Date(dateString) >= new Date();

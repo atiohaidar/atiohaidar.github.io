@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, RefreshControl, Alert } from 'react-native';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { View, StyleSheet, FlatList, RefreshControl, Alert, ScrollView } from 'react-native';
 import { Text, FAB, ActivityIndicator, Searchbar, Chip, Portal } from 'react-native-paper';
 import { useAuth } from '@/contexts/AuthContext';
 import ApiService from '@/services/api';
@@ -10,7 +10,6 @@ import { useRouter } from 'expo-router';
 
 export default function TicketsScreen() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
-  const [filteredTickets, setFilteredTickets] = useState<Ticket[]>([]);
   const [categories, setCategories] = useState<TicketCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -25,28 +24,8 @@ export default function TicketsScreen() {
     loadData();
   }, []);
 
-  useEffect(() => {
-    filterTickets();
-  }, [tickets, searchQuery, statusFilter]);
-
-  const loadData = async () => {
-    try {
-      const [ticketsData, categoriesData] = await Promise.all([
-        ApiService.listTickets(),
-        ApiService.listTicketCategories(),
-      ]);
-      setTickets(ticketsData);
-      setCategories(categoriesData);
-    } catch (error) {
-      console.error('Failed to load data:', error);
-      Alert.alert('Error', 'Failed to load tickets');
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  };
-
-  const filterTickets = () => {
+  // Memoize filtered tickets to prevent recalculation on every render
+  const filteredTickets = useMemo(() => {
     let filtered = tickets;
 
     if (statusFilter !== 'all') {
@@ -63,19 +42,36 @@ export default function TicketsScreen() {
       );
     }
 
-    setFilteredTickets(filtered);
-  };
+    return filtered;
+  }, [tickets, searchQuery, statusFilter]);
 
-  const onRefresh = () => {
+  const loadData = useCallback(async () => {
+    try {
+      const [ticketsData, categoriesData] = await Promise.all([
+        ApiService.listTickets(),
+        ApiService.listTicketCategories(),
+      ]);
+      setTickets(ticketsData);
+      setCategories(categoriesData);
+    } catch (error) {
+      console.error('Failed to load data:', error);
+      Alert.alert('Error', 'Failed to load tickets');
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
+
+  const onRefresh = useCallback(() => {
     setRefreshing(true);
     loadData();
-  };
+  }, [loadData]);
 
-  const handleCreateTicket = async (ticketData: TicketCreate) => {
+  const handleCreateTicket = useCallback(async (ticketData: TicketCreate) => {
     setFormLoading(true);
     try {
       const newTicket = await ApiService.createTicket(ticketData);
-      setTickets([newTicket, ...tickets]);
+      setTickets((prev) => [newTicket, ...prev]);
       setDialogVisible(false);
       Alert.alert(
         'Success',
@@ -87,21 +83,43 @@ export default function TicketsScreen() {
     } finally {
       setFormLoading(false);
     }
-  };
+  }, []);
 
-  const handleUpdateStatus = async (ticket: Ticket, status: 'in_progress' | 'solved') => {
+  const handleUpdateStatus = useCallback(async (ticket: Ticket, status: 'in_progress' | 'solved') => {
     try {
       const updated = await ApiService.updateTicket(ticket.id, { status });
-      setTickets(tickets.map((t) => (t.id === ticket.id ? updated : t)));
+      setTickets((prev) => prev.map((t) => (t.id === ticket.id ? updated : t)));
     } catch (error: any) {
       console.error('Failed to update ticket:', error);
       Alert.alert('Error', error.message || 'Failed to update ticket status');
     }
-  };
+  }, []);
 
-  const handleTicketPress = (ticket: Ticket) => {
+  const handleTicketPress = useCallback((ticket: Ticket) => {
     router.push(`/tickets/${ticket.id}`);
-  };
+  }, [router]);
+
+  const renderTicketItem = useCallback(({ item }: { item: Ticket }) => (
+    <TicketCard
+      ticket={item}
+      isAdmin={isAdmin}
+      onPress={handleTicketPress}
+      onUpdateStatus={handleUpdateStatus}
+    />
+  ), [isAdmin, handleTicketPress, handleUpdateStatus]);
+
+  const keyExtractor = useCallback((item: Ticket) => item.id.toString(), []);
+
+  const ListEmptyComponent = useMemo(() => (
+    <View style={styles.emptyContainer}>
+      <Text variant="bodyLarge">No tickets found</Text>
+      <Text variant="bodyMedium" style={styles.emptySubtext}>
+        {statusFilter !== 'all'
+          ? 'Try changing the filter'
+          : 'Create your first ticket to get started'}
+      </Text>
+    </View>
+  ), [statusFilter]);
 
   if (loading) {
     return (
@@ -164,31 +182,24 @@ export default function TicketsScreen() {
         </ScrollView>
       </View>
 
-      <ScrollView
-        style={styles.scrollView}
+      <FlatList
+        data={filteredTickets}
+        renderItem={renderTicketItem}
+        keyExtractor={keyExtractor}
+        contentContainerStyle={styles.listContent}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-      >
-        {filteredTickets.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <Text variant="bodyLarge">No tickets found</Text>
-            <Text variant="bodyMedium" style={styles.emptySubtext}>
-              {statusFilter !== 'all'
-                ? 'Try changing the filter'
-                : 'Create your first ticket to get started'}
-            </Text>
-          </View>
-        ) : (
-          filteredTickets.map((ticket) => (
-            <TicketCard
-              key={ticket.id}
-              ticket={ticket}
-              isAdmin={isAdmin}
-              onPress={handleTicketPress}
-              onUpdateStatus={handleUpdateStatus}
-            />
-          ))
-        )}
-      </ScrollView>
+        ListEmptyComponent={ListEmptyComponent}
+        // Performance optimizations
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={10}
+        windowSize={5}
+        initialNumToRender={10}
+        getItemLayout={(data, index) => ({
+          length: 120, // Approximate height of TicketCard
+          offset: 120 * index,
+          index,
+        })}
+      />
 
       <Portal>
         <CreateTicketDialog
@@ -236,9 +247,9 @@ const styles = StyleSheet.create({
   filterChip: {
     marginRight: 8,
   },
-  scrollView: {
-    flex: 1,
+  listContent: {
     padding: 16,
+    flexGrow: 1,
   },
   emptyContainer: {
     flex: 1,
