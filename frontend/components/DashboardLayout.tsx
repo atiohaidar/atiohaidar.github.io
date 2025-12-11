@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useLogout } from '../hooks/useApi';
 import { DASHBOARD_THEME } from '../utils/styles';
 import { useTheme } from '../contexts/ThemeContext';
 import ThemeToggle from './ThemeToggle';
 import SpyTooltip from './SpyTooltip';
+import BackendLoader from './BackendLoader';
+
+// Get API base URL for server host display
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787';
+const parsedUrl = new URL(API_BASE_URL);
+const serverHost = parsedUrl.host;
+const isSecure = parsedUrl.protocol === 'https:';
 
 interface StoredUser {
     username: string;
@@ -108,10 +115,13 @@ const menuItems: MenuItem[] = [
     },
 ];
 
+import { useBackendLoader } from '../contexts/BackendLoaderContext';
+
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const logout = useLogout();
+    const { showLoader, updateLoader, hideLoader } = useBackendLoader(); // Use global hook
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
     const [isLogoTooltipOpen, setIsLogoTooltipOpen] = useState(false);
@@ -127,9 +137,43 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
 
     const navItemBase = 'flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300';
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        const startTime = performance.now();
+
+        // Show global loader immediately
+        showLoader({
+            title: "Signing Out",
+            subtitle: "Ending your session",
+            endpoint: "/api/auth/logout",
+            method: "POST",
+            serverHost: serverHost,
+            isSecure: isSecure,
+            completeDelay: 500, // Short delay to see success
+        });
+
+        // Simulate a small delay for animation
+        await new Promise(resolve => setTimeout(resolve, 800));
+
+        // Perform actual logout logic
+        const latency = Math.round(performance.now() - startTime);
         logout();
+
+        // Update loader to success state
+        updateLoader({
+            status: 'success',
+            actualLatency: latency,
+            actualStatusCode: 200,
+            successMessage: "Goodbye! See you next time."
+            // NOTE: We don't wait for 'onComplete' to navigate.
+            // We navigate NOW implicitly or via a slight timeout to let success show for a split second.
+            // But since the user wants the page to change behind the animation, we navigate immediately after success update.
+        });
+
+        // Navigate immediately behind the loader!
         navigate('/login', { replace: true });
+
+        // The loader will handle its own exit animation due to 'completeDelay' and internal phase logic in BackendLoader,
+        // which eventually calls onComplete -> hideLoader (handled by context)
     };
 
     const filteredMenuItems = menuItems.filter(

@@ -1,8 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { COLORS, LAYOUT } from '../utils/styles';
 import { listTicketCategories, submitTicket } from '../lib/api/services';
 import type { TicketCategory, TicketCreate, TicketPriority } from '../apiTypes';
+import BackendLoader from './BackendLoader';
+
+// Get API base URL for server host display
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787';
+const parsedUrl = new URL(API_BASE_URL);
+const serverHost = parsedUrl.host;
+const isSecure = parsedUrl.protocol === 'https:';
 
 const TicketSubmissionSection: React.FC = () => {
     const [categories, setCategories] = useState<TicketCategory[]>([]);
@@ -18,6 +25,15 @@ const TicketSubmissionSection: React.FC = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitResult, setSubmitResult] = useState<{ success: boolean; message: string; token?: string } | null>(null);
     const [showTokenModal, setShowTokenModal] = useState(false);
+
+    // Loader state
+    const [showLoader, setShowLoader] = useState(false);
+    const [loaderStatus, setLoaderStatus] = useState<'loading' | 'success' | 'error'>('loading');
+    const [loaderLatency, setLoaderLatency] = useState<number | undefined>(undefined);
+    const [loaderStatusCode, setLoaderStatusCode] = useState<number | undefined>(undefined);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [createdToken, setCreatedToken] = useState<string | null>(null);
+    const requestStartTime = useRef<number>(0);
 
     useEffect(() => {
         const loadCategories = async () => {
@@ -36,17 +52,30 @@ const TicketSubmissionSection: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsSubmitting(true);
-        setSubmitResult(null);
+
+        // Show loader immediately
+        setShowLoader(true);
+        setLoaderStatus('loading');
+        setErrorMessage(null);
+        setLoaderLatency(undefined);
+        setLoaderStatusCode(undefined);
+        requestStartTime.current = performance.now();
 
         try {
             const response = await submitTicket(formData);
+
+            // Calculate latency
+            const latency = Math.round(performance.now() - requestStartTime.current);
+            setLoaderLatency(latency);
+            setLoaderStatusCode(201); // Created
+
+            setCreatedToken(response.ticket.token);
             setSubmitResult({
                 success: true,
                 message: response.message,
                 token: response.ticket.token,
             });
-            setShowTokenModal(true);
+            setLoaderStatus('success');
 
             // Reset form
             setFormData({
@@ -59,13 +88,31 @@ const TicketSubmissionSection: React.FC = () => {
                 reference_link: '',
             });
         } catch (error) {
+            const latency = Math.round(performance.now() - requestStartTime.current);
+            setLoaderLatency(latency);
+            setLoaderStatusCode(400);
+
+            const errMsg = error instanceof Error ? error.message : 'Failed to submit ticket';
+            setErrorMessage(errMsg);
             setSubmitResult({
                 success: false,
-                message: error instanceof Error ? error.message : 'Failed to submit ticket',
+                message: errMsg,
             });
+            setLoaderStatus('error');
         } finally {
             setIsSubmitting(false);
         }
+    };
+
+    const handleLoaderComplete = () => {
+        setShowLoader(false);
+        if (loaderStatus === 'success') {
+            setShowTokenModal(true);
+        }
+    };
+
+    const handleLoaderDismiss = () => {
+        setShowLoader(false);
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -75,6 +122,28 @@ const TicketSubmissionSection: React.FC = () => {
 
     return (
         <section id="ticket-submission" className={`py-16 md:py-20 ${COLORS.BG_PRIMARY}`}>
+            {/* Loading Overlay */}
+            {showLoader && createPortal(
+                <BackendLoader
+                    status={loaderStatus}
+                    onComplete={handleLoaderComplete}
+                    onDismiss={handleLoaderDismiss}
+                    title="Submitting Ticket"
+                    subtitle="Processing your complaint"
+                    successMessage={createdToken ? `Ticket created! Token: ${createdToken}` : 'Ticket submitted successfully!'}
+                    errorMessage={errorMessage}
+                    responseData={createdToken ? { token: createdToken } : undefined}
+                    endpoint="/api/tickets/public"
+                    method="POST"
+                    actualLatency={loaderLatency}
+                    actualStatusCode={loaderStatusCode}
+                    serverHost={serverHost}
+                    isSecure={isSecure}
+                    completeDelay={800}
+                />,
+                document.body
+            )}
+
             <div className="container mx-auto px-4 max-w-3xl">
                 <div className={`${COLORS.BG_SECONDARY} rounded-lg shadow-xl p-8 md:p-12`}>
                     <h2 className={`text-3xl md:text-4xl font-bold ${COLORS.TEXT_PRIMARY} mb-4 text-center`}>
