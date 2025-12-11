@@ -154,8 +154,8 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, navigateDelay = 0 }) => {
             <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-32 h-32 rounded-full bg-cyan-500/20 blur-3xl pointer-events-none" />
 
             <div className="relative z-10">
-                <h2 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white tracking-tight">Welcome Back</h2>
-                <p className="text-gray-500 dark:text-gray-400 mb-8">Sign in to access your dashboard</p>
+                <h2 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white tracking-tight">Balik Lagii</h2>
+                <p className="text-gray-500 dark:text-gray-400 mb-8">Sign in untuk masuk ke dashboard</p>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                     <div>
@@ -195,13 +195,13 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, navigateDelay = 0 }) => {
                 </form>
 
                 <div className="mt-8 pt-6 border-t border-gray-200 dark:border-white/5">
-                    <p className="text-xs text-center text-gray-500 dark:text-gray-400 mb-3 font-medium uppercase tracking-wider">Demo Credentials</p>
+                    <p className="text-xs text-center text-gray-500 dark:text-gray-400 mb-3 font-medium uppercase tracking-wider">Kalo mau nyoba login</p>
                     <div className="flex justify-center gap-4 text-xs">
                         <div className="px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300">
-                            <strong>Admin:</strong> username: admin, password: admin123
+                            username: admin <br></br> password: admin123
                         </div>
                         <div className="px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300">
-                            <strong>User:</strong> username: user, password: user123
+                            username: user <br></br> password: user123
                         </div>
                     </div>
                 </div>

@@ -5,6 +5,8 @@ import ParallaxBackground from '../components/ParallaxBackground';
 import { getAuthToken, getStoredUser } from '../lib/api';
 import type { LoginResponse } from '../lib/api/types';
 
+import TypewriterText from '../components/TypewriterText';
+
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
 
@@ -35,11 +37,16 @@ const LoginPage: React.FC = () => {
 
             <main className="w-full max-w-6xl flex flex-col lg:flex-row gap-12 items-center z-10">
                 <div className="flex-1 space-y-6 text-center lg:text-left">
-                    <h1 className="text-4xl lg:text-5xl font-bold text-light-text dark:text-white">
-                        Welcome Back.
+                    <h1 className="text-4xl lg:text-5xl font-bold text-light-text dark:text-white min-h-[3.5rem] lg:min-h-[4rem]">
+                        <TypewriterText
+                            texts={["ꦮꦶꦭꦸꦗꦺꦁ ꦱꦸꦩ꧀ꦥꦶꦁ", "Selamat Datang", "Welcome", "مرحبا"]}
+                            typingSpeed={100}
+                            deletingSpeed={50}
+                            delayBetween={1000} // Cepat ganti
+                        />
                     </h1>
-                    <p className="text-lg text-light-muted dark:text-soft-gray leading-relaxed max-w-lg mx-auto lg:mx-0">
-                        Masuk ke Dashboard untuk mengelola konten, memantau tiket, dan melihat statistik project Anda.
+                    <p className="text-lg py-5 text-light-muted dark:text-soft-gray leading-relaxed max-w-lg mx-auto lg:mx-0">
+                        Ini untuk masuk ke dashboard untuk ngakses lebih banyak backend yang udah dibuat
                     </p>
                     <div className="hidden lg:flex gap-4 pt-4">
                         <div className="flex -space-x-3">
