@@ -116,11 +116,23 @@ fun ItemsScreen(
                     selectedTabIndex = selectedTab,
                     containerColor = Color(0xFF1E293B),
                     contentColor = Color.White,
-                    indicator = { tabPositions ->
-                        TabRowDefaults.SecondaryIndicator(
-                            Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
-                            color = Color(0xFF2563EB)
-                        )
+                    divider = {},
+                    indicator = @Composable { tabPositions ->
+                        Box(
+                            Modifier
+                                .fillMaxWidth()
+                                .wrapContentSize(Alignment.BottomStart)
+                        ) {
+                            if (selectedTab < tabPositions.size) {
+                                Box(
+                                    Modifier
+                                        .offset(x = tabPositions[selectedTab].left)
+                                        .width(tabPositions[selectedTab].width)
+                                        .height(3.dp)
+                                        .background(Color(0xFF2563EB), RoundedCornerShape(topStart = 3.dp, topEnd = 3.dp))
+                                )
+                            }
+                        }
                     }
                 ) {
                     Tab(

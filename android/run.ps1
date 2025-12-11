@@ -7,7 +7,7 @@ Write-Host "[*] Building and Installing..." -ForegroundColor Yellow
 # Check if build succeeded
 if ($LASTEXITCODE -eq 0) {
     Write-Host "[+] Launching App..." -ForegroundColor Green
-    adb shell am start -n com.example.portoflio_android/.MainActivity
+    adb shell am start -n com.example.portoflio_android.debug/com.example.portoflio_android.MainActivity
     
     Write-Host "[*] Showing Logs (Ctrl+C to stop)..." -ForegroundColor Cyan
     # Clear old logs
