@@ -19,7 +19,7 @@ class ChatRepository @Inject constructor(
         return try {
             val response = chatApiService.getConversations()
             if (response.isSuccessful && response.body()?.success == true) {
-                Result.success(response.body()!!.data)
+                Result.success(response.body()?.data ?: emptyList())
             } else {
                 Result.failure(Exception(response.message() ?: "Failed to fetch conversations"))
             }
@@ -49,7 +49,7 @@ class ChatRepository @Inject constructor(
         return try {
             val response = chatApiService.getConversationMessages(conversationId, page, limit)
             if (response.isSuccessful && response.body()?.success == true) {
-                Result.success(response.body()!!.data)
+                Result.success(response.body()?.data ?: emptyList())
             } else {
                 Result.failure(Exception(response.message() ?: "Failed to fetch messages"))
             }
@@ -77,7 +77,7 @@ class ChatRepository @Inject constructor(
         return try {
             val response = chatApiService.getGroups()
             if (response.isSuccessful && response.body()?.success == true) {
-                Result.success(response.body()!!.data)
+                Result.success(response.body()?.data ?: emptyList())
             } else {
                 Result.failure(Exception(response.message() ?: "Failed to fetch groups"))
             }
@@ -146,7 +146,7 @@ class ChatRepository @Inject constructor(
         return try {
             val response = chatApiService.getGroupMessages(groupId, page, limit)
             if (response.isSuccessful && response.body()?.success == true) {
-                Result.success(response.body()!!.data)
+                Result.success(response.body()?.data ?: emptyList())
             } else {
                 Result.failure(Exception(response.message() ?: "Failed to fetch group messages"))
             }
@@ -159,7 +159,7 @@ class ChatRepository @Inject constructor(
         return try {
             val response = chatApiService.getGroupMembers(groupId)
             if (response.isSuccessful && response.body()?.success == true) {
-                Result.success(response.body()!!.data)
+                Result.success(response.body()?.data ?: emptyList())
             } else {
                 Result.failure(Exception(response.message() ?: "Failed to fetch group members"))
             }

@@ -1,0 +1,52 @@
+﻿--------- beginning of crash
+12-12 10:31:16.650  7348  7348 E AndroidRuntime: FATAL EXCEPTION: main
+12-12 10:31:16.650  7348  7348 E AndroidRuntime: Process: com.example.portoflio_android.debug, PID: 7348
+12-12 10:31:16.650  7348  7348 E AndroidRuntime: java.lang.NullPointerException: Parameter specified as non-null is null: method com.example.portoflio_android.ui.viewmodel.ChatUiState.copy, parameter conversations
+12-12 10:31:16.650  7348  7348 E AndroidRuntime: 	at com.example.portoflio_android.ui.viewmodel.ChatUiState.copy(Unknown Source:4)
+12-12 10:31:16.650  7348  7348 E AndroidRuntime: 	at com.example.portoflio_android.ui.viewmodel.ChatUiState.copy$default(Unknown Source:92)
+12-12 10:31:16.650  7348  7348 E AndroidRuntime: 	at com.example.portoflio_android.ui.viewmodel.ChatViewModel$loadConversations$1.invokeSuspend(ChatViewModel.kt:56)
+12-12 10:31:16.650  7348  7348 E AndroidRuntime: 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+12-12 10:31:16.650  7348  7348 E AndroidRuntime: 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+12-12 10:31:16.650  7348  7348 E AndroidRuntime: 	at android.os.Handler.handleCallback(Handler.java:942)
+12-12 10:31:16.650  7348  7348 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:99)
+12-12 10:31:16.650  7348  7348 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:223)
+12-12 10:31:16.650  7348  7348 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:324)
+12-12 10:31:16.650  7348  7348 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:8481)
+12-12 10:31:16.650  7348  7348 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+12-12 10:31:16.650  7348  7348 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:582)
+12-12 10:31:16.650  7348  7348 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1061)
+12-12 10:31:16.650  7348  7348 E AndroidRuntime: 	Suppressed: kotlinx.coroutines.internal.DiagnosticCoroutineContextException: [StandaloneCoroutine{Cancelling}@f7ee23b, Dispatchers.Main.immediate]
+12-12 10:31:30.121  7507  7507 E AndroidRuntime: FATAL EXCEPTION: main
+12-12 10:31:30.121  7507  7507 E AndroidRuntime: Process: com.example.portoflio_android.debug, PID: 7507
+12-12 10:31:30.121  7507  7507 E AndroidRuntime: java.lang.NullPointerException: Parameter specified as non-null is null: method com.example.portoflio_android.ui.viewmodel.TicketsUiState.copy, parameter tickets
+12-12 10:31:30.121  7507  7507 E AndroidRuntime: 	at com.example.portoflio_android.ui.viewmodel.TicketsUiState.copy(Unknown Source:3)
+12-12 10:31:30.121  7507  7507 E AndroidRuntime: 	at com.example.portoflio_android.ui.viewmodel.TicketsUiState.copy$default(Unknown Source:79)
+12-12 10:31:30.121  7507  7507 E AndroidRuntime: 	at com.example.portoflio_android.ui.viewmodel.TicketsViewModel$loadTickets$1.invokeSuspend(TicketsViewModel.kt:58)
+12-12 10:31:30.121  7507  7507 E AndroidRuntime: 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+12-12 10:31:30.121  7507  7507 E AndroidRuntime: 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+12-12 10:31:30.121  7507  7507 E AndroidRuntime: 	at android.os.Handler.handleCallback(Handler.java:942)
+12-12 10:31:30.121  7507  7507 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:99)
+12-12 10:31:30.121  7507  7507 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:223)
+12-12 10:31:30.121  7507  7507 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:324)
+12-12 10:31:30.121  7507  7507 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:8481)
+12-12 10:31:30.121  7507  7507 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+12-12 10:31:30.121  7507  7507 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:582)
+12-12 10:31:30.121  7507  7507 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1061)
+12-12 10:31:30.121  7507  7507 E AndroidRuntime: 	Suppressed: kotlinx.coroutines.internal.DiagnosticCoroutineContextException: [StandaloneCoroutine{Cancelling}@a7c407a, Dispatchers.Main.immediate]
+12-12 10:31:41.875  7619  7619 E AndroidRuntime: FATAL EXCEPTION: main
+12-12 10:31:41.875  7619  7619 E AndroidRuntime: Process: com.example.portoflio_android.debug, PID: 7619
+12-12 10:31:41.875  7619  7619 E AndroidRuntime: java.lang.NullPointerException: Parameter specified as non-null is null: method com.example.portoflio_android.ui.viewmodel.TicketsUiState.copy, parameter tickets
+12-12 10:31:41.875  7619  7619 E AndroidRuntime: 	at com.example.portoflio_android.ui.viewmodel.TicketsUiState.copy(Unknown Source:3)
+12-12 10:31:41.875  7619  7619 E AndroidRuntime: 	at com.example.portoflio_android.ui.viewmodel.TicketsUiState.copy$default(Unknown Source:79)
+12-12 10:31:41.875  7619  7619 E AndroidRuntime: 	at com.example.portoflio_android.ui.viewmodel.TicketsViewModel$loadTickets$1.invokeSuspend(TicketsViewModel.kt:58)
+12-12 10:31:41.875  7619  7619 E AndroidRuntime: 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+12-12 10:31:41.875  7619  7619 E AndroidRuntime: 	at kotlinx.coroutines.DispatchedTask.run(DispatchedTask.kt:101)
+12-12 10:31:41.875  7619  7619 E AndroidRuntime: 	at android.os.Handler.handleCallback(Handler.java:942)
+12-12 10:31:41.875  7619  7619 E AndroidRuntime: 	at android.os.Handler.dispatchMessage(Handler.java:99)
+12-12 10:31:41.875  7619  7619 E AndroidRuntime: 	at android.os.Looper.loopOnce(Looper.java:223)
+12-12 10:31:41.875  7619  7619 E AndroidRuntime: 	at android.os.Looper.loop(Looper.java:324)
+12-12 10:31:41.875  7619  7619 E AndroidRuntime: 	at android.app.ActivityThread.main(ActivityThread.java:8481)
+12-12 10:31:41.875  7619  7619 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+12-12 10:31:41.875  7619  7619 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:582)
+12-12 10:31:41.875  7619  7619 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:1061)
+12-12 10:31:41.875  7619  7619 E AndroidRuntime: 	Suppressed: kotlinx.coroutines.internal.DiagnosticCoroutineContextException: [StandaloneCoroutine{Cancelling}@99f5c89, Dispatchers.Main.immediate]

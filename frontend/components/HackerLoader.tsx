@@ -29,6 +29,7 @@ const HackerLoader: React.FC<HackerLoaderProps> = ({
     const targetText = 'SIAPA AKU';
 
     const identityLogs = [
+        "CERITANYA MASIH PEMULA...",
         "MASIH BELAJAR...",
         "DALAM PROSES...",
         "IDENTITY CONFIRMED: VIBE CODER",

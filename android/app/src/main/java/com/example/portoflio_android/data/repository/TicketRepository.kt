@@ -19,7 +19,7 @@ class TicketRepository @Inject constructor(
         return try {
             val response = ticketApiService.getCategories()
             if (response.isSuccessful && response.body()?.data != null) {
-                Result.success(response.body()!!.data!!)
+                Result.success(response.body()?.data ?: emptyList())
             } else {
                 Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
@@ -32,7 +32,7 @@ class TicketRepository @Inject constructor(
         return try {
             val response = ticketApiService.getTickets(status = status, categoryId = categoryId)
             if (response.isSuccessful && response.body() != null) {
-                Result.success(response.body()!!.data)
+                Result.success(response.body()?.data ?: emptyList())
             } else {
                 Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
@@ -71,7 +71,7 @@ class TicketRepository @Inject constructor(
         return try {
             val response = ticketApiService.getComments(ticketId)
             if (response.isSuccessful && response.body()?.data != null) {
-                Result.success(response.body()!!.data!!)
+                Result.success(response.body()?.data ?: emptyList())
             } else {
                 Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
@@ -111,7 +111,7 @@ class TicketRepository @Inject constructor(
         return try {
             val response = ticketApiService.getAssignments(ticketId)
             if (response.isSuccessful && response.body()?.data != null) {
-                Result.success(response.body()!!.data!!)
+                Result.success(response.body()?.data ?: emptyList())
             } else {
                 Result.failure(Exception(com.example.portoflio_android.data.network.ErrorUtils.parseError(response)))
             }
