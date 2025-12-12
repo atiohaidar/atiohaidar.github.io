@@ -90,12 +90,12 @@ dependencies {
     implementation(libs.datastore.preferences)
 
     // CameraX for QR Code Scanning
-    implementation("androidx.camera:camera-camera2:1.3.1")
-    implementation("androidx.camera:camera-lifecycle:1.3.1")
-    implementation("androidx.camera:camera-view:1.3.1")
+    implementation("androidx.camera:camera-camera2:1.5.2")
+    implementation("androidx.camera:camera-lifecycle:1.5.2")
+    implementation("androidx.camera:camera-view:1.5.2")
     
     // ML Kit Barcode Scanning
-    implementation("com.google.mlkit:barcode-scanning:17.2.0")
+    implementation("com.google.mlkit:barcode-scanning:17.3.0")
 
     // Testing
     testImplementation(libs.junit)
