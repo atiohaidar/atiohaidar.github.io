@@ -17,6 +17,7 @@ import TicketSubmissionSection from '../components/TicketSubmissionSection';
 import TicketTrackingSection from '../components/TicketTrackingSection';
 import ScrollReveal from '../components/ScrollReveal';
 import SpyTooltip from '../components/SpyTooltip';
+import ParallaxBackground from '../components/ParallaxBackground';
 import { useLandingData } from '../contexts/LandingDataContext';
 import { useMultiParallax } from '../hooks/useParallax';
 import { getAuthToken, getStoredUser, clearAuth } from '../apiClient';
@@ -134,23 +135,10 @@ const LandingPage: React.FC = () => {
     }
 
     return (
-        <div className={`relative min-h-screen bg-light-bg dark:bg-deep-navy transition-colors duration-300 overflow-hidden`}>
+        <div className={`relative min-h-screen duration-300 overflow-hidden`}>
             {/* Global Background Elements */}
-            <div className="fixed inset-0 bg-gradient-to-br from-blue-500/5 via-cyan-500/5 to-purple-500/5 -z-10" />
+            <ParallaxBackground intensity={1} zIndex={10} opacity={0.3} />
 
-            {/* Animated Orbs with Parallax (Fixed) */}
-            <div
-                className="fixed top-[20%] right-[10%] w-[600px] h-[600px] bg-accent-blue/40 rounded-full blur-[120px] animate-blob mix-blend-multiply dark:mix-blend-screen opacity-90 -z-10 pointer-events-none"
-                style={{ transform: `translateY(${parallax.getOffset(0.05, 'down')}px)` }}
-            />
-            <div
-                className="fixed bottom-[20%] left-[10%] w-[600px] h-[600px] bg-purple-500/40 rounded-full blur-[120px] animate-blob animation-delay-2000 mix-blend-multiply dark:mix-blend-screen opacity-90 -z-10 pointer-events-none"
-                style={{ transform: `translateY(${parallax.getOffset(0.08, 'down')}px)` }}
-            />
-            <div
-                className="fixed top-[40%] left-[40%] w-[600px] h-[600px] bg-cyan-500/40 rounded-full blur-[120px] animate-blob animation-delay-4000 mix-blend-multiply dark:mix-blend-screen opacity-90 -z-10 pointer-events-none"
-                style={{ transform: `translateY(${parallax.getOffset(0.12, 'down')}px)` }}
-            />
 
             {/* Particle Overlay (Optional, keep it subtle) */}
             {/* <div className="fixed inset-0 opacity-20 dark:opacity-30 -z-10 pointer-events-none">
@@ -165,7 +153,7 @@ const LandingPage: React.FC = () => {
                 onNavAction={handleNavAction}
             />
 
-            <main className="mx-auto relative z-10">
+            <main className="mx-auto relative  -z-12 bg-light-bg dark:bg-deep-navy transition-colors  ">
                 <ScrollReveal delay={200}>
 
 

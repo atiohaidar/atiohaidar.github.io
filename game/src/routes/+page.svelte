@@ -171,6 +171,7 @@
             #0f172a 100%
         );
         padding: 2rem;
+        overflow-y: auto;
     }
 
     .login-container {

@@ -5,6 +5,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useLogin } from '../hooks/useApi';
 import BackendLoader from './BackendLoader';
 import type { LoginResponse } from '../lib/api/types';
+import { Link } from 'react-router-dom';
 
 // Get API base URL for server host display
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787';
@@ -194,16 +195,24 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, navigateDelay = 0 }) => {
                     </button>
                 </form>
 
-                <div className="mt-8 pt-6 border-t border-gray-200 dark:border-white/5">
-                    <p className="text-xs text-center text-gray-500 dark:text-gray-400 mb-3 font-medium uppercase tracking-wider">Kalo mau nyoba login</p>
-                    <div className="flex justify-center gap-4 text-xs">
-                        <div className="px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300">
-                            username: admin <br></br> password: admin123
-                        </div>
-                        <div className="px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300">
-                            username: user <br></br> password: user123
-                        </div>
-                    </div>
+                <div className="text-sm text-center mt-6 space-y-3">
+                    <p className="text-light-muted/80 dark:text-soft-gray/60">
+                        Belum punya akun?{' '}
+                        <Link
+                            to="/register"
+                            className="text-accent-blue hover:text-accent-blue/80 hover:underline font-medium transition-colors"
+                        >
+                            Daftar di sini
+                        </Link>
+                    </p>
+                    <p className="text-light-muted/80 dark:text-soft-gray/60">
+                        <Link
+                            to="/forgot-password"
+                            className="text-amber-500 dark:text-amber-400 hover:underline font-medium transition-colors"
+                        >
+                            Lupa Password?
+                        </Link>
+                    </p>
                 </div>
             </div>
         </div>

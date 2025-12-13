@@ -110,7 +110,7 @@ class _DashboardOverviewScreenState extends State<DashboardOverviewScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      "Inilah yang terjadi dengan proyek Anda hari ini.",
+                      "Jadi beginilah hari ini. Have a nice day!",
                       style: TextStyle(
                         fontSize: 14,
                         color: isDark

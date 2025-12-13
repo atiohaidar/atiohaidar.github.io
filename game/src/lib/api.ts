@@ -11,6 +11,21 @@ interface ApiResponse<T> {
     error?: string;
 }
 
+export interface User {
+    id: string;
+    username: string;
+    email: string;
+    name: string;
+    role: string;
+    balance: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export async function getUser(username: string): Promise<ApiResponse<User>> {
+    return fetchApi<User>(`/users/${username}`);
+}
+
 // Auth token management
 let authToken: string | null = null;
 

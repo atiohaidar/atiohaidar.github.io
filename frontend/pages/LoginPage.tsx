@@ -25,12 +25,12 @@ const LoginPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen w-full relative flex flex-col bg-light-bg dark:bg-deep-navy overflow-hidden">
+        <div className="min-h-screen w-full relative flex flex-col bg-light-bg dark:bg-deep-navy overflow-y-auto">
             {/* Parallax Background */}
-            <ParallaxBackground intensity={0.6} />
+            <ParallaxBackground intensity={0.01} zIndex={10} opacity={0.1} />
 
             {/* Header */}
-            <header className="relative px-6 py-5 flex justify-between items-center z-20">
+            <header className="relative px-6 py-5 flex justify-between items-center">
                 <Link
                     to="/"
                     className="flex items-center gap-3 text-light-text dark:text-white hover:text-accent-blue dark:hover:text-accent-blue transition-all duration-300 group"
@@ -48,11 +48,10 @@ const LoginPage: React.FC = () => {
 
             {/* Main Content */}
             <main className={`flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8 z-10 transition-all duration-700 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                <div className="w-full max-w-6xl flex flex-col lg:flex-row gap-8 lg:gap-12 items-center">
+                <div className="w-full max-w-6xl flex flex-col items-center lg:flex-row gap-8 lg:gap-12">
                     {/* Left Section - Welcome Text */}
                     <div className="flex-1 space-y-6 text-center lg:text-left">
                         <div className="space-y-2">
-                            Authentication Portal
 
                             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-light-text dark:text-white min-h-[2.5rem] sm:min-h-[3.5rem] lg:min-h-[4rem]">
                                 <TypewriterText
@@ -67,22 +66,25 @@ const LoginPage: React.FC = () => {
                         <p className="text-base sm:text-lg text-light-muted dark:text-soft-gray leading-relaxed max-w-lg mx-auto lg:mx-0">
                             Masuk ke dashboard untuk mengakses lebih banyak fitur backend yang sudah tersedia
                         </p>
+                        <div className="mt-8 pt-6 border-t border-gray-200 dark:border-white/5">
+                            <p className="text-xs text-center text-gray-500 dark:text-gray-400 mb-3 font-medium uppercase tracking-wider">Kalo mau nyoba login</p>
+                            <div className="flex justify-center gap-4 text-xs">
+                                <div className="px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300">
+                                    username: admin <br /> password: admin123
+                                </div>
+                                <div className="px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300">
+                                    username: user <br /> password: user123
+                                </div>
+                            </div>
+                        </div>
 
                         {/* Stats/Features Cards - Desktop Only */}
-                        <div className="hidden lg:grid grid-cols-3 gap-4 pt-6">
-                            <div className="glass-panel p-4 rounded-xl text-center group hover:scale-105 transition-transform duration-300">
+                        {/* <div className="hidden lg:flex flex-wrap gap-4 pt-6">
+                            <div className="glass-panel p-4 rounded-xl text-center group hover:scale-105 transition-transform duration-300 min-w-[120px]">
                                 <div className="text-2xl font-bold text-accent-blue">10+</div>
                                 <div className="text-xs text-light-muted dark:text-soft-gray mt-1">API Endpoints</div>
                             </div>
-                            <div className="glass-panel p-4 rounded-xl text-center group hover:scale-105 transition-transform duration-300">
-                                <div className="text-2xl font-bold text-green-500">24/7</div>
-                                <div className="text-xs text-light-muted dark:text-soft-gray mt-1">Ketersediaan</div>
-                            </div>
-                            <div className="glass-panel p-4 rounded-xl text-center group hover:scale-105 transition-transform duration-300">
-                                <div className="text-2xl font-bold text-purple-500">∞</div>
-                                <div className="text-xs text-light-muted dark:text-soft-gray mt-1">Kemungkinan</div>
-                            </div>
-                        </div>
+                        </div> */}
                     </div>
 
                     {/* Right Section - Login Form */}
@@ -90,25 +92,7 @@ const LoginPage: React.FC = () => {
                         {/* Login component has its own glass-panel styling */}
                         <Login onLoginSuccess={handleLoginSuccess} navigateDelay={1000} />
 
-                        <div className="text-sm text-center mt-6 space-y-3">
-                            <p className="text-light-muted/80 dark:text-soft-gray/60">
-                                Belum punya akun?{' '}
-                                <Link
-                                    to="/register"
-                                    className="text-accent-blue hover:text-accent-blue/80 hover:underline font-medium transition-colors"
-                                >
-                                    Daftar di sini
-                                </Link>
-                            </p>
-                            <p className="text-light-muted/80 dark:text-soft-gray/60">
-                                <Link
-                                    to="/forgot-password"
-                                    className="text-amber-500 dark:text-amber-400 hover:underline font-medium transition-colors"
-                                >
-                                    Lupa Password?
-                                </Link>
-                            </p>
-                        </div>
+
                     </div>
                 </div>
             </main>
@@ -116,7 +100,7 @@ const LoginPage: React.FC = () => {
             {/* Footer */}
             <footer className="relative z-20 py-4 px-6 text-center">
                 <p className="text-xs text-light-muted/60 dark:text-soft-gray/40">
-                    © {new Date().getFullYear()} Tio Haidar. Built with ❤️
+                    Sebuah website random
                 </p>
             </footer>
         </div>

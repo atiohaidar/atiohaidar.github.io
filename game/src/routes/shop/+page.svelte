@@ -11,6 +11,7 @@
         exchangeBalanceToGems,
         getGameConstants,
         getCrops,
+        getUser,
         type ShopItem,
         type GameConstants,
         type Crop,
@@ -95,17 +96,13 @@
             crops = cropsRes.data;
         }
 
-        // Fetch user balance from /api/users/:username
+        // Fetch user balance
         try {
             const username = getUsernameFromToken();
             if (username) {
-                const res = await fetch(`/api/users/${username}`, {
-                    headers: { Authorization: `Bearer ${getAuthToken()}` },
-                });
-                const data = await res.json();
-                console.log(data.user);
-                if (data.success && data.user) {
-                    userBalance = data.user.balance || 0;
+                const userRes = await getUser(username);
+                if (userRes.success && userRes.data) {
+                    userBalance = userRes.data.balance || 0;
                 }
             }
         } catch (e) {

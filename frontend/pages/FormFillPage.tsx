@@ -120,7 +120,7 @@ const FormFillPage: React.FC = () => {
             linkedin: 'https://www.linkedin.com/in/atiohaidar/',
             instagram: 'https://www.instagram.com/tiohaidarhanif'
         },
-        copyright: '© 2024 Tio Haidar. All rights reserved.'
+        copyright: 'Sebuah website random'
     };
 
     const activeProfile = profile || defaultProfile;

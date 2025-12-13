@@ -36,13 +36,7 @@ const DashboardOverviewPage: React.FC = () => {
             icon: '📝',
             color: 'from-blue-500 to-cyan-400'
         },
-        {
-            title: 'Pesan Belum Dibaca',
-            value: unreadMessages.toString(),
-            trend: 'Sistem chat',
-            icon: '💬',
-            color: 'from-blue-600 to-indigo-500'
-        },
+
         {
             title: 'Tiket Aktif',
             value: isTicketsLoading ? '...' : pendingTickets.toString(),
@@ -98,7 +92,7 @@ const DashboardOverviewPage: React.FC = () => {
                             {greeting}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">{user?.name || storedUser?.name}</span>
                         </h1>
                         <p className={`mt-2 text-lg ${palette.panel.textMuted}`}>
-                            Inilah yang terjadi dengan proyek Anda hari ini.
+                            Jadi inilah yang terjadi hari ini, have a nice day!
                         </p>
                     </div>
                     <div className="flex gap-3">

@@ -50,7 +50,7 @@ const ForgotPasswordPage: React.FC = () => {
     return (
         <div className="min-h-screen w-full relative flex flex-col bg-light-bg dark:bg-deep-navy overflow-hidden">
             {/* Parallax Background */}
-            <ParallaxBackground intensity={0.6} />
+            <ParallaxBackground intensity={0.6} zIndex={10} />
 
             {/* Header */}
             <header className="relative px-6 py-5 flex justify-between items-center z-20">
@@ -172,7 +172,7 @@ const ForgotPasswordPage: React.FC = () => {
             {/* Footer */}
             <footer className="relative z-20 py-4 px-6 text-center">
                 <p className="text-xs text-light-muted/60 dark:text-soft-gray/40">
-                    © {new Date().getFullYear()} Tio Haidar. Built with ❤️
+                    Sebuah website random
                 </p>
             </footer>
         </div>

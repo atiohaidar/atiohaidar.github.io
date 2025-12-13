@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 
 type LoaderStatus = 'loading' | 'success' | 'error';
 
@@ -209,7 +210,8 @@ const BackendLoader: React.FC<BackendLoaderProps> = ({
 
     const isError = phase === 'error';
 
-    return (
+    // Use portal to ensure loader stays on top of everything (including headers/transforms)
+    return createPortal(
         <div
             className={`
                 fixed inset-0 z-[9999] flex flex-col items-center justify-center font-mono overflow-hidden
@@ -453,7 +455,8 @@ const BackendLoader: React.FC<BackendLoaderProps> = ({
                     100% { transform: translateX(0); opacity: 1; }
                 }
             `}</style>
-        </div>
+        </div>,
+        document.body
     );
 };
 
