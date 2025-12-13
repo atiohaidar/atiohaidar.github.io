@@ -13,8 +13,38 @@
         type ShopItem,
         type GameConstants,
         type Crop,
+        type GoldExchangeResult,
+        type GemsExchangeResult,
     } from "$lib/api";
+
     import { profile, showToast, isLoggedIn } from "$lib/stores";
+
+    interface ShopPageItem {
+        id: string;
+        name: string;
+        type: string;
+        price_gold: number;
+        price_gems: number;
+        unlock_level: number;
+        icon?: string;
+        description?: string;
+        unlocked?: boolean;
+
+        // Specific to CurrencyPackage
+        price_balance?: number;
+        reward_amount?: number;
+        currencyType?: string;
+
+        // Specific to Crop
+        isCrop?: boolean;
+        tier?: number;
+        grow_time_seconds?: number;
+        xp_reward?: number;
+
+        // Specific to ShopItem (optional here to allow compatibility)
+        max_quantity?: number;
+        effect?: string;
+    }
 
     let shopItems: ShopItem[] = [];
     let crops: Crop[] = [];
@@ -24,6 +54,7 @@
     let constants: GameConstants | null = null;
     let userBalance = 0;
 
+    let categories = [
         { id: "all", name: "All", icon: "🛒" },
         { id: "seeds", name: "Seeds", icon: "🌱" },
         { id: "tool", name: "Tools", icon: "🔧" },
@@ -113,8 +144,8 @@
         if (result.success && result.data) {
             const received =
                 item.currencyType === "gold"
-                    ? result.data.gold_received
-                    : result.data.gems_received;
+                    ? (result.data as GoldExchangeResult).gold_received
+                    : (result.data as GemsExchangeResult).gems_received;
             const currency =
                 item.currencyType === "gold" ? "Gold 🪙" : "Gems 💎";
 
@@ -134,7 +165,7 @@
         }
     }
 
-    async function handlePurchase(item: ShopItem) {
+    async function handlePurchase(item: ShopPageItem) {
         if (purchaseLoading) return;
 
         purchaseLoading = item.id;
@@ -152,7 +183,7 @@
         }
     }
 
-    function canAfford(item: ShopItem): boolean {
+    function canAfford(item: ShopPageItem): boolean {
         const gold = $profile?.gold || 0;
         const gems = $profile?.gems || 0;
         return gold >= item.price_gold && gems >= item.price_gems;
@@ -191,6 +222,15 @@
 
     function canAffordCrop(crop: Crop): boolean {
         return ($profile?.gold || 0) >= crop.seed_price;
+    }
+
+    function getSafeCropProfit(item: ShopPageItem): number {
+        if (!item.isCrop) return 0;
+        return getCropProfit(item as unknown as Crop);
+    }
+
+    function getSafeGrowTime(item: ShopPageItem): string {
+        return formatGrowTime(item.grow_time_seconds || 0);
     }
 
     function formatGrowTime(seconds: number): string {
@@ -282,7 +322,7 @@
             isCrop: true,
         })),
         ...shopItems,
-    ];
+    ] as ShopPageItem[];
 
     $: filteredItems =
         selectedCategory === "all"
@@ -339,7 +379,7 @@
                 <div
                     class="shop-item"
                     style="--item-color: {item.isCrop
-                        ? getCropTierColor(item.tier)
+                        ? getCropTierColor(item.tier || 1)
                         : getTierColor(item.type)}"
                 >
                     <div class="item-icon">
@@ -352,18 +392,14 @@
                             <div class="stat-row">
                                 <span>Profit:</span>
                                 <span class="profit"
-                                    >+{getCropProfit(
+                                    >+{getSafeCropProfit(
                                         item,
                                     ).toLocaleString()}</span
                                 >
                             </div>
                             <div class="stat-row">
                                 <span>Time:</span>
-                                <span
-                                    >{formatGrowTime(
-                                        item.grow_time_seconds,
-                                    )}</span
-                                >
+                                <span>{getSafeGrowTime(item)}</span>
                             </div>
                             <div class="stat-row">
                                 <span>XP:</span>
@@ -421,7 +457,7 @@
                         <button
                             class="btn btn-primary buy-btn"
                             disabled={(item.type === "currency"
-                                ? userBalance < item.price_balance
+                                ? userBalance < (item.price_balance || 0)
                                 : !canAfford(item)) ||
                                 purchaseLoading === item.id}
                             on:click={() =>
@@ -433,7 +469,7 @@
                                 {item.type === "currency"
                                     ? "Exchanging..."
                                     : "Buying..."}
-                            {:else if item.type === "currency" && userBalance < item.price_balance}
+                            {:else if item.type === "currency" && userBalance < (item.price_balance || 0)}
                                 Insufficient Saldo
                             {:else if item.type !== "currency" && !canAfford(item)}
                                 Not Enough

@@ -645,7 +645,9 @@
             <div class="farm-land-container">
                 <h2 class="farm-title absolute-top">🌾 Bercocok tanam 🌾</h2>
                 <div class="land-usage-badge top-right">
-                    <span>Land: {$farmPlots.length} / {plotsUnlocked}</span>
+                    <span
+                        >Crops: {$farmPlots.filter((p) => p.crop_id).length} / {$farmPlots.length}</span
+                    >
                 </div>
 
                 <!-- Farm Land Area -->
@@ -702,7 +704,7 @@
                                 <!-- Empty plot (invisible unless in build mode) -->
                                 <div
                                     class="soil-patch"
-                                    style="opacity: {isBuildMode ? 0.5 : 0};"
+                                    style="opacity: {isBuildMode ? 0.7 : 0.4};"
                                 ></div>
                             {/if}
                         </button>
@@ -718,7 +720,9 @@
                 </p>
 
                 <div class="land-usage-badge">
-                    <span>Land: {$farmPlots.length} / {plotsUnlocked}</span>
+                    <span
+                        >Crops: {$farmPlots.filter((p) => p.crop_id).length} / {$farmPlots.length}</span
+                    >
                 </div>
             </div>
         {/if}
@@ -795,7 +799,7 @@
                 <span class="value">{$profile?.total_harvests || 0}</span>
             </div>
             <div class="stat">
-                <span class="label">Land</span>
+                <span class="label">Plots</span>
                 <span class="value">{$farmPlots.length} / {plotsUnlocked}</span>
             </div>
 
