@@ -1,21 +1,32 @@
 import { D1Database } from '@cloudflare/workers-types';
 import { UserSeeder } from './user.seeder';
 import { TaskSeeder } from './task.seeder';
+import { seedGameData } from './game.seeder';
 
 export interface Seeder {
   name: string;
   run(db: D1Database): Promise<void>;
 }
 
+// Game seeder wrapper
+const GameSeeder: Seeder = {
+  name: 'GameSeeder',
+  async run(db: D1Database) {
+    const result = await seedGameData(db);
+    console.log(`🎮 Seeded game data: ${result.crops} crops, ${result.items} items, ${result.achievements} achievements`);
+  }
+};
+
 const seeders: Seeder[] = [
   UserSeeder,
   TaskSeeder,
+  GameSeeder,
   // Tambahkan seeder lain di sini
 ];
 
 export async function runSeeders(db: D1Database) {
   console.log('🔍 Checking for seeders to run...');
-  
+
   // Buat tabel untuk melacak seed yang sudah dijalankan
   await db.exec(`
     CREATE TABLE IF NOT EXISTS _migrations (
@@ -37,12 +48,12 @@ export async function runSeeders(db: D1Database) {
     if (!executedSeedNames.has(seeder.name)) {
       console.log(`🌱 Running seeder: ${seeder.name}`);
       await seeder.run(db);
-      
+
       // Tandai seed ini sudah dijalankan
       await db.prepare(
         'INSERT INTO _migrations (name) VALUES (?)'
       ).bind(seeder.name).run();
-      
+
       seededCount++;
       console.log(`✅ Seeded: ${seeder.name}`);
     } else {

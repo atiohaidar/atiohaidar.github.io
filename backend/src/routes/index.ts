@@ -116,11 +116,36 @@ import {
 	AttendeeWithScansGet,
 	EventScanHistoryList,
 } from "../controllers/event.controller";
+import {
+	GameProfileGet,
+	GameProfileReset,
+	GameFarmGet,
+	GameFarmPlant,
+	GameFarmWater,
+	GameFarmHarvest,
+	GameFarmHarvestAll,
+	GameCropsList,
+	GameShopList,
+	GameShopPurchase,
+	GameInventoryList,
+	GameAchievementsList,
+	GameAchievementClaim,
+	GameQuestsList,
+	GameQuestClaim,
+	GameLeaderboardGet,
+	GameExchangeBalanceToGems,
+	GameExchangeBalanceToGold,
+	GameConstantsGet,
+} from "../controllers/game.controller";
+import { SeedDatabase } from "../controllers/seed.controller";
 
 export const registerRoutes = (openapi: any) => {
 	// Public routes (no authentication required)
 	openapi.get("/api/public/articles", PublicArticleList);
 	openapi.get("/api/public/articles/:slug", PublicArticleGet);
+
+	// Seed route (run database seeders)
+	openapi.post("/api/seed", SeedDatabase);
 
 	// Auth routes
 	openapi.post("/api/auth/login", AuthLogin);
@@ -271,4 +296,25 @@ export const registerRoutes = (openapi: any) => {
 	// Attendance scan routes
 	openapi.post("/api/events/:eventId/scan", AttendanceScanCreate);
 	openapi.get("/api/events/:eventId/scan-history", EventScanHistoryList);
+
+	// Game routes
+	openapi.get("/api/game/constants", GameConstantsGet);
+	openapi.get("/api/game/profile", GameProfileGet);
+	openapi.post("/api/game/profile/reset", GameProfileReset);
+	openapi.get("/api/game/farm", GameFarmGet);
+	openapi.post("/api/game/farm/plant", GameFarmPlant);
+	openapi.post("/api/game/farm/water", GameFarmWater);
+	openapi.post("/api/game/farm/harvest", GameFarmHarvest);
+	openapi.post("/api/game/farm/harvest-all", GameFarmHarvestAll);
+	openapi.get("/api/game/crops", GameCropsList);
+	openapi.get("/api/game/shop", GameShopList);
+	openapi.post("/api/game/shop/purchase", GameShopPurchase);
+	openapi.get("/api/game/inventory", GameInventoryList);
+	openapi.get("/api/game/achievements", GameAchievementsList);
+	openapi.post("/api/game/achievements/:achievementId/claim", GameAchievementClaim);
+	openapi.get("/api/game/quests/daily", GameQuestsList);
+	openapi.post("/api/game/quests/:questId/claim", GameQuestClaim);
+	openapi.get("/api/game/leaderboard", GameLeaderboardGet);
+	openapi.post("/api/game/exchange/gems", GameExchangeBalanceToGems);
+	openapi.post("/api/game/exchange/gold", GameExchangeBalanceToGold);
 };
