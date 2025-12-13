@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { base } from "$app/paths";
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
     import {
@@ -99,7 +100,7 @@
 
 <div class="inventory-page">
     <header class="header">
-        <a href="/play" class="back-btn">← Kembali ke Kebun</a>
+        <a href="{base}/play" class="back-btn">← Kembali ke Kebun</a>
         <h1>📦 Inventaris</h1>
         <div class="item-count">{inventory.length} item</div>
     </header>
@@ -179,7 +180,7 @@
         {#if filteredItems.length === 0}
             <div class="empty-state">
                 <p>Tidak ada item di kategori ini</p>
-                <a href="/shop" class="shop-link">Kunjungi Toko →</a>
+                <a href="{base}/shop" class="shop-link">Kunjungi Toko →</a>
             </div>
         {/if}
     {/if}

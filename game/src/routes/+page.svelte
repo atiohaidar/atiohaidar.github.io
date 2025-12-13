@@ -1,5 +1,6 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
+    import { base } from "$app/paths";
     import { login, getAuthToken } from "$lib/api";
     import { isLoggedIn, showToast } from "$lib/stores";
     import { onMount } from "svelte";
@@ -14,7 +15,7 @@
         const token = getAuthToken();
         if (token) {
             isLoggedIn.set(true);
-            goto("/play");
+            goto(`${base}/play`);
         }
     });
 
@@ -37,7 +38,7 @@
                 `Halo, ${result.data.user.name}! Selamat datang kembali!`,
                 "success",
             );
-            goto("/play");
+            goto(`${base}/play`);
         } else {
             error = result.error || "Gagal login. Silakan coba lagi.";
         }

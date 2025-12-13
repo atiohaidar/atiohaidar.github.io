@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { base } from "$app/paths";
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
     import {
@@ -71,7 +72,7 @@
 
 <div class="leaderboard-page">
     <header class="header">
-        <a href="/play" class="back-btn">← Kembali ke Kebun</a>
+        <a href="{base}/play" class="back-btn">← Kembali ke Kebun</a>
         <h1>🏆 Peringkat</h1>
         <div class="spacer"></div>
     </header>

@@ -3,7 +3,7 @@
  * Handles all API communication with the backend
  */
 
-const API_BASE = '/api';
+const API_BASE = import.meta.env.DEV ? '/api' : 'https://backend.atiohaidar.workers.dev/api';
 
 interface ApiResponse<T> {
     success: boolean;

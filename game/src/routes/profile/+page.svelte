@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { base } from "$app/paths";
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
     import {
@@ -65,7 +66,7 @@
 
         if (result.success && result.data) {
             showToast(
-                `Diklaim! +${result.data.gold} emas, +${result.data.gems} permata`,
+                `Claimed! +${result.data.gold} gold, +${result.data.gems} gems`,
                 "gold",
             );
             await loadData();
@@ -133,7 +134,7 @@
 
 <div class="profile-page">
     <header class="header">
-        <a href="/play" class="back-btn">← Kembali ke Kebun</a>
+        <a href="{base}/play" class="back-btn">← Kembali ke Kebun</a>
         <h1>👤 Profil</h1>
         <button class="logout-btn" on:click={handleLogout}>Keluar</button>
     </header>

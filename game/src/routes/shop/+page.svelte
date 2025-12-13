@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { base } from "$app/paths";
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
     import {
@@ -337,7 +338,7 @@
 <div class="shop-page">
     <header class="header">
         <div class="header-left">
-            <a href="/play" class="back-btn">← Kembali ke Kebun</a>
+            <a href="{base}/play" class="back-btn">← Kembali ke Kebun</a>
             <h1>🛒 Toko</h1>
         </div>
         <div class="header-right">

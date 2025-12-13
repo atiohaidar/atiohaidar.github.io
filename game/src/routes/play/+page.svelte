@@ -2,6 +2,7 @@
     import { onMount, onDestroy } from "svelte";
     import { get } from "svelte/store";
     import { goto } from "$app/navigation";
+    import { base } from "$app/paths";
     import { browser } from "$app/environment";
     import {
         getAuthToken,
@@ -781,11 +782,11 @@
 
         <!-- Navigation Links -->
         <div class="nav-links">
-            <a href="/shop" class="nav-link">🛒 Toko</a>
-            <a href="/inventory" class="nav-link">📦 Inventaris</a>
-            <a href="/profile" class="nav-link">👤 Profil</a>
-            <a href="/prestige" class="nav-link">✨ Prestise</a>
-            <a href="/leaderboard" class="nav-link">🏆 Peringkat</a>
+            <a href="{base}/shop" class="nav-link">🛒 Toko</a>
+            <a href="{base}/inventory" class="nav-link">📦 Inventaris</a>
+            <a href="{base}/profile" class="nav-link">👤 Profil</a>
+            <a href="{base}/prestige" class="nav-link">✨ Prestise</a>
+            <a href="{base}/leaderboard" class="nav-link">🏆 Peringkat</a>
             <button class="nav-link logout-link" on:click={handleLogout}
                 >🚪 Keluar</button
             >
