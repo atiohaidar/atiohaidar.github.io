@@ -97,7 +97,7 @@ class AuthViewModel @Inject constructor(
             
             authRepository.register(username, name, password)
                 .onSuccess { response ->
-                    _registerState.value = RegisterState.Success(response.message)
+                    _registerState.value = RegisterState.Success("Registrasi berhasil")
                 }
                 .onFailure { exception ->
                     _registerState.value = RegisterState.Error(exception.message ?: "Registrasi gagal")
@@ -121,7 +121,7 @@ class AuthViewModel @Inject constructor(
             
             authRepository.forgotPassword(username, newPassword)
                 .onSuccess { response ->
-                    _forgotPasswordState.value = ForgotPasswordState.Success(response.message)
+                    _forgotPasswordState.value = ForgotPasswordState.Success("Permintaan reset password berhasil, silakan cek email Anda")
                 }
                 .onFailure { exception ->
                     _forgotPasswordState.value = ForgotPasswordState.Error(exception.message ?: "Reset password gagal")

@@ -43,7 +43,7 @@ class AnonymousChatViewModel @Inject constructor(
                 .onFailure { exception ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = exception.message
+                        error = exception.message ?: "Gagal memuat pesan"
                     )
                 }
         }
@@ -56,7 +56,7 @@ class AnonymousChatViewModel @Inject constructor(
                     loadMessages()
                 }
                 .onFailure { exception ->
-                    _uiState.value = _uiState.value.copy(error = exception.message)
+                    _uiState.value = _uiState.value.copy(error = exception.message ?: "Gagal mengirim pesan")
                 }
         }
     }
@@ -68,7 +68,7 @@ class AnonymousChatViewModel @Inject constructor(
                     loadMessages()
                 }
                 .onFailure { exception ->
-                    _uiState.value = _uiState.value.copy(error = exception.message)
+                    _uiState.value = _uiState.value.copy(error = exception.message ?: "Gagal menghapus pesan")
                 }
         }
     }

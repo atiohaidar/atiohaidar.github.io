@@ -47,7 +47,7 @@ class TransactionHistoryViewModel @Inject constructor(
                 .onFailure { exception ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = exception.message ?: "Failed to load transactions"
+                        error = exception.message ?: "Gagal memuat riwayat transaksi"
                     )
                 }
         }

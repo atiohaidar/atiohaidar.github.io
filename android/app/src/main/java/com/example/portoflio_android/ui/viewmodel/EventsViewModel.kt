@@ -171,7 +171,7 @@ class EventsViewModel @Inject constructor(
                 .onSuccess { scan ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        scanResult = "Attendance recorded successfully!"
+                        scanResult = "Absensi berhasil dicatat!"
                     )
                     // Refresh attendees if we're viewing them
                     _uiState.value.selectedEvent?.let { showAttendees(it) }

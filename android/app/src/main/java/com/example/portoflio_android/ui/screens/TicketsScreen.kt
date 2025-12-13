@@ -263,7 +263,7 @@ private fun TicketCard(
                         color = statusColor.copy(alpha = 0.2f)
                     ) {
                         Text(
-                            text = ticket.status.name.replace("_", " "),
+                            text = getTicketStatusLabel(ticket.status),
                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                             fontSize = 10.sp,
                             color = statusColor
@@ -275,7 +275,7 @@ private fun TicketCard(
                         color = priorityColor.copy(alpha = 0.2f)
                     ) {
                         Text(
-                            text = ticket.priority.name,
+                            text = getTicketPriorityLabel(ticket.priority),
                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                             fontSize = 10.sp,
                             color = priorityColor
@@ -598,7 +598,7 @@ private fun EditTicketDialog(
                         FilterChip(
                             selected = status == s,
                             onClick = { status = s },
-                            label = { Text(s.name.replace("_", " "), fontSize = 10.sp) },
+                            label = { Text(getTicketStatusLabel(s), fontSize = 10.sp) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = Color(0xFF2563EB),
                                 selectedLabelColor = Color.White
@@ -615,7 +615,7 @@ private fun EditTicketDialog(
                         FilterChip(
                             selected = priority == p,
                             onClick = { priority = p },
-                            label = { Text(p.name, fontSize = 10.sp) },
+                            label = { Text(getTicketPriorityLabel(p), fontSize = 10.sp) },
                             colors = FilterChipDefaults.filterChipColors(
                                 selectedContainerColor = Color(0xFF2563EB),
                                 selectedLabelColor = Color.White
@@ -699,4 +699,22 @@ private fun AssignTicketDialog(
         },
         containerColor = Color(0xFF1E293B)
     )
+}
+
+private fun getTicketStatusLabel(status: TicketStatus): String {
+    return when (status) {
+        TicketStatus.OPEN -> "TERBUKA"
+        TicketStatus.IN_PROGRESS -> "DALAM PROSES"
+        TicketStatus.WAITING -> "MENUNGGU"
+        TicketStatus.SOLVED -> "TERATASI"
+    }
+}
+
+private fun getTicketPriorityLabel(priority: TicketPriority): String {
+    return when (priority) {
+        TicketPriority.LOW -> "RENDAH"
+        TicketPriority.MEDIUM -> "SEDANG"
+        TicketPriority.HIGH -> "TINGGI"
+        TicketPriority.CRITICAL -> "KRITIS"
+    }
 }

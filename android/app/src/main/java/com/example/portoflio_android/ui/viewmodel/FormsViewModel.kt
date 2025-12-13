@@ -54,7 +54,7 @@ class FormsViewModel @Inject constructor(
                 }
                 .onFailure { error ->
                     _uiState.value = _uiState.value.copy(
-                        error = error.message ?: "Failed to load forms",
+                        error = error.message ?: "Gagal memuat formulir",
                         isLoading = false
                     )
                 }
@@ -74,7 +74,7 @@ class FormsViewModel @Inject constructor(
                 }
                 .onFailure { error ->
                     _uiState.value = _uiState.value.copy(
-                        error = error.message ?: "Failed to load form",
+                        error = error.message ?: "Gagal memuat formulir",
                         isLoading = false
                     )
                 }
@@ -99,7 +99,7 @@ class FormsViewModel @Inject constructor(
                 }
                 .onFailure { error ->
                     _uiState.value = _uiState.value.copy(
-                        error = error.message ?: "Failed to create form",
+                        error = error.message ?: "Gagal membuat formulir",
                         isLoading = false
                     )
                 }
@@ -115,7 +115,7 @@ class FormsViewModel @Inject constructor(
                 }
                 .onFailure { error ->
                     _uiState.value = _uiState.value.copy(
-                        error = error.message ?: "Failed to delete form",
+                        error = error.message ?: "Gagal menghapus formulir",
                         isLoading = false
                     )
                 }

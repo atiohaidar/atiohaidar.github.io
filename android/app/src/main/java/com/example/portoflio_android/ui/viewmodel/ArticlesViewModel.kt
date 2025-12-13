@@ -44,7 +44,7 @@ class ArticlesViewModel @Inject constructor(
                 .onFailure { exception ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = exception.message
+                        error = exception.message ?: "Gagal memuat artikel"
                     )
                 }
         }
@@ -66,7 +66,7 @@ class ArticlesViewModel @Inject constructor(
                 .onFailure { exception ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = exception.message
+                        error = exception.message ?: "Gagal membuat artikel"
                     )
                 }
         }
@@ -77,7 +77,7 @@ class ArticlesViewModel @Inject constructor(
             articleRepository.deleteArticle(slug)
                 .onSuccess { loadArticles() }
                 .onFailure { exception ->
-                    _uiState.value = _uiState.value.copy(error = exception.message)
+                    _uiState.value = _uiState.value.copy(error = exception.message ?: "Gagal menghapus artikel")
                 }
         }
     }

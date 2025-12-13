@@ -61,7 +61,7 @@ class ChatViewModel @Inject constructor(
                 .onFailure { exception ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = exception.message
+                        error = exception.message ?: "Gagal memuat percakapan"
                     )
                 }
         }
@@ -82,7 +82,7 @@ class ChatViewModel @Inject constructor(
                 .onFailure { exception ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = exception.message
+                        error = exception.message ?: "Gagal memulai percakapan"
                     )
                 }
         }
@@ -111,7 +111,7 @@ class ChatViewModel @Inject constructor(
                 .onFailure { exception ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = exception.message
+                        error = exception.message ?: "Gagal memuat pesan"
                     )
                 }
         }
@@ -128,7 +128,7 @@ class ChatViewModel @Inject constructor(
                     loadConversationMessages(conversationId)
                 }
                 .onFailure { exception ->
-                    _uiState.value = _uiState.value.copy(error = exception.message)
+                    _uiState.value = _uiState.value.copy(error = exception.message ?: "Gagal mengirim pesan")
                 }
         }
     }
@@ -149,7 +149,7 @@ class ChatViewModel @Inject constructor(
                 .onFailure { exception ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = exception.message
+                        error = exception.message ?: "Gagal memuat grup"
                     )
                 }
         }
@@ -166,7 +166,7 @@ class ChatViewModel @Inject constructor(
                 .onFailure { exception ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = exception.message
+                        error = exception.message ?: "Gagal membuat grup"
                     )
                 }
         }
@@ -197,7 +197,7 @@ class ChatViewModel @Inject constructor(
                 .onFailure { exception ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = exception.message
+                        error = exception.message ?: "Gagal memuat pesan grup"
                     )
                 }
         }
@@ -226,7 +226,7 @@ class ChatViewModel @Inject constructor(
                     loadGroupMessages(groupId)
                 }
                 .onFailure { exception ->
-                    _uiState.value = _uiState.value.copy(error = exception.message)
+                    _uiState.value = _uiState.value.copy(error = exception.message ?: "Gagal mengirim pesan grup")
                 }
         }
     }

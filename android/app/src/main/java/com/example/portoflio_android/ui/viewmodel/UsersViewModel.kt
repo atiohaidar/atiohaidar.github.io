@@ -45,7 +45,7 @@ class UsersViewModel @Inject constructor(
                 .onFailure { exception ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = exception.message
+                        error = exception.message ?: "Gagal memuat pengguna"
                     )
                 }
         }
@@ -67,7 +67,7 @@ class UsersViewModel @Inject constructor(
                 .onFailure { exception ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = exception.message
+                        error = exception.message ?: "Gagal membuat pengguna"
                     )
                 }
         }
@@ -78,7 +78,7 @@ class UsersViewModel @Inject constructor(
             userRepository.deleteUser(username)
                 .onSuccess { loadUsers() }
                 .onFailure { exception ->
-                    _uiState.value = _uiState.value.copy(error = exception.message)
+                    _uiState.value = _uiState.value.copy(error = exception.message ?: "Gagal menghapus pengguna")
                 }
         }
     }

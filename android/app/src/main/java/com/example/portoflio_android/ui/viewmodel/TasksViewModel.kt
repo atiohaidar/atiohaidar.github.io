@@ -46,7 +46,7 @@ class TasksViewModel @Inject constructor(
                 .onFailure { exception ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = exception.message
+                        error = exception.message ?: "Gagal memuat tugas"
                     )
                 }
         }
@@ -66,7 +66,7 @@ class TasksViewModel @Inject constructor(
                 .onFailure { exception ->
                     _uiState.value = _uiState.value.copy(
                         isRefreshing = false,
-                        error = exception.message
+                        error = exception.message ?: "Gagal memuat tugas"
                     )
                 }
         }
@@ -89,7 +89,7 @@ class TasksViewModel @Inject constructor(
                 .onFailure { exception ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = exception.message
+                        error = exception.message ?: "Gagal membuat tugas"
                     )
                 }
         }
@@ -104,7 +104,7 @@ class TasksViewModel @Inject constructor(
                     loadTasks() // Reload after updating
                 }
                 .onFailure { exception ->
-                    _uiState.value = _uiState.value.copy(error = exception.message)
+                    _uiState.value = _uiState.value.copy(error = exception.message ?: "Gagal memperbarui status tugas")
                 }
         }
     }
@@ -116,7 +116,7 @@ class TasksViewModel @Inject constructor(
                     loadTasks() // Reload after deleting
                 }
                 .onFailure { exception ->
-                    _uiState.value = _uiState.value.copy(error = exception.message)
+                    _uiState.value = _uiState.value.copy(error = exception.message ?: "Gagal menghapus tugas")
                 }
         }
     }

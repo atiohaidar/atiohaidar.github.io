@@ -39,6 +39,10 @@ class TransferViewModel @Inject constructor(
     }
     
     fun transfer(toUsername: String, amount: Double, description: String?) {
+        if (amount <= 0) {
+            _uiState.value = _uiState.value.copy(error = "Jumlah tidak valid")
+            return
+        }
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, error = null, isSuccess = false)
             
@@ -48,7 +52,7 @@ class TransferViewModel @Inject constructor(
                     // Refresh user data (if possible)
                 }
                 .onFailure { e ->
-                    _uiState.value = _uiState.value.copy(isLoading = false, error = e.message)
+                    _uiState.value = _uiState.value.copy(isLoading = false, error = e.message ?: "Transfer gagal")
                 }
         }
     }

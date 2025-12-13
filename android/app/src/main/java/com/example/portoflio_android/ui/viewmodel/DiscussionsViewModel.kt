@@ -44,7 +44,7 @@ class DiscussionsViewModel @Inject constructor(
                 .onFailure { exception ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = exception.message
+                        error = exception.message ?: "Gagal memuat diskusi"
                     )
                 }
         }
@@ -64,7 +64,7 @@ class DiscussionsViewModel @Inject constructor(
                 .onFailure { exception ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = exception.message
+                        error = exception.message ?: "Gagal memuat detail diskusi"
                     )
                 }
         }
@@ -85,7 +85,7 @@ class DiscussionsViewModel @Inject constructor(
                 .onFailure { exception ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = exception.message
+                        error = exception.message ?: "Gagal membuat diskusi"
                     )
                 }
         }
@@ -101,7 +101,7 @@ class DiscussionsViewModel @Inject constructor(
                     selectDiscussion(_uiState.value.activeDiscussion!!)
                 }
                 .onFailure { exception ->
-                    _uiState.value = _uiState.value.copy(error = exception.message)
+                    _uiState.value = _uiState.value.copy(error = exception.message ?: "Gagal mengirim balasan")
                 }
         }
     }
@@ -114,7 +114,7 @@ class DiscussionsViewModel @Inject constructor(
                     loadDiscussions()
                 }
                 .onFailure { exception ->
-                    _uiState.value = _uiState.value.copy(error = exception.message)
+                    _uiState.value = _uiState.value.copy(error = exception.message ?: "Gagal menghapus diskusi")
                 }
         }
     }

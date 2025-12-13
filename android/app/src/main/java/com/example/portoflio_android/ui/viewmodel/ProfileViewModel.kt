@@ -58,7 +58,7 @@ class ProfileViewModel @Inject constructor(
                 .onFailure { exception ->
                     _uiState.value = _uiState.value.copy(
                         isUpdating = false,
-                        error = exception.message
+                        error = exception.message ?: "Gagal memperbarui profil"
                     )
                 }
         }

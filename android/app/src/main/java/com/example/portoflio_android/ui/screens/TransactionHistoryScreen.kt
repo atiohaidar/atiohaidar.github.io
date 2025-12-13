@@ -221,7 +221,7 @@ private fun TransactionCard(transaction: Transaction) {
                 
                 Column {
                     Text(
-                        text = transaction.type.name.lowercase().replaceFirstChar { it.uppercase() },
+                        text = getTransactionTypeLabel(transaction.type),
                         color = Color.White,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 16.sp
@@ -294,5 +294,14 @@ private fun formatDate(dateString: String): String {
         if (date != null) outputFormat.format(date) else dateString
     } catch (e: Exception) {
         dateString
+    }
+}
+
+private fun getTransactionTypeLabel(type: TransactionType): String {
+    return when (type) {
+        TransactionType.TOPUP -> "Isi Ulang"
+        TransactionType.TRANSFER -> "Transfer"
+        TransactionType.RECEIVE -> "Terima"
+        TransactionType.WITHDRAWAL -> "Penarikan"
     }
 }

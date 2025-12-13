@@ -520,7 +520,7 @@ private fun BorrowingCard(
                     color = statusColor.copy(alpha = 0.2f)
                 ) {
                     Text(
-                        text = borrowing.status.name,
+                        text = getBorrowingStatusLabel(borrowing.status),
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
@@ -802,7 +802,7 @@ private fun BorrowItemDialog(
             },
             dismissButton = {
                 TextButton(onClick = { showEndDatePicker = false }) {
-                    Text("Cancel", color = Color(0xFF94A3B8))
+                    Text("Batal", color = Color(0xFF94A3B8))
                 }
             },
             colors = DatePickerDefaults.colors(containerColor = Color(0xFF1E293B))
@@ -830,13 +830,13 @@ private fun AddItemDialog(
     
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("New Item", color = Color.White) },
+        title = { Text("Barang Baru", color = Color.White) },
         text = {
             Column {
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Item Name") },
+                    label = { Text("Nama Barang") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
@@ -850,7 +850,7 @@ private fun AddItemDialog(
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text("Description") },
+                    label = { Text("Deskripsi") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
@@ -864,7 +864,7 @@ private fun AddItemDialog(
                 OutlinedTextField(
                     value = stock,
                     onValueChange = { stock = it.filter { c -> c.isDigit() } },
-                    label = { Text("Stock") },
+                    label = { Text("Stok") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
@@ -888,14 +888,26 @@ private fun AddItemDialog(
                 enabled = name.isNotBlank(),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2563EB))
             ) {
-                Text("Create")
+                Text("Buat")
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", color = Color(0xFF94A3B8))
+                Text("Batal", color = Color(0xFF94A3B8))
             }
         },
         containerColor = Color(0xFF1E293B)
     )
+
+}
+
+private fun getBorrowingStatusLabel(status: ItemBorrowingStatus): String {
+    return when (status) {
+        ItemBorrowingStatus.PENDING -> "MENUNGGU"
+        ItemBorrowingStatus.APPROVED -> "DISETUJUI"
+        ItemBorrowingStatus.REJECTED -> "DITOLAK"
+        ItemBorrowingStatus.RETURNED -> "DIKEMBALIKAN"
+        ItemBorrowingStatus.DAMAGED -> "RUSAK"
+        ItemBorrowingStatus.EXTENDED -> "DIPERPANJANG"
+    }
 }

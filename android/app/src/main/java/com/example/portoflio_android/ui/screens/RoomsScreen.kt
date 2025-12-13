@@ -362,7 +362,7 @@ private fun BookingCard(
                     color = statusColor.copy(alpha = 0.2f)
                 ) {
                     Text(
-                        text = booking.status.name.replace("_", " "),
+                        text = getBookingStatusLabel(booking.status),
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                         fontSize = 12.sp,
                         color = statusColor
@@ -597,5 +597,14 @@ private fun CreateBookingDialog(
                 )
             )
         }
+    }
+}
+
+private fun getBookingStatusLabel(status: BookingStatus): String {
+    return when (status) {
+        BookingStatus.PENDING -> "MENUNGGU"
+        BookingStatus.APPROVED -> "DISETUJUI"
+        BookingStatus.REJECTED -> "DITOLAK"
+        BookingStatus.CANCELLED -> "DIBATALKAN"
     }
 }

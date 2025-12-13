@@ -47,7 +47,7 @@ class RoomsViewModel @Inject constructor(
                 .onFailure { exception ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = exception.message
+                        error = exception.message ?: "Gagal memuat ruangan"
                     )
                 }
         }
@@ -60,7 +60,7 @@ class RoomsViewModel @Inject constructor(
                     _uiState.value = _uiState.value.copy(bookings = bookings)
                 }
                 .onFailure { exception ->
-                    _uiState.value = _uiState.value.copy(error = exception.message)
+                    _uiState.value = _uiState.value.copy(error = exception.message ?: "Gagal memuat jadwal")
                 }
         }
     }
@@ -84,7 +84,7 @@ class RoomsViewModel @Inject constructor(
                 .onFailure { exception ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = exception.message
+                        error = exception.message ?: "Gagal membuat reservasi"
                     )
                 }
         }
@@ -97,7 +97,7 @@ class RoomsViewModel @Inject constructor(
                     loadBookings() // Reload after canceling
                 }
                 .onFailure { exception ->
-                    _uiState.value = _uiState.value.copy(error = exception.message)
+                    _uiState.value = _uiState.value.copy(error = exception.message ?: "Gagal membatalkan reservasi")
                 }
         }
     }
