@@ -1,9 +1,8 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { goto } from "$app/navigation";
-    import { getAuthToken, getProfile } from "$lib/api";
+    import { getAuthToken, getProfile, prestigeReset } from "$lib/api";
     import { profile, showToast, isLoggedIn } from "$lib/stores";
-    import { API_BASE } from "$lib/api";
 
     let loading = true;
     let prestigeLoading = false;
@@ -33,24 +32,17 @@
         prestigeLoading = true;
 
         try {
-            const res = await fetch(`${API_BASE}/game/profile/reset`, {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${getAuthToken()}`,
-                    "Content-Type": "application/json",
-                },
-            });
-            const data = await res.json();
+            const res = await prestigeReset();
 
-            if (data.success) {
+            if (res.success && res.data) {
                 showToast(
-                    `🎉 Prestige complete! Level ${data.data.new_prestige_level} (+${data.data.bonus_percent}% gold bonus)`,
+                    `🎉 Prestige complete! Level ${res.data.new_prestige_level} (+${res.data.bonus_percent}% gold bonus)`,
                     "level",
                 );
                 confirmReset = false;
                 await loadData();
             } else {
-                showToast(data.error || "Prestige failed", "error");
+                showToast(res.error || "Prestige failed", "error");
             }
         } catch (e) {
             showToast("Failed to prestige", "error");
