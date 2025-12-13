@@ -64,7 +64,23 @@ jobs:
         working-directory: ./frontend
         run: npm run build
 
-      # --- 4. COMBINE OUTPUTS ---
+      # --- 4. BUILD GAME ---
+      - name: Setup Node.js for Game
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: game/package-lock.json
+
+      - name: Install Game Dependencies
+        working-directory: ./game
+        run: npm ci
+
+      - name: Build Game
+        working-directory: ./game
+        run: npm run build
+
+      # --- 5. COMBINE OUTPUTS ---
       - name: Prepare Deployment Directory
         run: |
           mkdir deploy_artifact
@@ -76,12 +92,15 @@ jobs:
           cp -r mobile_flutter/build/web/* deploy_artifact/flutter/
           # Copy _headers to flutter folder if exists
           
-          # Buat folder expo dan copy hasil Expo
           mkdir deploy_artifact/expo
           cp -r expojs/dist/* deploy_artifact/expo/
           
+          # Buat folder game dan copy hasil Game
+          mkdir deploy_artifact/game
+          cp -r game/build/* deploy_artifact/game/
+          
 
-      # --- 5. DEPLOY TO BRANCH 'deploy' ---
+      # --- 6. DEPLOY TO BRANCH 'deploy' ---
       - name: Deploy to 'deploy' branch
         uses: peaceiris/actions-gh-pages@v3
         with:
