@@ -63,7 +63,7 @@ fun DashboardScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "Dashboard",
+                        "Dasbor",
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
@@ -105,7 +105,7 @@ fun DashboardScreen(
                 ) {
                     item {
                         Text(
-                            "Overview",
+                            "Ringkasan",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color.White,
@@ -135,7 +135,7 @@ fun DashboardScreen(
                     
                     item {
                         Text(
-                            "Quick Actions",
+                            "Aksi Cepat",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = Color.White,
@@ -150,14 +150,14 @@ fun DashboardScreen(
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             QuickActionCard(
-                                title = "Tasks",
+                                title = "Tugas",
                                 icon = Icons.Default.Task,
                                 color = Color(0xFF2563EB),
                                 modifier = Modifier.weight(1f),
                                 onClick = onNavigateToTasks
                             )
                             QuickActionCard(
-                                title = "Rooms",
+                                title = "Ruangan",
                                 icon = Icons.Default.MeetingRoom,
                                 color = Color(0xFF7C3AED),
                                 modifier = Modifier.weight(1f),
@@ -173,14 +173,14 @@ fun DashboardScreen(
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             QuickActionCard(
-                                title = "Articles",
+                                title = "Artikel",
                                 icon = Icons.Default.Article,
                                 color = Color(0xFF10B981),
                                 modifier = Modifier.weight(1f),
                                 onClick = onNavigateToArticles
                             )
                             QuickActionCard(
-                                title = "Events",
+                                title = "Acara",
                                 icon = Icons.Default.Event,
                                 color = Color(0xFFF59E0B),
                                 modifier = Modifier.weight(1f),
@@ -197,7 +197,7 @@ fun DashboardScreen(
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             QuickActionCard(
-                                title = "Tickets",
+                                title = "Tiket",
                                 icon = Icons.Default.ConfirmationNumber,
                                 color = Color(0xFFEF4444),
                                 modifier = Modifier.weight(1f),
@@ -206,7 +206,7 @@ fun DashboardScreen(
                             // Users menu only visible to admin
                             if (user?.role == com.example.portoflio_android.data.models.UserRole.ADMIN) {
                                 QuickActionCard(
-                                    title = "Users",
+                                    title = "Pengguna",
                                     icon = Icons.Default.People,
                                     color = Color(0xFF06B6D4),
                                     modifier = Modifier.weight(1f),
@@ -225,14 +225,14 @@ fun DashboardScreen(
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             QuickActionCard(
-                                title = "Forms",
+                                title = "Formulir",
                                 icon = Icons.Default.Description,
                                 color = Color(0xFFEC4899),
                                 modifier = Modifier.weight(1f),
                                 onClick = onNavigateToForms
                             )
                             QuickActionCard(
-                                title = "Inventory",
+                                title = "Inventaris",
                                 icon = Icons.Default.Inventory,
                                 color = Color(0xFF8B5CF6),
                                 modifier = Modifier.weight(1f),
@@ -248,7 +248,7 @@ fun DashboardScreen(
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             QuickActionCard(
-                                title = "Chat",
+                                title = "Obrolan",
                                 icon = Icons.Default.Chat,
                                 color = Color(0xFF14B8A6),
                                 modifier = Modifier.weight(1f),
@@ -271,14 +271,14 @@ fun DashboardScreen(
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             QuickActionCard(
-                                title = "Finance",
+                                title = "Keuangan",
                                 icon = Icons.Default.AccountBalance,
                                 color = Color(0xFF10B981),
                                 modifier = Modifier.weight(1f),
                                 onClick = onNavigateToTransactionHistory
                             )
                             QuickActionCard(
-                                title = "Profile",
+                                title = "Profil",
                                 icon = Icons.Default.Person,
                                 color = Color(0xFF6366F1),
                                 modifier = Modifier.weight(1f),
@@ -294,7 +294,7 @@ fun DashboardScreen(
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             QuickActionCard(
-                                title = "Anon Chat",
+                                title = "Obrolan Anonim",
                                 icon = Icons.Default.VisibilityOff,
                                 color = Color(0xFF7C3AED),
                                 modifier = Modifier.weight(1f),
@@ -366,7 +366,7 @@ private fun BalanceCard(
                                 containerColor = Color(0xFF8B5CF6)
                             )
                         ) {
-                            Text("Top Up", fontWeight = FontWeight.Bold)
+                            Text("Isi Ulang", fontWeight = FontWeight.Bold)
                         }
                     }
 
@@ -391,7 +391,7 @@ private fun BalanceCard(
             )
             
             Text(
-                "Total Balance",
+                "Total Saldo",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color(0xFF94A3B8)
@@ -412,7 +412,7 @@ private fun BalanceCard(
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    "View Transaction History",
+                    "Lihat Riwayat Transaksi",
                     color = Color(0xFF10B981),
                     fontWeight = FontWeight.SemiBold
                 )
@@ -431,17 +431,17 @@ private fun StatsGrid(stats: DashboardStats) {
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             StatCard(
-                title = "Tasks",
+                title = "Tugas",
                 value = "${stats.completedTasks}/${stats.totalTasks}",
-                subtitle = "Completed",
+                subtitle = "Selesai",
                 icon = Icons.Default.TaskAlt,
                 color = Color(0xFF10B981),
                 modifier = Modifier.weight(1f)
             )
             StatCard(
-                title = "Articles",
+                title = "Artikel",
                 value = stats.publishedArticles.toString(),
-                subtitle = "Published",
+                subtitle = "Diterbitkan",
                 icon = Icons.Default.Article,
                 color = Color(0xFF2563EB),
                 modifier = Modifier.weight(1f)
@@ -452,17 +452,17 @@ private fun StatsGrid(stats: DashboardStats) {
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             StatCard(
-                title = "Rooms",
+                title = "Ruangan",
                 value = (stats.totalRooms ?: 0).toString(),
-                subtitle = "Available",
+                subtitle = "Tersedia",
                 icon = Icons.Default.MeetingRoom,
                 color = Color(0xFF7C3AED),
                 modifier = Modifier.weight(1f)
             )
             StatCard(
-                title = "Bookings",
+                title = "Reservasi",
                 value = stats.pendingBookings.toString(),
-                subtitle = "Pending",
+                subtitle = "Menunggu",
                 icon = Icons.Default.EventAvailable,
                 color = Color(0xFFF59E0B),
                 modifier = Modifier.weight(1f)

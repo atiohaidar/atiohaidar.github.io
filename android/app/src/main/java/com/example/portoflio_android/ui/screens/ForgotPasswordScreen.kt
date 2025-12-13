@@ -82,7 +82,7 @@ fun ForgotPasswordScreen(
                 color = Color.White
             )
             Text(
-                text = "Enter your username and new password",
+                text = "Masukkan username dan password baru",
                 fontSize = 16.sp,
                 color = Color(0xFF94A3B8),
                 modifier = Modifier.padding(bottom = 32.dp)
@@ -135,7 +135,7 @@ fun ForgotPasswordScreen(
                             newPassword = it
                             passwordError = null
                         },
-                        label = { Text("New Password") },
+                        label = { Text("Password Baru") },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 12.dp),
@@ -181,7 +181,7 @@ fun ForgotPasswordScreen(
                             confirmPassword = it
                             passwordError = null
                         },
-                        label = { Text("Confirm New Password") },
+                        label = { Text("Konfirmasi Password Baru") },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 16.dp),
@@ -200,7 +200,7 @@ fun ForgotPasswordScreen(
                                 if (newPassword == confirmPassword) {
                                     viewModel.forgotPassword(username, newPassword)
                                 } else {
-                                    passwordError = "Passwords do not match"
+                                    passwordError = "Password tidak sama"
                                 }
                             }
                         ),
@@ -251,7 +251,7 @@ fun ForgotPasswordScreen(
                         }
                         is ForgotPasswordState.Success -> {
                             Text(
-                                text = "Password reset successful! Redirecting to login...",
+                                text = "Password berhasil direset! Mengalihkan ke login...",
                                 color = Color(0xFF22C55E),
                                 fontSize = 14.sp,
                                 textAlign = TextAlign.Center,
@@ -267,7 +267,7 @@ fun ForgotPasswordScreen(
                             if (newPassword == confirmPassword) {
                                 viewModel.forgotPassword(username, newPassword)
                             } else {
-                                passwordError = "Passwords do not match"
+                                passwordError = "Password tidak sama"
                             }
                         },
                         modifier = Modifier
@@ -302,12 +302,12 @@ fun ForgotPasswordScreen(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = "Remember your password? ",
+                            text = "Sudah ingat password? ",
                             color = Color(0xFF94A3B8),
                             fontSize = 14.sp
                         )
                         Text(
-                            text = "Login",
+                            text = "Masuk",
                             color = Color(0xFFF59E0B),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold,

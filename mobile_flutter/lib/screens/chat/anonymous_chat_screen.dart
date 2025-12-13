@@ -92,7 +92,7 @@ class _AnonymousChatScreenState extends State<AnonymousChatScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text('Anonymous Chat'),
+        title: const Text('Obrolan Anonim'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -116,14 +116,14 @@ class _AnonymousChatScreenState extends State<AnonymousChatScreen> {
 
   Widget _buildMessagesList(AnonymousChatProvider provider, bool isDark) {
     if (provider.isLoading && provider.messages.isEmpty) {
-      return const LoadingIndicator(message: 'Loading messages...');
+      return const LoadingIndicator(message: 'Memuat pesan...');
     }
 
     if (provider.messages.isEmpty) {
       return const EmptyState(
         icon: Icons.chat_bubble_outline,
-        title: 'No messages yet',
-        subtitle: 'Be the first to start the conversation!',
+        title: 'Belum ada pesan',
+        subtitle: 'Jadilah yang pertama memulai percakapan!',
       );
     }
 
@@ -301,7 +301,7 @@ class _AnonymousChatScreenState extends State<AnonymousChatScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Replying to',
+                            'Membalas ke',
                             style: TextStyle(
                               fontSize: 11,
                               color: AppColors.purple,
@@ -344,7 +344,7 @@ class _AnonymousChatScreenState extends State<AnonymousChatScreen> {
                   child: TextField(
                     controller: _messageController,
                     decoration: InputDecoration(
-                      hintText: 'Type a message...',
+                      hintText: 'Ketik pesan...',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(24),
                         borderSide: BorderSide.none,

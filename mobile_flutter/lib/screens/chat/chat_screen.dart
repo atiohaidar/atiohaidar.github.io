@@ -137,13 +137,13 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget _buildMessagesList(
       ChatProvider provider, AuthProvider authProvider, bool isDark) {
     if (provider.isLoading && provider.messages.isEmpty) {
-      return const LoadingIndicator(message: 'Loading messages...');
+      return const LoadingIndicator(message: 'Memuat pesan...');
     }
 
     if (provider.messages.isEmpty) {
       return Center(
         child: Text(
-          'No messages yet',
+          'Belum ada pesan',
           style: TextStyle(
             color: isDark ? AppColors.textMuted : Colors.grey.shade600,
           ),
@@ -359,7 +359,7 @@ class _ChatScreenState extends State<ChatScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Replying to ${_replyToMessage!.senderName ?? _replyToMessage!.senderUsername}',
+                  'Membalas ${_replyToMessage!.senderName ?? _replyToMessage!.senderUsername}',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 12,
@@ -419,7 +419,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 child: TextField(
                   controller: _messageController,
                   decoration: const InputDecoration(
-                    hintText: 'Type a message...',
+                    hintText: 'Ketik pesan...',
                     border: InputBorder.none,
                     enabledBorder: InputBorder.none,
                     focusedBorder: InputBorder.none,

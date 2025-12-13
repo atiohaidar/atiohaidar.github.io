@@ -106,7 +106,7 @@ class _EventDetailScreenState extends State<EventDetailScreen>
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text('Event Details'),
+        title: const Text('Detail Acara'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: isEventAdmin && _event != null
@@ -125,8 +125,8 @@ class _EventDetailScreenState extends State<EventDetailScreen>
           indicatorColor: AppColors.primaryBlue,
           tabs: const [
             Tab(text: 'Info'),
-            Tab(text: 'Attendees'),
-            Tab(text: 'Admins'),
+            Tab(text: 'Peserta'),
+            Tab(text: 'Daftar Hadir'),
           ],
         ),
       ),
@@ -141,7 +141,8 @@ class _EventDetailScreenState extends State<EventDetailScreen>
               },
               backgroundColor: AppColors.primaryBlue,
               icon: const Icon(Icons.qr_code_scanner, color: Colors.white),
-              label: const Text('Scan', style: TextStyle(color: Colors.white)),
+              label:
+                  const Text('Pindai', style: TextStyle(color: Colors.white)),
             )
           : null,
       body: _buildBody(isDark),
@@ -191,7 +192,7 @@ class _EventDetailScreenState extends State<EventDetailScreen>
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Edit Event',
+                  'Edit Acara',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -203,7 +204,7 @@ class _EventDetailScreenState extends State<EventDetailScreen>
                   controller: titleController,
                   decoration: const InputDecoration(
                     labelText: 'Title',
-                    hintText: 'Event title',
+                    hintText: 'Judul acara',
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -285,16 +286,16 @@ class _EventDetailScreenState extends State<EventDetailScreen>
                 TextField(
                   controller: locationController,
                   decoration: const InputDecoration(
-                    labelText: 'Location',
-                    hintText: 'Event location',
+                    labelText: 'Lokasi',
+                    hintText: 'Lokasi acara',
                   ),
                 ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: descController,
                   decoration: const InputDecoration(
-                    labelText: 'Description',
-                    hintText: 'Event description',
+                    labelText: 'Deskripsi',
+                    hintText: 'Deskripsi acara',
                   ),
                   maxLines: 3,
                 ),
@@ -325,7 +326,7 @@ class _EventDetailScreenState extends State<EventDetailScreen>
                           Navigator.pop(context);
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                                content: Text('Event updated successfully')),
+                                content: Text('Acara berhasil diperbarui')),
                           );
                           _loadEventData();
                         }
@@ -338,7 +339,7 @@ class _EventDetailScreenState extends State<EventDetailScreen>
                       }
                     }
                   },
-                  child: const Text('Save Changes'),
+                  child: const Text('Simpan Perubahan'),
                 ),
                 const SizedBox(height: 16),
               ],
@@ -351,7 +352,7 @@ class _EventDetailScreenState extends State<EventDetailScreen>
 
   Widget _buildBody(bool isDark) {
     if (_isLoading && _event == null) {
-      return const LoadingIndicator(message: 'Loading event...');
+      return const LoadingIndicator(message: 'Memuat acara...');
     }
 
     if (_error != null) {
@@ -364,7 +365,7 @@ class _EventDetailScreenState extends State<EventDetailScreen>
     if (_event == null) {
       return const EmptyState(
         icon: Icons.event_outlined,
-        title: 'Event not found',
+        title: 'Acara tidak ditemukan',
       );
     }
 
@@ -403,7 +404,7 @@ class _EventDetailScreenState extends State<EventDetailScreen>
                   const SizedBox(height: 16),
                   _buildInfoRow(
                     Icons.calendar_today,
-                    'Date',
+                    'Tanggal',
                     DateFormat('EEEE, MMMM d, yyyy • h:mm a')
                         .format(DateTime.parse(_event!.eventDate)),
                     isDark,
@@ -412,7 +413,7 @@ class _EventDetailScreenState extends State<EventDetailScreen>
                     const SizedBox(height: 12),
                     _buildInfoRow(
                       Icons.location_on_outlined,
-                      'Location',
+                      'Lokasi',
                       _event!.location!,
                       isDark,
                     ),
@@ -420,14 +421,14 @@ class _EventDetailScreenState extends State<EventDetailScreen>
                   const SizedBox(height: 12),
                   _buildInfoRow(
                     Icons.people_outline,
-                    'Attendees',
-                    '${_attendees.length} registered',
+                    'Peserta',
+                    '${_attendees.length} terdaftar',
                     isDark,
                   ),
                   const SizedBox(height: 12),
                   _buildInfoRow(
                     Icons.person_outline,
-                    'Created by',
+                    'Dibuat oleh',
                     _event!.createdBy,
                     isDark,
                   ),
@@ -442,7 +443,7 @@ class _EventDetailScreenState extends State<EventDetailScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Description',
+                      'Deskripsi',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -529,7 +530,7 @@ class _EventDetailScreenState extends State<EventDetailScreen>
           ),
         ),
         child: Text(
-          _isRegistered ? 'Unregister' : 'Register for Event',
+          _isRegistered ? 'Batal Daftar' : 'Daftar Acara',
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -546,8 +547,8 @@ class _EventDetailScreenState extends State<EventDetailScreen>
       child: _attendees.isEmpty
           ? const EmptyState(
               icon: Icons.people_outline,
-              title: 'No attendees yet',
-              subtitle: 'Be the first to register!',
+              title: 'Belum ada peserta',
+              subtitle: 'Jadilah yang pertama mendaftar!',
             )
           : ListView.builder(
               padding: const EdgeInsets.all(16),
@@ -634,7 +635,7 @@ class _EventDetailScreenState extends State<EventDetailScreen>
       child: _admins.isEmpty
           ? const EmptyState(
               icon: Icons.admin_panel_settings_outlined,
-              title: 'No admins assigned',
+              title: 'Tidak ada admin ditugaskan',
             )
           : ListView.builder(
               padding: const EdgeInsets.all(16),
@@ -676,7 +677,7 @@ class _EventDetailScreenState extends State<EventDetailScreen>
                   ),
                 ),
                 Text(
-                  'Assigned by ${admin.assignedBy}',
+                  'Ditugaskan oleh ${admin.assignedBy}',
                   style: TextStyle(
                     fontSize: 12,
                     color: isDark ? AppColors.textMuted : Colors.grey.shade600,
@@ -695,11 +696,11 @@ class _EventDetailScreenState extends State<EventDetailScreen>
     final diff = now.difference(date);
 
     if (diff.inMinutes < 60) {
-      return '${diff.inMinutes}m ago';
+      return '${diff.inMinutes}m lalu';
     } else if (diff.inHours < 24) {
-      return '${diff.inHours}h ago';
+      return '${diff.inHours}j lalu';
     } else if (diff.inDays < 7) {
-      return '${diff.inDays}d ago';
+      return '${diff.inDays}h lalu';
     } else {
       return DateFormat('MMM d').format(date);
     }
@@ -716,7 +717,7 @@ class _EventDetailScreenState extends State<EventDetailScreen>
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Successfully unregistered'),
+              content: Text('Berhasil membatalkan pendaftaran'),
               backgroundColor: AppColors.success,
             ),
           );
@@ -727,7 +728,7 @@ class _EventDetailScreenState extends State<EventDetailScreen>
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Successfully registered!'),
+              content: Text('Berhasil mendaftar!'),
               backgroundColor: AppColors.success,
             ),
           );

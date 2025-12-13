@@ -54,7 +54,7 @@ class _PublicTicketScreenState extends State<PublicTicketScreen> {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedCategoryId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a category')),
+        const SnackBar(content: Text('Harap pilih kategori')),
       );
       return;
     }
@@ -113,7 +113,7 @@ class _PublicTicketScreenState extends State<PublicTicketScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text('Submit Ticket'),
+        title: const Text('Kirim Tiket'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -131,7 +131,7 @@ class _PublicTicketScreenState extends State<PublicTicketScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Create Support Ticket',
+                      'Buat Tiket Dukungan',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -142,7 +142,7 @@ class _PublicTicketScreenState extends State<PublicTicketScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Submit your issue and we\'ll get back to you.',
+                      'Kirim masalah Anda dan kami akan menghubungi Anda kembali.',
                       style: TextStyle(
                         color: isDark
                             ? AppColors.textSecondary
@@ -155,11 +155,11 @@ class _PublicTicketScreenState extends State<PublicTicketScreen> {
                     TextFormField(
                       controller: _titleController,
                       decoration: const InputDecoration(
-                        labelText: 'Title *',
-                        hintText: 'Brief description of your issue',
+                        labelText: 'Judul *',
+                        hintText: 'Deskripsi singkat masalah Anda',
                       ),
                       validator: (v) =>
-                          v == null || v.isEmpty ? 'Required' : null,
+                          v == null || v.isEmpty ? 'Wajib diisi' : null,
                     ),
                     const SizedBox(height: 16),
 
@@ -167,12 +167,12 @@ class _PublicTicketScreenState extends State<PublicTicketScreen> {
                     TextFormField(
                       controller: _descriptionController,
                       decoration: const InputDecoration(
-                        labelText: 'Description *',
-                        hintText: 'Detailed description of your issue',
+                        labelText: 'Deskripsi *',
+                        hintText: 'Deskripsi detail masalah Anda',
                       ),
                       maxLines: 4,
                       validator: (v) =>
-                          v == null || v.isEmpty ? 'Required' : null,
+                          v == null || v.isEmpty ? 'Wajib diisi' : null,
                     ),
                     const SizedBox(height: 16),
 
@@ -181,7 +181,7 @@ class _PublicTicketScreenState extends State<PublicTicketScreen> {
                       DropdownButtonFormField<int>(
                         value: _selectedCategoryId,
                         decoration: const InputDecoration(
-                          labelText: 'Category *',
+                          labelText: 'Kategori *',
                         ),
                         items: _categories
                             .map((c) => DropdownMenuItem(
@@ -198,7 +198,7 @@ class _PublicTicketScreenState extends State<PublicTicketScreen> {
                     DropdownButtonFormField<TicketPriority>(
                       value: _selectedPriority,
                       decoration: const InputDecoration(
-                        labelText: 'Priority',
+                        labelText: 'Prioritas',
                       ),
                       items: TicketPriority.values
                           .map((p) => DropdownMenuItem(
@@ -214,8 +214,8 @@ class _PublicTicketScreenState extends State<PublicTicketScreen> {
                     TextFormField(
                       controller: _nameController,
                       decoration: const InputDecoration(
-                        labelText: 'Your Name (optional)',
-                        hintText: 'For follow-up',
+                        labelText: 'Nama Anda (opsional)',
+                        hintText: 'Untuk tindak lanjut',
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -224,8 +224,8 @@ class _PublicTicketScreenState extends State<PublicTicketScreen> {
                     TextFormField(
                       controller: _emailController,
                       decoration: const InputDecoration(
-                        labelText: 'Email (optional)',
-                        hintText: 'We\'ll notify you of updates',
+                        labelText: 'Email (opsional)',
+                        hintText: 'Kami akan memberi tahu Anda update terbaru',
                       ),
                       keyboardType: TextInputType.emailAddress,
                     ),
@@ -235,8 +235,8 @@ class _PublicTicketScreenState extends State<PublicTicketScreen> {
                     TextFormField(
                       controller: _refLinkController,
                       decoration: const InputDecoration(
-                        labelText: 'Reference Link (optional)',
-                        hintText: 'URL related to the issue',
+                        labelText: 'Tautan Referensi (opsional)',
+                        hintText: 'URL terkait masalah',
                       ),
                       keyboardType: TextInputType.url,
                     ),
@@ -256,7 +256,7 @@ class _PublicTicketScreenState extends State<PublicTicketScreen> {
                                   color: Colors.white,
                                 ),
                               )
-                            : const Text('Submit Ticket'),
+                            : const Text('Kirim Tiket'),
                       ),
                     ),
                   ],
@@ -273,7 +273,7 @@ class _PublicTicketScreenState extends State<PublicTicketScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text('Ticket Submitted'),
+        title: const Text('Tiket Terkirim'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -293,7 +293,7 @@ class _PublicTicketScreenState extends State<PublicTicketScreen> {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Ticket Submitted!',
+                  'Tiket Terkirim!',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -302,7 +302,7 @@ class _PublicTicketScreenState extends State<PublicTicketScreen> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Save this token to track your ticket:',
+                  'Simpan token ini untuk melacak tiket Anda:',
                   style: TextStyle(
                     color: isDark
                         ? AppColors.textSecondary
@@ -346,7 +346,7 @@ class _PublicTicketScreenState extends State<PublicTicketScreen> {
                               ClipboardData(text: _submittedToken!));
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                                content: Text('Token copied to clipboard')),
+                                content: Text('Token disalin ke papan klip')),
                           );
                         },
                       ),
@@ -365,7 +365,7 @@ class _PublicTicketScreenState extends State<PublicTicketScreen> {
                       _refLinkController.clear();
                     });
                   },
-                  child: const Text('Submit Another Ticket'),
+                  child: const Text('Kirim Tiket Lain'),
                 ),
               ],
             ),

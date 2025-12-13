@@ -49,7 +49,7 @@ fun ArticlesScreen(
                 TopAppBar(
                     title = {
                         Text(
-                            "Articles",
+                            "Artikel",
                             fontWeight = FontWeight.Bold,
                             color = Color.White
                         )
@@ -110,7 +110,7 @@ fun ArticlesScreen(
                             tint = Color(0xFF475569)
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text("No articles yet", color = Color(0xFF64748B))
+                        Text("Belum ada artikel", color = Color(0xFF64748B))
                     }
                 }
             } else {
@@ -191,7 +191,7 @@ private fun ArticleCard(
                     else Color(0xFFF59E0B).copy(alpha = 0.2f)
                 ) {
                     Text(
-                        text = if (article.published) "Published" else "Draft",
+                        text = if (article.published) "Diterbitkan" else "Draf",
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                         fontSize = 12.sp,
                         color = if (article.published) Color(0xFF10B981) else Color(0xFFF59E0B)
@@ -215,7 +215,7 @@ private fun ArticleCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "by ${article.owner ?: "Unknown"}",
+                    text = "oleh ${article.owner ?: "Unknown"}",
                     fontSize = 12.sp,
                     color = Color(0xFF64748B)
                 )
@@ -244,7 +244,7 @@ private fun AddArticleDialog(
     
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("New Article", color = Color.White) },
+        title = { Text("Artikel Baru", color = Color.White) },
         text = {
             Column {
                 OutlinedTextField(
@@ -264,7 +264,7 @@ private fun AddArticleDialog(
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
-                    label = { Text("Title") },
+                    label = { Text("Judul") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
@@ -278,7 +278,7 @@ private fun AddArticleDialog(
                 OutlinedTextField(
                     value = content,
                     onValueChange = { content = it },
-                    label = { Text("Content") },
+                    label = { Text("Konten") },
                     modifier = Modifier.fillMaxWidth(),
                     minLines = 3,
                     maxLines = 5,
@@ -301,7 +301,7 @@ private fun AddArticleDialog(
                             uncheckedColor = Color(0xFF475569)
                         )
                     )
-                    Text("Publish immediately", color = Color.White)
+                    Text("Terbitkan segera", color = Color.White)
                 }
             }
         },
@@ -311,12 +311,12 @@ private fun AddArticleDialog(
                 enabled = slug.isNotBlank() && title.isNotBlank() && content.isNotBlank(),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2563EB))
             ) {
-                Text("Create")
+                Text("Buat")
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", color = Color(0xFF94A3B8))
+                Text("Batal", color = Color(0xFF94A3B8))
             }
         },
         containerColor = Color(0xFF1E293B)

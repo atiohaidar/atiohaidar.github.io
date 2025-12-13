@@ -14,11 +14,11 @@
     let selectedCategory = "all";
 
     const categories = [
-        { id: "all", name: "All", icon: "📦" },
-        { id: "tool", name: "Tools", icon: "🔧" },
-        { id: "upgrade", name: "Upgrades", icon: "⬆️" },
-        { id: "decoration", name: "Decorations", icon: "🌸" },
-        { id: "booster", name: "Boosters", icon: "⚡" },
+        { id: "all", name: "Semua", icon: "📦" },
+        { id: "tool", name: "Alat", icon: "🔧" },
+        { id: "upgrade", name: "Peningkatan", icon: "⬆️" },
+        { id: "decoration", name: "Dekorasi", icon: "🌸" },
+        { id: "booster", name: "Booster", icon: "⚡" },
     ];
 
     onMount(async () => {
@@ -58,31 +58,31 @@
     }
 
     function getEffectDescription(effect: string | null): string {
-        if (!effect) return "No effect";
+        if (!effect) return "Tidak ada efek";
         try {
             const e = JSON.parse(effect);
             switch (e.type) {
                 case "water_all":
-                    return `Water ${e.area} plots at once`;
+                    return `Siram ${e.area} petak sekaligus`;
                 case "plant_speed":
-                    return `Plant ${e.value}x faster`;
+                    return `Tanam ${e.value}x lebih cepat`;
                 case "harvest_all":
-                    return "Harvest all ready crops";
+                    return "Panen semua tanaman siap panen";
                 case "auto_water":
-                    return `Auto-water ${e.area} plots`;
+                    return `Otomatis siram ${e.area} petak`;
                 case "auto_harvest":
-                    return "Auto-harvest ready crops";
+                    return "Otomatis panen tanaman siap";
                 case "auto_replant":
-                    return "Auto-replant after harvest";
+                    return "Otomatis tanam ulang setelah panen";
                 case "growth_speed":
-                    return `+${(e.value - 1) * 100}% growth speed`;
+                    return `+${(e.value - 1) * 100}% kecepatan tumbuh`;
                 case "double_harvest_chance":
-                    return `${e.value * 100}% double harvest`;
+                    return `${e.value * 100}% peluang panen ganda`;
                 default:
-                    return "Special effect";
+                    return "Efek khusus";
             }
         } catch {
-            return "Special effect";
+            return "Efek khusus";
         }
     }
 
@@ -99,15 +99,15 @@
 
 <div class="inventory-page">
     <header class="header">
-        <a href="/play" class="back-btn">← Back to Farm</a>
-        <h1>📦 Inventory</h1>
-        <div class="item-count">{inventory.length} items</div>
+        <a href="/play" class="back-btn">← Kembali ke Kebun</a>
+        <h1>📦 Inventaris</h1>
+        <div class="item-count">{inventory.length} item</div>
     </header>
 
     <!-- Equipped Items -->
     {#if equippedItems.length > 0}
         <div class="equipped-section">
-            <h2>⚡ Active Equipment</h2>
+            <h2>⚡ Peralatan Aktif</h2>
             <div class="equipped-grid">
                 {#each equippedItems as inv}
                     <div
@@ -119,7 +119,7 @@
                         <span class="item-icon">{inv.item?.icon || "📦"}</span>
                         <div class="item-info">
                             <span class="item-name"
-                                >{inv.item?.name || "Unknown"}</span
+                                >{inv.item?.name || "Tidak Diketahui"}</span
                             >
                             <span class="item-effect"
                                 >{getEffectDescription(
@@ -149,7 +149,7 @@
     {#if loading}
         <div class="loading">
             <div class="spinner"></div>
-            <p>Loading inventory...</p>
+            <p>Memuat inventaris...</p>
         </div>
     {:else}
         <div class="inventory-grid">
@@ -159,7 +159,9 @@
                     style="--item-color: {getItemColor(inv.item?.type || '')}"
                 >
                     <div class="item-icon-lg">{inv.item?.icon || "📦"}</div>
-                    <h3 class="item-name">{inv.item?.name || "Unknown"}</h3>
+                    <h3 class="item-name">
+                        {inv.item?.name || "Tidak Diketahui"}
+                    </h3>
                     <div class="item-type">
                         {(inv.item?.type || "item").toUpperCase()}
                     </div>
@@ -168,7 +170,7 @@
                     </p>
                     <div class="item-quantity">x{inv.quantity}</div>
                     {#if inv.equipped}
-                        <div class="equipped-badge">✓ Equipped</div>
+                        <div class="equipped-badge">✓ Dipakai</div>
                     {/if}
                 </div>
             {/each}
@@ -176,8 +178,8 @@
 
         {#if filteredItems.length === 0}
             <div class="empty-state">
-                <p>No items in this category</p>
-                <a href="/shop" class="shop-link">Visit Shop →</a>
+                <p>Tidak ada item di kategori ini</p>
+                <a href="/shop" class="shop-link">Kunjungi Toko →</a>
             </div>
         {/if}
     {/if}

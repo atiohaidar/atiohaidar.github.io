@@ -128,7 +128,7 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
                                     {isUserMenuOpen && (
                                         <div className="absolute top-full right-0 mt-3 glass-card min-w-[200px] rounded-xl p-2 animate-fade-in-up">
                                             <div className="px-4 py-3 border-b border-gray-100 dark:border-white/5 mb-2">
-                                                <p className="text-xs text-light-muted dark:text-slate-400">Signed in as</p>
+                                                <p className="text-xs text-light-muted dark:text-slate-400">Masuk sebagai</p>
                                                 <p className="font-semibold text-sm truncate dark:text-white">{loggedInUser}</p>
                                             </div>
                                             <Link
@@ -145,7 +145,7 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
                                                 }}
                                                 className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-500/10 rounded-lg transition-colors mt-1"
                                             >
-                                                Logout
+                                                Keluar
                                             </button>
                                         </div>
                                     )}
@@ -155,7 +155,7 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
                                     to="/login"
                                     className="glass-button px-5 py-2 rounded-full text-sm font-medium text-accent-blue hover:text-white hover:bg-accent-blue hover:border-accent-blue transition-all"
                                 >
-                                    Login
+                                    Masuk
                                 </Link>
                             )}
                         </div>
@@ -254,7 +254,7 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
                                     }}
                                     className="block w-full text-center py-3 rounded-xl border border-red-500/20 text-red-500 font-medium hover:bg-red-500/5"
                                 >
-                                    Logout ({loggedInUser})
+                                    Keluar ({loggedInUser})
                                 </button>
                             </div>
                         ) : (
@@ -263,7 +263,7 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
                                 onClick={() => setIsMenuOpen(false)}
                                 className="block w-full text-center py-3 rounded-xl bg-accent-blue text-white font-medium shadow-lg shadow-accent-blue/25"
                             >
-                                Login
+                                Masuk
                             </Link>
                         )}
                     </div>

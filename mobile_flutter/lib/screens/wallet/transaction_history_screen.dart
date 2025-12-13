@@ -33,7 +33,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Transaction History'),
+        title: const Text('Riwayat Transaksi'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
@@ -62,7 +62,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                       size: 20,
                     ),
                     const SizedBox(width: 8),
-                    const Text('All Transactions'),
+                    const Text('Semua Transaksi'),
                   ],
                 ),
               ),
@@ -79,7 +79,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                       size: 20,
                     ),
                     const SizedBox(width: 8),
-                    const Text('Transfers'),
+                    const Text('Transfer'),
                   ],
                 ),
               ),
@@ -95,7 +95,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                       size: 20,
                     ),
                     const SizedBox(width: 8),
-                    const Text('Top Ups'),
+                    const Text('Isi Saldo'),
                   ],
                 ),
               ),
@@ -149,7 +149,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
             children: [
               _buildSummaryItem(
                 icon: Icons.arrow_downward,
-                label: 'Income',
+                label: 'Masuk',
                 amount: summary['income'] ?? 0,
                 color: Colors.green,
                 isDark: isDark,
@@ -161,7 +161,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
               ),
               _buildSummaryItem(
                 icon: Icons.arrow_upward,
-                label: 'Outcome',
+                label: 'Keluar',
                 amount: summary['outcome'] ?? 0,
                 color: Colors.red,
                 isDark: isDark,
@@ -173,7 +173,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
               ),
               _buildSummaryItem(
                 icon: Icons.add_circle,
-                label: 'Top Up',
+                label: 'Isi Saldo',
                 amount: summary['topup'] ?? 0,
                 color: AppColors.primaryBlue,
                 isDark: isDark,
@@ -229,7 +229,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
     bool isDark,
   ) {
     if (provider.isLoading) {
-      return const LoadingIndicator(message: 'Loading transactions...');
+      return const LoadingIndicator(message: 'Memuat transaksi...');
     }
 
     if (provider.error != null) {
@@ -244,8 +244,8 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
     if (transactions.isEmpty) {
       return const EmptyState(
         icon: Icons.receipt_long,
-        title: 'No Transactions',
-        subtitle: 'Your transaction history will appear here',
+        title: 'Tidak Ada Transaksi',
+        subtitle: 'Riwayat transaksi Anda akan muncul di sini',
       );
     }
 
@@ -333,10 +333,10 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
               children: [
                 Text(
                   isTopUp
-                      ? 'Top Up'
+                      ? 'Isi Saldo'
                       : (isIncome
-                          ? 'Received from ${transaction.fromUsername ?? 'Unknown'}'
-                          : 'Transfer to ${transaction.toUsername}'),
+                          ? 'Diterima dari ${transaction.fromUsername ?? 'Tidak Diketahui'}'
+                          : 'Transfer ke ${transaction.toUsername}'),
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -387,9 +387,9 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
     final dateOnly = DateTime(date.year, date.month, date.day);
 
     if (dateOnly == today) {
-      return 'Today';
+      return 'Hari Ini';
     } else if (dateOnly == yesterday) {
-      return 'Yesterday';
+      return 'Kemarin';
     } else if (date.year == now.year) {
       return DateFormat('EEEE, d MMMM').format(date);
     } else {

@@ -89,7 +89,7 @@ class _TopUpScreenState extends State<TopUpScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Top Up Balance'),
+        title: const Text('Isi Saldo'),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -124,7 +124,7 @@ class _TopUpScreenState extends State<TopUpScreen> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'Current Balance',
+                          'Saldo Saat Ini',
                           style: TextStyle(
                             fontSize: 14,
                             color: isDark
@@ -156,7 +156,7 @@ class _TopUpScreenState extends State<TopUpScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Top Up Target',
+                            'Target Pengisian',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -170,7 +170,7 @@ class _TopUpScreenState extends State<TopUpScreen> {
                             children: [
                               Expanded(
                                 child: _buildOptionChip(
-                                  label: 'My Account',
+                                  label: 'Akun Saya',
                                   isSelected: _topUpSelf,
                                   onTap: () =>
                                       setState(() => _topUpSelf = true),
@@ -180,7 +180,7 @@ class _TopUpScreenState extends State<TopUpScreen> {
                               const SizedBox(width: 12),
                               Expanded(
                                 child: _buildOptionChip(
-                                  label: 'Other User',
+                                  label: 'Pengguna Lain',
                                   isSelected: !_topUpSelf,
                                   onTap: () =>
                                       setState(() => _topUpSelf = false),
@@ -194,13 +194,13 @@ class _TopUpScreenState extends State<TopUpScreen> {
                             TextFormField(
                               controller: _usernameController,
                               decoration: const InputDecoration(
-                                labelText: 'Target Username',
+                                labelText: 'Username Target',
                                 prefixIcon: Icon(Icons.person_outline),
                               ),
                               validator: (value) {
                                 if (!_topUpSelf &&
                                     (value == null || value.isEmpty)) {
-                                  return 'Please enter username';
+                                  return 'Harap masukkan username';
                                 }
                                 return null;
                               },
@@ -214,7 +214,7 @@ class _TopUpScreenState extends State<TopUpScreen> {
 
                   // Quick Amount Selection
                   Text(
-                    'Quick Amount',
+                    'Jumlah Cepat',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -277,21 +277,21 @@ class _TopUpScreenState extends State<TopUpScreen> {
                   TextFormField(
                     controller: _amountController,
                     decoration: const InputDecoration(
-                      labelText: 'Amount',
+                      labelText: 'Jumlah',
                       prefixIcon: Icon(Icons.attach_money),
-                      hintText: 'Enter custom amount',
+                      hintText: 'Masukkan jumlah kustom',
                     ),
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter amount';
+                        return 'Harap masukkan jumlah';
                       }
                       final amount = double.tryParse(value);
                       if (amount == null || amount <= 0) {
-                        return 'Invalid amount';
+                        return 'Jumlah tidak valid';
                       }
                       if (amount < 10000) {
-                        return 'Minimum top up is Rp 10,000';
+                        return 'Minimal pengisian Rp 10.000';
                       }
                       return null;
                     },
@@ -302,7 +302,7 @@ class _TopUpScreenState extends State<TopUpScreen> {
                   TextFormField(
                     controller: _descriptionController,
                     decoration: const InputDecoration(
-                      labelText: 'Description (Optional)',
+                      labelText: 'Deskripsi (Opsional)',
                       prefixIcon: Icon(Icons.note_outlined),
                     ),
                     maxLines: 2,
@@ -335,7 +335,7 @@ class _TopUpScreenState extends State<TopUpScreen> {
                                   color: Colors.white),
                               SizedBox(width: 8),
                               Text(
-                                'Top Up Now',
+                                'Isi Sekarang',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,

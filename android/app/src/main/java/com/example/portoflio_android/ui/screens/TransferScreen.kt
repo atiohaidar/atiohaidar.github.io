@@ -38,7 +38,7 @@ fun TransferScreen(
 
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess) {
-            Toast.makeText(context, "Transfer Successful", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Transfer Berhasil", Toast.LENGTH_SHORT).show()
             onNavigateBack()
         }
     }
@@ -81,7 +81,7 @@ fun TransferScreen(
                     )
                 }
                 Text(
-                    "Transfer Balance",
+                    "Transfer Saldo",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
@@ -104,7 +104,7 @@ fun TransferScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        "Current Balance",
+                        "Saldo Saat Ini",
                         color = Color(0xFF94A3B8),
                         fontSize = 14.sp
                     )
@@ -133,7 +133,7 @@ fun TransferScreen(
                     OutlinedTextField(
                         value = toUsername,
                         onValueChange = { toUsername = it },
-                        label = { Text("Recipient Username") },
+                        label = { Text("Username Penerima") },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedTextColor = Color.White,
@@ -148,7 +148,7 @@ fun TransferScreen(
                     OutlinedTextField(
                         value = amount,
                         onValueChange = { amount = it },
-                        label = { Text("Amount (Rp)") },
+                        label = { Text("Jumlah (Rp)") },
                         modifier = Modifier.fillMaxWidth(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         colors = OutlinedTextFieldDefaults.colors(
@@ -164,7 +164,7 @@ fun TransferScreen(
                     OutlinedTextField(
                         value = description,
                         onValueChange = { description = it },
-                        label = { Text("Description (Optional)") },
+                        label = { Text("Deskripsi (Opsional)") },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedTextColor = Color.White,
@@ -182,7 +182,7 @@ fun TransferScreen(
                             if (amt != null && toUsername.isNotEmpty()) {
                                 viewModel.transfer(toUsername, amt, description)
                             } else {
-                                Toast.makeText(context, "Invalid input", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Input tidak valid", Toast.LENGTH_SHORT).show()
                             }
                         },
                         modifier = Modifier.fillMaxWidth().height(50.dp),
@@ -194,7 +194,7 @@ fun TransferScreen(
                         if (uiState.isLoading) {
                             CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
                         } else {
-                            Text("Transfer Now", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                            Text("Transfer Sekarang", fontSize = 16.sp, fontWeight = FontWeight.Bold)
                         }
                     }
                 }

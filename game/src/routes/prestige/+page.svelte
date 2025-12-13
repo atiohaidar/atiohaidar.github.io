@@ -36,16 +36,16 @@
 
             if (res.success && res.data) {
                 showToast(
-                    `🎉 Prestige complete! Level ${res.data.new_prestige_level} (+${res.data.bonus_percent}% gold bonus)`,
+                    `🎉 Prestise selesai! Level ${res.data.new_prestige_level} (+${res.data.bonus_percent}% bonus emas)`,
                     "level",
                 );
                 confirmReset = false;
                 await loadData();
             } else {
-                showToast(res.error || "Prestige failed", "error");
+                showToast(res.error || "Prestise gagal", "error");
             }
         } catch (e) {
-            showToast("Failed to prestige", "error");
+            showToast("Gagal melakukan prestise", "error");
         }
 
         prestigeLoading = false;
@@ -57,67 +57,67 @@
 </script>
 
 <svelte:head>
-    <title>Bercock tanam</title>
+    <title>Bercocok Tanam - Prestise</title>
 </svelte:head>
 
 <div class="prestige-page">
     <header class="header">
-        <a href="/play" class="back-btn">← Back to Farm</a>
-        <h1>✨ Prestige</h1>
+        <a href="/play" class="back-btn">← Kembali ke Kebun</a>
+        <h1>✨ Prestise</h1>
         <div class="spacer"></div>
     </header>
 
     {#if loading}
         <div class="loading">
             <div class="spinner"></div>
-            <p>Loading...</p>
+            <p>Memuat...</p>
         </div>
     {:else}
         <div class="prestige-card">
             <div class="prestige-icon">🔄</div>
-            <h2>Prestige Reset</h2>
+            <h2>Reset Prestise</h2>
             <p class="description">
-                Reset your farm progress to earn permanent gold bonuses. Higher
-                prestige = more gold per harvest!
+                Reset progres kebun Anda untuk mendapatkan bonus emas permanen.
+                Semakin tinggi prestise = semakin banyak emas per panen!
             </p>
 
             <div class="stats-grid">
                 <div class="stat-item">
-                    <span class="label">Current Level</span>
+                    <span class="label">Level Saat Ini</span>
                     <span class="value">{$profile?.level || 1}</span>
                 </div>
                 <div class="stat-item">
-                    <span class="label">Prestige Level</span>
+                    <span class="label">Level Prestise</span>
                     <span class="value prestige"
                         >⭐ {$profile?.prestige_level || 0}</span
                     >
                 </div>
                 <div class="stat-item">
-                    <span class="label">Current Bonus</span>
+                    <span class="label">Bonus Saat Ini</span>
                     <span class="value gold">+{currentBonus}%</span>
                 </div>
                 <div class="stat-item">
-                    <span class="label">Next Bonus</span>
+                    <span class="label">Bonus Berikutnya</span>
                     <span class="value gold">+{nextBonus}%</span>
                 </div>
             </div>
 
             <div class="requirements">
-                <h3>Requirements</h3>
+                <h3>Persyaratan</h3>
                 <div class="req-item" class:met={canPrestige}>
                     {#if canPrestige}✅{:else}❌{/if}
-                    Reach Level 20 (Current: {$profile?.level || 1})
+                    Capai Level 20 (Saat Ini: {$profile?.level || 1})
                 </div>
             </div>
 
             <div class="warning-box">
-                <strong>⚠️ Warning:</strong> Prestige will reset:
+                <strong>⚠️ Peringatan:</strong> Prestise akan mereset:
                 <ul>
-                    <li>Your level back to 1</li>
-                    <li>Your gold to 100</li>
-                    <li>All farm plots (crops cleared)</li>
+                    <li>Level Anda kembali ke 1</li>
+                    <li>Emas Anda menjadi 100</li>
+                    <li>Semua petak kebun (tanaman dihapus)</li>
                 </ul>
-                <p>You will keep: Gems, Shop items, Achievements</p>
+                <p>Anda akan tetap memiliki: Permata, Item Toko, Pencapaian</p>
             </div>
 
             {#if canPrestige}
@@ -126,11 +126,11 @@
                         class="btn btn-prestige"
                         on:click={() => (confirmReset = true)}
                     >
-                        🔄 Prestige Now
+                        🔄 Prestise Sekarang
                     </button>
                 {:else}
                     <div class="confirm-box">
-                        <p>Are you sure? This cannot be undone!</p>
+                        <p>Apakah Anda yakin? Ini tidak dapat dibatalkan!</p>
                         <div class="confirm-buttons">
                             <button
                                 class="btn btn-danger"
@@ -138,28 +138,28 @@
                                 disabled={prestigeLoading}
                             >
                                 {prestigeLoading
-                                    ? "Processing..."
-                                    : "Confirm Prestige"}
+                                    ? "Memproses..."
+                                    : "Konfirmasi Prestise"}
                             </button>
                             <button
                                 class="btn btn-secondary"
                                 on:click={() => (confirmReset = false)}
                             >
-                                Cancel
+                                Batal
                             </button>
                         </div>
                     </div>
                 {/if}
             {:else}
                 <button class="btn btn-disabled" disabled>
-                    🔒 Reach Level 20 to Prestige
+                    🔒 Capai Level 20 untuk Prestise
                 </button>
             {/if}
         </div>
 
         <!-- Prestige Rewards Table -->
         <div class="rewards-table">
-            <h3>Prestige Rewards</h3>
+            <h3>Hadiah Prestise</h3>
             <div class="table-grid">
                 {#each [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as level}
                     <div
@@ -168,7 +168,7 @@
                             ($profile?.prestige_level || 0)}
                     >
                         <span class="level">⭐ {level}</span>
-                        <span class="bonus">+{level * 10}% gold</span>
+                        <span class="bonus">+{level * 10}% emas</span>
                     </div>
                 {/each}
             </div>

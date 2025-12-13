@@ -56,7 +56,7 @@ class _PublicFormScreenState extends State<PublicFormScreen> {
     for (final q in _formData!.questions) {
       if (!_answers.containsKey(q.id) || _answers[q.id]!.trim().isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Please answer: ${q.questionText}')),
+          SnackBar(content: Text('Harap jawab: ${q.questionText}')),
         );
         return;
       }
@@ -91,7 +91,7 @@ class _PublicFormScreenState extends State<PublicFormScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: Text(_formData?.form.title ?? 'Form'),
+        title: Text(_formData?.form.title ?? 'Formulir'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -102,7 +102,7 @@ class _PublicFormScreenState extends State<PublicFormScreen> {
 
   Widget _buildBody(bool isDark) {
     if (_isLoading) {
-      return const LoadingIndicator(message: 'Loading form...');
+      return const LoadingIndicator(message: 'Memuat formulir...');
     }
 
     if (_error != null) {
@@ -115,7 +115,7 @@ class _PublicFormScreenState extends State<PublicFormScreen> {
               const Icon(Icons.error_outline, size: 64, color: AppColors.error),
               const SizedBox(height: 16),
               Text(
-                'Form not found',
+                'Formulir tidak ditemukan',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -124,7 +124,7 @@ class _PublicFormScreenState extends State<PublicFormScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                'This form may have expired or does not exist.',
+                'Formulir ini mungkin telah kedaluwarsa atau tidak ada.',
                 style: TextStyle(
                   color: isDark
                       ? AppColors.textSecondary
@@ -151,7 +151,7 @@ class _PublicFormScreenState extends State<PublicFormScreen> {
                     size: 72, color: AppColors.success),
                 const SizedBox(height: 24),
                 Text(
-                  'Thank you!',
+                  'Terima kasih!',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -160,7 +160,7 @@ class _PublicFormScreenState extends State<PublicFormScreen> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Your response has been submitted.',
+                  'Respon Anda telah dikirim.',
                   style: TextStyle(
                     color: isDark
                         ? AppColors.textSecondary
@@ -203,7 +203,7 @@ class _PublicFormScreenState extends State<PublicFormScreen> {
                     color: Colors.white,
                   ),
                 )
-              : const Text('Submit'),
+              : const Text('Kirim'),
         ),
       ],
     );
@@ -234,7 +234,7 @@ class _PublicFormScreenState extends State<PublicFormScreen> {
             ),
             const SizedBox(height: 12),
             TextField(
-              decoration: const InputDecoration(hintText: 'Your answer'),
+              decoration: const InputDecoration(hintText: 'Jawaban Anda'),
               onChanged: (v) => setState(() => _answers[q.id] = v),
             ),
           ],

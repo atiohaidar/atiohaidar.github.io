@@ -58,7 +58,7 @@ fun AnonymousChatScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            "Anonymous Chat",
+                            "Obrolan Anonim",
                             fontWeight = FontWeight.Bold,
                             color = Color.White
                         )
@@ -117,12 +117,12 @@ fun AnonymousChatScreen(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            "No anonymous messages yet",
+                            "Belum ada pesan anonim",
                             color = Color(0xFF64748B),
                             fontSize = 16.sp
                         )
                         Text(
-                            "Be the first to post!",
+                            "Jadilah yang pertama mengirim!",
                             color = Color(0xFF94A3B8),
                             fontSize = 14.sp
                         )
@@ -155,7 +155,7 @@ fun AnonymousChatScreen(
                     value = messageText,
                     onValueChange = { messageText = it },
                     modifier = Modifier.weight(1f),
-                    placeholder = { Text("Send anonymous message...", color = Color(0xFF64748B)) },
+                    placeholder = { Text("Kirim pesan anonim...", color = Color(0xFF64748B)) },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = Color.White,
                         unfocusedTextColor = Color.White,
@@ -196,7 +196,7 @@ fun AnonymousChatScreen(
                 containerColor = Color(0xFFEF4444),
                 action = {
                     TextButton(onClick = { viewModel.clearError() }) {
-                        Text("Dismiss", color = Color.White)
+                        Text("Tutup", color = Color.White)
                     }
                 }
             ) {
@@ -209,11 +209,11 @@ fun AnonymousChatScreen(
     if (showSendDialog) {
         AlertDialog(
             onDismissRequest = { showSendDialog = false },
-            title = { Text("Send Message", color = Color.White) },
+            title = { Text("Kirim Pesan", color = Color.White) },
             text = {
                 Column {
                     Text(
-                        "Choose a nickname (optional):",
+                        "Pilih nama panggilan (opsional):",
                         color = Color(0xFF94A3B8),
                         fontSize = 14.sp
                     )
@@ -221,8 +221,8 @@ fun AnonymousChatScreen(
                     OutlinedTextField(
                         value = senderName,
                         onValueChange = { senderName = it },
-                        label = { Text("Nickname", color = Color(0xFF94A3B8)) },
-                        placeholder = { Text("Anonymous", color = Color(0xFF475569)) },
+                        label = { Text("Nama Panggilan", color = Color(0xFF94A3B8)) },
+                        placeholder = { Text("Anonim", color = Color(0xFF475569)) },
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedTextColor = Color.White,
                             unfocusedTextColor = Color.White,
@@ -247,12 +247,12 @@ fun AnonymousChatScreen(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF7C3AED))
                 ) {
-                    Text("Send")
+                    Text("Kirim")
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showSendDialog = false }) {
-                    Text("Cancel", color = Color(0xFF94A3B8))
+                    Text("Batal", color = Color(0xFF94A3B8))
                 }
             },
             containerColor = Color(0xFF1E293B)
@@ -263,10 +263,10 @@ fun AnonymousChatScreen(
     if (showDeleteConfirm) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirm = false },
-            title = { Text("Delete All Messages", color = Color.White) },
+            title = { Text("Hapus Semua Pesan", color = Color.White) },
             text = { 
                 Text(
-                    "Are you sure you want to delete all anonymous messages?",
+                    "Apakah Anda yakin ingin menghapus semua pesan anonim?",
                     color = Color(0xFF94A3B8)
                 )
             },
@@ -278,12 +278,12 @@ fun AnonymousChatScreen(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444))
                 ) {
-                    Text("Delete All")
+                    Text("Hapus Semua")
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteConfirm = false }) {
-                    Text("Cancel", color = Color(0xFF94A3B8))
+                    Text("Batal", color = Color(0xFF94A3B8))
                 }
             },
             containerColor = Color(0xFF1E293B)
@@ -321,7 +321,7 @@ private fun AnonymousMessageCard(message: AnonymousMessage) {
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        message.senderName ?: "Anonymous",
+                        message.senderName ?: "Anonim",
                         color = Color.White,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 14.sp

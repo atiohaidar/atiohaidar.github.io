@@ -30,30 +30,30 @@ const DashboardOverviewPage: React.FC = () => {
 
     const stats = [
         {
-            title: 'Total Tasks',
+            title: 'Total Tugas',
             value: isStatsLoading ? '...' : totalTasks.toString(),
-            trend: 'Check tasks',
+            trend: 'Cek tugas',
             icon: '📝',
             color: 'from-blue-500 to-cyan-400'
         },
         {
-            title: 'Unread Messages',
+            title: 'Pesan Belum Dibaca',
             value: unreadMessages.toString(),
-            trend: 'Chat system',
+            trend: 'Sistem chat',
             icon: '💬',
             color: 'from-blue-600 to-indigo-500'
         },
         {
-            title: 'Active Tickets',
+            title: 'Tiket Aktif',
             value: isTicketsLoading ? '...' : pendingTickets.toString(),
-            trend: 'Open issues',
+            trend: 'Masalah terbuka',
             icon: '🎫',
             color: 'from-orange-500 to-red-500'
         },
         {
-            title: 'Upcoming Events',
+            title: 'Acara Mendatang',
             value: isEventsLoading ? '...' : upcomingEventsCount.toString(),
-            trend: 'Next: Soon',
+            trend: 'Segera',
             icon: '🎉',
             color: 'from-teal-500 to-emerald-400'
         },
@@ -73,7 +73,7 @@ const DashboardOverviewPage: React.FC = () => {
         type: 'Event',
         title: e.title,
         time: new Date(e.event_date).toLocaleDateString(),
-        status: 'Upcoming'
+        status: 'Mendatang'
     })) || [];
 
     // Simple merge and sort could be done here, but for now just show tickets as activity
@@ -81,7 +81,7 @@ const DashboardOverviewPage: React.FC = () => {
 
     // Get current greeting based on time
     const hour = new Date().getHours();
-    const greeting = hour < 12 ? 'Good Morning' : hour < 18 ? 'Good Afternoon' : 'Good Evening';
+    const greeting = hour < 12 ? 'Selamat Pagi' : hour < 18 ? 'Selamat Siang' : 'Selamat Sore';
 
     return (
         <div className="space-y-8 animate-fade-in-up">
@@ -98,12 +98,12 @@ const DashboardOverviewPage: React.FC = () => {
                             {greeting}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">{user?.name || storedUser?.name}</span>
                         </h1>
                         <p className={`mt-2 text-lg ${palette.panel.textMuted}`}>
-                            Here's what's happening with your projects today.
+                            Inilah yang terjadi dengan proyek Anda hari ini.
                         </p>
                     </div>
                     <div className="flex gap-3">
                         <span className={`px-4 py-2 rounded-full text-sm font-medium border ${theme === 'dark' ? 'bg-white/5 border-white/10 text-white' : 'bg-white/50 border-gray-200 text-gray-800'} backdrop-blur-md shadow-lg`}>
-                            {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+                            {new Date().toLocaleDateString('id-ID', { weekday: 'long', month: 'long', day: 'numeric' })}
                         </span>
                     </div>
                 </div>
@@ -124,13 +124,13 @@ const DashboardOverviewPage: React.FC = () => {
                                     <span className="text-xl">💰</span>
                                 </div>
                                 <div className={`px-2 py-1 rounded-full text-xs font-medium ${theme === 'dark' ? 'bg-white/10 text-white/80' : 'bg-green-100 text-green-700'}`}>
-                                    Wallet
+                                    Dompet
                                 </div>
                             </div>
                             <h3 className={`text-3xl font-bold ${palette.panel.text} mb-1`}>
                                 Rp {(user?.balance || 0).toLocaleString()}
                             </h3>
-                            <p className={`text-sm font-medium ${palette.panel.textMuted}`}>Total Balance</p>
+                            <p className={`text-sm font-medium ${palette.panel.textMuted}`}>Total Saldo</p>
                         </div>
 
                         <div className="flex gap-2 mt-4 pt-4 border-t border-gray-200/10">
@@ -191,21 +191,21 @@ const DashboardOverviewPage: React.FC = () => {
                 {/* Visual Chart / Large Widget */}
                 <div className={`lg:col-span-2 p-6 rounded-3xl ${palette.panel.bg} ${palette.panel.border} shadow-xl`}>
                     <div className="flex justify-between items-center mb-6">
-                        <h2 className={`text-xl font-bold ${palette.panel.text}`}>Productivity Overview</h2>
+                        <h2 className={`text-xl font-bold ${palette.panel.text}`}>Ringkasan Produktivitas</h2>
                         <select className={`bg-transparent border-none text-sm font-medium ${palette.panel.textMuted} focus:ring-0 cursor-pointer`}>
-                            <option>This Week</option>
-                            <option>Last Week</option>
+                            <option>Minggu Ini</option>
+                            <option>Minggu Lalu</option>
                         </select>
                     </div>
                     {/* Placeholder for Chart */}
                     <div className="h-64 flex items-center justify-center rounded-2xl bg-gradient-to-r from-blue-500/5 to-cyan-500/5 border border-dashed border-gray-500/20">
-                        <p className={palette.panel.textMuted}>Chart Visualization Area</p>
+                        <p className={palette.panel.textMuted}>Area Visualisasi Grafik</p>
                     </div>
                 </div>
 
                 {/* Recent Activity */}
                 <div className={`p-6 rounded-3xl ${palette.panel.bg} ${palette.panel.border} shadow-xl`}>
-                    <h2 className={`text-xl font-bold ${palette.panel.text} mb-6`}>Recent Activity</h2>
+                    <h2 className={`text-xl font-bold ${palette.panel.text} mb-6`}>Aktivitas Terbaru</h2>
                     <div className="space-y-6">
                         {recentActivities.length > 0 ? (
                             recentActivities.map((activity) => (
@@ -222,7 +222,7 @@ const DashboardOverviewPage: React.FC = () => {
                                 </div>
                             ))
                         ) : (
-                            <p className={`text-sm ${palette.panel.textMuted}`}>No recent activity.</p>
+                            <p className={`text-sm ${palette.panel.textMuted}`}>Tidak ada aktivitas terbaru.</p>
                         )}
                     </div>
 
@@ -230,7 +230,7 @@ const DashboardOverviewPage: React.FC = () => {
                         ? 'bg-white/5 hover:bg-white/10 text-white border border-white/10'
                         : 'bg-black/5 hover:bg-black/10 text-gray-800'
                         }`}>
-                        View All Activity
+                        Lihat Semua Aktivitas
                     </button>
                 </div>
             </div>

@@ -79,9 +79,7 @@ const RegisterPage: React.FC = () => {
                         <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-32 h-32 rounded-full bg-emerald-500/20 blur-3xl pointer-events-none" />
 
                         <div className="relative z-10">
-                            <p className="text-green-500 font-mono text-xs tracking-wider uppercase mb-2">
-                                Create Account
-                            </p>
+                            Buat Akun
                             <h2 className="text-2xl sm:text-3xl font-bold mb-2 text-gray-900 dark:text-white tracking-tight">Daftar Akun</h2>
                             <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">Buat akun baru untuk mengakses dashboard</p>
 

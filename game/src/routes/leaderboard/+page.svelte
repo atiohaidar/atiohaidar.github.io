@@ -71,28 +71,28 @@
 
 <div class="leaderboard-page">
     <header class="header">
-        <a href="/play" class="back-btn">← Back to Farm</a>
-        <h1>🏆 Leaderboard</h1>
+        <a href="/play" class="back-btn">← Kembali ke Kebun</a>
+        <h1>🏆 Peringkat</h1>
         <div class="spacer"></div>
     </header>
 
     {#if loading}
         <div class="loading">
             <div class="spinner"></div>
-            <p>Loading leaderboard...</p>
+            <p>Memuat peringkat...</p>
         </div>
     {:else}
         <!-- Current User Rank Card -->
         {#if currentUserRank > 0}
             <div class="your-rank-card">
-                <span class="your-rank-label">Your Rank</span>
+                <span class="your-rank-label">Peringkat Anda</span>
                 <span class="your-rank-value"
                     >{getRankBadge(currentUserRank)}</span
                 >
                 <span class="your-rank-stats">
                     Level {$profile?.level} • {formatGold(
                         $profile?.total_gold_earned || 0,
-                    )} gold earned
+                    )} emas didapat
                 </span>
             </div>
         {/if}
@@ -143,11 +143,11 @@
         <!-- Full Leaderboard Table -->
         <div class="leaderboard-table">
             <div class="table-header">
-                <span class="col-rank">Rank</span>
-                <span class="col-player">Player</span>
+                <span class="col-rank">Peringkat</span>
+                <span class="col-player">Pemain</span>
                 <span class="col-level">Level</span>
-                <span class="col-prestige">Prestige</span>
-                <span class="col-gold">Total Gold</span>
+                <span class="col-prestige">Prestise</span>
+                <span class="col-gold">Total Emas</span>
             </div>
 
             {#each leaderboard as entry, i}
@@ -174,8 +174,8 @@
 
             {#if leaderboard.length === 0}
                 <div class="empty-state">
-                    <p>No players on the leaderboard yet!</p>
-                    <p>Be the first to farm and earn gold.</p>
+                    <p>Belum ada pemain di peringkat!</p>
+                    <p>Jadilah yang pertama bertani dan dapatkan emas.</p>
                 </div>
             {/if}
         </div>

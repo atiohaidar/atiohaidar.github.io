@@ -39,7 +39,7 @@ fun TransactionHistoryScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "Transaction History",
+                        "Riwayat Transaksi",
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
@@ -77,7 +77,7 @@ fun TransactionHistoryScreen(
                 FilterChip(
                     selected = uiState.selectedFilter == null,
                     onClick = { viewModel.filterByType(null) },
-                    label = { Text("All") },
+                    label = { Text("Semua") },
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = Color(0xFF2563EB),
                         selectedLabelColor = Color.White,
@@ -89,7 +89,7 @@ fun TransactionHistoryScreen(
                 FilterChip(
                     selected = uiState.selectedFilter == TransactionType.TOPUP,
                     onClick = { viewModel.filterByType(TransactionType.TOPUP) },
-                    label = { Text("Top Up") },
+                    label = { Text("Isi Ulang") },
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = Color(0xFF10B981),
                         selectedLabelColor = Color.White,
@@ -113,7 +113,7 @@ fun TransactionHistoryScreen(
                 FilterChip(
                     selected = uiState.selectedFilter == TransactionType.RECEIVE,
                     onClick = { viewModel.filterByType(TransactionType.RECEIVE) },
-                    label = { Text("Receive") },
+                    label = { Text("Terima") },
                     colors = FilterChipDefaults.filterChipColors(
                         selectedContainerColor = Color(0xFF8B5CF6),
                         selectedLabelColor = Color.White,
@@ -144,7 +144,7 @@ fun TransactionHistoryScreen(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            "No transactions found",
+                            "Tidak ada transaksi ditemukan",
                             color = Color(0xFF64748B),
                             fontSize = 16.sp
                         )
@@ -240,14 +240,14 @@ private fun TransactionCard(transaction: Transaction) {
                     when (transaction.type) {
                         TransactionType.TRANSFER -> transaction.toUsername?.let {
                             Text(
-                                text = "To: @$it",
+                                text = "Kepada: @$it",
                                 color = Color(0xFF64748B),
                                 fontSize = 12.sp
                             )
                         }
                         TransactionType.RECEIVE -> transaction.fromUsername?.let {
                             Text(
-                                text = "From: @$it",
+                                text = "Dari: @$it",
                                 color = Color(0xFF64748B),
                                 fontSize = 12.sp
                             )
@@ -276,7 +276,7 @@ private fun TransactionCard(transaction: Transaction) {
                 
                 transaction.balance?.let { balance ->
                     Text(
-                        text = "Balance: Rp ${String.format("%.0f", balance)}",
+                        text = "Saldo: Rp ${String.format("%.0f", balance)}",
                         color = Color(0xFF64748B),
                         fontSize = 11.sp
                     )

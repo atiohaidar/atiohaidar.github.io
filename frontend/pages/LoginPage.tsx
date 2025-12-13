@@ -52,9 +52,8 @@ const LoginPage: React.FC = () => {
                     {/* Left Section - Welcome Text */}
                     <div className="flex-1 space-y-6 text-center lg:text-left">
                         <div className="space-y-2">
-                            <p className="text-accent-blue font-mono text-sm tracking-wider uppercase">
-                                Authentication Portal
-                            </p>
+                            Authentication Portal
+
                             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-light-text dark:text-white min-h-[2.5rem] sm:min-h-[3.5rem] lg:min-h-[4rem]">
                                 <TypewriterText
                                     texts={["ꦮꦶꦭꦸꦗꦺꦁ ꦱꦸꦩ꧀ꦥꦶꦁ", "Selamat Datang", "Welcome", "مرحبا"]}
@@ -77,11 +76,11 @@ const LoginPage: React.FC = () => {
                             </div>
                             <div className="glass-panel p-4 rounded-xl text-center group hover:scale-105 transition-transform duration-300">
                                 <div className="text-2xl font-bold text-green-500">24/7</div>
-                                <div className="text-xs text-light-muted dark:text-soft-gray mt-1">Availability</div>
+                                <div className="text-xs text-light-muted dark:text-soft-gray mt-1">Ketersediaan</div>
                             </div>
                             <div className="glass-panel p-4 rounded-xl text-center group hover:scale-105 transition-transform duration-300">
                                 <div className="text-2xl font-bold text-purple-500">∞</div>
-                                <div className="text-xs text-light-muted dark:text-soft-gray mt-1">Possibilities</div>
+                                <div className="text-xs text-light-muted dark:text-soft-gray mt-1">Kemungkinan</div>
                             </div>
                         </div>
                     </div>

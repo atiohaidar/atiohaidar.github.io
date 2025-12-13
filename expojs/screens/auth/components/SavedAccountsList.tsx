@@ -24,7 +24,7 @@ export const SavedAccountsList: React.FC<SavedAccountsListProps> = ({
   return (
     <View style={styles.container}>
       <Text variant="titleSmall" style={styles.title}>
-        Quick login
+        Login Cepat
       </Text>
       {accounts.map((account) => (
         <View key={account.username} style={styles.row}>

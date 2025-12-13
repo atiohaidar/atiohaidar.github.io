@@ -42,7 +42,7 @@ class _RoomsScreenState extends State<RoomsScreen>
       backgroundColor:
           Colors.transparent, // Background handled by parent GradientBackground
       appBar: AppBar(
-        title: const Text('Rooms & Bookings'),
+        title: const Text('Ruangan & Pesanan'),
         backgroundColor: Colors.transparent, // Transparent to show gradient
         elevation: 0,
         centerTitle: true,
@@ -53,8 +53,8 @@ class _RoomsScreenState extends State<RoomsScreen>
               isDark ? AppColors.textMuted : Colors.grey.shade600,
           indicatorColor: AppColors.primaryBlue,
           tabs: const [
-            Tab(text: 'Rooms'),
-            Tab(text: 'My Bookings'),
+            Tab(text: 'Ruangan'),
+            Tab(text: 'Pesanan Saya'),
           ],
         ),
       ),
@@ -113,7 +113,7 @@ class _RoomsScreenState extends State<RoomsScreen>
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Create New Room',
+                  'Buat Ruangan Baru',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -124,8 +124,8 @@ class _RoomsScreenState extends State<RoomsScreen>
                 TextField(
                   controller: idController,
                   decoration: const InputDecoration(
-                    labelText: 'Room ID',
-                    hintText: 'e.g., ROOM-A1',
+                    labelText: 'ID Ruangan',
+                    hintText: 'Mis: ROOM-A1',
                   ),
                   autofocus: true,
                 ),
@@ -133,16 +133,16 @@ class _RoomsScreenState extends State<RoomsScreen>
                 TextField(
                   controller: nameController,
                   decoration: const InputDecoration(
-                    labelText: 'Room Name',
-                    hintText: 'Enter room name',
+                    labelText: 'Nama Ruangan',
+                    hintText: 'Masukkan nama ruangan',
                   ),
                 ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: capacityController,
                   decoration: const InputDecoration(
-                    labelText: 'Capacity',
-                    hintText: 'Number of people',
+                    labelText: 'Kapasitas',
+                    hintText: 'Jumlah orang',
                   ),
                   keyboardType: TextInputType.number,
                 ),
@@ -150,8 +150,8 @@ class _RoomsScreenState extends State<RoomsScreen>
                 TextField(
                   controller: descController,
                   decoration: const InputDecoration(
-                    labelText: 'Description (optional)',
-                    hintText: 'Room description',
+                    labelText: 'Deskripsi (opsional)',
+                    hintText: 'Deskripsi ruangan',
                   ),
                   maxLines: 2,
                 ),
@@ -178,12 +178,12 @@ class _RoomsScreenState extends State<RoomsScreen>
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content: Text('Room created successfully')),
+                              content: Text('Ruangan berhasil dibuat')),
                         );
                       }
                     }
                   },
-                  child: const Text('Create Room'),
+                  child: const Text('Buat Ruangan'),
                 ),
                 const SizedBox(height: 16),
               ],
@@ -196,14 +196,14 @@ class _RoomsScreenState extends State<RoomsScreen>
 
   Widget _buildRoomsList(RoomsProvider provider, bool isDark) {
     if (provider.isLoading && provider.rooms.isEmpty) {
-      return const LoadingIndicator(message: 'Loading rooms...');
+      return const LoadingIndicator(message: 'Memuat ruangan...');
     }
 
     if (provider.rooms.isEmpty) {
       return const EmptyState(
         icon: Icons.meeting_room_outlined,
-        title: 'No rooms available',
-        subtitle: 'Rooms will appear here',
+        title: 'Tidak ada ruangan tersedia',
+        subtitle: 'Ruangan akan muncul di sini',
       );
     }
 
@@ -272,7 +272,7 @@ class _RoomsScreenState extends State<RoomsScreen>
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
-                          room.available ? 'Available' : 'Unavailable',
+                          room.available ? 'Tersedia' : 'Tidak Tersedia',
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
@@ -286,7 +286,7 @@ class _RoomsScreenState extends State<RoomsScreen>
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Capacity: ${room.capacity} people',
+                    'Kapasitas: ${room.capacity} Orang',
                     style: TextStyle(
                       fontSize: 14,
                       color:
@@ -320,7 +320,7 @@ class _RoomsScreenState extends State<RoomsScreen>
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
                       ),
-                      child: const Text('Book Room'),
+                      child: const Text('Pesan Ruangan'),
                     ),
                   ),
                 ],
@@ -371,7 +371,7 @@ class _RoomsScreenState extends State<RoomsScreen>
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Book ${room.name}',
+                  'Pesan ${room.name}',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -469,8 +469,8 @@ class _RoomsScreenState extends State<RoomsScreen>
                 TextField(
                   controller: purposeController,
                   decoration: const InputDecoration(
-                    labelText: 'Purpose',
-                    hintText: 'Meeting purpose',
+                    labelText: 'Tujuan',
+                    hintText: 'Tujuan pertemuan',
                   ),
                   maxLines: 2,
                 ),
@@ -502,12 +502,12 @@ class _RoomsScreenState extends State<RoomsScreen>
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content: Text('Room booked successfully!')),
+                              content: Text('Ruangan berhasil dipesan!')),
                         );
                       }
                     }
                   },
-                  child: const Text('Confirm Booking'),
+                  child: const Text('Konfirmasi Pesanan'),
                 ),
                 const SizedBox(height: 16),
               ],
@@ -520,14 +520,14 @@ class _RoomsScreenState extends State<RoomsScreen>
 
   Widget _buildBookingsList(RoomsProvider provider, bool isDark) {
     if (provider.isLoading && provider.bookings.isEmpty) {
-      return const LoadingIndicator(message: 'Loading bookings...');
+      return const LoadingIndicator(message: 'Memuat pesanan...');
     }
 
     if (provider.bookings.isEmpty) {
       return const EmptyState(
         icon: Icons.bookmark_border,
-        title: 'No bookings',
-        subtitle: 'Your bookings will appear here',
+        title: 'Tidak ada pesanan',
+        subtitle: 'Pesanan Anda akan muncul di sini',
       );
     }
 
@@ -550,7 +550,7 @@ class _RoomsScreenState extends State<RoomsScreen>
                         available: false),
                   )
                   .name
-              : 'Loading...';
+              : 'Memuat...';
 
           return _buildBookingCard(booking, roomName, isDark);
         },
@@ -605,7 +605,7 @@ class _RoomsScreenState extends State<RoomsScreen>
             ),
             const SizedBox(height: 8),
             Text(
-              'Reason: ${booking.purpose ?? "No purpose"}',
+              'Alasan: ${booking.purpose ?? "Tidak ada tujuan"}',
               style: TextStyle(
                 fontSize: 14,
                 color: isDark ? AppColors.textMuted : Colors.grey.shade600,
@@ -618,7 +618,7 @@ class _RoomsScreenState extends State<RoomsScreen>
                 child: TextButton.icon(
                   onPressed: () => _showCancelBookingDialog(booking),
                   icon: const Icon(Icons.cancel_outlined, size: 18),
-                  label: const Text('Cancel'),
+                  label: const Text('Batal'),
                   style: TextButton.styleFrom(
                     foregroundColor: AppColors.error,
                   ),
@@ -651,12 +651,12 @@ class _RoomsScreenState extends State<RoomsScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Cancel Booking'),
-        content: const Text('Are you sure you want to cancel this booking?'),
+        title: const Text('Batalkan Pesanan'),
+        content: const Text('Apakah Anda yakin ingin membatalkan pesanan ini?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('No'),
+            child: const Text('Tidak'),
           ),
           TextButton(
             onPressed: () async {
@@ -667,8 +667,8 @@ class _RoomsScreenState extends State<RoomsScreen>
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(success
-                        ? 'Booking cancelled successfully'
-                        : provider.error ?? 'Failed to cancel booking'),
+                        ? 'Pesanan berhasil dibatalkan'
+                        : provider.error ?? 'Gagal membatalkan pesanan'),
                     backgroundColor:
                         success ? AppColors.success : AppColors.error,
                   ),
@@ -676,7 +676,7 @@ class _RoomsScreenState extends State<RoomsScreen>
               }
             },
             style: TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: const Text('Yes, Cancel'),
+            child: const Text('Ya, Batalkan'),
           ),
         ],
       ),
@@ -692,22 +692,22 @@ class _RoomsScreenState extends State<RoomsScreen>
       case BookingStatus.approved:
         color = const Color(0xFF059669);
         bgColor = const Color(0xFFD1FAE5);
-        text = 'Approved';
+        text = 'Disetujui';
         break;
       case BookingStatus.pending:
         color = const Color(0xFFD97706);
         bgColor = const Color(0xFFFEF3C7);
-        text = 'Pending';
+        text = 'Menunggu';
         break;
       case BookingStatus.rejected:
         color = const Color(0xFFDC2626);
         bgColor = const Color(0xFFFEE2E2);
-        text = 'Rejected';
+        text = 'Ditolak';
         break;
       case BookingStatus.cancelled:
         color = Colors.grey;
         bgColor = Colors.grey.shade200;
-        text = 'Cancelled';
+        text = 'Dibatalkan';
         break;
     }
 

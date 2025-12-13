@@ -43,7 +43,7 @@ class _TasksScreenState extends State<TasksScreen> {
 
   Widget _buildBody(TasksProvider provider, bool isDark) {
     if (provider.isLoading && provider.tasks.isEmpty) {
-      return const LoadingIndicator(message: 'Loading tasks...');
+      return const LoadingIndicator(message: 'Memuat tugas...');
     }
 
     if (provider.error != null && provider.tasks.isEmpty) {
@@ -56,12 +56,12 @@ class _TasksScreenState extends State<TasksScreen> {
     if (provider.tasks.isEmpty) {
       return EmptyState(
         icon: Icons.task_alt,
-        title: 'No tasks yet',
-        subtitle: 'Tap the + button to create your first task',
+        title: 'Belum ada tugas',
+        subtitle: 'Ketuk tombol + untuk membuat tugas pertama Anda',
         action: ElevatedButton.icon(
           onPressed: () => _showAddTaskDialog(context),
           icon: const Icon(Icons.add),
-          label: const Text('Add Task'),
+          label: const Text('Tambah Tugas'),
         ),
       );
     }
@@ -78,7 +78,7 @@ class _TasksScreenState extends State<TasksScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           sliver: SliverToBoxAdapter(
             child: Text(
-              'All Tasks',
+              'Semua Tugas',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -117,7 +117,7 @@ class _TasksScreenState extends State<TasksScreen> {
         const SizedBox(width: 12),
         Expanded(
           child: _buildStatChip(
-            'Pending',
+            'Menunggu',
             '${provider.pendingTasks.length}',
             AppColors.warning,
             isDark,
@@ -126,7 +126,7 @@ class _TasksScreenState extends State<TasksScreen> {
         const SizedBox(width: 12),
         Expanded(
           child: _buildStatChip(
-            'Completed',
+            'Selesai',
             '${provider.completedTasks.length}',
             AppColors.success,
             isDark,
@@ -305,7 +305,7 @@ class _TasksScreenState extends State<TasksScreen> {
               ),
               const SizedBox(height: 24),
               Text(
-                'Add New Task',
+                'Tambah Tugas Baru',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -325,8 +325,8 @@ class _TasksScreenState extends State<TasksScreen> {
               TextField(
                 controller: descController,
                 decoration: const InputDecoration(
-                  labelText: 'Description (optional)',
-                  hintText: 'Enter task description',
+                  labelText: 'Deskripsi (opsional)',
+                  hintText: 'Masukkan deskripsi tugas',
                 ),
                 maxLines: 3,
               ),
@@ -347,7 +347,7 @@ class _TasksScreenState extends State<TasksScreen> {
                     }
                   }
                 },
-                child: const Text('Add Task'),
+                child: const Text('Tambah Tugas'),
               ),
               const SizedBox(height: 16),
             ],
@@ -393,7 +393,7 @@ class _TasksScreenState extends State<TasksScreen> {
               ),
               const SizedBox(height: 24),
               Text(
-                'Edit Task',
+                'Edit Tugas',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -404,8 +404,8 @@ class _TasksScreenState extends State<TasksScreen> {
               TextField(
                 controller: nameController,
                 decoration: const InputDecoration(
-                  labelText: 'Task Name',
-                  hintText: 'Enter task name',
+                  labelText: 'Nama Tugas',
+                  hintText: 'Masukkan nama tugas',
                 ),
                 autofocus: true,
               ),
@@ -413,8 +413,8 @@ class _TasksScreenState extends State<TasksScreen> {
               TextField(
                 controller: descController,
                 decoration: const InputDecoration(
-                  labelText: 'Description (optional)',
-                  hintText: 'Enter task description',
+                  labelText: 'Deskripsi (opsional)',
+                  hintText: 'Masukkan deskripsi tugas',
                 ),
                 maxLines: 3,
               ),
@@ -437,7 +437,7 @@ class _TasksScreenState extends State<TasksScreen> {
                     }
                   }
                 },
-                child: const Text('Save Changes'),
+                child: const Text('Simpan Perubahan'),
               ),
               const SizedBox(height: 16),
             ],
@@ -451,12 +451,12 @@ class _TasksScreenState extends State<TasksScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Task'),
-        content: Text('Are you sure you want to delete "${task.name}"?'),
+        title: const Text('Hapus Tugas'),
+        content: Text('Apakah Anda yakin ingin menghapus "${task.name}"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('Batal'),
           ),
           TextButton(
             onPressed: () {
@@ -464,7 +464,7 @@ class _TasksScreenState extends State<TasksScreen> {
               Navigator.pop(context);
             },
             style: TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: const Text('Delete'),
+            child: const Text('Hapus'),
           ),
         ],
       ),

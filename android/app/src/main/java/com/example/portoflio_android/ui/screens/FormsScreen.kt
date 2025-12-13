@@ -68,7 +68,7 @@ fun FormsScreen(
                 containerColor = Color(0xFFEF4444),
                 action = {
                     TextButton(onClick = { viewModel.clearError() }) {
-                        Text("Dismiss", color = Color.White)
+                        Text("Tutup", color = Color.White)
                     }
                 }
             ) {
@@ -91,7 +91,7 @@ private fun FormListView(
             TopAppBar(
                 title = {
                     Text(
-                        "Forms",
+                        "Formulir",
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
@@ -143,7 +143,7 @@ private fun FormListView(
                         tint = Color(0xFF475569)
                     )
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text("No forms available", color = Color(0xFF64748B))
+                    Text("Tidak ada formulir tersedia", color = Color(0xFF64748B))
                 }
             }
         } else {
@@ -302,7 +302,7 @@ private fun FormDetailView(
                                 color = Color(0xFF2563EB).copy(alpha = 0.2f)
                             ) {
                                 Text(
-                                    text = "${formWithQuestions.questions.size} Questions",
+                                    text = "${formWithQuestions.questions.size} Pertanyaan",
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                                     fontSize = 12.sp,
                                     color = Color(0xFF2563EB)
@@ -314,7 +314,7 @@ private fun FormDetailView(
                                 color = Color(0xFF10B981).copy(alpha = 0.2f)
                             ) {
                                 Text(
-                                    text = "$responsesCount Responses",
+                                    text = "$responsesCount Respons",
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                                     fontSize = 12.sp,
                                     color = Color(0xFF10B981)
@@ -328,7 +328,7 @@ private fun FormDetailView(
             // Questions Header
             item {
                 Text(
-                    "Questions",
+                    "Pertanyaan",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White,

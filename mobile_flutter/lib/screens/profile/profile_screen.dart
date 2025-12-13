@@ -40,14 +40,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (user == null) {
       return const Scaffold(
         backgroundColor: Colors.transparent,
-        body: Center(child: Text('User not found')),
+        body: Center(child: Text('Pengguna tidak ditemukan')),
       );
     }
 
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: const Text('Profil'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -117,7 +117,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const Divider(height: 32),
                   _buildInfoRow(
-                    'Full Name',
+                    'Nama Lengkap',
                     _nameController
                         .text, // Use controller text only when editing? No, bind to field.
                     Icons.person_outline,
@@ -127,8 +127,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   const Divider(height: 32),
                   _buildInfoRow(
-                    'Role',
-                    user.isAdmin ? 'Administrator' : 'Member',
+                    'Peran',
+                    user.isAdmin ? 'Administrator' : 'Anggota',
                     Icons.admin_panel_settings_outlined,
                     isDark,
                     enabled: false,
@@ -147,7 +147,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
-                  child: const Text('Save Changes'),
+                  child: const Text('Simpan Perubahan'),
                 ),
               ),
 
@@ -165,7 +165,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   side: const BorderSide(color: AppColors.error),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                child: const Text('Logout'),
+                child: const Text('Keluar'),
               ),
             ),
           ],
@@ -253,11 +253,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (success && mounted) {
         setState(() => _isEditing = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile updated successfully')),
+          const SnackBar(content: Text('Profil berhasil diperbarui')),
         );
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(authProvider.error ?? 'Update failed')),
+          SnackBar(content: Text(authProvider.error ?? 'Gagal memperbarui')),
         );
       }
     }

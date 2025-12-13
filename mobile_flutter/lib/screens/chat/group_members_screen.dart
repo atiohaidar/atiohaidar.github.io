@@ -53,25 +53,25 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Add Member',
+        title: const Text('Tambah Anggota',
             style: TextStyle(color: AppColors.textPrimary)),
         backgroundColor: AppColors.darkSurface,
         content: TextField(
           controller: controller,
           decoration: const InputDecoration(
             labelText: 'Username',
-            hintText: 'Enter username to add',
+            hintText: 'Masukkan username untuk ditambahkan',
           ),
           style: const TextStyle(color: AppColors.textPrimary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('Batal'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, controller.text.trim()),
-            child: const Text('Add'),
+            child: const Text('Tambah'),
           ),
         ],
       ),
@@ -83,7 +83,7 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
         _loadMembers();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Member added successfully')),
+            const SnackBar(content: Text('Anggota berhasil ditambahkan')),
           );
         }
       } catch (e) {
@@ -100,22 +100,22 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Remove Member',
+        title: const Text('Hapus Anggota',
             style: TextStyle(color: AppColors.textPrimary)),
         backgroundColor: AppColors.darkSurface,
         content: Text(
-          'Remove ${member.userUsername} from the group?',
+          'Hapus ${member.userUsername} dari grup?',
           style: const TextStyle(color: AppColors.textSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: const Text('Batal'),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
-            child: const Text('Remove'),
+            child: const Text('Hapus'),
           ),
         ],
       ),
@@ -127,7 +127,7 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
         _loadMembers();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Member removed')),
+            const SnackBar(content: Text('Anggota dihapus')),
           );
         }
       } catch (e) {
@@ -148,7 +148,7 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
       _loadMembers();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Role changed to $newRole')),
+          SnackBar(content: Text('Peran diubah menjadi $newRole')),
         );
       }
     } catch (e) {
@@ -174,7 +174,7 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: Text(widget.group?.name ?? 'Group Members'),
+        title: Text(widget.group?.name ?? 'Anggota Grup'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -192,7 +192,7 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
 
   Widget _buildBody(bool isDark, String? currentUser, bool isAdmin) {
     if (_isLoading) {
-      return const LoadingIndicator(message: 'Loading members...');
+      return const LoadingIndicator(message: 'Memuat anggota...');
     }
 
     if (_error != null) {
@@ -202,10 +202,11 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
           children: [
             const Icon(Icons.error_outline, size: 64, color: AppColors.error),
             const SizedBox(height: 16),
-            const Text('Error loading members',
+            const Text('Gagal memuat anggota',
                 style: TextStyle(color: AppColors.textPrimary)),
             const SizedBox(height: 8),
-            ElevatedButton(onPressed: _loadMembers, child: const Text('Retry')),
+            ElevatedButton(
+                onPressed: _loadMembers, child: const Text('Coba Lagi')),
           ],
         ),
       );
@@ -214,8 +215,8 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
     if (_members.isEmpty) {
       return const EmptyState(
         icon: Icons.group_off,
-        title: 'No members',
-        subtitle: 'This group has no members',
+        title: 'Tidak ada anggota',
+        subtitle: 'Grup ini tidak memiliki anggota',
       );
     }
 
@@ -279,7 +280,7 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
                       const Padding(
                         padding: EdgeInsets.only(left: 8),
                         child: Text(
-                          '(You)',
+                          '(Anda)',
                           style: TextStyle(
                             color: AppColors.textMuted,
                             fontSize: 12,
@@ -327,13 +328,13 @@ class _GroupMembersScreenState extends State<GroupMembersScreen> {
                 PopupMenuItem(
                   value: 'role',
                   child: Text(member.role == 'admin'
-                      ? 'Demote to Member'
-                      : 'Promote to Admin'),
+                      ? 'Turunkan menjadi Anggota'
+                      : 'Promosikan menjadi Admin'),
                 ),
                 const PopupMenuItem(
                   value: 'remove',
                   child:
-                      Text('Remove', style: TextStyle(color: AppColors.error)),
+                      Text('Hapus', style: TextStyle(color: AppColors.error)),
                 ),
               ],
             ),

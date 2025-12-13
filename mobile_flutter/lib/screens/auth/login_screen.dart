@@ -62,7 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     // Welcome text
                     Text(
-                      'Welcome Back.',
+                      'Selamat Datang Kembali.',
                       style: TextStyle(
                         fontSize: 36,
                         fontWeight: FontWeight.bold,
@@ -95,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Text(
-                              'Login',
+                              'Masuk',
                               style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
@@ -124,12 +124,12 @@ class _LoginScreenState extends State<LoginScreen> {
                               decoration: InputDecoration(
                                 labelText: 'Username',
                                 prefixIcon: const Icon(Icons.person_outline),
-                                hintText: 'Enter your username',
+                                hintText: 'Masukkan username Anda',
                               ),
                               textInputAction: TextInputAction.next,
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Please enter your username';
+                                  return 'Mohon masukkan username Anda';
                                 }
                                 return null;
                               },
@@ -143,7 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               decoration: InputDecoration(
                                 labelText: 'Password',
                                 prefixIcon: const Icon(Icons.lock_outline),
-                                hintText: 'Enter your password',
+                                hintText: 'Masukkan password Anda',
                                 suffixIcon: IconButton(
                                   icon: Icon(
                                     _obscurePassword
@@ -161,7 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               onFieldSubmitted: (_) => _handleLogin(),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'Please enter your password';
+                                  return 'Mohon masukkan password Anda';
                                 }
                                 return null;
                               },
@@ -239,7 +239,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                             ),
                                           )
                                         : const Text(
-                                            'Login',
+                                            'Masuk',
                                             style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w600,

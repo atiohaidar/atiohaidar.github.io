@@ -56,7 +56,7 @@ fun EventsScreen(
                 TopAppBar(
                     title = {
                         Text(
-                            "Events",
+                            "Acara",
                             fontWeight = FontWeight.Bold,
                             color = Color.White
                         )
@@ -117,7 +117,7 @@ fun EventsScreen(
                             tint = Color(0xFF475569)
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text("No events available", color = Color(0xFF64748B))
+                        Text("Tidak ada acara tersedia", color = Color(0xFF64748B))
                     }
                 }
             } else {
@@ -157,10 +157,10 @@ fun EventsScreen(
         showDeleteConfirmDialog?.let { event ->
             AlertDialog(
                 onDismissRequest = { showDeleteConfirmDialog = null },
-                title = { Text("Delete Event", color = Color.White) },
+                title = { Text("Hapus Acara", color = Color.White) },
                 text = { 
                     Text(
-                        "Are you sure you want to delete \"${event.title}\"? This action cannot be undone.",
+                        "Apakah Anda yakin ingin menghapus \"${event.title}\"? Tindakan ini tidak dapat dibatalkan.",
                         color = Color(0xFF94A3B8)
                     )
                 },
@@ -172,12 +172,12 @@ fun EventsScreen(
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444))
                     ) {
-                        Text("Delete")
+                        Text("Hapus")
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { showDeleteConfirmDialog = null }) {
-                        Text("Cancel", color = Color(0xFF94A3B8))
+                        Text("Batal", color = Color(0xFF94A3B8))
                     }
                 },
                 containerColor = Color(0xFF1E293B)
@@ -217,7 +217,7 @@ fun EventsScreen(
                 containerColor = Color(0xFF10B981),
                 action = {
                     TextButton(onClick = { viewModel.clearScanResult() }) {
-                        Text("Dismiss", color = Color.White)
+                        Text("Tutup", color = Color.White)
                     }
                 }
             ) {
@@ -240,7 +240,7 @@ private fun AttendeesContent(
             .padding(bottom = 32.dp)
     ) {
         Text(
-            text = event?.title ?: "Attendees",
+            text = event?.title ?: "Peserta",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White
@@ -249,7 +249,7 @@ private fun AttendeesContent(
         Spacer(modifier = Modifier.height(8.dp))
         
         Text(
-            text = "${attendees.size} registered attendees",
+            text = "${attendees.size} peserta terdaftar",
             fontSize = 14.sp,
             color = Color(0xFF94A3B8)
         )
@@ -280,7 +280,7 @@ private fun AttendeesContent(
                         tint = Color(0xFF475569)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text("No attendees yet", color = Color(0xFF64748B))
+                    Text("Belum ada peserta", color = Color(0xFF64748B))
                 }
             }
         } else {
@@ -341,7 +341,7 @@ private fun AttendeeCard(attendee: EventAttendee) {
                     )
                     attendee.registeredAt?.take(10)?.let { date ->
                         Text(
-                            text = "Registered: $date",
+                            text = "Terdaftar: $date",
                             fontSize = 12.sp,
                             color = Color(0xFF64748B)
                         )
@@ -378,18 +378,18 @@ private fun CreateEventDialog(
     var showDatePicker by remember { mutableStateOf(false) }
     
     // Validation errors
-    val titleError = if (title.isNotBlank() && title.length < 3) "Title must be at least 3 characters" else null
-    val dateError = if (selectedDate != null && selectedDate!! < System.currentTimeMillis()) "Date cannot be in the past" else null
+    val titleError = if (title.isNotBlank() && title.length < 3) "Judul harus minimal 3 karakter" else null
+    val dateError = if (selectedDate != null && selectedDate!! < System.currentTimeMillis()) "Tanggal tidak boleh di masa lalu" else null
     
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Create Event", color = Color.White) },
+        title = { Text("Buat Acara", color = Color.White) },
         text = {
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
-                    label = { Text("Event Title *") },
+                    label = { Text("Judul Acara *") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     isError = titleError != null,
@@ -410,7 +410,7 @@ private fun CreateEventDialog(
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text("Description (optional)") },
+                    label = { Text("Deskripsi (opsional)") },
                     modifier = Modifier.fillMaxWidth(),
                     maxLines = 3,
                     colors = OutlinedTextFieldDefaults.colors(
@@ -438,7 +438,7 @@ private fun CreateEventDialog(
                         text = selectedDate?.let {
                             java.text.SimpleDateFormat("MMM dd, yyyy", java.util.Locale.getDefault())
                                 .format(java.util.Date(it))
-                        } ?: "Select Date"
+                        } ?: "Pilih Tanggal"
                     )
                 }
                 
@@ -447,7 +447,7 @@ private fun CreateEventDialog(
                 OutlinedTextField(
                     value = location,
                     onValueChange = { location = it },
-                    label = { Text("Location (optional)") },
+                    label = { Text("Lokasi (opsional)") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
@@ -478,12 +478,12 @@ private fun CreateEventDialog(
                 enabled = title.isNotBlank() && title.length >= 3 && selectedDate != null && titleError == null && dateError == null,
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2563EB))
             ) {
-                Text("Create")
+                Text("Buat")
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", color = Color(0xFF94A3B8))
+                Text("Batal", color = Color(0xFF94A3B8))
             }
         },
         containerColor = Color(0xFF1E293B)
@@ -505,7 +505,7 @@ private fun CreateEventDialog(
             },
             dismissButton = {
                 TextButton(onClick = { showDatePicker = false }) {
-                    Text("Cancel", color = Color(0xFF94A3B8))
+                    Text("Batal", color = Color(0xFF94A3B8))
                 }
             },
             colors = DatePickerDefaults.colors(containerColor = Color(0xFF1E293B))
@@ -619,7 +619,7 @@ private fun EventCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "by ${event.createdBy}",
+                    text = "oleh ${event.createdBy}",
                     fontSize = 12.sp,
                     color = Color(0xFF64748B)
                 )
@@ -639,7 +639,7 @@ private fun EventCard(
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Attendees", fontSize = 12.sp)
+                        Text("Peserta", fontSize = 12.sp)
                     }
                     
                     // Register Button
@@ -656,7 +656,7 @@ private fun EventCard(
                             modifier = Modifier.size(16.dp)
                         )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Register", fontSize = 14.sp)
+                        Text("Daftar", fontSize = 14.sp)
                     }
                 }
             }

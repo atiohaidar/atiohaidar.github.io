@@ -55,14 +55,14 @@
     let userBalance = 0;
 
     let categories = [
-        { id: "all", name: "All", icon: "🛒" },
-        { id: "seeds", name: "Seeds", icon: "🌱" },
-        { id: "tool", name: "Tools", icon: "🔧" },
-        { id: "upgrade", name: "Upgrades", icon: "⬆️" },
-        { id: "decoration", name: "Decorations", icon: "🌸" },
+        { id: "all", name: "Semua", icon: "🛒" },
+        { id: "seeds", name: "Benih", icon: "🌱" },
+        { id: "tool", name: "Alat", icon: "🔧" },
+        { id: "upgrade", name: "Peningkatan", icon: "⬆️" },
+        { id: "decoration", name: "Dekorasi", icon: "🌸" },
         { id: "premium", name: "Premium", icon: "💎" },
-        { id: "booster", name: "Boosters", icon: "⚡" },
-        { id: "currency", name: "Currency", icon: "💰" },
+        { id: "booster", name: "Booster", icon: "⚡" },
+        { id: "currency", name: "Mata Uang", icon: "💰" },
     ];
 
     onMount(async () => {
@@ -173,13 +173,13 @@
         purchaseLoading = null;
 
         if (result.success && result.data) {
-            showToast(`Purchased ${item.name}! 🎉`, "success");
+            showToast(`Membeli ${item.name}! 🎉`, "success");
             const profileRes = await getProfile();
             if (profileRes.success && profileRes.data) {
                 profile.set(profileRes.data);
             }
         } else {
-            showToast(result.error || "Purchase failed", "error");
+            showToast(result.error || "Pembelian gagal", "error");
         }
     }
 
@@ -243,7 +243,7 @@
     $: currencyPackages = [
         {
             id: "gold_small",
-            name: "Small Gold Pouch",
+            name: "Kantung Emas Kecil",
             type: "currency",
             currencyType: "gold",
             price_balance: 10,
@@ -251,12 +251,12 @@
             price_gold: 0,
             price_gems: 0,
             icon: "🪙",
-            description: "A small pouch of gold to get you started.",
+            description: "Kantung kecil berisi emas untuk memulai.",
             unlock_level: 0,
         },
         {
             id: "gold_medium",
-            name: "Medium Gold Sack",
+            name: "Karung Emas Menengah",
             type: "currency",
             currencyType: "gold",
             price_balance: 50,
@@ -264,12 +264,12 @@
             price_gold: 0,
             price_gems: 0,
             icon: "💰",
-            description: "A decent amount of gold.",
+            description: "Jumlah emas yang lumayan.",
             unlock_level: 0,
         },
         {
             id: "gold_large",
-            name: "Large Gold Chest",
+            name: "Peti Emas Besar",
             type: "currency",
             currencyType: "gold",
             price_balance: 100,
@@ -277,12 +277,12 @@
             price_gold: 0,
             price_gems: 0,
             icon: "🏦",
-            description: "A chest overflowing with gold!",
+            description: "Peti yang meluap dengan emas!",
             unlock_level: 0,
         },
         {
             id: "gems_small",
-            name: "Handful of Gems",
+            name: "Segenggam Permata",
             type: "currency",
             currencyType: "gems",
             price_balance: 100,
@@ -292,12 +292,12 @@
             price_gold: 0,
             price_gems: 0,
             icon: "💎",
-            description: "A handful of shiny gems.",
+            description: "Segenggam permata berkilau.",
             unlock_level: 0,
         },
         {
             id: "gems_large",
-            name: "Bucket of Gems",
+            name: "Sebakul Permata",
             type: "currency",
             currencyType: "gems",
             price_balance: 500,
@@ -307,7 +307,7 @@
             price_gold: 0,
             price_gems: 0,
             icon: "💠",
-            description: "Enough gems to speed up your farm.",
+            description: "Cukup permata untuk mempercepat kebunmu.",
             unlock_level: 0,
         },
     ];
@@ -337,8 +337,8 @@
 <div class="shop-page">
     <header class="header">
         <div class="header-left">
-            <a href="/play" class="back-btn">← Back to Farm</a>
-            <h1>🛒 Shop</h1>
+            <a href="/play" class="back-btn">← Kembali ke Kebun</a>
+            <h1>🛒 Toko</h1>
         </div>
         <div class="header-right">
             <div class="currency-display">
@@ -371,7 +371,7 @@
     {#if loading}
         <div class="loading">
             <div class="spinner"></div>
-            <p>Loading shop...</p>
+            <p>Memuat toko...</p>
         </div>
     {:else}
         <div class="shop-grid">
@@ -390,7 +390,7 @@
                     {#if item.isCrop}
                         <div class="item-crop-stats">
                             <div class="stat-row">
-                                <span>Profit:</span>
+                                <span>Untung:</span>
                                 <span class="profit"
                                     >+{getSafeCropProfit(
                                         item,
@@ -398,7 +398,7 @@
                                 >
                             </div>
                             <div class="stat-row">
-                                <span>Time:</span>
+                                <span>Waktu:</span>
                                 <span>{getSafeGrowTime(item)}</span>
                             </div>
                             <div class="stat-row">
@@ -409,19 +409,19 @@
                     {:else if item.type === "currency"}
                         <div class="item-crop-stats">
                             <div class="stat-row">
-                                <span>Get:</span>
+                                <span>Dapat:</span>
                                 <span class="profit">
                                     {item.reward_amount}
                                     {item.currencyType === "gold"
-                                        ? "Gold"
-                                        : "Gems"}
+                                        ? "Emas"
+                                        : "Permata"}
                                 </span>
                             </div>
                         </div>
                         <p class="item-desc">{item.description}</p>
                     {:else}
                         <p class="item-desc">
-                            {item.description || "No description"}
+                            {item.description || "Tidak ada deskripsi"}
                         </p>
                     {/if}
 
@@ -452,7 +452,7 @@
                     {#if item.unlock_level > ($profile?.level || 1)}
                         <div class="locked">🔒 Level {item.unlock_level}</div>
                     {:else if item.isCrop}
-                        <div class="unlocked-text">✓ Unlocked</div>
+                        <div class="unlocked-text">✓ Terbuka</div>
                     {:else}
                         <button
                             class="btn btn-primary buy-btn"
@@ -467,14 +467,16 @@
                         >
                             {#if purchaseLoading === item.id}
                                 {item.type === "currency"
-                                    ? "Exchanging..."
-                                    : "Buying..."}
+                                    ? "Menukar..."
+                                    : "Membeli..."}
                             {:else if item.type === "currency" && userBalance < (item.price_balance || 0)}
-                                Insufficient Saldo
+                                Saldo Tidak Cukup
                             {:else if item.type !== "currency" && !canAfford(item)}
-                                Not Enough
+                                Tidak Cukup
                             {:else}
-                                {item.type === "currency" ? "Top Up" : "Buy"}
+                                {item.type === "currency"
+                                    ? "Isi Ulang"
+                                    : "Beli"}
                             {/if}
                         </button>
                     {/if}
@@ -484,7 +486,7 @@
 
         {#if filteredItems.length === 0}
             <div class="empty-state">
-                <p>No items in this category</p>
+                <p>Tidak ada item di kategori ini</p>
             </div>
         {/if}
     {/if}

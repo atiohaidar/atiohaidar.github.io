@@ -13,7 +13,7 @@ class NotificationsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text('Notifications'),
+        title: const Text('Notifikasi'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -30,8 +30,8 @@ class NotificationsScreen extends StatelessWidget {
     if (notifications.isEmpty) {
       return const EmptyState(
         icon: Icons.notifications_none_outlined,
-        title: 'No notifications',
-        subtitle: 'You\'re all caught up! Check back later.',
+        title: 'Tidak ada notifikasi',
+        subtitle: 'Anda sudah mengetahui semuanya! Periksa kembali nanti.',
       );
     }
 

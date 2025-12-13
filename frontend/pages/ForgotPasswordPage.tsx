@@ -78,9 +78,7 @@ const ForgotPasswordPage: React.FC = () => {
                         <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-32 h-32 rounded-full bg-orange-500/20 blur-3xl pointer-events-none" />
 
                         <div className="relative z-10">
-                            <p className="text-amber-500 font-mono text-xs tracking-wider uppercase mb-2">
-                                Password Recovery
-                            </p>
+                            Pemulihan Password
                             <h2 className="text-2xl sm:text-3xl font-bold mb-2 text-gray-900 dark:text-white tracking-tight">Reset Password</h2>
                             <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">Masukkan username dan password baru</p>
 

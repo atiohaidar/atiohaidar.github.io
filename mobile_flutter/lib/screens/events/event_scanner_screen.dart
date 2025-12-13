@@ -295,7 +295,7 @@ class _EventScannerScreenState extends State<EventScannerScreen> {
                 child: ElevatedButton.icon(
                   onPressed: _resetScanner,
                   icon: const Icon(Icons.qr_code_scanner),
-                  label: const Text('Scan Next'),
+                  label: const Text('Pindai Berikutnya'),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                   ),
@@ -309,7 +309,7 @@ class _EventScannerScreenState extends State<EventScannerScreen> {
   }
 
   String _formatTime(String? timestamp) {
-    if (timestamp == null) return 'Unknown';
+    if (timestamp == null) return 'Tidak Diketahui';
     try {
       final date = DateTime.parse(timestamp);
       return DateFormat('HH:mm:ss').format(date);

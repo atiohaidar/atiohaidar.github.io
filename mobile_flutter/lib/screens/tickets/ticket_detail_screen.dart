@@ -56,7 +56,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
       return Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
-          title: const Text('Ticket Details'),
+          title: const Text('Detail Tiket'),
         ),
         body: const Center(child: CircularProgressIndicator()),
       );
@@ -65,7 +65,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: Text('Ticket #${ticket.id}'),
+        title: Text('Tiket #${ticket.id}'),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -98,7 +98,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                   children: [
                     Icon(Icons.delete, size: 20, color: Colors.red),
                     SizedBox(width: 8),
-                    Text('Delete', style: TextStyle(color: Colors.red)),
+                    Text('Hapus', style: TextStyle(color: Colors.red)),
                   ],
                 ),
               ),
@@ -157,7 +157,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Edit Ticket',
+                  'Edit Tiket',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -167,12 +167,12 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                 const SizedBox(height: 16),
                 TextField(
                   controller: titleController,
-                  decoration: const InputDecoration(labelText: 'Title'),
+                  decoration: const InputDecoration(labelText: 'Judul'),
                 ),
                 const SizedBox(height: 12),
                 TextField(
                   controller: descController,
-                  decoration: const InputDecoration(labelText: 'Description'),
+                  decoration: const InputDecoration(labelText: 'Deskripsi'),
                   maxLines: 3,
                 ),
                 const SizedBox(height: 12),
@@ -190,7 +190,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                 const SizedBox(height: 12),
                 DropdownButtonFormField<TicketPriority>(
                   value: selectedPriority,
-                  decoration: const InputDecoration(labelText: 'Priority'),
+                  decoration: const InputDecoration(labelText: 'Prioritas'),
                   items: TicketPriority.values
                       .map((p) => DropdownMenuItem(
                             value: p,
@@ -218,15 +218,15 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(success
-                                ? 'Ticket updated'
-                                : provider.error ?? 'Update failed'),
+                                ? 'Tiket diperbarui'
+                                : provider.error ?? 'Gagal memperbarui'),
                             backgroundColor:
                                 success ? AppColors.success : AppColors.error,
                           ),
                         );
                       }
                     },
-                    child: const Text('Save Changes'),
+                    child: const Text('Simpan Perubahan'),
                   ),
                 ),
               ],
@@ -241,12 +241,12 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete Ticket'),
-        content: Text('Are you sure you want to delete ticket #${ticket.id}?'),
+        title: const Text('Hapus Tiket'),
+        content: Text('Apakah Anda yakin ingin menghapus tiket #${ticket.id}?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: const Text('Batal'),
           ),
           TextButton(
             onPressed: () async {
@@ -257,7 +257,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                      content: Text('Ticket deleted'),
+                      content: Text('Tiket dihapus'),
                       backgroundColor: AppColors.success,
                     ),
                   );
@@ -267,7 +267,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Failed to delete: $e'),
+                      content: Text('Gagal menghapus: $e'),
                       backgroundColor: AppColors.error,
                     ),
                   );
@@ -275,7 +275,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
               }
             },
             style: TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: const Text('Delete'),
+            child: const Text('Hapus'),
           ),
         ],
       ),
@@ -316,7 +316,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
               ),
               const SizedBox(width: 4),
               Text(
-                'Created by you', // Replace with creator name if available
+                'Dibuat oleh Anda', // Replace with creator name if available
                 style: TextStyle(
                   fontSize: 14,
                   color: isDark
@@ -337,7 +337,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
                 ticket.createdAt != null
                     ? DateFormat('MMM d, y HH:mm')
                         .format(DateTime.parse(ticket.createdAt!))
-                    : 'Unknown date',
+                    : 'Tanggal tidak diketahui',
                 style: TextStyle(
                   fontSize: 14,
                   color: isDark
@@ -359,7 +359,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Description',
+            'Deskripsi',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -388,7 +388,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Comments',
+          'Komentar',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -397,7 +397,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
         ),
         const SizedBox(height: 16),
         const Center(
-          child: Text('No comments yet'),
+          child: Text('Belum ada komentar'),
         ),
       ],
     );
@@ -420,7 +420,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
             child: TextField(
               controller: _commentController,
               decoration: InputDecoration(
-                hintText: 'Add a comment...',
+                hintText: 'Tambah komentar...',
                 filled: true,
                 fillColor: isDark ? AppColors.deepNavy : Colors.grey.shade100,
                 border: OutlineInputBorder(
@@ -467,7 +467,7 @@ class _TicketDetailScreenState extends State<TicketDetailScreen> {
         _commentController.clear();
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Comment posted')),
+        const SnackBar(content: Text('Komentar diposting')),
       );
     }
   }

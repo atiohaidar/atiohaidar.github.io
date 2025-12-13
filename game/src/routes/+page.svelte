@@ -20,7 +20,7 @@
 
     async function handleLogin() {
         if (!username || !password) {
-            error = "Please enter username and password";
+            error = "Harap isi username dan password";
             return;
         }
 
@@ -33,10 +33,13 @@
 
         if (result.success && result.data) {
             isLoggedIn.set(true);
-            showToast(`Welcome, ${result.data.user.name}!`, "success");
+            showToast(
+                `Halo, ${result.data.user.name}! Selamat datang kembali!`,
+                "success",
+            );
             goto("/play");
         } else {
-            error = result.error || "Login failed";
+            error = result.error || "Gagal login. Silakan coba lagi.";
         }
     }
 
@@ -57,7 +60,7 @@
         <div class="logo">
             <span class="emoji">🌾</span>
             <h1>Bercocok Tanam</h1>
-            <p class="subtitle">Build your dream farm!</p>
+            <p class="subtitle">Bangun kebun impianmu disini!</p>
         </div>
 
         <!-- Login Form -->
@@ -68,7 +71,7 @@
                     type="text"
                     id="username"
                     bind:value={username}
-                    placeholder="Enter your username"
+                    placeholder="Masukkan username Anda"
                     on:keydown={handleKeydown}
                     disabled={loading}
                 />
@@ -80,7 +83,7 @@
                     type="password"
                     id="password"
                     bind:value={password}
-                    placeholder="Enter your password"
+                    placeholder="Masukkan password Anda"
                     on:keydown={handleKeydown}
                     disabled={loading}
                 />
@@ -97,38 +100,59 @@
             >
                 {#if loading}
                     <span class="spinner"></span>
-                    Loading...
+                    Mohon tunggu...
                 {:else}
-                    🚜 Start Farming!
+                    🚜 Mulai Bertani!
                 {/if}
             </button>
         </form>
 
         <!-- Info -->
         <div class="info">
-            <p>Use your existing account to play.</p>
+            <p>Gunakan akun yang sudah ada untuk bermain.</p>
             <p class="text-muted">
-                Don't have an account? Register at the main site.
+                Belum punya akun? Daftar dulu di web utama.
             </p>
+        </div>
+
+        <!-- Demo Accounts -->
+        <div class="mt-8 pt-6 border-t border-white/10">
+            <p
+                class="text-xs text-center text-gray-400 mb-3 font-medium uppercase tracking-wider"
+            >
+                Akun Demo
+            </p>
+            <div class="flex justify-center gap-4 text-xs">
+                <div
+                    class="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-gray-300"
+                >
+                    username: admin <br /> password: admin123
+                </div>
+                <div
+                    class="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-gray-300"
+                >
+                    username: user <br /> password: user123
+                </div>
+            </div>
         </div>
 
         <!-- Features -->
         <div class="features">
             <div class="feature">
                 <span>🌱</span>
-                <span>Plant Crops</span>
+                <span>Tanam-tanam</span>
             </div>
             <div class="feature">
                 <span>💰</span>
-                <span>Earn Gold</span>
+                <span>Cari Cuan</span>
             </div>
             <div class="feature">
                 <span>🏆</span>
-                <span>Level Up</span>
+                <span>Naikin Level</span>
             </div>
             <div class="feature">
                 <span>🛒</span>
-                <span>Buy Upgrades</span>
+                <span>Beli Upgrade</span>
             </div>
         </div>
     </div>
@@ -138,8 +162,7 @@
     .login-page {
         min-height: 100vh;
         display: flex;
-        align-items: center;
-        justify-content: center;
+        /* Safe centering approach using margin: auto on container */
         background: linear-gradient(
             135deg,
             #0f172a 0%,
@@ -150,6 +173,7 @@
     }
 
     .login-container {
+        margin: auto; /* Enables safe centering with scroll support */
         background: rgba(30, 41, 59, 0.8);
         backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.1);

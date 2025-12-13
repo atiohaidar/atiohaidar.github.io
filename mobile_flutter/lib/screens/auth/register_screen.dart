@@ -109,7 +109,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                 // Title
                 const Text(
-                  'Create Account',
+                  'Buat Akun',
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,

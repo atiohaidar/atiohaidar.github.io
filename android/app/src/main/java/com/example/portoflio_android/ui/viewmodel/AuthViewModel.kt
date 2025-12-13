@@ -64,7 +64,7 @@ class AuthViewModel @Inject constructor(
     
     fun login(username: String, password: String) {
         if (username.isBlank() || password.isBlank()) {
-            _authState.value = AuthState.Error("Username and password are required")
+            _authState.value = AuthState.Error("Username dan password diperlukan")
             return
         }
         
@@ -76,19 +76,19 @@ class AuthViewModel @Inject constructor(
                     _authState.value = AuthState.Authenticated(loginResponse.user)
                 }
                 .onFailure { exception ->
-                    _authState.value = AuthState.Error(exception.message ?: "Login failed")
+                    _authState.value = AuthState.Error(exception.message ?: "Login gagal")
                 }
         }
     }
     
     fun register(username: String, name: String, password: String) {
         if (username.isBlank() || name.isBlank() || password.isBlank()) {
-            _registerState.value = RegisterState.Error("All fields are required")
+            _registerState.value = RegisterState.Error("Semua kolom wajib diisi")
             return
         }
         
         if (password.length < 6) {
-            _registerState.value = RegisterState.Error("Password must be at least 6 characters")
+            _registerState.value = RegisterState.Error("Password minimal 6 karakter")
             return
         }
         
@@ -100,19 +100,19 @@ class AuthViewModel @Inject constructor(
                     _registerState.value = RegisterState.Success(response.message)
                 }
                 .onFailure { exception ->
-                    _registerState.value = RegisterState.Error(exception.message ?: "Registration failed")
+                    _registerState.value = RegisterState.Error(exception.message ?: "Registrasi gagal")
                 }
         }
     }
     
     fun forgotPassword(username: String, newPassword: String) {
         if (username.isBlank() || newPassword.isBlank()) {
-            _forgotPasswordState.value = ForgotPasswordState.Error("All fields are required")
+            _forgotPasswordState.value = ForgotPasswordState.Error("Semua kolom wajib diisi")
             return
         }
         
         if (newPassword.length < 6) {
-            _forgotPasswordState.value = ForgotPasswordState.Error("Password must be at least 6 characters")
+            _forgotPasswordState.value = ForgotPasswordState.Error("Password minimal 6 karakter")
             return
         }
         
@@ -124,7 +124,7 @@ class AuthViewModel @Inject constructor(
                     _forgotPasswordState.value = ForgotPasswordState.Success(response.message)
                 }
                 .onFailure { exception ->
-                    _forgotPasswordState.value = ForgotPasswordState.Error(exception.message ?: "Password reset failed")
+                    _forgotPasswordState.value = ForgotPasswordState.Error(exception.message ?: "Reset password gagal")
                 }
         }
     }

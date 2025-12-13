@@ -63,7 +63,7 @@ fun ProfileScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "Profile",
+                        "Profil",
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
@@ -152,7 +152,7 @@ fun ProfileScreen(
                             OutlinedTextField(
                                 value = name,
                                 onValueChange = { name = it },
-                                label = { Text("Display Name", color = Color(0xFF94A3B8)) },
+                                label = { Text("Nama Tampilan", color = Color(0xFF94A3B8)) },
                                 enabled = editMode,
                                 modifier = Modifier.fillMaxWidth(),
                                 colors = OutlinedTextFieldDefaults.colors(
@@ -173,7 +173,7 @@ fun ProfileScreen(
                                 OutlinedTextField(
                                     value = password,
                                     onValueChange = { password = it },
-                                    label = { Text("New Password (optional)", color = Color(0xFF94A3B8)) },
+                                    label = { Text("Password Baru (opsional)", color = Color(0xFF94A3B8)) },
                                     visualTransformation = PasswordVisualTransformation(),
                                     modifier = Modifier.fillMaxWidth(),
                                     colors = OutlinedTextFieldDefaults.colors(
@@ -191,7 +191,7 @@ fun ProfileScreen(
                                 OutlinedTextField(
                                     value = confirmPassword,
                                     onValueChange = { confirmPassword = it },
-                                    label = { Text("Confirm Password", color = Color(0xFF94A3B8)) },
+                                    label = { Text("Konfirmasi Password", color = Color(0xFF94A3B8)) },
                                     visualTransformation = PasswordVisualTransformation(),
                                     modifier = Modifier.fillMaxWidth(),
                                     colors = OutlinedTextFieldDefaults.colors(
@@ -223,7 +223,7 @@ fun ProfileScreen(
                                             contentColor = Color(0xFF94A3B8)
                                         )
                                     ) {
-                                        Text("Cancel")
+                                        Text("Batal")
                                     }
                                     
                                     Button(
@@ -248,7 +248,7 @@ fun ProfileScreen(
                                                 strokeWidth = 2.dp
                                             )
                                         } else {
-                                            Text("Save")
+                                            Text("Simpan")
                                         }
                                     }
                                 }
@@ -268,7 +268,7 @@ fun ProfileScreen(
                 containerColor = Color(0xFFEF4444),
                 action = {
                     TextButton(onClick = { viewModel.clearError() }) {
-                        Text("Dismiss", color = Color.White)
+                        Text("Tutup", color = Color.White)
                     }
                 }
             ) {

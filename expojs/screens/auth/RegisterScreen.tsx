@@ -79,7 +79,7 @@ export default function RegisterScreen() {
 
                 {/* Title */}
                 <View style={styles.titleContainer}>
-                    <Text style={styles.title}>Create Account</Text>
+                    <Text style={styles.title}>Buat Akun</Text>
                     <Text style={styles.subtitle}>Daftar untuk membuat akun baru</Text>
                 </View>
 

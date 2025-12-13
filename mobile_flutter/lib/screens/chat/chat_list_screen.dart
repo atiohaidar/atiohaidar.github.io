@@ -44,7 +44,7 @@ class _ChatListScreenState extends State<ChatListScreen>
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text('Messages'),
+        title: const Text('Pesan'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -55,7 +55,7 @@ class _ChatListScreenState extends State<ChatListScreen>
           unselectedLabelColor:
               isDark ? AppColors.textMuted : Colors.grey.shade600,
           tabs: const [
-            Tab(text: 'Direct', icon: Icon(Icons.person)),
+            Tab(text: 'Langsung', icon: Icon(Icons.person)),
             Tab(text: 'Grup', icon: Icon(Icons.group)),
           ],
         ),
@@ -84,14 +84,14 @@ class _ChatListScreenState extends State<ChatListScreen>
   Widget _buildConversationsTab(
       ChatProvider provider, AuthProvider authProvider, bool isDark) {
     if (provider.isLoading && provider.conversations.isEmpty) {
-      return const LoadingIndicator(message: 'Loading conversations...');
+      return const LoadingIndicator(message: 'Memuat percakapan...');
     }
 
     if (provider.conversations.isEmpty) {
       return const EmptyState(
         icon: Icons.chat_bubble_outline,
-        title: 'No messages',
-        subtitle: 'Start a conversation with someone',
+        title: 'Tidak ada pesan',
+        subtitle: 'Mulai percakapan dengan seseorang',
       );
     }
 
@@ -112,14 +112,14 @@ class _ChatListScreenState extends State<ChatListScreen>
 
   Widget _buildGroupsTab(ChatProvider provider, bool isDark) {
     if (provider.isLoading && provider.groups.isEmpty) {
-      return const LoadingIndicator(message: 'Loading groups...');
+      return const LoadingIndicator(message: 'Memuat grup...');
     }
 
     if (provider.groups.isEmpty) {
       return const EmptyState(
         icon: Icons.group_off,
-        title: 'No groups',
-        subtitle: 'Create or join a group to start chatting',
+        title: 'Tidak ada grup',
+        subtitle: 'Buat atau gabung grup untuk mulai mengobrol',
       );
     }
 
@@ -251,7 +251,7 @@ class _ChatListScreenState extends State<ChatListScreen>
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    group.description ?? '${group.memberCount ?? 0} members',
+                    group.description ?? '${group.memberCount ?? 0} anggota',
                     style: TextStyle(
                       fontSize: 14,
                       color: isDark
@@ -290,21 +290,21 @@ class _ChatListScreenState extends State<ChatListScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('New Message',
+        title: const Text('Pesan Baru',
             style: TextStyle(color: AppColors.textPrimary)),
         backgroundColor: AppColors.darkSurface,
         content: TextField(
           controller: controller,
           decoration: const InputDecoration(
             labelText: 'Username',
-            hintText: 'Enter username to chat with',
+            hintText: 'Masukkan username untuk mengobrol',
           ),
           style: const TextStyle(color: AppColors.textPrimary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('Batal'),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -328,7 +328,7 @@ class _ChatListScreenState extends State<ChatListScreen>
                 }
               }
             },
-            child: const Text('Start Chat'),
+            child: const Text('Mulai Chat'),
           ),
         ],
       ),
@@ -341,7 +341,7 @@ class _ChatListScreenState extends State<ChatListScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('New Group',
+        title: const Text('Grup Baru',
             style: TextStyle(color: AppColors.textPrimary)),
         backgroundColor: AppColors.darkSurface,
         content: Column(
@@ -350,8 +350,8 @@ class _ChatListScreenState extends State<ChatListScreen>
             TextField(
               controller: nameController,
               decoration: const InputDecoration(
-                labelText: 'Group Name',
-                hintText: 'Enter group name',
+                labelText: 'Nama Grup',
+                hintText: 'Masukkan nama grup',
               ),
               style: const TextStyle(color: AppColors.textPrimary),
             ),
@@ -359,8 +359,8 @@ class _ChatListScreenState extends State<ChatListScreen>
             TextField(
               controller: descController,
               decoration: const InputDecoration(
-                labelText: 'Description (optional)',
-                hintText: 'Enter description',
+                labelText: 'Deskripsi (opsional)',
+                hintText: 'Masukkan deskripsi',
               ),
               style: const TextStyle(color: AppColors.textPrimary),
             ),
@@ -369,7 +369,7 @@ class _ChatListScreenState extends State<ChatListScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: const Text('Batal'),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -395,7 +395,7 @@ class _ChatListScreenState extends State<ChatListScreen>
                 }
               }
             },
-            child: const Text('Create Group'),
+            child: const Text('Buat Grup'),
           ),
         ],
       ),

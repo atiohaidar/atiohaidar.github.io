@@ -48,7 +48,7 @@ fun TasksScreen(
                 TopAppBar(
                     title = {
                         Text(
-                            "Tasks",
+                            "Tugas",
                             fontWeight = FontWeight.Bold,
                             color = Color.White
                         )
@@ -82,7 +82,7 @@ fun TasksScreen(
                     containerColor = Color(0xFF2563EB),
                     contentColor = Color.White
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = "Add Task")
+                    Icon(Icons.Default.Add, contentDescription = "Tambah Tugas")
                 }
             },
             containerColor = Color.Transparent
@@ -112,12 +112,12 @@ fun TasksScreen(
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                         Text(
-                            "No tasks yet",
+                            "Belum ada tugas",
                             fontSize = 18.sp,
                             color = Color(0xFF64748B)
                         )
                         Text(
-                            "Tap + to create your first task",
+                            "Ketuk + untuk membuat tugas pertama Anda",
                             fontSize = 14.sp,
                             color = Color(0xFF475569)
                         )
@@ -261,14 +261,14 @@ private fun AddTaskDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text("New Task", color = Color.White)
+            Text("Tugas Baru", color = Color.White)
         },
         text = {
             Column {
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Task Name") },
+                    label = { Text("Nama Tugas") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
@@ -284,7 +284,7 @@ private fun AddTaskDialog(
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text("Description (optional)") },
+                    label = { Text("Deskripsi (opsional)") },
                     modifier = Modifier.fillMaxWidth(),
                     maxLines = 3,
                     colors = OutlinedTextFieldDefaults.colors(
@@ -306,12 +306,12 @@ private fun AddTaskDialog(
                     containerColor = Color(0xFF2563EB)
                 )
             ) {
-                Text("Create")
+                Text("Buat")
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", color = Color(0xFF94A3B8))
+                Text("Batal", color = Color(0xFF94A3B8))
             }
         },
         containerColor = Color(0xFF1E293B)

@@ -60,7 +60,7 @@ class _ItemBorrowingDetailScreenState extends State<ItemBorrowingDetailScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text('Borrowing Details'),
+        title: const Text('Detail Peminjaman'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -71,7 +71,7 @@ class _ItemBorrowingDetailScreenState extends State<ItemBorrowingDetailScreen> {
 
   Widget _buildBody(bool isDark) {
     if (_isLoading) {
-      return const LoadingIndicator(message: 'Loading details...');
+      return const LoadingIndicator(message: 'Memuat detail...');
     }
 
     if (_error != null) {
@@ -84,7 +84,7 @@ class _ItemBorrowingDetailScreenState extends State<ItemBorrowingDetailScreen> {
     if (_borrowing == null) {
       return const EmptyState(
         icon: Icons.assignment_outlined,
-        title: 'Borrowing not found',
+        title: 'Peminjaman tidak ditemukan',
       );
     }
 
@@ -119,32 +119,32 @@ class _ItemBorrowingDetailScreenState extends State<ItemBorrowingDetailScreen> {
       case ItemBorrowingStatus.approved:
         statusColor = AppColors.success;
         statusIcon = Icons.check_circle;
-        statusText = 'Approved';
+        statusText = 'Disetujui';
         break;
       case ItemBorrowingStatus.pending:
         statusColor = AppColors.warning;
         statusIcon = Icons.schedule;
-        statusText = 'Pending Approval';
+        statusText = 'Menunggu Persetujuan';
         break;
       case ItemBorrowingStatus.returned:
         statusColor = AppColors.info;
         statusIcon = Icons.assignment_return;
-        statusText = 'Returned';
+        statusText = 'Dikembalikan';
         break;
       case ItemBorrowingStatus.rejected:
         statusColor = AppColors.error;
         statusIcon = Icons.cancel;
-        statusText = 'Rejected';
+        statusText = 'Ditolak';
         break;
       case ItemBorrowingStatus.damaged:
         statusColor = AppColors.error;
         statusIcon = Icons.warning;
-        statusText = 'Damaged';
+        statusText = 'Rusak';
         break;
       case ItemBorrowingStatus.extended:
         statusColor = AppColors.purple;
         statusIcon = Icons.update;
-        statusText = 'Extended';
+        statusText = 'Diperpanjang';
         break;
     }
 
@@ -174,7 +174,7 @@ class _ItemBorrowingDetailScreenState extends State<ItemBorrowingDetailScreen> {
                   ),
                 ),
                 Text(
-                  'Borrowing #${_borrowing!.id.substring(0, 8)}',
+                  'Peminjaman #${_borrowing!.id.substring(0, 8)}',
                   style: TextStyle(
                     fontSize: 12,
                     color: isDark ? AppColors.textMuted : Colors.grey.shade600,
@@ -217,7 +217,7 @@ class _ItemBorrowingDetailScreenState extends State<ItemBorrowingDetailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      _item?.name ?? 'Loading...',
+                      _item?.name ?? 'Memuat...',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -257,7 +257,7 @@ class _ItemBorrowingDetailScreenState extends State<ItemBorrowingDetailScreen> {
                     size: 16, color: AppColors.primaryBlue),
                 const SizedBox(width: 6),
                 Text(
-                  'Quantity: ${_borrowing!.quantity}',
+                  'Kuantitas: ${_borrowing!.quantity}',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     color: AppColors.primaryBlue,
@@ -278,7 +278,7 @@ class _ItemBorrowingDetailScreenState extends State<ItemBorrowingDetailScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Borrowing Details',
+            'Detail Peminjaman',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -288,21 +288,21 @@ class _ItemBorrowingDetailScreenState extends State<ItemBorrowingDetailScreen> {
           const SizedBox(height: 16),
           _buildDetailRow(
             Icons.calendar_today,
-            'Start Date',
+            'Tanggal Mulai',
             _borrowing!.startDate,
             isDark,
           ),
           const SizedBox(height: 12),
           _buildDetailRow(
             Icons.event_available,
-            'End Date',
+            'Tanggal Selesai',
             _borrowing!.endDate,
             isDark,
           ),
           const SizedBox(height: 12),
           _buildDetailRow(
             Icons.person_outline,
-            'Borrower',
+            'Peminjam',
             _borrowing!.borrowerUsername,
             isDark,
           ),
@@ -310,7 +310,7 @@ class _ItemBorrowingDetailScreenState extends State<ItemBorrowingDetailScreen> {
             const SizedBox(height: 12),
             _buildDetailRow(
               Icons.notes,
-              'Notes',
+              'Catatan',
               _borrowing!.notes!,
               isDark,
             ),
@@ -369,7 +369,7 @@ class _ItemBorrowingDetailScreenState extends State<ItemBorrowingDetailScreen> {
         ),
       ),
       icon: const Icon(Icons.cancel),
-      label: const Text('Cancel Borrowing'),
+      label: const Text('Batalkan Peminjaman'),
     );
   }
 
@@ -377,13 +377,13 @@ class _ItemBorrowingDetailScreenState extends State<ItemBorrowingDetailScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Cancel Borrowing'),
+        title: const Text('Batalkan Peminjaman'),
         content: const Text(
-            'Are you sure you want to cancel this borrowing request?'),
+            'Apakah Anda yakin ingin membatalkan permintaan peminjaman ini?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('No'),
+            child: const Text('Tidak'),
           ),
           TextButton(
             onPressed: () async {
@@ -393,7 +393,7 @@ class _ItemBorrowingDetailScreenState extends State<ItemBorrowingDetailScreen> {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                        content: Text('Borrowing cancelled successfully')),
+                        content: Text('Peminjaman berhasil dibatalkan')),
                   );
                   Navigator.pop(context); // Go back to list
                 }
@@ -406,7 +406,7 @@ class _ItemBorrowingDetailScreenState extends State<ItemBorrowingDetailScreen> {
               }
             },
             style: TextButton.styleFrom(foregroundColor: AppColors.error),
-            child: const Text('Yes, Cancel'),
+            child: const Text('Ya, Batalkan'),
           ),
         ],
       ),

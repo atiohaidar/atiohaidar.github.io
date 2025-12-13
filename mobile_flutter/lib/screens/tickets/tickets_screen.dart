@@ -118,7 +118,7 @@ class _TicketsScreenState extends State<TicketsScreen>
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Create New Ticket',
+                  'Buat Tiket Baru',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -129,8 +129,8 @@ class _TicketsScreenState extends State<TicketsScreen>
                 TextField(
                   controller: titleController,
                   decoration: const InputDecoration(
-                    labelText: 'Subject',
-                    hintText: 'Enter ticket subject',
+                    labelText: 'Subjek',
+                    hintText: 'Masukkan subjek tiket',
                   ),
                   autofocus: true,
                 ),
@@ -138,15 +138,15 @@ class _TicketsScreenState extends State<TicketsScreen>
                 TextField(
                   controller: descController,
                   decoration: const InputDecoration(
-                    labelText: 'Description',
-                    hintText: 'Describe your issue',
+                    labelText: 'Deskripsi',
+                    hintText: 'Jelaskan masalah Anda',
                   ),
                   maxLines: 4,
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<TicketCategory>(
                   value: selectedCategory,
-                  decoration: const InputDecoration(labelText: 'Category'),
+                  decoration: const InputDecoration(labelText: 'Kategori'),
                   items: categories.map((c) {
                     return DropdownMenuItem(
                       value: c,
@@ -168,7 +168,7 @@ class _TicketsScreenState extends State<TicketsScreen>
                 const SizedBox(height: 16),
                 DropdownButtonFormField<TicketPriority>(
                   value: selectedPriority,
-                  decoration: const InputDecoration(labelText: 'Priority'),
+                  decoration: const InputDecoration(labelText: 'Prioritas'),
                   items: TicketPriority.values.map((p) {
                     return DropdownMenuItem(
                       value: p,
@@ -204,17 +204,16 @@ class _TicketsScreenState extends State<TicketsScreen>
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content: Text('Ticket created successfully')),
+                              content: Text('Tiket berhasil dibuat')),
                         );
                       }
                     } else if (selectedCategory == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Please select a category')),
+                        const SnackBar(content: Text('Harap pilih kategori')),
                       );
                     }
                   },
-                  child: const Text('Submit Ticket'),
+                  child: const Text('Kirim Tiket'),
                 ),
                 const SizedBox(height: 16),
               ],
@@ -278,7 +277,7 @@ class _TicketsScreenState extends State<TicketsScreen>
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Edit Ticket #${ticket.id}',
+                  'Edit Tiket #${ticket.id}',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -289,23 +288,23 @@ class _TicketsScreenState extends State<TicketsScreen>
                 TextField(
                   controller: titleController,
                   decoration: const InputDecoration(
-                    labelText: 'Subject',
-                    hintText: 'Enter ticket subject',
+                    labelText: 'Subjek',
+                    hintText: 'Masukkan subjek tiket',
                   ),
                 ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: descController,
                   decoration: const InputDecoration(
-                    labelText: 'Description',
-                    hintText: 'Describe your issue',
+                    labelText: 'Deskripsi',
+                    hintText: 'Jelaskan masalah Anda',
                   ),
                   maxLines: 4,
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<TicketStatus>(
                   value: selectedStatus,
-                  decoration: const InputDecoration(labelText: 'Status'),
+                  decoration: const InputDecoration(labelText: 'Penerima'),
                   items: TicketStatus.values.map((s) {
                     return DropdownMenuItem(
                       value: s,
@@ -327,7 +326,7 @@ class _TicketsScreenState extends State<TicketsScreen>
                 const SizedBox(height: 16),
                 DropdownButtonFormField<TicketPriority>(
                   value: selectedPriority,
-                  decoration: const InputDecoration(labelText: 'Priority'),
+                  decoration: const InputDecoration(labelText: 'Prioritas'),
                   items: TicketPriority.values.map((p) {
                     return DropdownMenuItem(
                       value: p,
@@ -367,12 +366,12 @@ class _TicketsScreenState extends State<TicketsScreen>
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content: Text('Ticket updated successfully')),
+                              content: Text('Tiket berhasil diperbarui')),
                         );
                       }
                     }
                   },
-                  child: const Text('Save Changes'),
+                  child: const Text('Simpan Perubahan'),
                 ),
                 const SizedBox(height: 16),
               ],
@@ -397,17 +396,17 @@ class _TicketsScreenState extends State<TicketsScreen>
           const SizedBox(width: 8),
           Expanded(
             child: _buildMiniStat(
-                'Open', '${stats?.open ?? 0}', AppColors.info, isDark),
+                'Buka', '${stats?.open ?? 0}', AppColors.info, isDark),
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: _buildMiniStat('Progress', '${stats?.inProgress ?? 0}',
+            child: _buildMiniStat('Proses', '${stats?.inProgress ?? 0}',
                 AppColors.warning, isDark),
           ),
           const SizedBox(width: 8),
           Expanded(
             child: _buildMiniStat(
-                'Solved', '${stats?.solved ?? 0}', AppColors.success, isDark),
+                'Selesai', '${stats?.solved ?? 0}', AppColors.success, isDark),
           ),
         ],
       ),
@@ -465,10 +464,10 @@ class _TicketsScreenState extends State<TicketsScreen>
           borderRadius: BorderRadius.circular(12),
         ),
         tabs: const [
-          Tab(text: 'All'),
-          Tab(text: 'Open'),
-          Tab(text: 'Progress'),
-          Tab(text: 'Solved'),
+          Tab(text: 'Semua'),
+          Tab(text: 'Buka'),
+          Tab(text: 'Proses'),
+          Tab(text: 'Selesai'),
         ],
       ),
     );
@@ -477,7 +476,7 @@ class _TicketsScreenState extends State<TicketsScreen>
   Widget _buildTicketList(
       List<Ticket> tickets, TicketsProvider provider, bool isDark) {
     if (provider.isLoading && tickets.isEmpty) {
-      return const LoadingIndicator(message: 'Loading tickets...');
+      return const LoadingIndicator(message: 'Memuat tiket...');
     }
 
     if (provider.error != null && tickets.isEmpty) {
@@ -490,8 +489,8 @@ class _TicketsScreenState extends State<TicketsScreen>
     if (tickets.isEmpty) {
       return const EmptyState(
         icon: Icons.confirmation_number_outlined,
-        title: 'No tickets',
-        subtitle: 'Tickets will appear here',
+        title: 'Tidak ada tiket',
+        subtitle: 'Tiket akan muncul di sini',
       );
     }
 

@@ -53,7 +53,7 @@ fun RoomsScreen(
                 TopAppBar(
                     title = {
                         Text(
-                            "Rooms & Bookings",
+                            "Ruangan & Reservasi",
                             fontWeight = FontWeight.Bold,
                             color = Color.White
                         )
@@ -105,12 +105,12 @@ fun RoomsScreen(
                     Tab(
                         selected = selectedTab == 0,
                         onClick = { selectedTab = 0 },
-                        text = { Text("Rooms") }
+                        text = { Text("Ruangan") }
                     )
                     Tab(
                         selected = selectedTab == 1,
                         onClick = { selectedTab = 1 },
-                        text = { Text("My Bookings") }
+                        text = { Text("Reservasi Saya") }
                     )
                 }
                 
@@ -181,7 +181,7 @@ private fun RoomsList(rooms: List<Room>, onBookRoom: (roomId: String) -> Unit) {
                     tint = Color(0xFF475569)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("No rooms available", color = Color(0xFF64748B))
+                Text("Tidak ada ruangan tersedia", color = Color(0xFF64748B))
             }
         }
     } else {
@@ -229,7 +229,7 @@ private fun RoomCard(room: Room, onBookRoom: (roomId: String) -> Unit) {
                     else Color(0xFFEF4444).copy(alpha = 0.2f)
                 ) {
                     Text(
-                        text = if (room.available) "Available" else "Unavailable",
+                        text = if (room.available) "Tersedia" else "Tidak Tersedia",
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                         fontSize = 12.sp,
                         color = if (room.available) Color(0xFF10B981) else Color(0xFFEF4444)
@@ -250,7 +250,7 @@ private fun RoomCard(room: Room, onBookRoom: (roomId: String) -> Unit) {
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "Capacity: ${room.capacity}",
+                    text = "Kapasitas: ${room.capacity}",
                     fontSize = 14.sp,
                     color = Color(0xFF94A3B8)
                 )
@@ -277,7 +277,7 @@ private fun RoomCard(room: Room, onBookRoom: (roomId: String) -> Unit) {
                 ) {
                     Icon(Icons.Default.Book, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Book Room")
+                    Text("Pesan Ruangan")
                 }
             }
         }
@@ -302,7 +302,7 @@ private fun BookingsList(
                     tint = Color(0xFF475569)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("No bookings yet", color = Color(0xFF64748B))
+                Text("Belum ada reservasi", color = Color(0xFF64748B))
             }
         }
     } else {
@@ -352,7 +352,7 @@ private fun BookingCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Room: ${booking.roomId}",
+                    text = "Ruangan: ${booking.roomId}",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White
@@ -409,7 +409,7 @@ private fun BookingCard(
                         )
                     )
                 ) {
-                    Text("Cancel Booking")
+                    Text("Batalkan Reservasi")
                 }
             }
         }
@@ -431,18 +431,18 @@ private fun CreateBookingDialog(
     
     // Validation
     val dateError = when {
-        startDate != null && startDate!! < System.currentTimeMillis() -> "Start time cannot be in the past"
-        startDate != null && endDate != null && startDate!! >= endDate!! -> "End time must be after start time"
+        startDate != null && startDate!! < System.currentTimeMillis() -> "Waktu mulai tidak boleh di masa lalu"
+        startDate != null && endDate != null && startDate!! >= endDate!! -> "Waktu selesai harus setelah waktu mulai"
         else -> null
     }
     
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Book Room", color = Color.White) },
+        title = { Text("Pesan Ruangan", color = Color.White) },
         text = {
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 Text(
-                    "Room ID: $roomId",
+                    "ID Ruangan: $roomId",
                     fontSize = 14.sp,
                     color = Color(0xFF94A3B8),
                     modifier = Modifier.padding(bottom = 12.dp)
@@ -468,7 +468,7 @@ private fun CreateBookingDialog(
                         startDate?.let {
                             java.text.SimpleDateFormat("MMM dd, yyyy HH:mm", java.util.Locale.getDefault())
                                 .format(java.util.Date(it))
-                        } ?: "Start Time"
+                        } ?: "Waktu Mulai"
                     )
                 }
                 
@@ -485,7 +485,7 @@ private fun CreateBookingDialog(
                         endDate?.let {
                             java.text.SimpleDateFormat("MMM dd, yyyy HH:mm", java.util.Locale.getDefault())
                                 .format(java.util.Date(it))
-                        } ?: "End Time"
+                        } ?: "Waktu Selesai"
                     )
                 }
                 
@@ -494,7 +494,7 @@ private fun CreateBookingDialog(
                 OutlinedTextField(
                     value = purpose,
                     onValueChange = { purpose = it },
-                    label = { Text("Purpose (optional)") },
+                    label = { Text("Tujuan (opsional)") },
                     modifier = Modifier.fillMaxWidth(),
                     maxLines = 3,
                     colors = OutlinedTextFieldDefaults.colors(
@@ -524,12 +524,12 @@ private fun CreateBookingDialog(
                 enabled = startDate != null && endDate != null && dateError == null,
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2563EB))
             ) {
-                Text("Book")
+                Text("Pesan")
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", color = Color(0xFF94A3B8))
+                Text("Batal", color = Color(0xFF94A3B8))
             }
         },
         containerColor = Color(0xFF1E293B)
@@ -551,7 +551,7 @@ private fun CreateBookingDialog(
             },
             dismissButton = {
                 TextButton(onClick = { showStartDatePicker = false }) {
-                    Text("Cancel", color = Color(0xFF94A3B8))
+                    Text("Batal", color = Color(0xFF94A3B8))
                 }
             },
             colors = DatePickerDefaults.colors(containerColor = Color(0xFF1E293B))
@@ -583,7 +583,7 @@ private fun CreateBookingDialog(
             },
             dismissButton = {
                 TextButton(onClick = { showEndDatePicker = false }) {
-                    Text("Cancel", color = Color(0xFF94A3B8))
+                    Text("Batal", color = Color(0xFF94A3B8))
                 }
             },
             colors = DatePickerDefaults.colors(containerColor = Color(0xFF1E293B))

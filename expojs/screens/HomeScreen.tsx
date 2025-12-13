@@ -30,7 +30,7 @@ export default function HomeScreen() {
     ...(isAdmin && stats?.totalUsers
       ? [
         {
-          title: 'Total Users',
+          title: 'Total Pengguna',
           value: stats.totalUsers,
           icon: 'account-group',
           color: AppColors.statBlue,
@@ -38,23 +38,23 @@ export default function HomeScreen() {
       ]
       : []),
     {
-      title: 'Total Tasks',
+      title: 'Total Tugas',
       value: stats?.totalTasks || 0,
-      subtitle: `${stats?.completedTasks || 0} completed`,
+      subtitle: `${stats?.completedTasks || 0} selesai`,
       icon: 'checkbox-marked-circle',
       color: AppColors.statGreen,
     },
     {
-      title: 'Articles',
+      title: 'Artikel',
       value: stats?.totalArticles || 0,
-      subtitle: `${stats?.publishedArticles || 0} published`,
+      subtitle: `${stats?.publishedArticles || 0} dipublikasikan`,
       icon: 'file-document',
       color: AppColors.statOrange,
     },
     ...(isAdmin && stats?.totalRooms
       ? [
         {
-          title: 'Rooms',
+          title: 'Ruangan',
           value: stats.totalRooms,
           icon: 'door',
           color: AppColors.statPurple,
@@ -62,9 +62,9 @@ export default function HomeScreen() {
       ]
       : []),
     {
-      title: 'Bookings',
+      title: 'Pemesanan',
       value: stats?.totalBookings || 0,
-      subtitle: `${stats?.pendingBookings || 0} pending`,
+      subtitle: `${stats?.pendingBookings || 0} menunggu`,
       icon: 'calendar-check',
       color: AppColors.statRed,
     },
@@ -80,10 +80,10 @@ export default function HomeScreen() {
     >
       <View style={styles.header}>
         <Text variant="headlineMedium" style={[styles.welcomeText, { color: theme.colors.onSurface }]}>
-          Welcome, {user?.name || user?.username}!
+          Selamat Datang, {user?.name || user?.username}!
         </Text>
         <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
-          {isAdmin ? 'Administrator' : 'Member'}
+          {isAdmin ? 'Administrator' : 'Anggota'}
         </Text>
       </View>
 
@@ -102,7 +102,7 @@ export default function HomeScreen() {
                 Rp {(user?.balance ?? 0).toLocaleString('id-ID')}
               </Text>
               <Text variant="bodyMedium" style={{ color: theme.colors.onSurface }}>
-                Total Balance
+                Total Saldo
               </Text>
             </View>
             <View style={{ gap: 8 }}>
@@ -158,19 +158,19 @@ export default function HomeScreen() {
       <GlassCard style={styles.infoCard} mode="elevated">
         <View style={{ padding: 16 }}>
           <Text variant="titleMedium" style={[styles.infoTitle, { color: theme.colors.onSurface }]}>
-            Quick Actions
+            Aksi Cepat
           </Text>
           <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, marginBottom: 8 }}>
-            • Navigate to Tasks tab to manage your tasks
+            • Buka tab Tugas untuk mengelola tugas Anda
           </Text>
           <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, marginBottom: 8 }}>
-            • Check Articles for published content
+            • Cek Artikel untuk konten yang dipublikasikan
           </Text>
           <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant, marginBottom: 8 }}>
-            • Visit Bookings to reserve rooms
+            • Kunjungi Pemesanan untuk reservasi ruangan
           </Text>
           <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>
-            • Use Chat to communicate with others
+            • Gunakan Chat untuk berkomunikasi dengan orang lain
           </Text>
         </View>
       </GlassCard>

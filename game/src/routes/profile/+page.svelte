@@ -65,12 +65,12 @@
 
         if (result.success && result.data) {
             showToast(
-                `Claimed! +${result.data.gold} gold, +${result.data.gems} gems`,
+                `Diklaim! +${result.data.gold} emas, +${result.data.gems} permata`,
                 "gold",
             );
             await loadData();
         } else {
-            showToast(result.error || "Failed to claim", "error");
+            showToast(result.error || "Gagal mengklaim", "error");
         }
     }
 
@@ -83,12 +83,12 @@
 
         if (result.success && result.data) {
             showToast(
-                `Claimed! +${result.data.gold} gold, +${result.data.gems} gems`,
+                `Diklaim! +${result.data.gold} emas, +${result.data.gems} permata`,
                 "gold",
             );
             await loadData();
         } else {
-            showToast(result.error || "Failed to claim", "error");
+            showToast(result.error || "Gagal mengklaim", "error");
         }
     }
 
@@ -111,10 +111,10 @@
 
     function getQuestTypeLabel(type: string): string {
         const labels: Record<string, string> = {
-            harvest: "🌾 Harvest crops",
-            plant: "🌱 Plant crops",
-            water: "💧 Water crops",
-            earn: "💰 Earn gold",
+            harvest: "🌾 Panen tanaman",
+            plant: "🌱 Tanam tanaman",
+            water: "💧 Siram tanaman",
+            earn: "💰 Dapatkan emas",
         };
         return labels[type] || type;
     }
@@ -133,15 +133,15 @@
 
 <div class="profile-page">
     <header class="header">
-        <a href="/play" class="back-btn">← Back to Farm</a>
-        <h1>👤 Profile</h1>
-        <button class="logout-btn" on:click={handleLogout}>Log Out</button>
+        <a href="/play" class="back-btn">← Kembali ke Kebun</a>
+        <h1>👤 Profil</h1>
+        <button class="logout-btn" on:click={handleLogout}>Keluar</button>
     </header>
 
     {#if loading}
         <div class="loading">
             <div class="spinner"></div>
-            <p>Loading profile...</p>
+            <p>Memuat profil...</p>
         </div>
     {:else}
         <!-- Profile Stats -->
@@ -160,32 +160,32 @@
                     <span class="stat-value"
                         >{$profile?.gold?.toLocaleString() || 0}</span
                     >
-                    <span class="stat-label">Gold</span>
+                    <span class="stat-label">Emas</span>
                 </div>
                 <div class="stat-card">
                     <span class="stat-icon">💎</span>
                     <span class="stat-value">{$profile?.gems || 0}</span>
-                    <span class="stat-label">Gems</span>
+                    <span class="stat-label">Permata</span>
                 </div>
                 <div class="stat-card">
                     <span class="stat-icon">🌾</span>
                     <span class="stat-value"
                         >{$profile?.total_harvests || 0}</span
                     >
-                    <span class="stat-label">Harvests</span>
+                    <span class="stat-label">Panen</span>
                 </div>
                 <div class="stat-card">
                     <span class="stat-icon">⭐</span>
                     <span class="stat-value"
                         >{$profile?.prestige_level || 0}</span
                     >
-                    <span class="stat-label">Prestige</span>
+                    <span class="stat-label">Prestise</span>
                 </div>
             </div>
 
             <div class="xp-section">
                 <div class="xp-label">
-                    <span>XP Progress</span>
+                    <span>Progres XP</span>
                     <span>{$xpProgress.current} / {$xpProgress.needed}</span>
                 </div>
                 <div class="xp-bar">
@@ -199,9 +199,9 @@
 
         <!-- Daily Quests -->
         <section class="quests-section">
-            <h2>📋 Daily Quests</h2>
+            <h2>📋 Misi Harian</h2>
             {#if quests.length === 0}
-                <p class="empty-text">No quests available today</p>
+                <p class="empty-text">Tidak ada misi hari ini</p>
             {:else}
                 <div class="quests-list">
                     {#each quests as quest}
@@ -248,7 +248,7 @@
                                 >
                                     {claimingQuest === quest.id
                                         ? "..."
-                                        : "Claim"}
+                                        : "Klaim"}
                                 </button>
                             {/if}
                         </div>
@@ -259,7 +259,7 @@
 
         <!-- Achievements -->
         <section class="achievements-section">
-            <h2>🏆 Achievements</h2>
+            <h2>🏆 Pencapaian</h2>
             <div class="achievements-grid">
                 {#each achievements as ach}
                     {@const req = getRequirementInfo(ach.requirement)}
@@ -295,7 +295,7 @@
                             {/if}
                         </div>
                         {#if ach.claimed}
-                            <div class="claimed-badge">✓ Claimed</div>
+                            <div class="claimed-badge">✓ Diklaim</div>
                         {:else if canClaimAchievement(ach)}
                             <button
                                 class="btn btn-success claim-btn"
@@ -304,7 +304,7 @@
                             >
                                 {claimingAchievement === ach.id
                                     ? "..."
-                                    : "Claim"}
+                                    : "Klaim"}
                             </button>
                         {/if}
                     </div>

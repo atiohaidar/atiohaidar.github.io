@@ -49,7 +49,7 @@ fun UsersScreen(
                 TopAppBar(
                     title = {
                         Text(
-                            "Users",
+                            "Pengguna",
                             fontWeight = FontWeight.Bold,
                             color = Color.White
                         )
@@ -83,7 +83,7 @@ fun UsersScreen(
                     containerColor = Color(0xFF2563EB),
                     contentColor = Color.White
                 ) {
-                    Icon(Icons.Default.PersonAdd, contentDescription = "Add User")
+                    Icon(Icons.Default.PersonAdd, contentDescription = "Tambah Pengguna")
                 }
             },
             containerColor = Color.Transparent
@@ -110,7 +110,7 @@ fun UsersScreen(
                             tint = Color(0xFF475569)
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text("No users found", color = Color(0xFF64748B))
+                        Text("Pengguna tidak ditemukan", color = Color(0xFF64748B))
                     }
                 }
             } else {
@@ -257,7 +257,7 @@ private fun AddUserDialog(
     
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("New User", color = Color.White) },
+        title = { Text("Pengguna Baru", color = Color.White) },
         text = {
             Column {
                 OutlinedTextField(
@@ -277,7 +277,7 @@ private fun AddUserDialog(
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Full Name") },
+                    label = { Text("Nama Lengkap") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
@@ -291,7 +291,7 @@ private fun AddUserDialog(
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
-                    label = { Text("Password") },
+                    label = { Text("Kata Sandi") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
@@ -311,7 +311,7 @@ private fun AddUserDialog(
                         value = selectedRole.name,
                         onValueChange = {},
                         readOnly = true,
-                        label = { Text("Role") },
+                        label = { Text("Peran") },
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                         modifier = Modifier
                             .fillMaxWidth(),
@@ -345,12 +345,12 @@ private fun AddUserDialog(
                 enabled = username.isNotBlank() && name.isNotBlank() && password.isNotBlank(),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2563EB))
             ) {
-                Text("Create")
+                Text("Buat")
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", color = Color(0xFF94A3B8))
+                Text("Batal", color = Color(0xFF94A3B8))
             }
         },
         containerColor = Color(0xFF1E293B)

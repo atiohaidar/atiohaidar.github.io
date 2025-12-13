@@ -33,7 +33,7 @@ export default function LoginScreen() {
   const handleLogin = async (override?: LoginRequest) => {
     const credentials = override ?? { username, password };
     if (!credentials.username || !credentials.password) {
-      setError('Please enter username and password');
+      setError('Mohon isi username dan password');
       return;
     }
 
@@ -45,7 +45,7 @@ export default function LoginScreen() {
       await saveAccountIfNeeded(credentials, Boolean(override));
       router.replace('/(tabs)');
     } catch (err: any) {
-      setError(err.message || 'Login failed. Please check your credentials.');
+      setError(err.message || 'Gagal masuk. Mohon periksa kredensial Anda.');
     } finally {
       setLoading(false);
     }
@@ -77,10 +77,10 @@ export default function LoginScreen() {
           <GlassCard style={styles.card}>
             <View style={styles.cardContent}>
               <Text variant="headlineMedium" style={[styles.title, { color: theme.colors.primary }]}>
-                Welcome Back
+                Selamat Datang Kembali
               </Text>
               <Text variant="bodyMedium" style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}>
-                Sign in to manage your dashboard
+                Masuk untuk mengelola dashboard Anda
               </Text>
 
               <View style={styles.form}>
@@ -102,7 +102,7 @@ export default function LoginScreen() {
                     color={theme.colors.primary}
                   />
                   <Text variant="bodyMedium" style={[styles.rememberLabel, { color: theme.colors.onSurface }]}>
-                    Remember this login
+                    Ingat saya
                   </Text>
                 </View>
 
@@ -121,7 +121,7 @@ export default function LoginScreen() {
                   contentStyle={styles.buttonContent}
                   labelStyle={styles.buttonLabel}
                 >
-                  {loading ? 'Signing in...' : 'Sign In'}
+                  {loading ? 'Sedang Masuk...' : 'Masuk'}
                 </Button>
 
                 <DemoCredentials themeColor={theme.colors.onSurfaceVariant} />

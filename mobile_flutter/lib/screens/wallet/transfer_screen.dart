@@ -47,7 +47,7 @@ class _TransferScreenState extends State<TransferScreen> {
         context.read<AuthProvider>().checkAuth(); // Refresh user balance
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Transfer successful'),
+            content: Text('Transfer berhasil'),
             backgroundColor: Colors.green,
           ),
         );
@@ -74,7 +74,7 @@ class _TransferScreenState extends State<TransferScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Transfer Balance'),
+        title: const Text('Transfer Saldo'),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -93,7 +93,7 @@ class _TransferScreenState extends State<TransferScreen> {
                     child: Column(
                       children: [
                         Text(
-                          'Current Balance',
+                          'Saldo Saat Ini',
                           style: TextStyle(
                             fontSize: 14,
                             color: isDark
@@ -119,15 +119,15 @@ class _TransferScreenState extends State<TransferScreen> {
                   TextFormField(
                     controller: _usernameController,
                     decoration: const InputDecoration(
-                      labelText: 'Recipient Username',
+                      labelText: 'Username Penerima',
                       prefixIcon: Icon(Icons.person_outline),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter username';
+                        return 'Harap masukkan username';
                       }
                       if (value == user?.username) {
-                        return 'Cannot transfer to yourself';
+                        return 'Tidak dapat mentransfer ke diri sendiri';
                       }
                       return null;
                     },
@@ -136,20 +136,20 @@ class _TransferScreenState extends State<TransferScreen> {
                   TextFormField(
                     controller: _amountController,
                     decoration: const InputDecoration(
-                      labelText: 'Amount',
+                      labelText: 'Jumlah',
                       prefixIcon: Icon(Icons.attach_money),
                     ),
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter amount';
+                        return 'Harap masukkan jumlah';
                       }
                       final amount = double.tryParse(value);
                       if (amount == null || amount <= 0) {
-                        return 'Invalid amount';
+                        return 'Jumlah tidak valid';
                       }
                       if (amount > (user?.balance ?? 0)) {
-                        return 'Insufficient balance';
+                        return 'Saldo tidak mencukupi';
                       }
                       return null;
                     },
@@ -158,7 +158,7 @@ class _TransferScreenState extends State<TransferScreen> {
                   TextFormField(
                     controller: _descriptionController,
                     decoration: const InputDecoration(
-                      labelText: 'Note (Optional)',
+                      labelText: 'Catatan (Opsional)',
                       prefixIcon: Icon(Icons.note_outlined),
                     ),
                     maxLines: 2,

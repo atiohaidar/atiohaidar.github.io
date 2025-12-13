@@ -35,19 +35,19 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
     {
         id: 'overview',
-        label: 'Overview',
+        label: 'Ringkasan',
         icon: '📊',
         path: '/dashboard',
     },
     {
         id: 'tasks',
-        label: 'Todo List',
+        label: 'Daftar Tugas',
         icon: '📝',
         path: '/dashboard/tasks',
     },
     {
         id: 'chat',
-        label: 'Chat',
+        label: 'Obrolan',
         icon: '💬',
         path: '/dashboard/chat',
     },
@@ -59,7 +59,7 @@ const menuItems: MenuItem[] = [
     },
     {
         id: 'bookings',
-        label: 'Booking',
+        label: 'Pemesanan',
         icon: '📅',
         path: '/dashboard/bookings',
     },
@@ -95,21 +95,21 @@ const menuItems: MenuItem[] = [
     },
     {
         id: 'users',
-        label: 'User Management',
+        label: 'Manajemen Pengguna',
         icon: '👥',
         path: '/dashboard/users',
         adminOnly: true,
     },
     {
         id: 'finance',
-        label: 'Finance',
+        label: 'Keuangan',
         icon: '💰',
         path: '/dashboard/finance',
         adminOnly: true,
     },
     {
         id: 'articles',
-        label: 'Articles',
+        label: 'Artikel',
         icon: '📰',
         path: '/dashboard/articles',
     },
@@ -142,8 +142,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
 
         // Show global loader immediately
         showLoader({
-            title: "Signing Out",
-            subtitle: "Ending your session",
+            title: "Keluar",
+            subtitle: "Mengakhiri sesi Anda",
             endpoint: "/api/auth/logout",
             method: "POST",
             serverHost: serverHost,
@@ -163,7 +163,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
             status: 'success',
             actualLatency: latency,
             actualStatusCode: 200,
-            successMessage: "Goodbye! See you next time."
+            successMessage: "Sampai jumpa lagi."
             // NOTE: We don't wait for 'onComplete' to navigate.
             // We navigate NOW implicitly or via a slight timeout to let success show for a split second.
             // But since the user wants the page to change behind the animation, we navigate immediately after success update.
@@ -334,7 +334,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                         title={!isSidebarOpen ? 'Logout' : undefined}
                     >
                         <span className="text-xl">🚪</span>
-                        {isSidebarOpen && <span className="font-medium">Logout</span>}
+                        {isSidebarOpen && <span className="font-medium">Keluar</span>}
                     </button>
                 </div>
             </aside>

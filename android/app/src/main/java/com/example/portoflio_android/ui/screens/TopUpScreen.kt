@@ -59,7 +59,7 @@ fun TopUpScreen(
                     )
                 }
                 Text(
-                    "Top Up User (Admin)",
+                    "Isi Ulang Pengguna (Admin)",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
@@ -80,7 +80,7 @@ fun TopUpScreen(
                     OutlinedTextField(
                         value = targetUsername,
                         onValueChange = { targetUsername = it },
-                        label = { Text("Target Username") },
+                        label = { Text("Username Target") },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedTextColor = Color.White,
@@ -95,7 +95,7 @@ fun TopUpScreen(
                     OutlinedTextField(
                         value = amount,
                         onValueChange = { amount = it },
-                        label = { Text("Amount (Rp)") },
+                        label = { Text("Jumlah (Rp)") },
                         modifier = Modifier.fillMaxWidth(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         colors = OutlinedTextFieldDefaults.colors(
@@ -111,7 +111,7 @@ fun TopUpScreen(
                     OutlinedTextField(
                         value = description,
                         onValueChange = { description = it },
-                        label = { Text("Description (Optional)") },
+                        label = { Text("Deskripsi (Opsional)") },
                         modifier = Modifier.fillMaxWidth(),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedTextColor = Color.White,
@@ -137,7 +137,7 @@ fun TopUpScreen(
                         if (uiState.isLoading) {
                             CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
                         } else {
-                            Text("Top Up Balance", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                            Text("Isi Ulang Saldo", fontSize = 16.sp, fontWeight = FontWeight.Bold)
                         }
                     }
 

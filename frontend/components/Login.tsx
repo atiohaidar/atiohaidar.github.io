@@ -78,7 +78,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, navigateDelay = 0 }) => {
 
             // Show error in loader
             setLoaderStatus('error');
-            setErrorMessage(error instanceof Error ? error.message : 'Login failed. Please check your credentials.');
+            setErrorMessage(error instanceof Error ? error.message : 'Gagal masuk. Mohon periksa kredensial Anda.');
         }
     };
 
@@ -126,9 +126,9 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, navigateDelay = 0 }) => {
                 status={loaderStatus}
                 onComplete={handleLoaderComplete}
                 onDismiss={handleLoaderDismiss}
-                title="Authenticating"
-                subtitle="Verifying your credentials"
-                successMessage={userData ? `Welcome back, ${userData.name}!` : undefined}
+                title="Sedang Mengotentikasi"
+                subtitle="Memverifikasi kredensial Anda"
+                successMessage={userData ? `Selamat datang kembali, ${userData.name}!` : undefined}
                 errorMessage={errorMessage}
                 responseData={userData ? {
                     username: userData.username,
@@ -155,7 +155,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, navigateDelay = 0 }) => {
 
             <div className="relative z-10">
                 <h2 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white tracking-tight">Balik Lagii</h2>
-                <p className="text-gray-500 dark:text-gray-400 mb-8">Sign in untuk masuk ke dashboard</p>
+                <p className="text-gray-500 dark:text-gray-400 mb-8">Masuk untuk mengelola dashboard</p>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                     <div>
@@ -167,7 +167,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, navigateDelay = 0 }) => {
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             className="w-full px-5 py-3 bg-white/50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all font-medium"
-                            placeholder="admin or user"
+                            placeholder="admin atau user"
                             required
                         />
                     </div>
@@ -190,7 +190,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, navigateDelay = 0 }) => {
                         type="submit"
                         className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all mt-2"
                     >
-                        Sign In
+                        Masuk
                     </button>
                 </form>
 

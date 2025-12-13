@@ -33,7 +33,7 @@ class _DiscussionsScreenState extends State<DiscussionsScreen> {
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         title: Text(
-          'Forum Discussions',
+          'Diskusi Forum',
           style: TextStyle(
             color: isDark ? AppColors.textPrimary : AppColors.lightText,
             fontWeight: FontWeight.bold,
@@ -52,14 +52,14 @@ class _DiscussionsScreenState extends State<DiscussionsScreen> {
         backgroundColor: AppColors.primaryBlue,
         icon: const Icon(Icons.add, color: Colors.white),
         label:
-            const Text('New Discussion', style: TextStyle(color: Colors.white)),
+            const Text('Diskusi Baru', style: TextStyle(color: Colors.white)),
       ),
     );
   }
 
   Widget _buildBody(DiscussionsProvider provider, bool isDark) {
     if (provider.isLoading && provider.discussions.isEmpty) {
-      return const LoadingIndicator(message: 'Loading discussions...');
+      return const LoadingIndicator(message: 'Memuat diskusi...');
     }
 
     if (provider.error != null) {
@@ -72,8 +72,8 @@ class _DiscussionsScreenState extends State<DiscussionsScreen> {
     if (provider.discussions.isEmpty) {
       return const EmptyState(
         icon: Icons.forum_outlined,
-        title: 'No discussions yet',
-        subtitle: 'Start a conversation by creating a new discussion',
+        title: 'Belum ada diskusi',
+        subtitle: 'Mulai percakapan dengan membuat diskusi baru',
       );
     }
 
@@ -169,7 +169,7 @@ class _DiscussionsScreenState extends State<DiscussionsScreen> {
               ),
               const SizedBox(width: 4),
               Text(
-                '${discussion.replyCount ?? 0} replies',
+                '${discussion.replyCount ?? 0} balasan',
                 style: TextStyle(
                   fontSize: 12,
                   color: isDark ? AppColors.textMuted : Colors.grey.shade600,
@@ -192,11 +192,11 @@ class _DiscussionsScreenState extends State<DiscussionsScreen> {
     final diff = now.difference(date);
 
     if (diff.inMinutes < 60) {
-      return '${diff.inMinutes}m ago';
+      return '${diff.inMinutes}m lalu';
     } else if (diff.inHours < 24) {
-      return '${diff.inHours}h ago';
+      return '${diff.inHours}j lalu';
     } else if (diff.inDays < 7) {
-      return '${diff.inDays}d ago';
+      return '${diff.inDays}h lalu';
     } else {
       return DateFormat('MMM d').format(date);
     }
@@ -216,7 +216,7 @@ class _DiscussionsScreenState extends State<DiscussionsScreen> {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('New Discussion'),
+        title: const Text('Diskusi Baru'),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -224,8 +224,8 @@ class _DiscussionsScreenState extends State<DiscussionsScreen> {
               TextField(
                 controller: titleController,
                 decoration: const InputDecoration(
-                  labelText: 'Title',
-                  hintText: 'What do you want to discuss?',
+                  labelText: 'Judul',
+                  hintText: 'Apa yang ingin Anda diskusikan?',
                   border: OutlineInputBorder(),
                 ),
                 textCapitalization: TextCapitalization.sentences,
@@ -234,8 +234,8 @@ class _DiscussionsScreenState extends State<DiscussionsScreen> {
               TextField(
                 controller: contentController,
                 decoration: const InputDecoration(
-                  labelText: 'Content',
-                  hintText: 'Provide more details...',
+                  labelText: 'Konten',
+                  hintText: 'Berikan detail lebih lanjut...',
                   border: OutlineInputBorder(),
                 ),
                 maxLines: 4,
@@ -245,8 +245,8 @@ class _DiscussionsScreenState extends State<DiscussionsScreen> {
               TextField(
                 controller: nameController,
                 decoration: const InputDecoration(
-                  labelText: 'Your Name (Optional)',
-                  hintText: 'Leave empty to post anonymously',
+                  labelText: 'Nama Anda (Opsional)',
+                  hintText: 'Biarkan kosong untuk memposting secara anonim',
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -256,7 +256,7 @@ class _DiscussionsScreenState extends State<DiscussionsScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('Cancel'),
+            child: const Text('Batal'),
           ),
           ElevatedButton(
             onPressed: () => _submitDiscussion(
@@ -268,7 +268,7 @@ class _DiscussionsScreenState extends State<DiscussionsScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryBlue,
             ),
-            child: const Text('Post'),
+            child: const Text('Posting'),
           ),
         ],
       ),
@@ -286,7 +286,7 @@ class _DiscussionsScreenState extends State<DiscussionsScreen> {
         contentController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please fill in title and content'),
+          content: Text('Harap isi judul dan konten'),
           backgroundColor: AppColors.error,
         ),
       );
@@ -306,15 +306,14 @@ class _DiscussionsScreenState extends State<DiscussionsScreen> {
     if (success && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Discussion created successfully'),
+          content: Text('Diskusi berhasil dibuat'),
           backgroundColor: AppColors.success,
         ),
       );
     } else if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content:
-              Text(discussionsProvider.error ?? 'Failed to create discussion'),
+          content: Text(discussionsProvider.error ?? 'Gagal membuat diskusi'),
           backgroundColor: AppColors.error,
         ),
       );

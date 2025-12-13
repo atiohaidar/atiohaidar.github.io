@@ -32,7 +32,7 @@ class _FormsScreenState extends State<FormsScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text('Forms'),
+        title: const Text('Formulir'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -84,7 +84,7 @@ class _FormsScreenState extends State<FormsScreen> {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Create New Form',
+                  'Buat Formulir Baru',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -104,8 +104,8 @@ class _FormsScreenState extends State<FormsScreen> {
                 TextField(
                   controller: descController,
                   decoration: const InputDecoration(
-                    labelText: 'Description (optional)',
-                    hintText: 'Enter form description',
+                    labelText: 'Deskripsi (opsional)',
+                    hintText: 'Masukkan deskripsi formulir',
                   ),
                   maxLines: 2,
                 ),
@@ -126,12 +126,12 @@ class _FormsScreenState extends State<FormsScreen> {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content: Text('Form created successfully')),
+                              content: Text('Formulir berhasil dibuat')),
                         );
                       }
                     }
                   },
-                  child: const Text('Create Form'),
+                  child: const Text('Buat Formulir'),
                 ),
                 const SizedBox(height: 16),
               ],
@@ -180,7 +180,7 @@ class _FormsScreenState extends State<FormsScreen> {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Edit Form',
+                  'Edit Formulir',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -199,8 +199,8 @@ class _FormsScreenState extends State<FormsScreen> {
                 TextField(
                   controller: descController,
                   decoration: const InputDecoration(
-                    labelText: 'Description (optional)',
-                    hintText: 'Enter description',
+                    labelText: 'Deskripsi (opsional)',
+                    hintText: 'Masukkan deskripsi',
                   ),
                   maxLines: 3,
                 ),
@@ -224,12 +224,12 @@ class _FormsScreenState extends State<FormsScreen> {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content: Text('Form updated successfully')),
+                              content: Text('Formulir berhasil diperbarui')),
                         );
                       }
                     }
                   },
-                  child: const Text('Save Changes'),
+                  child: const Text('Simpan Perubahan'),
                 ),
                 const SizedBox(height: 16),
               ],
@@ -242,7 +242,7 @@ class _FormsScreenState extends State<FormsScreen> {
 
   Widget _buildBody(FormsProvider provider, bool isDark) {
     if (provider.isLoading && provider.forms.isEmpty) {
-      return const LoadingIndicator(message: 'Loading forms...');
+      return const LoadingIndicator(message: 'Memuat formulir...');
     }
 
     if (provider.error != null && provider.forms.isEmpty) {
@@ -255,8 +255,8 @@ class _FormsScreenState extends State<FormsScreen> {
     if (provider.forms.isEmpty) {
       return const EmptyState(
         icon: Icons.dynamic_form_outlined,
-        title: 'No forms created',
-        subtitle: 'Create forms to collect data',
+        title: 'Belum ada formulir',
+        subtitle: 'Buat formulir untuk mengumpulkan data',
       );
     }
 
@@ -308,24 +308,25 @@ class _FormsScreenState extends State<FormsScreen> {
                     _showEditFormDialog(form);
                   } else if (value == 'share') {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Link copied to clipboard')),
+                      const SnackBar(
+                          content: Text('Tautan disalin ke papan klip')),
                     );
                   } else if (value == 'delete') {
                     final confirm = await showDialog<bool>(
                       context: context,
                       builder: (context) => AlertDialog(
-                        title: const Text('Delete Form'),
-                        content: Text('Delete "${form.title}"?'),
+                        title: const Text('Hapus Formulir'),
+                        content: Text('Hapus "${form.title}"?'),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(context, false),
-                            child: const Text('Cancel'),
+                            child: const Text('Batal'),
                           ),
                           TextButton(
                             onPressed: () => Navigator.pop(context, true),
                             style: TextButton.styleFrom(
                                 foregroundColor: AppColors.error),
-                            child: const Text('Delete'),
+                            child: const Text('Hapus'),
                           ),
                         ],
                       ),
@@ -353,7 +354,7 @@ class _FormsScreenState extends State<FormsScreen> {
                       children: [
                         Icon(Icons.share, size: 20),
                         SizedBox(width: 8),
-                        Text('Share'),
+                        Text('Bagikan'),
                       ],
                     ),
                   ),
@@ -364,7 +365,7 @@ class _FormsScreenState extends State<FormsScreen> {
                         children: [
                           Icon(Icons.delete, size: 20, color: AppColors.error),
                           SizedBox(width: 8),
-                          Text('Delete',
+                          Text('Hapus',
                               style: TextStyle(color: AppColors.error)),
                         ],
                       ),
@@ -397,7 +398,7 @@ class _FormsScreenState extends State<FormsScreen> {
               ),
               const SizedBox(width: 4),
               Text(
-                'Created by ${form.createdBy}',
+                'Dibuat oleh ${form.createdBy}',
                 style: TextStyle(
                   fontSize: 12,
                   color: isDark ? AppColors.textMuted : Colors.grey.shade600,
@@ -428,7 +429,7 @@ class _FormsScreenState extends State<FormsScreen> {
                     );
                   },
                   icon: const Icon(Icons.bar_chart),
-                  label: const Text('Responses'),
+                  label: const Text('Respon'),
                   style: OutlinedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8)),
@@ -441,11 +442,12 @@ class _FormsScreenState extends State<FormsScreen> {
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                          content: Text('Form view/edit not implemented yet')),
+                          content: Text(
+                              'Lihat/edit formulir belum diimplementasikan')),
                     );
                   },
                   icon: const Icon(Icons.visibility_outlined),
-                  label: const Text('View'),
+                  label: const Text('Lihat'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryBlue,
                     foregroundColor: Colors.white,

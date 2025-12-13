@@ -89,7 +89,7 @@ class _PublicTicketDetailScreenState extends State<PublicTicketDetailScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text('Ticket Status'),
+        title: const Text('Status Tiket'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -100,7 +100,7 @@ class _PublicTicketDetailScreenState extends State<PublicTicketDetailScreen> {
 
   Widget _buildBody(bool isDark) {
     if (_isLoading) {
-      return const LoadingIndicator(message: 'Loading ticket...');
+      return const LoadingIndicator(message: 'Memuat tiket...');
     }
 
     if (_error != null) {
@@ -113,7 +113,7 @@ class _PublicTicketDetailScreenState extends State<PublicTicketDetailScreen> {
               const Icon(Icons.error_outline, size: 64, color: AppColors.error),
               const SizedBox(height: 16),
               Text(
-                'Ticket not found',
+                'Tiket tidak ditemukan',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -122,7 +122,7 @@ class _PublicTicketDetailScreenState extends State<PublicTicketDetailScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Please check your token and try again.',
+                'Harap periksa token Anda dan coba lagi.',
                 style: TextStyle(
                   color: isDark
                       ? AppColors.textSecondary
@@ -185,7 +185,7 @@ class _PublicTicketDetailScreenState extends State<PublicTicketDetailScreen> {
           if (_ticket!.createdAt != null) ...[
             const SizedBox(height: 12),
             Text(
-              'Submitted: ${DateFormat('MMM d, y HH:mm').format(DateTime.parse(_ticket!.createdAt!).toLocal())}',
+              'Dikirim: ${DateFormat('d MMM y HH:mm').format(DateTime.parse(_ticket!.createdAt!).toLocal())}',
               style: TextStyle(
                 fontSize: 12,
                 color: isDark ? AppColors.textMuted : Colors.grey.shade600,
@@ -237,7 +237,7 @@ class _PublicTicketDetailScreenState extends State<PublicTicketDetailScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Comments',
+          'Komentar',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -247,7 +247,7 @@ class _PublicTicketDetailScreenState extends State<PublicTicketDetailScreen> {
         const SizedBox(height: 12),
         if (_comments.isEmpty)
           Text(
-            'No comments yet',
+            'Belum ada komentar',
             style: TextStyle(
               color: isDark
                   ? AppColors.textSecondary
@@ -343,7 +343,7 @@ class _PublicTicketDetailScreenState extends State<PublicTicketDetailScreen> {
               child: TextField(
                 controller: _commentController,
                 decoration: const InputDecoration(
-                  hintText: 'Add a comment...',
+                  hintText: 'Tambah komentar...',
                   border: InputBorder.none,
                 ),
                 maxLines: 2,

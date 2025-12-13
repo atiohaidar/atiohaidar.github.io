@@ -77,13 +77,13 @@ fun RegisterScreen(
         ) {
             // Title
             Text(
-                text = "Create Account",
+                text = "Buat Akun",
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
             Text(
-                text = "Register to get started",
+                text = "Daftar untuk memulai",
                 fontSize = 16.sp,
                 color = Color(0xFF94A3B8),
                 modifier = Modifier.padding(bottom = 32.dp)
@@ -133,7 +133,7 @@ fun RegisterScreen(
                     OutlinedTextField(
                         value = name,
                         onValueChange = { name = it },
-                        label = { Text("Full Name") },
+                        label = { Text("Nama Lengkap") },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 12.dp),
@@ -209,7 +209,7 @@ fun RegisterScreen(
                             confirmPassword = it
                             passwordError = null
                         },
-                        label = { Text("Confirm Password") },
+                        label = { Text("Konfirmasi Password") },
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(bottom = 16.dp),
@@ -228,7 +228,7 @@ fun RegisterScreen(
                                 if (password == confirmPassword) {
                                     viewModel.register(username, name, password)
                                 } else {
-                                    passwordError = "Passwords do not match"
+                                    passwordError = "Password tidak sama"
                                 }
                             }
                         ),
@@ -279,7 +279,7 @@ fun RegisterScreen(
                         }
                         is RegisterState.Success -> {
                             Text(
-                                text = "Registration successful! Redirecting to login...",
+                                text = "Registrasi berhasil! Mengalihkan ke login...",
                                 color = Color(0xFF22C55E),
                                 fontSize = 14.sp,
                                 textAlign = TextAlign.Center,
@@ -295,7 +295,7 @@ fun RegisterScreen(
                             if (password == confirmPassword) {
                                 viewModel.register(username, name, password)
                             } else {
-                                passwordError = "Passwords do not match"
+                                passwordError = "Password tidak sama"
                             }
                         },
                         modifier = Modifier
@@ -315,7 +315,7 @@ fun RegisterScreen(
                             )
                         } else {
                             Text(
-                                text = "Register",
+                                text = "Daftar",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.SemiBold
                             )
@@ -330,12 +330,12 @@ fun RegisterScreen(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = "Already have an account? ",
+                            text = "Sudah punya akun? ",
                             color = Color(0xFF94A3B8),
                             fontSize = 14.sp
                         )
                         Text(
-                            text = "Login",
+                            text = "Masuk",
                             color = Color(0xFF22C55E),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold,

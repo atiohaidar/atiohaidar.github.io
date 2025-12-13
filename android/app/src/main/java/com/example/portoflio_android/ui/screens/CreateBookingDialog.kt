@@ -27,11 +27,11 @@ private fun CreateBookingDialog(
     
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Book Room", color = Color.White) },
+        title = { Text("Pesan Ruangan", color = Color.White) },
         text = {
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 Text(
-                    "Room ID: $roomId",
+                    "ID Ruangan: $roomId",
                     fontSize = 14.sp,
                     color = Color(0xFF94A3B8),
                     modifier = Modifier.padding(bottom = 12.dp)
@@ -48,7 +48,7 @@ private fun CreateBookingDialog(
                         startDate?.let {
                             java.text.SimpleDateFormat("MMM dd, yyyy HH:mm", java.util.Locale.getDefault())
                                 .format(java.util.Date(it))
-                        } ?: "Start Time"
+                        } ?: "Waktu Mulai"
                     )
                 }
                 
@@ -65,7 +65,7 @@ private fun CreateBookingDialog(
                         endDate?.let {
                             java.text.SimpleDateFormat("MMM dd, yyyy HH:mm", java.util.Locale.getDefault())
                                 .format(java.util.Date(it))
-                        } ?: "End Time"
+                        } ?: "Waktu Selesai"
                     )
                 }
                 
@@ -74,7 +74,7 @@ private fun CreateBookingDialog(
                 OutlinedTextField(
                     value = purpose,
                     onValueChange = { purpose = it },
-                    label = { Text("Purpose (optional)") },
+                    label = { Text("Tujuan (opsional)") },
                     modifier = Modifier.fillMaxWidth(),
                     maxLines = 3,
                     colors = OutlinedTextFieldDefaults.colors(
@@ -104,12 +104,12 @@ private fun CreateBookingDialog(
                 enabled = startDate != null && endDate != null,
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2563EB))
             ) {
-                Text("Book")
+                Text("Pesan")
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", color = Color(0xFF94A3B8))
+                Text("Batal", color = Color(0xFF94A3B8))
             }
         },
         containerColor = Color(0xFF1E293B)
@@ -131,7 +131,7 @@ private fun CreateBookingDialog(
             },
             dismissButton = {
                 TextButton(onClick = { showStartDatePicker = false }) {
-                    Text("Cancel", color = Color(0xFF94A3B8))
+                    Text("Batal", color = Color(0xFF94A3B8))
                 }
             },
             colors = DatePickerDefaults.colors(containerColor = Color(0xFF1E293B))
@@ -163,7 +163,7 @@ private fun CreateBookingDialog(
             },
             dismissButton = {
                 TextButton(onClick = { showEndDatePicker = false }) {
-                    Text("Cancel", color = Color(0xFF94A3B8))
+                    Text("Batal", color = Color(0xFF94A3B8))
                 }
             },
             colors = DatePickerDefaults.colors(containerColor = Color(0xFF1E293B))

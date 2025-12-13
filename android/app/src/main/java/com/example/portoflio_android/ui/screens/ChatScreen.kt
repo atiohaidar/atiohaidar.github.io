@@ -53,9 +53,9 @@ fun ChatScreen(
                 title = {
                     Text(
                         when {
-                            uiState.activeConversation != null -> uiState.activeConversation?.otherUsername ?: "Chat"
-                            uiState.activeGroup != null -> uiState.activeGroup?.name ?: "Group"
-                            else -> "Messages"
+                            uiState.activeConversation != null -> uiState.activeConversation?.otherUsername ?: "Obrolan"
+                            uiState.activeGroup != null -> uiState.activeGroup?.name ?: "Grup"
+                            else -> "Pesan"
                         },
                         fontWeight = FontWeight.Bold,
                         color = Color.White
@@ -143,7 +143,7 @@ fun ChatScreen(
                 containerColor = Color(0xFFEF4444),
                 action = {
                     TextButton(onClick = { viewModel.clearError() }) {
-                        Text("Dismiss", color = Color.White)
+                        Text("Tutup", color = Color.White)
                     }
                 }
             ) {
@@ -194,12 +194,12 @@ private fun ChatTabs(
             Tab(
                 selected = uiState.selectedTab == 0,
                 onClick = { onTabSelected(0) },
-                text = { Text("Conversations") }
+                text = { Text("Percakapan") }
             )
             Tab(
                 selected = uiState.selectedTab == 1,
                 onClick = { onTabSelected(1) },
-                text = { Text("Groups") }
+                text = { Text("Grup") }
             )
         }
         
@@ -251,7 +251,7 @@ private fun ConversationsList(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    "No conversations yet",
+                    "Belum ada percakapan",
                     color = Color(0xFF64748B),
                     fontSize = 16.sp
                 )
@@ -349,7 +349,7 @@ private fun GroupsList(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    "No groups yet",
+                    "Belum ada grup",
                     color = Color(0xFF64748B),
                     fontSize = 16.sp
                 )
@@ -410,7 +410,7 @@ private fun GroupCard(
                     fontSize = 16.sp
                 )
                 Text(
-                    "${group.memberCount ?: 0} members",
+                    "${group.memberCount ?: 0} anggota",
                     color = Color(0xFF94A3B8),
                     fontSize = 14.sp
                 )
@@ -458,7 +458,7 @@ private fun MessageView(
                 value = messageText,
                 onValueChange = onMessageTextChange,
                 modifier = Modifier.weight(1f),
-                placeholder = { Text("Type a message...", color = Color(0xFF64748B)) },
+                placeholder = { Text("Ketik pesan...", color = Color(0xFF64748B)) },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
@@ -522,12 +522,12 @@ private fun NewConversationDialog(
     
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Start Conversation", color = Color.White) },
+        title = { Text("Mulai Percakapan", color = Color.White) },
         text = {
             OutlinedTextField(
                 value = username,
                 onValueChange = { username = it },
-                label = { Text("Username", color = Color(0xFF94A3B8)) },
+                label = { Text("Nama Pengguna", color = Color(0xFF94A3B8)) },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
@@ -543,12 +543,12 @@ private fun NewConversationDialog(
                 onClick = { if (username.isNotBlank()) onStart(username) },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2563EB))
             ) {
-                Text("Start")
+                Text("Mulai")
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", color = Color(0xFF94A3B8))
+                Text("Batal", color = Color(0xFF94A3B8))
             }
         },
         containerColor = Color(0xFF1E293B)
@@ -566,13 +566,13 @@ private fun NewGroupDialog(
     
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Create Group", color = Color.White) },
+        title = { Text("Buat Grup", color = Color.White) },
         text = {
             Column {
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = { Text("Group Name", color = Color(0xFF94A3B8)) },
+                    label = { Text("Nama Grup", color = Color(0xFF94A3B8)) },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = Color.White,
                         unfocusedTextColor = Color.White,
@@ -586,7 +586,7 @@ private fun NewGroupDialog(
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text("Description (optional)", color = Color(0xFF94A3B8)) },
+                    label = { Text("Deskripsi (opsional)", color = Color(0xFF94A3B8)) },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = Color.White,
                         unfocusedTextColor = Color.White,
@@ -606,12 +606,12 @@ private fun NewGroupDialog(
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2563EB))
             ) {
-                Text("Create")
+                Text("Buat")
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", color = Color(0xFF94A3B8))
+                Text("Batal", color = Color(0xFF94A3B8))
             }
         },
         containerColor = Color(0xFF1E293B)

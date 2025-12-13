@@ -62,7 +62,7 @@ fun ItemsScreen(
                 TopAppBar(
                     title = {
                         Text(
-                            "Inventory",
+                            "Inventaris",
                             fontWeight = FontWeight.Bold,
                             color = Color.White
                         )
@@ -100,7 +100,7 @@ fun ItemsScreen(
                         containerColor = Color(0xFF2563EB),
                         contentColor = Color.White
                     ) {
-                        Icon(Icons.Default.Add, contentDescription = "Add Item")
+                        Icon(Icons.Default.Add, contentDescription = "Tambah Barang")
                     }
                 }
             },
@@ -138,13 +138,13 @@ fun ItemsScreen(
                     Tab(
                         selected = selectedTab == 0,
                         onClick = { selectedTab = 0 },
-                        text = { Text("Items", color = if (selectedTab == 0) Color.White else Color(0xFF94A3B8)) },
+                        text = { Text("Barang", color = if (selectedTab == 0) Color.White else Color(0xFF94A3B8)) },
                         icon = { Icon(Icons.Default.Inventory, contentDescription = null, tint = if (selectedTab == 0) Color.White else Color(0xFF94A3B8)) }
                     )
                     Tab(
                         selected = selectedTab == 1,
                         onClick = { selectedTab = 1 },
-                        text = { Text("Borrowings", color = if (selectedTab == 1) Color.White else Color(0xFF94A3B8)) },
+                        text = { Text("Peminjaman", color = if (selectedTab == 1) Color.White else Color(0xFF94A3B8)) },
                         icon = { Icon(Icons.Default.SwapHoriz, contentDescription = null, tint = if (selectedTab == 1) Color.White else Color(0xFF94A3B8)) }
                     )
                 }
@@ -202,7 +202,7 @@ fun ItemsScreen(
                 containerColor = Color(0xFFEF4444),
                 action = {
                     TextButton(onClick = { viewModel.clearError() }) {
-                        Text("Dismiss", color = Color.White)
+                        Text("Tutup", color = Color.White)
                     }
                 }
             ) {
@@ -240,7 +240,7 @@ private fun ItemsTab(
                     tint = Color(0xFF475569)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("No items in inventory", color = Color(0xFF64748B))
+                Text("Tidak ada barang di inventaris", color = Color(0xFF64748B))
             }
         }
     } else {
@@ -297,7 +297,7 @@ private fun BorrowingsTab(
                     tint = Color(0xFF475569)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("No borrowing requests", color = Color(0xFF64748B))
+                Text("Tidak ada permintaan peminjaman", color = Color(0xFF64748B))
             }
         }
     } else {
@@ -317,7 +317,7 @@ private fun BorrowingsTab(
                 
                 BorrowingCard(
                     borrowing = borrowing,
-                    itemName = item?.name ?: "Unknown Item",
+                    itemName = item?.name ?: "Barang Tidak Diketahui",
                     canManage = canManage,
                     canMarkReturned = canMarkReturned,
                     onApprove = { onApprove(borrowing.id) },
@@ -444,7 +444,7 @@ private fun ItemCard(
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Borrow", fontSize = 14.sp)
+                            Text("Pinjam", fontSize = 14.sp)
                         }
                     }
                     if (showDeleteButton) {
@@ -540,7 +540,7 @@ private fun BorrowingCard(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "Borrower: ${borrowing.borrowerUsername}",
+                    text = "Peminjam: ${borrowing.borrowerUsername}",
                     fontSize = 12.sp,
                     color = Color(0xFF64748B)
                 )
@@ -566,7 +566,7 @@ private fun BorrowingCard(
             borrowing.notes?.let { notes ->
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "Notes: $notes",
+                    text = "Catatan: $notes",
                     fontSize = 12.sp,
                     color = Color(0xFF94A3B8),
                     maxLines = 2
@@ -588,7 +588,7 @@ private fun BorrowingCard(
                             ),
                             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
                         ) {
-                            Text("Reject", fontSize = 12.sp)
+                            Text("Tolak", fontSize = 12.sp)
                         }
                         Spacer(modifier = Modifier.width(8.dp))
                         Button(
@@ -598,7 +598,7 @@ private fun BorrowingCard(
                             ),
                             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
                         ) {
-                            Text("Approve", fontSize = 12.sp)
+                            Text("Setujui", fontSize = 12.sp)
                         }
                     }
                     if (canMarkReturned) {
@@ -615,7 +615,7 @@ private fun BorrowingCard(
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Mark Returned", fontSize = 12.sp)
+                            Text("Tandai Kembali", fontSize = 12.sp)
                         }
                     }
                 }
@@ -643,7 +643,7 @@ private fun BorrowItemDialog(
     
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Borrow Item", color = Color.White) },
+        title = { Text("Pinjam Barang", color = Color.White) },
         text = {
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 Text(
@@ -653,7 +653,7 @@ private fun BorrowItemDialog(
                     color = Color(0xFF94A3B8)
                 )
                 Text(
-                    text = "Available: ${item.stock}",
+                    text = "Tersedia: ${item.stock}",
                     fontSize = 12.sp,
                     color = Color(0xFF64748B)
                 )
@@ -669,7 +669,7 @@ private fun BorrowItemDialog(
                             quantity = filtered
                         }
                     },
-                    label = { Text("Quantity") },
+                    label = { Text("Jumlah") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
@@ -693,7 +693,7 @@ private fun BorrowItemDialog(
                     Icon(Icons.Default.CalendarToday, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "Start: ${startDate?.let { displayFormat.format(java.util.Date(it)) } ?: "Select Date"}"
+                        text = "Mulai: ${startDate?.let { displayFormat.format(java.util.Date(it)) } ?: "Pilih Tanggal"}"
                     )
                 }
                 
@@ -710,7 +710,7 @@ private fun BorrowItemDialog(
                     Icon(Icons.Default.CalendarToday, contentDescription = null, modifier = Modifier.size(18.dp))
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "End: ${endDate?.let { displayFormat.format(java.util.Date(it)) } ?: "Select Date"}"
+                        text = "Selesai: ${endDate?.let { displayFormat.format(java.util.Date(it)) } ?: "Pilih Tanggal"}"
                     )
                 }
                 
@@ -719,7 +719,7 @@ private fun BorrowItemDialog(
                 OutlinedTextField(
                     value = notes,
                     onValueChange = { notes = it },
-                    label = { Text("Notes (optional)") },
+                    label = { Text("Catatan (opsional)") },
                     modifier = Modifier.fillMaxWidth(),
                     maxLines = 3,
                     colors = OutlinedTextFieldDefaults.colors(
@@ -742,12 +742,12 @@ private fun BorrowItemDialog(
                 enabled = quantity.isNotBlank() && (quantity.toIntOrNull() ?: 0) > 0 && startDate != null && endDate != null,
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2563EB))
             ) {
-                Text("Submit Request")
+                Text("Kirim Permintaan")
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", color = Color(0xFF94A3B8))
+                Text("Batal", color = Color(0xFF94A3B8))
             }
         },
         containerColor = Color(0xFF1E293B)
@@ -770,7 +770,7 @@ private fun BorrowItemDialog(
             },
             dismissButton = {
                 TextButton(onClick = { showStartDatePicker = false }) {
-                    Text("Cancel", color = Color(0xFF94A3B8))
+                    Text("Batal", color = Color(0xFF94A3B8))
                 }
             },
             colors = DatePickerDefaults.colors(containerColor = Color(0xFF1E293B))

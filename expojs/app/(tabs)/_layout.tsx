@@ -20,8 +20,8 @@ export default function TabLayout() {
       <Drawer.Screen
         name="index"
         options={{
-          title: 'Home',
-          drawerLabel: 'Home',
+          title: 'Beranda',
+          drawerLabel: 'Beranda',
           drawerIcon: ({ color, size }) => (
             <IconButton icon="home" size={size} iconColor={color} />
           ),
@@ -37,8 +37,8 @@ export default function TabLayout() {
       <Drawer.Screen
         name="tasks"
         options={{
-          title: 'Tasks',
-          drawerLabel: 'Tasks',
+          title: 'Tugas',
+          drawerLabel: 'Tugas',
           drawerIcon: ({ color, size }) => (
             <IconButton icon="checkbox-marked-circle" size={size} iconColor={color} />
           ),
@@ -47,8 +47,8 @@ export default function TabLayout() {
       <Drawer.Screen
         name="articles"
         options={{
-          title: 'Articles',
-          drawerLabel: 'Articles',
+          title: 'Artikel',
+          drawerLabel: 'Artikel',
           drawerIcon: ({ color, size }) => (
             <IconButton icon="newspaper" size={size} iconColor={color} />
           ),
@@ -57,8 +57,8 @@ export default function TabLayout() {
       <Drawer.Screen
         name="bookings"
         options={{
-          title: 'Bookings',
-          drawerLabel: 'Bookings',
+          title: 'Pemesanan',
+          drawerLabel: 'Pemesanan',
           drawerIcon: ({ color, size }) => (
             <IconButton icon="calendar" size={size} iconColor={color} />
           ),
@@ -67,8 +67,8 @@ export default function TabLayout() {
       <Drawer.Screen
         name="chat"
         options={{
-          title: 'Chat',
-          drawerLabel: 'Chat',
+          title: 'Obrolan',
+          drawerLabel: 'Obrolan',
           drawerIcon: ({ color, size }) => (
             <IconButton icon="chat" size={size} iconColor={color} />
           ),
@@ -77,8 +77,8 @@ export default function TabLayout() {
       <Drawer.Screen
         name="tickets"
         options={{
-          title: 'Tickets',
-          drawerLabel: 'Tickets',
+          title: 'Tiket',
+          drawerLabel: 'Tiket',
           drawerIcon: ({ color, size }) => (
             <IconButton icon="ticket" size={size} iconColor={color} />
           ),
@@ -87,8 +87,8 @@ export default function TabLayout() {
       <Drawer.Screen
         name="forms"
         options={{
-          title: 'Forms',
-          drawerLabel: 'Forms',
+          title: 'Formulir',
+          drawerLabel: 'Formulir',
           drawerIcon: ({ color, size }) => (
             <IconButton icon="form-select" size={size} iconColor={color} />
           ),
@@ -97,8 +97,8 @@ export default function TabLayout() {
       <Drawer.Screen
         name="items"
         options={{
-          title: 'Items',
-          drawerLabel: 'Items',
+          title: 'Barang',
+          drawerLabel: 'Barang',
           drawerIcon: ({ color, size }) => (
             <IconButton icon="package-variant" size={size} iconColor={color} />
           ),
@@ -107,8 +107,8 @@ export default function TabLayout() {
       <Drawer.Screen
         name="item-borrowings"
         options={{
-          title: 'Borrowings',
-          drawerLabel: 'Borrowings',
+          title: 'Peminjaman',
+          drawerLabel: 'Peminjaman',
           drawerIcon: ({ color, size }) => (
             <IconButton icon="clipboard-list" size={size} iconColor={color} />
           ),
@@ -117,8 +117,8 @@ export default function TabLayout() {
       <Drawer.Screen
         name="discussions"
         options={{
-          title: 'Discussions',
-          drawerLabel: 'Discussions',
+          title: 'Diskusi',
+          drawerLabel: 'Diskusi',
           drawerIcon: ({ color, size }) => (
             <IconButton icon="forum" size={size} iconColor={color} />
           ),
@@ -127,8 +127,8 @@ export default function TabLayout() {
       <Drawer.Screen
         name="events"
         options={{
-          title: 'Events',
-          drawerLabel: 'Events',
+          title: 'Acara',
+          drawerLabel: 'Acara',
           drawerIcon: ({ color, size }) => (
             <IconButton icon="calendar-star" size={size} iconColor={color} />
           ),
@@ -137,8 +137,8 @@ export default function TabLayout() {
       <Drawer.Screen
         name="profile"
         options={{
-          title: 'Profile',
-          drawerLabel: 'Profile',
+          title: 'Profil',
+          drawerLabel: 'Profil',
           drawerIcon: ({ color, size }) => (
             <IconButton icon="account" size={size} iconColor={color} />
           ),
@@ -148,8 +148,8 @@ export default function TabLayout() {
       <Drawer.Screen
         name="users"
         options={{
-          title: 'Users',
-          drawerLabel: 'Users (Admin)',
+          title: 'Pengguna',
+          drawerLabel: 'Pengguna (Admin)',
           drawerIcon: ({ color, size }) => (
             <IconButton icon="account-group" size={size} iconColor={color} />
           ),
@@ -160,8 +160,8 @@ export default function TabLayout() {
       <Drawer.Screen
         name="notifications"
         options={{
-          title: 'Notifications',
-          drawerLabel: 'Notifications',
+          title: 'Notifikasi',
+          drawerLabel: 'Notifikasi',
           drawerIcon: ({ color, size }) => (
             <IconButton icon="bell" size={size} iconColor={color} />
           ),
@@ -170,8 +170,8 @@ export default function TabLayout() {
       <Drawer.Screen
         name="transactions"
         options={{
-          title: 'Transaction History',
-          drawerLabel: 'Transactions',
+          title: 'Riwayat Transaksi',
+          drawerLabel: 'Transaksi',
           drawerIcon: ({ color, size }) => (
             <IconButton icon="history" size={size} iconColor={color} />
           ),

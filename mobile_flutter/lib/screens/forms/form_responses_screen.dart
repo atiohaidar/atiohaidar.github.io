@@ -38,7 +38,7 @@ class _FormResponsesScreenState extends State<FormResponsesScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: Text('Responses: ${widget.formTitle}'),
+        title: Text('Respon: ${widget.formTitle}'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -49,14 +49,14 @@ class _FormResponsesScreenState extends State<FormResponsesScreen> {
 
   Widget _buildBody(FormsProvider provider, bool isDark) {
     if (provider.isLoading && provider.responses.isEmpty) {
-      return const LoadingIndicator(message: 'Loading responses...');
+      return const LoadingIndicator(message: 'Memuat respon...');
     }
 
     if (provider.responses.isEmpty) {
       return const EmptyState(
         icon: Icons.inbox_outlined,
-        title: 'No responses yet',
-        subtitle: 'Responses will appear here when submitted',
+        title: 'Belum ada respon',
+        subtitle: 'Respon akan muncul di sini setelah dikirim',
       );
     }
 
@@ -107,7 +107,7 @@ class _FormResponsesScreenState extends State<FormResponsesScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    response.respondentName ?? 'Anonymous',
+                    response.respondentName ?? 'Anonim',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -160,7 +160,7 @@ class _FormResponsesScreenState extends State<FormResponsesScreen> {
   }
 
   String _formatDate(String? dateStr) {
-    if (dateStr == null) return 'Unknown date';
+    if (dateStr == null) return 'Tanggal tidak diketahui';
     try {
       final date = DateTime.parse(dateStr);
       return DateFormat('MMM d, yyyy • HH:mm').format(date);
@@ -231,7 +231,7 @@ class _ResponseDetailSheet extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        respondentName ?? 'Anonymous',
+                        respondentName ?? 'Anonim',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,

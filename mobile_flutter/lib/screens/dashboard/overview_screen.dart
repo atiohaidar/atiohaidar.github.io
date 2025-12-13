@@ -27,9 +27,9 @@ class _DashboardOverviewScreenState extends State<DashboardOverviewScreen> {
 
   String _getGreeting() {
     final hour = DateTime.now().hour;
-    if (hour < 12) return 'Good Morning';
-    if (hour < 18) return 'Good Afternoon';
-    return 'Good Evening';
+    if (hour < 12) return 'Selamat Pagi';
+    if (hour < 18) return 'Selamat Siang';
+    return 'Selamat Sore';
   }
 
   @override
@@ -110,7 +110,7 @@ class _DashboardOverviewScreenState extends State<DashboardOverviewScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      "Here's what's happening with your projects today.",
+                      "Inilah yang terjadi dengan proyek Anda hari ini.",
                       style: TextStyle(
                         fontSize: 14,
                         color: isDark
@@ -155,31 +155,31 @@ class _DashboardOverviewScreenState extends State<DashboardOverviewScreen> {
 
     final statItems = [
       _StatItem(
-        title: 'Total Tasks',
+        title: 'Total Tugas',
         value: isLoading ? '...' : '${stats?.totalTasks ?? 0}',
         icon: Icons.task_alt,
-        subtitle: 'Check tasks',
+        subtitle: 'Cek tugas',
         colors: [const Color(0xFF3B82F6), const Color(0xFF22D3EE)],
       ),
       _StatItem(
-        title: 'Unread Messages',
+        title: 'Pesan Belum Dibaca',
         value: '0',
         icon: Icons.chat_bubble_outline,
-        subtitle: 'Chat system',
+        subtitle: 'Sistem chat',
         colors: [const Color(0xFF2563EB), const Color(0xFF6366F1)],
       ),
       _StatItem(
-        title: 'Active Tickets',
+        title: 'Tiket Aktif',
         value: isLoading ? '...' : '${provider.activeTicketsCount}',
         icon: Icons.confirmation_number_outlined,
-        subtitle: 'Open issues',
+        subtitle: 'Masalah terbuka',
         colors: [const Color(0xFFF97316), const Color(0xFFEF4444)],
       ),
       _StatItem(
-        title: 'Upcoming Events',
+        title: 'Acara Mendatang',
         value: isLoading ? '...' : '${provider.upcomingEventsCount}',
         icon: Icons.event,
-        subtitle: 'Next: Soon',
+        subtitle: 'Segera',
         colors: [const Color(0xFF14B8A6), const Color(0xFF10B981)],
       ),
     ];
@@ -214,14 +214,14 @@ class _DashboardOverviewScreenState extends State<DashboardOverviewScreen> {
             title: t.title,
             time: t.createdAt != null
                 ? DateFormat('MMM d').format(DateTime.parse(t.createdAt!))
-                : 'Recently',
+                : 'Baru saja',
             status: t.status.value,
           )),
       ...provider.upcomingEvents.map((e) => _Activity(
             type: 'Event',
             title: e.title,
             time: DateFormat('MMM d').format(DateTime.parse(e.eventDate)),
-            status: 'Upcoming',
+            status: 'Mendatang',
           )),
     ].take(5).toList();
 
@@ -232,7 +232,7 @@ class _DashboardOverviewScreenState extends State<DashboardOverviewScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Recent Activity',
+            'Aktivitas Terbaru',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -241,12 +241,12 @@ class _DashboardOverviewScreenState extends State<DashboardOverviewScreen> {
           ),
           const SizedBox(height: 20),
           if (provider.isLoading)
-            const LoadingIndicator(message: 'Loading activities...')
+            const LoadingIndicator(message: 'Memuat aktivitas...')
           else if (activities.isEmpty)
             const EmptyState(
               icon: Icons.history,
-              title: 'No recent activity',
-              subtitle: 'Your recent activities will appear here',
+              title: 'Tidak ada aktivitas baru',
+              subtitle: 'Aktivitas terbaru Anda akan muncul di sini',
             )
           else
             ListView.separated(
@@ -276,7 +276,7 @@ class _DashboardOverviewScreenState extends State<DashboardOverviewScreen> {
                 ),
               ),
               child: Text(
-                'View All Activity',
+                'Lihat Semua Aktivitas',
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   color: isDark ? AppColors.textPrimary : AppColors.lightText,
@@ -415,7 +415,7 @@ class _DashboardOverviewScreenState extends State<DashboardOverviewScreen> {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        'History',
+                        'Riwayat',
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -441,7 +441,7 @@ class _DashboardOverviewScreenState extends State<DashboardOverviewScreen> {
             ),
           ),
           Text(
-            'Total Balance',
+            'Total Saldo',
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
@@ -476,7 +476,7 @@ class _DashboardOverviewScreenState extends State<DashboardOverviewScreen> {
               Expanded(
                 child: _buildWalletAction(
                   icon: Icons.receipt_long,
-                  label: 'History',
+                  label: 'Riwayat',
                   color: Colors.orange,
                   onTap: () => context.push('/transactions'),
                   isDark: isDark,

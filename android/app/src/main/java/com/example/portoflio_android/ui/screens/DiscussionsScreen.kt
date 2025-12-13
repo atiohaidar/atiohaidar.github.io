@@ -51,8 +51,8 @@ fun DiscussionsScreen(
                 title = {
                     Text(
                         if (uiState.activeDiscussion != null) 
-                            uiState.activeDiscussion?.title ?: "Discussion" 
-                        else "Discussions",
+                            uiState.activeDiscussion?.title ?: "Diskusi" 
+                        else "Diskusi",
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
                         maxLines = 1
@@ -143,7 +143,7 @@ fun DiscussionsScreen(
                 containerColor = Color(0xFFEF4444),
                 action = {
                     TextButton(onClick = { viewModel.clearError() }) {
-                        Text("Dismiss", color = Color.White)
+                        Text("Tutup", color = Color.White)
                     }
                 }
             ) {
@@ -184,12 +184,12 @@ private fun DiscussionsList(
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    "No discussions yet",
+                    "Belum ada diskusi",
                     color = Color(0xFF64748B),
                     fontSize = 16.sp
                 )
                 Text(
-                    "Start a new discussion!",
+                    "Mulai diskusi baru!",
                     color = Color(0xFF94A3B8),
                     fontSize = 14.sp
                 )
@@ -274,7 +274,7 @@ private fun DiscussionCard(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        "${discussion.replyCount} replies",
+                        "${discussion.replyCount} balasan",
                         color = Color(0xFF64748B),
                         fontSize = 12.sp
                     )
@@ -368,7 +368,7 @@ private fun DiscussionDetailView(
             // Replies header
             item {
                 Text(
-                    "Replies (${discussion.replies?.size ?: 0})",
+                    "Balasan (${discussion.replies?.size ?: 0})",
                     color = Color(0xFF94A3B8),
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.padding(top = 8.dp)
@@ -395,7 +395,7 @@ private fun DiscussionDetailView(
                 value = replyText,
                 onValueChange = onReplyTextChange,
                 modifier = Modifier.weight(1f),
-                placeholder = { Text("Write a reply...", color = Color(0xFF64748B)) },
+                placeholder = { Text("Tulis balasan...", color = Color(0xFF64748B)) },
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White,
@@ -427,8 +427,8 @@ private fun DiscussionDetailView(
     if (showDeleteConfirm) {
         AlertDialog(
             onDismissRequest = { showDeleteConfirm = false },
-            title = { Text("Delete Discussion", color = Color.White) },
-            text = { Text("Are you sure you want to delete this discussion?", color = Color(0xFF94A3B8)) },
+            title = { Text("Hapus Diskusi", color = Color.White) },
+            text = { Text("Apakah Anda yakin ingin menghapus diskusi ini?", color = Color(0xFF94A3B8)) },
             confirmButton = {
                 Button(
                     onClick = {
@@ -437,12 +437,12 @@ private fun DiscussionDetailView(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444))
                 ) {
-                    Text("Delete")
+                    Text("Hapus")
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteConfirm = false }) {
-                    Text("Cancel", color = Color(0xFF94A3B8))
+                    Text("Batal", color = Color(0xFF94A3B8))
                 }
             },
             containerColor = Color(0xFF1E293B)
@@ -510,13 +510,13 @@ private fun CreateDiscussionDialog(
     
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Start Discussion", color = Color.White) },
+        title = { Text("Mulai Diskusi", color = Color.White) },
         text = {
             Column {
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
-                    label = { Text("Title", color = Color(0xFF94A3B8)) },
+                    label = { Text("Judul", color = Color(0xFF94A3B8)) },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = Color.White,
                         unfocusedTextColor = Color.White,
@@ -530,7 +530,7 @@ private fun CreateDiscussionDialog(
                 OutlinedTextField(
                     value = content,
                     onValueChange = { content = it },
-                    label = { Text("Content", color = Color(0xFF94A3B8)) },
+                    label = { Text("Konten", color = Color(0xFF94A3B8)) },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = Color.White,
                         unfocusedTextColor = Color.White,
@@ -551,12 +551,12 @@ private fun CreateDiscussionDialog(
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2563EB))
             ) {
-                Text("Create")
+                Text("Buat")
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", color = Color(0xFF94A3B8))
+                Text("Batal", color = Color(0xFF94A3B8))
             }
         },
         containerColor = Color(0xFF1E293B)

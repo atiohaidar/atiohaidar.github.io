@@ -54,7 +54,7 @@ class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text('Discussion'),
+        title: const Text('Diskusi'),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -64,7 +64,7 @@ class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
 
   Widget _buildBody(DiscussionsProvider provider, bool isDark) {
     if (provider.isLoading && provider.selectedDiscussion == null) {
-      return const LoadingIndicator(message: 'Loading discussion...');
+      return const LoadingIndicator(message: 'Memuat diskusi...');
     }
 
     if (provider.error != null) {
@@ -78,7 +78,7 @@ class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
     if (discussionWithReplies == null) {
       return const EmptyState(
         icon: Icons.forum_outlined,
-        title: 'Discussion not found',
+        title: 'Diskusi tidak ditemukan',
       );
     }
 
@@ -140,7 +140,7 @@ class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
                       ),
                     ),
                     Text(
-                      DateFormat('MMM d, yyyy • h:mm a')
+                      DateFormat('d MMM yyyy • HH:mm')
                           .format(discussion.createdAt),
                       style: TextStyle(
                         fontSize: 12,
@@ -189,7 +189,7 @@ class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
             ),
             const SizedBox(height: 12),
             Text(
-              'No replies yet',
+              'Belum ada balasan',
               style: TextStyle(
                 fontSize: 14,
                 color: isDark ? AppColors.textMuted : Colors.grey.shade600,
@@ -197,7 +197,7 @@ class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
             ),
             const SizedBox(height: 4),
             Text(
-              'Be the first to reply!',
+              'Jadilah yang pertama membalas!',
               style: TextStyle(
                 fontSize: 12,
                 color: isDark ? AppColors.textMuted : Colors.grey.shade500,
@@ -212,7 +212,7 @@ class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Replies (${replies.length})',
+          'Balasan (${replies.length})',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -308,8 +308,8 @@ class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
             TextField(
               controller: _nameController,
               decoration: InputDecoration(
-                labelText: 'Your Name (Optional)',
-                hintText: 'Leave empty to reply anonymously',
+                labelText: 'Nama Anda (Opsional)',
+                hintText: 'Biarkan kosong untuk membalas secara anonim',
                 border: const OutlineInputBorder(),
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -328,7 +328,7 @@ class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
                   child: TextField(
                     controller: _replyController,
                     decoration: InputDecoration(
-                      hintText: 'Write a reply...',
+                      hintText: 'Tulis balasan...',
                       border: const OutlineInputBorder(),
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 12),
@@ -353,7 +353,7 @@ class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
                   child: IconButton(
                     onPressed: _submitReply,
                     icon: const Icon(Icons.send, color: Colors.white),
-                    tooltip: 'Send reply',
+                    tooltip: 'Kirim balasan',
                   ),
                 ),
               ],
@@ -369,13 +369,13 @@ class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
     final diff = now.difference(date);
 
     if (diff.inMinutes < 60) {
-      return '${diff.inMinutes}m ago';
+      return '${diff.inMinutes}m lalu';
     } else if (diff.inHours < 24) {
-      return '${diff.inHours}h ago';
+      return '${diff.inHours}j lalu';
     } else if (diff.inDays < 7) {
-      return '${diff.inDays}d ago';
+      return '${diff.inDays}h lalu';
     } else {
-      return DateFormat('MMM d').format(date);
+      return DateFormat('d MMM').format(date);
     }
   }
 
@@ -383,7 +383,7 @@ class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
     if (_replyController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please enter a reply'),
+          content: Text('Harap masukkan balasan'),
           backgroundColor: AppColors.error,
         ),
       );
@@ -403,7 +403,7 @@ class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
       _replyController.clear();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Reply posted successfully'),
+          content: Text('Balasan berhasil diposting'),
           backgroundColor: AppColors.success,
         ),
       );
@@ -420,7 +420,8 @@ class _DiscussionDetailScreenState extends State<DiscussionDetailScreen> {
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(discussionsProvider.error ?? 'Failed to post reply'),
+          content:
+              Text(discussionsProvider.error ?? 'Gagal memposting balasan'),
           backgroundColor: AppColors.error,
         ),
       );

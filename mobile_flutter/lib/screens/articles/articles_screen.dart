@@ -31,7 +31,7 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text('Articles'),
+        title: const Text('Artikel'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -84,7 +84,7 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Create New Article',
+                  'Buat Artikel Baru',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -95,8 +95,8 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
                 TextField(
                   controller: titleController,
                   decoration: const InputDecoration(
-                    labelText: 'Title',
-                    hintText: 'Article title',
+                    labelText: 'Judul',
+                    hintText: 'Judul artikel',
                   ),
                   autofocus: true,
                 ),
@@ -104,14 +104,14 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
                 TextField(
                   controller: contentController,
                   decoration: const InputDecoration(
-                    labelText: 'Content',
-                    hintText: 'Write your article content...',
+                    labelText: 'Konten',
+                    hintText: 'Tulis konten artikel Anda...',
                   ),
                   maxLines: 6,
                 ),
                 const SizedBox(height: 16),
                 SwitchListTile(
-                  title: const Text('Publish immediately'),
+                  title: const Text('Terbitkan segera'),
                   value: isPublished,
                   onChanged: (val) => setState(() => isPublished = val),
                   contentPadding: EdgeInsets.zero,
@@ -138,12 +138,12 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content: Text('Article created successfully')),
+                              content: Text('Artikel berhasil dibuat')),
                         );
                       }
                     }
                   },
-                  child: const Text('Publish Article'),
+                  child: const Text('Terbitkan Artikel'),
                 ),
                 const SizedBox(height: 16),
               ],
@@ -156,7 +156,7 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
 
   Widget _buildBody(ArticlesProvider provider, bool isDark) {
     if (provider.isLoading && provider.articles.isEmpty) {
-      return const LoadingIndicator(message: 'Loading articles...');
+      return const LoadingIndicator(message: 'Memuat artikel...');
     }
 
     if (provider.error != null && provider.articles.isEmpty) {
@@ -169,8 +169,8 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
     if (provider.articles.isEmpty) {
       return const EmptyState(
         icon: Icons.article_outlined,
-        title: 'No articles yet',
-        subtitle: 'Create your first article to share knowledge',
+        title: 'Belum ada artikel',
+        subtitle: 'Buat artikel pertama Anda untuk berbagi pengetahuan',
       );
     }
 
@@ -210,7 +210,7 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Text(
-                        'Article',
+                        'Artikel',
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -263,7 +263,7 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      article.owner ?? 'Unknown',
+                      article.owner ?? 'Tidak Diketahui',
                       style: TextStyle(
                         fontSize: 12,
                         color:
@@ -273,7 +273,7 @@ class _ArticlesScreenState extends State<ArticlesScreen> {
                     const Spacer(),
                     if (article.createdAt != null)
                       Text(
-                        DateFormat('MMM d, y')
+                        DateFormat('d MMM y')
                             .format(DateTime.parse(article.createdAt!)),
                         style: TextStyle(
                           fontSize: 12,

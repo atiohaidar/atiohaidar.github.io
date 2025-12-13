@@ -26,7 +26,7 @@ class TopUpViewModel @Inject constructor(
 
     fun topUp(targetUsername: String, amount: Double, description: String = "") {
         if (amount <= 0) {
-            _uiState.value = _uiState.value.copy(error = "Invalid amount")
+            _uiState.value = _uiState.value.copy(error = "Jumlah tidak valid")
             return
         }
 
@@ -43,7 +43,7 @@ class TopUpViewModel @Inject constructor(
                 .onFailure { exception ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = exception.message ?: "Top Up failed"
+                        error = exception.message ?: "Top Up gagal"
                     )
                 }
         }

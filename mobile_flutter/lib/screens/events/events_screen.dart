@@ -47,7 +47,7 @@ class _EventsScreenState extends State<EventsScreen> {
 
   Widget _buildBody(EventsProvider provider, bool isDark) {
     if (provider.isLoading && provider.events.isEmpty) {
-      return const LoadingIndicator(message: 'Loading events...');
+      return const LoadingIndicator(message: 'Memuat acara...');
     }
 
     if (provider.error != null && provider.events.isEmpty) {
@@ -72,10 +72,12 @@ class _EventsScreenState extends State<EventsScreen> {
           SliverFillRemaining(
             child: EmptyState(
               icon: Icons.event_outlined,
-              title: _showUpcoming ? 'No upcoming events' : 'No past events',
+              title: _showUpcoming
+                  ? 'Tidak ada acara mendatang'
+                  : 'Tidak ada acara yang lalu',
               subtitle: _showUpcoming
-                  ? 'New events will appear here'
-                  : 'Past events will appear here',
+                  ? 'Acara baru akan muncul di sini'
+                  : 'Acara yang lalu akan muncul di sini',
             ),
           )
         else
@@ -130,7 +132,7 @@ class _EventsScreenState extends State<EventsScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Upcoming',
+                    'Mendatang',
                     style: TextStyle(
                       fontSize: 12,
                       color: _showUpcoming
@@ -178,7 +180,7 @@ class _EventsScreenState extends State<EventsScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Past',
+                    'Lalu',
                     style: TextStyle(
                       fontSize: 12,
                       color: !_showUpcoming
@@ -284,7 +286,7 @@ class _EventsScreenState extends State<EventsScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Text(
-                            'Upcoming',
+                            'Mendatang',
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
@@ -405,7 +407,7 @@ class _EventsScreenState extends State<EventsScreen> {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Create New Event',
+                  'Buat Acara Baru',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -416,8 +418,8 @@ class _EventsScreenState extends State<EventsScreen> {
                 TextField(
                   controller: titleController,
                   decoration: const InputDecoration(
-                    labelText: 'Title',
-                    hintText: 'Event title',
+                    labelText: 'Judul',
+                    hintText: 'Judul acara',
                   ),
                   autofocus: true,
                 ),
@@ -454,7 +456,7 @@ class _EventsScreenState extends State<EventsScreen> {
                                       ? AppColors.textMuted
                                       : Colors.grey.shade600),
                               const SizedBox(width: 8),
-                              Text(DateFormat('MMM d, y').format(selectedDate)),
+                              Text(DateFormat('d MMM y').format(selectedDate)),
                             ],
                           ),
                         ),
@@ -500,16 +502,16 @@ class _EventsScreenState extends State<EventsScreen> {
                 TextField(
                   controller: locationController,
                   decoration: const InputDecoration(
-                    labelText: 'Location',
-                    hintText: 'Event location',
+                    labelText: 'Lokasi',
+                    hintText: 'Lokasi acara',
                   ),
                 ),
                 const SizedBox(height: 16),
                 TextField(
                   controller: descController,
                   decoration: const InputDecoration(
-                    labelText: 'Description',
-                    hintText: 'Event description',
+                    labelText: 'Deskripsi',
+                    hintText: 'Deskripsi acara',
                   ),
                   maxLines: 3,
                 ),
@@ -537,12 +539,12 @@ class _EventsScreenState extends State<EventsScreen> {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content: Text('Event created successfully')),
+                              content: Text('Acara berhasil dibuat')),
                         );
                       }
                     }
                   },
-                  child: const Text('Create Event'),
+                  child: const Text('Buat Acara'),
                 ),
                 const SizedBox(height: 16),
               ],

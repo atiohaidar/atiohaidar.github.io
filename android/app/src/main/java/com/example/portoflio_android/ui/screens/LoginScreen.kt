@@ -98,14 +98,14 @@ fun LoginScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Welcome Back",
+                        text = "Selamat Datang Kembali",
                         fontSize = 24.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                     Text(
-                        text = "Sign in to continue",
+                        text = "Masuk untuk melanjutkan",
                         fontSize = 14.sp,
                         color = Color(0xFF94A3B8),
                         modifier = Modifier.padding(bottom = 24.dp)
@@ -215,7 +215,7 @@ fun LoginScreen(
                             )
                         } else {
                             Text(
-                                text = "Sign In",
+                                text = "Masuk",
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.SemiBold
                             )
@@ -230,12 +230,12 @@ fun LoginScreen(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Text(
-                            text = "Don't have an account? ",
+                            text = "Belum punya akun? ",
                             color = Color(0xFF94A3B8),
                             fontSize = 14.sp
                         )
                         Text(
-                            text = "Register",
+                            text = "Daftar",
                             color = Color(0xFF22C55E),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold,
@@ -244,7 +244,7 @@ fun LoginScreen(
                     }
                     
                     Text(
-                        text = "Forgot Password?",
+                        text = "Lupa Password?",
                         color = Color(0xFFF59E0B),
                         fontSize = 14.sp,
                         fontWeight = FontWeight.SemiBold,

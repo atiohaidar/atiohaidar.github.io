@@ -47,7 +47,7 @@ fun ErrorDialog(
                         containerColor = Color(0xFF2563EB)
                     )
                 ) {
-                    Text("Retry")
+                    Text("Coba Lagi")
                 }
             } else {
                 Button(
@@ -62,7 +62,7 @@ fun ErrorDialog(
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Dismiss", color = Color(0xFF94A3B8))
+                Text("Tutup", color = Color(0xFF94A3B8))
             }
         },
         containerColor = Color(0xFF1E293B)
@@ -78,7 +78,7 @@ fun SuccessDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                "Success",
+                "Berhasil",
                 color = Color.White
             )
         },

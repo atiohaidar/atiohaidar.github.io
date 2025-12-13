@@ -41,7 +41,7 @@ class _ItemsScreenState extends State<ItemsScreen>
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text('Inventory & Items'),
+        title: const Text('Inventaris & Barang'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -52,8 +52,8 @@ class _ItemsScreenState extends State<ItemsScreen>
               isDark ? AppColors.textMuted : Colors.grey.shade600,
           indicatorColor: AppColors.primaryBlue,
           tabs: const [
-            Tab(text: 'Items'),
-            Tab(text: 'My Borrowings'),
+            Tab(text: 'Barang'),
+            Tab(text: 'Peminjaman Saya'),
           ],
         ),
       ),
@@ -111,7 +111,7 @@ class _ItemsScreenState extends State<ItemsScreen>
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Add New Item',
+                  'Tambah Barang Baru',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -122,8 +122,8 @@ class _ItemsScreenState extends State<ItemsScreen>
                 TextField(
                   controller: nameController,
                   decoration: const InputDecoration(
-                    labelText: 'Item Name',
-                    hintText: 'Enter item name',
+                    labelText: 'Nama Barang',
+                    hintText: 'Masukkan nama barang',
                   ),
                   autofocus: true,
                 ),
@@ -131,8 +131,8 @@ class _ItemsScreenState extends State<ItemsScreen>
                 TextField(
                   controller: descController,
                   decoration: const InputDecoration(
-                    labelText: 'Description (optional)',
-                    hintText: 'Enter item description',
+                    labelText: 'Deskripsi (opsional)',
+                    hintText: 'Masukkan deskripsi barang',
                   ),
                   maxLines: 2,
                 ),
@@ -140,8 +140,8 @@ class _ItemsScreenState extends State<ItemsScreen>
                 TextField(
                   controller: stockController,
                   decoration: const InputDecoration(
-                    labelText: 'Stock Quantity',
-                    hintText: 'Enter quantity',
+                    labelText: 'Jumlah Stok',
+                    hintText: 'Masukkan jumlah',
                   ),
                   keyboardType: TextInputType.number,
                 ),
@@ -166,12 +166,12 @@ class _ItemsScreenState extends State<ItemsScreen>
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content: Text('Item added successfully')),
+                              content: Text('Barang berhasil ditambahkan')),
                         );
                       }
                     }
                   },
-                  child: const Text('Add Item'),
+                  child: const Text('Tambah Barang'),
                 ),
                 const SizedBox(height: 16),
               ],
@@ -184,14 +184,14 @@ class _ItemsScreenState extends State<ItemsScreen>
 
   Widget _buildItemsList(ItemsProvider provider, bool isDark) {
     if (provider.isLoading && provider.items.isEmpty) {
-      return const LoadingIndicator(message: 'Loading items...');
+      return const LoadingIndicator(message: 'Memuat barang...');
     }
 
     if (provider.items.isEmpty) {
       return const EmptyState(
         icon: Icons.inventory_2_outlined,
-        title: 'No items found',
-        subtitle: 'Inventory is empty',
+        title: 'Tidak ada barang ditemukan',
+        subtitle: 'Inventaris kosong',
       );
     }
 
@@ -262,7 +262,7 @@ class _ItemsScreenState extends State<ItemsScreen>
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        'Stock: ${item.stock}',
+                        'Stok: ${item.stock}',
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -290,7 +290,7 @@ class _ItemsScreenState extends State<ItemsScreen>
                 Row(
                   children: [
                     Text(
-                      'Owner: ${item.ownerUsername}',
+                      'Pemilik: ${item.ownerUsername}',
                       style: TextStyle(
                         fontSize: 12,
                         color:
@@ -309,7 +309,7 @@ class _ItemsScreenState extends State<ItemsScreen>
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                             textStyle: const TextStyle(fontSize: 12),
                           ),
-                          child: const Text('Borrow'),
+                          child: const Text('Pinjam'),
                         ),
                       ),
                   ],
@@ -360,7 +360,7 @@ class _ItemsScreenState extends State<ItemsScreen>
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Borrow Item',
+                  'Pinjam Barang',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -369,7 +369,7 @@ class _ItemsScreenState extends State<ItemsScreen>
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Borrowing: ${item.name}',
+                  'Meminjam: ${item.name}',
                   style: TextStyle(
                     fontSize: 14,
                     color: isDark ? AppColors.textMuted : Colors.grey.shade600,
@@ -379,8 +379,8 @@ class _ItemsScreenState extends State<ItemsScreen>
                 TextField(
                   controller: qtyController,
                   decoration: const InputDecoration(
-                    labelText: 'Quantity',
-                    hintText: 'Enter quantity',
+                    labelText: 'Kuantitas',
+                    hintText: 'Masukkan kuantitas',
                   ),
                   keyboardType: TextInputType.number,
                   autofocus: true,
@@ -415,7 +415,7 @@ class _ItemsScreenState extends State<ItemsScreen>
                                 : Colors.grey.shade600),
                         const SizedBox(width: 8),
                         Text(
-                            'Return by: ${DateFormat('MMM d, y').format(endDate)}'),
+                            'Kembalikan sebelum: ${DateFormat('d MMM y').format(endDate)}'),
                       ],
                     ),
                   ),
@@ -430,7 +430,7 @@ class _ItemsScreenState extends State<ItemsScreen>
                       if (qty > item.stock) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content: Text('Quantity exceeds stock')),
+                              content: Text('Kuantitas melebihi stok')),
                         );
                         return;
                       }
@@ -442,18 +442,19 @@ class _ItemsScreenState extends State<ItemsScreen>
                         startDate:
                             DateTime.now().toIso8601String().split('T')[0],
                         endDate: endDate.toIso8601String().split('T')[0],
-                        notes: 'Borrowing',
+                        notes: 'Peminjaman',
                       ));
 
                       if (success && context.mounted) {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Borrow request sent')),
+                          const SnackBar(
+                              content: Text('Permintaan peminjaman dikirim')),
                         );
                       }
                     }
                   },
-                  child: const Text('Confirm Borrow'),
+                  child: const Text('Konfirmasi Peminjaman'),
                 ),
                 const SizedBox(height: 16),
               ],
@@ -466,14 +467,14 @@ class _ItemsScreenState extends State<ItemsScreen>
 
   Widget _buildBorrowingsList(ItemsProvider provider, bool isDark) {
     if (provider.isLoading && provider.borrowings.isEmpty) {
-      return const LoadingIndicator(message: 'Loading borrowings...');
+      return const LoadingIndicator(message: 'Memuat peminjaman...');
     }
 
     if (provider.borrowings.isEmpty) {
       return const EmptyState(
         icon: Icons.assignment_return_outlined,
-        title: 'No borrowings',
-        subtitle: 'You haven\'t borrowed any items',
+        title: 'Belum ada peminjaman',
+        subtitle: 'Anda belum meminjam barang apapun',
       );
     }
 
@@ -490,7 +491,10 @@ class _ItemsScreenState extends State<ItemsScreen>
               .firstWhere(
                 (i) => i.id == borrowing.itemId,
                 orElse: () => const Item(
-                    id: '', name: 'Unknown Item', stock: 0, ownerUsername: ''),
+                    id: '',
+                    name: 'Barang Tidak Diketahui',
+                    stock: 0,
+                    ownerUsername: ''),
               )
               .name;
 
@@ -526,13 +530,13 @@ class _ItemsScreenState extends State<ItemsScreen>
             children: [
               _buildInfoChip(
                 Icons.onetwothree,
-                'Qty: ${borrowing.quantity}',
+                'Jml: ${borrowing.quantity}',
                 isDark,
               ),
               const SizedBox(width: 12),
               _buildInfoChip(
                 Icons.calendar_today,
-                'Until ${borrowing.endDate}',
+                'Sampai ${borrowing.endDate}',
                 isDark,
               ),
             ],

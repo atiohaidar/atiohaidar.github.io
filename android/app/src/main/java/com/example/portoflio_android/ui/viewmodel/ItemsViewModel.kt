@@ -53,7 +53,7 @@ class ItemsViewModel @Inject constructor(
                 }
                 .onFailure { error ->
                     _uiState.value = _uiState.value.copy(
-                        error = error.message ?: "Failed to load items",
+                        error = error.message ?: "Gagal memuat barang",
                         isLoading = false
                     )
                 }
@@ -78,7 +78,7 @@ class ItemsViewModel @Inject constructor(
                 }
                 .onFailure { error ->
                     _uiState.value = _uiState.value.copy(
-                        error = error.message ?: "Failed to create item",
+                        error = error.message ?: "Gagal membuat barang",
                         isLoading = false
                     )
                 }
@@ -94,7 +94,7 @@ class ItemsViewModel @Inject constructor(
                 }
                 .onFailure { error ->
                     _uiState.value = _uiState.value.copy(
-                        error = error.message ?: "Failed to update item",
+                        error = error.message ?: "Gagal memperbarui barang",
                         isLoading = false
                     )
                 }
@@ -110,7 +110,7 @@ class ItemsViewModel @Inject constructor(
                 }
                 .onFailure { error ->
                     _uiState.value = _uiState.value.copy(
-                        error = error.message ?: "Failed to delete item",
+                        error = error.message ?: "Gagal menghapus barang",
                         isLoading = false
                     )
                 }
@@ -139,7 +139,7 @@ class ItemsViewModel @Inject constructor(
                 }
                 .onFailure { error ->
                     _uiState.value = _uiState.value.copy(
-                        error = error.message ?: "Failed to update borrowing status",
+                        error = error.message ?: "Gagal memperbarui status peminjaman",
                         isLoading = false
                     )
                 }
@@ -163,7 +163,7 @@ class ItemsViewModel @Inject constructor(
                 }
                 .onFailure { error ->
                     _uiState.value = _uiState.value.copy(
-                        error = error.message ?: "Failed to create borrowing request",
+                        error = error.message ?: "Gagal membuat permintaan peminjaman",
                         isLoading = false
                     )
                 }
@@ -178,7 +178,7 @@ class ItemsViewModel @Inject constructor(
                 updateBorrowingStatus(borrowingId, ItemBorrowingStatus.REJECTED)
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
-                    error = e.message ?: "Failed to cancel borrowing",
+                    error = e.message ?: "Gagal membatalkan peminjaman",
                     isLoading = false
                 )
             }

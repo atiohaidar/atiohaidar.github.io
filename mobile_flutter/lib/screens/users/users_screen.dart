@@ -30,7 +30,7 @@ class _UsersScreenState extends State<UsersScreen> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text('Users Management'),
+        title: const Text('Manajemen Pengguna'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -84,7 +84,7 @@ class _UsersScreenState extends State<UsersScreen> {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Create New User',
+                  'Buat Pengguna Baru',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -96,7 +96,7 @@ class _UsersScreenState extends State<UsersScreen> {
                   controller: usernameController,
                   decoration: const InputDecoration(
                     labelText: 'Username',
-                    hintText: 'Enter username',
+                    hintText: 'Masukkan username',
                     prefixIcon: Icon(Icons.alternate_email),
                   ),
                   autofocus: true,
@@ -105,8 +105,8 @@ class _UsersScreenState extends State<UsersScreen> {
                 TextField(
                   controller: nameController,
                   decoration: const InputDecoration(
-                    labelText: 'Full Name',
-                    hintText: 'Enter full name',
+                    labelText: 'Nama Lengkap',
+                    hintText: 'Masukkan nama lengkap',
                     prefixIcon: Icon(Icons.person),
                   ),
                 ),
@@ -115,7 +115,7 @@ class _UsersScreenState extends State<UsersScreen> {
                   controller: passwordController,
                   decoration: const InputDecoration(
                     labelText: 'Password',
-                    hintText: 'Enter password',
+                    hintText: 'Masukkan password',
                     prefixIcon: Icon(Icons.lock),
                   ),
                   obscureText: true,
@@ -124,13 +124,13 @@ class _UsersScreenState extends State<UsersScreen> {
                 DropdownButtonFormField<UserRole>(
                   value: selectedRole,
                   decoration: const InputDecoration(
-                    labelText: 'Role',
+                    labelText: 'Peran',
                     prefixIcon: Icon(Icons.admin_panel_settings),
                   ),
                   items: const [
                     DropdownMenuItem(
                       value: UserRole.member,
-                      child: Text('Member'),
+                      child: Text('Anggota'),
                     ),
                     DropdownMenuItem(
                       value: UserRole.admin,
@@ -159,12 +159,12 @@ class _UsersScreenState extends State<UsersScreen> {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content: Text('User created successfully')),
+                              content: Text('Pengguna berhasil dibuat')),
                         );
                       }
                     }
                   },
-                  child: const Text('Create User'),
+                  child: const Text('Buat Pengguna'),
                 ),
                 const SizedBox(height: 16),
               ],
@@ -177,7 +177,7 @@ class _UsersScreenState extends State<UsersScreen> {
 
   Widget _buildBody(UsersProvider provider, bool isDark) {
     if (provider.isLoading && provider.users.isEmpty) {
-      return const LoadingIndicator(message: 'Loading users...');
+      return const LoadingIndicator(message: 'Memuat pengguna...');
     }
 
     if (provider.error != null && provider.users.isEmpty) {
@@ -190,8 +190,8 @@ class _UsersScreenState extends State<UsersScreen> {
     if (provider.users.isEmpty) {
       return const EmptyState(
         icon: Icons.people_outline,
-        title: 'No users found',
-        subtitle: 'System has no users',
+        title: 'Tidak ada pengguna',
+        subtitle: 'Sistem tidak memiliki pengguna',
       );
     }
 
@@ -248,7 +248,7 @@ class _UsersScreenState extends State<UsersScreen> {
                 ),
                 const SizedBox(height: 24),
                 Text(
-                  'Edit User',
+                  'Edit Pengguna',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -268,8 +268,8 @@ class _UsersScreenState extends State<UsersScreen> {
                 TextField(
                   controller: nameController,
                   decoration: const InputDecoration(
-                    labelText: 'Full Name',
-                    hintText: 'Enter full name',
+                    labelText: 'Nama Lengkap',
+                    hintText: 'Masukkan nama lengkap',
                     prefixIcon: Icon(Icons.person),
                   ),
                 ),
@@ -277,8 +277,8 @@ class _UsersScreenState extends State<UsersScreen> {
                 TextField(
                   controller: passwordController,
                   decoration: const InputDecoration(
-                    labelText: 'New Password (optional)',
-                    hintText: 'Leave empty to keep current',
+                    labelText: 'Password Baru (opsional)',
+                    hintText: 'Kosongkan untuk tetap menggunakan yang saat ini',
                     prefixIcon: Icon(Icons.lock),
                   ),
                   obscureText: true,
@@ -287,13 +287,13 @@ class _UsersScreenState extends State<UsersScreen> {
                 DropdownButtonFormField<UserRole>(
                   value: selectedRole,
                   decoration: const InputDecoration(
-                    labelText: 'Role',
+                    labelText: 'Peran',
                     prefixIcon: Icon(Icons.admin_panel_settings),
                   ),
                   items: const [
                     DropdownMenuItem(
                       value: UserRole.member,
-                      child: Text('Member'),
+                      child: Text('Anggota'),
                     ),
                     DropdownMenuItem(
                       value: UserRole.admin,
@@ -324,12 +324,12 @@ class _UsersScreenState extends State<UsersScreen> {
                         Navigator.pop(context);
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content: Text('User updated successfully')),
+                              content: Text('Pengguna berhasil diperbarui')),
                         );
                       }
                     }
                   },
-                  child: const Text('Save Changes'),
+                  child: const Text('Simpan Perubahan'),
                 ),
                 const SizedBox(height: 16),
               ],
@@ -421,13 +421,13 @@ class _UsersScreenState extends State<UsersScreen> {
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: const Text('Delete User'),
+                    title: const Text('Hapus Pengguna'),
                     content:
-                        Text('Are you sure you want to delete ${user.name}?'),
+                        Text('Apakah Anda yakin ingin menghapus ${user.name}?'),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context),
-                        child: const Text('Cancel'),
+                        child: const Text('Batal'),
                       ),
                       TextButton(
                         onPressed: () async {
@@ -437,7 +437,7 @@ class _UsersScreenState extends State<UsersScreen> {
                         },
                         style: TextButton.styleFrom(
                             foregroundColor: AppColors.error),
-                        child: const Text('Delete'),
+                        child: const Text('Hapus'),
                       ),
                     ],
                   ),
@@ -461,7 +461,7 @@ class _UsersScreenState extends State<UsersScreen> {
                   children: [
                     Icon(Icons.delete, size: 20, color: AppColors.error),
                     SizedBox(width: 8),
-                    Text('Delete', style: TextStyle(color: AppColors.error)),
+                    Text('Hapus', style: TextStyle(color: AppColors.error)),
                   ],
                 ),
               ),

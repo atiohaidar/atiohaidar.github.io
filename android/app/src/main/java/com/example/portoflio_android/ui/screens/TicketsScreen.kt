@@ -91,7 +91,7 @@ private fun TicketListView(
             TopAppBar(
                 title = {
                     Text(
-                        "Tickets",
+                        "Tiket",
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
@@ -134,9 +134,9 @@ private fun TicketListView(
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    StatChip("Open", stats.open, Color(0xFF2563EB), Modifier.weight(1f))
-                    StatChip("In Progress", stats.in_progress, Color(0xFFF59E0B), Modifier.weight(1f))
-                    StatChip("Solved", stats.solved, Color(0xFF10B981), Modifier.weight(1f))
+                    StatChip("Terbuka", stats.open, Color(0xFF2563EB), Modifier.weight(1f))
+                    StatChip("Dalam Proses", stats.in_progress, Color(0xFFF59E0B), Modifier.weight(1f))
+                    StatChip("Teratasi", stats.solved, Color(0xFF10B981), Modifier.weight(1f))
                 }
             }
             
@@ -160,7 +160,7 @@ private fun TicketListView(
                             tint = Color(0xFF475569)
                         )
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text("No tickets", color = Color(0xFF64748B))
+                        Text("Tidak ada tiket", color = Color(0xFF64748B))
                     }
                 }
             } else {
@@ -245,7 +245,7 @@ private fun TicketCard(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "#${ticket.id} - ${ticket.title}",
+                        text = "Tiket #${ticket.id} - ${ticket.title}",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = Color.White
@@ -317,7 +317,7 @@ private fun TicketDetailView(
         TopAppBar(
             title = {
                 Text(
-                    "Ticket #${ticket.id}",
+                    "Tiket #${ticket.id}",
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
@@ -391,7 +391,7 @@ private fun TicketDetailView(
             // Comments Header
             item {
                 Text(
-                    "Comments (${comments.size})",
+                    "Komentar (${comments.size})",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White,
@@ -446,7 +446,7 @@ private fun TicketDetailView(
             OutlinedTextField(
                 value = commentText,
                 onValueChange = { commentText = it },
-                placeholder = { Text("Add a comment...", color = Color(0xFF64748B)) },
+                placeholder = { Text("Tambah komentar...", color = Color(0xFF64748B)) },
                 modifier = Modifier.weight(1f),
                 colors = OutlinedTextFieldDefaults.colors(
                     focusedBorderColor = Color(0xFF2563EB),
@@ -499,10 +499,10 @@ private fun TicketDetailView(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Delete Ticket?", color = Color.White) },
+            title = { Text("Hapus Tiket?", color = Color.White) },
             text = {
                 Text(
-                    "Are you sure you want to delete this ticket? This action cannot be undone.",
+                    "Apakah Anda yakin ingin menghapus tiket ini? Tindakan ini tidak dapat dibatalkan.",
                     color = Color(0xFF94A3B8)
                 )
             },
@@ -514,12 +514,12 @@ private fun TicketDetailView(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444))
                 ) {
-                    Text("Delete")
+                    Text("Hapus")
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDeleteDialog = false }) {
-                    Text("Cancel", color = Color(0xFF94A3B8))
+                    Text("Batal", color = Color(0xFF94A3B8))
                 }
             },
             containerColor = Color(0xFF1E293B)
@@ -553,13 +553,13 @@ private fun EditTicketDialog(
     
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Edit Ticket", color = Color.White) },
+        title = { Text("Edit Tiket", color = Color.White) },
         text = {
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
-                    label = { Text("Title") },
+                    label = { Text("Judul") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     colors = OutlinedTextFieldDefaults.colors(
@@ -577,7 +577,7 @@ private fun EditTicketDialog(
                 OutlinedTextField(
                     value = description,
                     onValueChange = { description = it },
-                    label = { Text("Description") },
+                    label = { Text("Deskripsi") },
                     modifier = Modifier.fillMaxWidth(),
                     maxLines = 4,
                     colors = OutlinedTextFieldDefaults.colors(
@@ -609,7 +609,7 @@ private fun EditTicketDialog(
                 
                 Spacer(modifier = Modifier.height(12.dp))
                 
-                Text("Priority", color = Color(0xFF94A3B8), fontSize = 12.sp)
+                Text("Prioritas", color = Color(0xFF94A3B8), fontSize = 12.sp)
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     TicketPriority.values().forEach { p ->
                         FilterChip(
@@ -635,12 +635,12 @@ private fun EditTicketDialog(
                 enabled = title.isNotBlank() && description.isNotBlank(),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2563EB))
             ) {
-                Text("Save")
+                Text("Simpan")
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", color = Color(0xFF94A3B8))
+                Text("Batal", color = Color(0xFF94A3B8))
             }
         },
         containerColor = Color(0xFF1E293B)
@@ -658,12 +658,12 @@ private fun AssignTicketDialog(
     
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Assign Ticket", color = Color.White) },
+        title = { Text("Tetapkan Tiket", color = Color.White) },
         text = {
             Column {
                 if (currentAssignee != null) {
                     Text(
-                        "Currently assigned to: $currentAssignee",
+                        "Saat ini ditetapkan ke: $currentAssignee",
                         color = Color(0xFF94A3B8),
                         fontSize = 12.sp,
                         modifier = Modifier.padding(bottom = 8.dp)
@@ -672,7 +672,7 @@ private fun AssignTicketDialog(
                 OutlinedTextField(
                     value = username,
                     onValueChange = { username = it },
-                    label = { Text("Assign to username", color = Color(0xFF94A3B8)) },
+                    label = { Text("Tetapkan ke username", color = Color(0xFF94A3B8)) },
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedTextColor = Color.White,
                         unfocusedTextColor = Color.White,
@@ -689,12 +689,12 @@ private fun AssignTicketDialog(
                 onClick = { if (username.isNotBlank()) onAssign(username) },
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2563EB))
             ) {
-                Text("Assign")
+                Text("Tetapkan")
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel", color = Color(0xFF94A3B8))
+                Text("Batal", color = Color(0xFF94A3B8))
             }
         },
         containerColor = Color(0xFF1E293B)

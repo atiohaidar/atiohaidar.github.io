@@ -10,7 +10,7 @@ export const DemoCredentials: React.FC<DemoCredentialsProps> = ({ themeColor }) 
   return (
     <View style={styles.infoCard}>
       <Text variant="bodySmall" style={{ color: themeColor }}>
-        Demo Credentials:
+        Akun Demo:
       </Text>
       <Text variant="bodySmall" style={{ color: themeColor }}>
         Admin: admin / admin123

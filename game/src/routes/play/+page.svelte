@@ -42,7 +42,7 @@
     } from "$lib/api";
 
     let loading = true;
-    let isBuildMode = false; // Now acts as "Inventory/Build Mode"
+    let isBuildMode = false; // Sekarang bertindak sebagai "Inventaris/Mode Bangun"
     let inventoryItems: InventoryItem[] = [];
 
     let selectedBuildItem: InventoryItem | null = null;
@@ -148,7 +148,10 @@
 
         if (plotData.placed_item_id) {
             // Can't interact with decorations in normal mode yet (maybe later implement 'use')
-            showToast("Switch to Build Mode to move this item", "info");
+            showToast(
+                "Beralih ke Mode Bangun untuk memindahkan item ini",
+                "info",
+            );
             return;
         }
 
@@ -176,11 +179,11 @@
         if (plotData?.placed_item_id) {
             const result = await removeItem(plotIndex);
             if (result.success) {
-                showToast("Item removed! 📦", "success");
+                showToast("Item dihapus! 📦", "success");
                 await refreshGameData();
                 await loadInventory(); // Refresh inventory count
             } else {
-                showToast(result.error || "Failed to remove", "error");
+                showToast(result.error || "Gagal menghapus", "error");
             }
             return;
         }
@@ -189,7 +192,7 @@
         if (selectedBuildItem) {
             // Check if plot is empty
             if (plotData?.crop_id) {
-                showToast("Cannot place on crops!", "error");
+                showToast("Tidak dapat meletakkan di atas tanaman!", "error");
                 return;
             }
 
@@ -198,7 +201,7 @@
                 selectedBuildItem.item_id,
             );
             if (result.success) {
-                showToast("Item placed! 🏗️", "success");
+                showToast("Item diletakkan! 🏗️", "success");
                 await refreshGameData();
                 await loadInventory(); // Refresh inventory count
 
@@ -209,12 +212,12 @@
                     selectedBuildItem.quantity--; // Visually decrement
                 }
             } else {
-                showToast(result.error || "Failed to place", "error");
+                showToast(result.error || "Gagal meletakkan", "error");
             }
             return;
         }
 
-        showToast("Select an item to place first!", "info");
+        showToast("Pilih item untuk diletakkan terlebih dahulu!", "info");
         showBuildSelector = true;
     }
 
@@ -245,7 +248,7 @@
         selectedBuildItem = item;
         showBuildSelector = false;
         showToast(
-            `Selected ${item.item?.name}. Click a plot to place.`,
+            `Dipilih ${item.item?.name}. Klik petak untuk meletakkan.`,
             "info",
         );
     }
@@ -254,10 +257,10 @@
         const result = await waterPlot(plotIndex);
 
         if (result.success) {
-            showToast("Watered! 💧 Growth +10%", "info");
+            showToast("Disiram! 💧 Pertumbuhan +10%", "info");
             await refreshGameData();
         } else {
-            showToast(result.error || "Failed to water", "error");
+            showToast(result.error || "Gagal menyiram", "error");
         }
     }
 
@@ -270,13 +273,13 @@
             showToast(`+${gold} gold, +${xp} XP`, "gold");
 
             if (leveledUp) {
-                showToast(`🎉 Level Up! Now level ${newLevel}`, "level");
+                showToast(`🎉 Naik Level! Sekarang level ${newLevel}`, "level");
             }
 
             await refreshGameData();
             await refreshProfile();
         } else {
-            showToast(result.error || "Failed to harvest", "error");
+            showToast(result.error || "Gagal memanen", "error");
         }
     }
 
@@ -293,18 +296,21 @@
             } = result.data;
 
             showToast(
-                `Harvested ${harvested_count}! +${total_gold} gold, +${total_xp} XP`,
+                `Dipanen ${harvested_count}! +${total_gold} emas, +${total_xp} XP`,
                 "gold",
             );
 
             if (leveled_up) {
-                showToast(`🎉 Level Up! Now level ${new_level}`, "level");
+                showToast(
+                    `🎉 Naik Level! Sekarang level ${new_level}`,
+                    "level",
+                );
             }
 
             await refreshGameData();
             await refreshProfile();
         } else {
-            showToast(result.error || "No crops ready", "error");
+            showToast(result.error || "Tidak ada tanaman siap panen", "error");
         }
     }
 
@@ -361,19 +367,22 @@
 
     async function handleExpandLand() {
         if (($profile?.gold || 0) < nextExpansionCost) {
-            showToast(`Need ${nextExpansionCost} gold to expand!`, "error");
+            showToast(
+                `Butuh ${nextExpansionCost} emas untuk memperluas!`,
+                "error",
+            );
             return;
         }
 
         const result = await expandLand();
         if (result.success && result.data) {
             showToast(
-                `Land expanded! You now have ${result.data.new_plots_unlocked} plots.`,
+                `Lahan diperluas! Anda sekarang memiliki ${result.data.new_plots_unlocked} petak.`,
                 "success",
             );
             await refreshProfile();
         } else {
-            showToast(result.error || "Expansion failed", "error");
+            showToast(result.error || "Gagal memperluas", "error");
         }
     }
 
@@ -407,7 +416,7 @@
                 y,
             );
             if (result.success) {
-                showToast("Item placed! 🏗️", "success");
+                showToast("Item diletakkan! 🏗️", "success");
                 await refreshGameData();
                 await loadInventory();
 
@@ -417,7 +426,7 @@
                     selectedBuildItem.quantity--;
                 }
             } else {
-                showToast(result.error || "Failed", "error");
+                showToast(result.error || "Gagal", "error");
             }
         }
     }
@@ -458,7 +467,7 @@
             // Use local plotsUnlocked variable which is reactive
             if ($farmPlots.length >= plotsUnlocked) {
                 showToast(
-                    `Land is full! (${$farmPlots.length}/${plotsUnlocked}) Expand your farm to plant more.`,
+                    `Lahan penuh! (${$farmPlots.length}/${plotsUnlocked}) Perluas lahan Anda untuk menanam lebih banyak.`,
                     "error",
                 );
                 return;
@@ -479,13 +488,13 @@
             y,
         );
         if (result.success) {
-            showToast("Item placed! 🏗️", "success");
+            showToast("Item diletakkan! 🏗️", "success");
             await refreshGameData();
             await loadInventory();
             if (selectedBuildItem.quantity <= 1) selectedBuildItem = null;
             else selectedBuildItem.quantity--;
         } else {
-            showToast(result.error || "Failed", "error");
+            showToast(result.error || "Gagal", "error");
         }
     }
 
@@ -499,11 +508,11 @@
 
             const result = await plantCrop(undefined, cropId, x, y);
             if (result.success) {
-                showToast("Planted! 🌱", "success");
+                showToast("Ditanam! 🌱", "success");
                 await refreshGameData();
                 await refreshProfile();
             } else {
-                showToast(result.error || "Failed", "error");
+                showToast(result.error || "Gagal", "error");
             }
             return;
         }
@@ -519,11 +528,11 @@
 
         if (result.success) {
             const crop = $crops.find((c) => c.id === cropId);
-            showToast(`Planted ${crop?.name || "crop"}! 🌱`, "success");
+            showToast(`Menanam ${crop?.name || "tanaman"}! 🌱`, "success");
             await refreshGameData();
             await refreshProfile();
         } else {
-            showToast(result.error || "Failed to plant", "error");
+            showToast(result.error || "Gagal menanam", "error");
         }
     }
 
@@ -637,7 +646,7 @@
         {#if loading}
             <div class="loading-overlay">
                 <div class="loading-spinner"></div>
-                <p>Loading farm...</p>
+                <p>Memuat kebun...</p>
             </div>
         {:else}
             <!-- HTML Farm Grid Overlay for reliable click handling -->
@@ -646,7 +655,8 @@
                 <h2 class="farm-title absolute-top">🌾 Bercocok tanam 🌾</h2>
                 <div class="land-usage-badge top-right">
                     <span
-                        >Crops: {$farmPlots.filter((p) => p.crop_id).length} / {$farmPlots.length}</span
+                        >Tanaman: {$farmPlots.filter((p) => p.crop_id).length} /
+                        {plotsUnlocked}</span
                     >
                 </div>
 
@@ -713,15 +723,17 @@
 
                 <p class="farm-hint">
                     {#if isBuildMode}
-                        Select an item and click anywhere to build!
+                        Pilih item dan klik di mana saja untuk membangun!
                     {:else}
-                        Click empty land to plant. Click crops to harvest/water.
+                        Klik lahan kosong untuk menanam. Klik tanaman untuk
+                        memanen/menyiram.
                     {/if}
                 </p>
 
                 <div class="land-usage-badge">
                     <span
-                        >Crops: {$farmPlots.filter((p) => p.crop_id).length} / {$farmPlots.length}</span
+                        >Tanaman: {$farmPlots.filter((p) => p.crop_id).length} /
+                        {plotsUnlocked}</span
                     >
                 </div>
             </div>
@@ -730,7 +742,7 @@
 
     <!-- Side Panel -->
     <div class="side-panel">
-        <h3>🌾 Quick Actions</h3>
+        <h3>🌾 Aksi Cepat</h3>
 
         <button
             class="btn w-full"
@@ -738,22 +750,22 @@
             class:btn-warning={isBuildMode}
             on:click={toggleBuildMode}
         >
-            {isBuildMode ? "❌ Exit Build Mode" : "🔨 Build Mode"}
+            {isBuildMode ? "❌ Keluar Mode Bangun" : "🔨 Mode Bangun"}
         </button>
 
         {#if !isBuildMode}
             <button class="btn btn-primary w-full" on:click={handleHarvestAll}>
-                🌾 Harvest All (H)
+                🌾 Panen Semua (H)
             </button>
         {:else}
             <div class="build-controls">
                 {#if selectedBuildItem}
                     <div class="selected-item">
-                        <span>Selected: {selectedBuildItem.item?.name}</span>
+                        <span>Dipilih: {selectedBuildItem.item?.name}</span>
                         <button
                             class="btn-xs"
                             on:click={() => (showBuildSelector = true)}
-                            >Change</button
+                            >Ganti</button
                         >
                     </div>
                 {:else}
@@ -761,7 +773,7 @@
                         class="btn btn-secondary w-full"
                         on:click={() => (showBuildSelector = true)}
                     >
-                        Select Item to Place
+                        Pilih Item untuk Diletakkan
                     </button>
                 {/if}
             </div>
@@ -769,13 +781,13 @@
 
         <!-- Navigation Links -->
         <div class="nav-links">
-            <a href="/shop" class="nav-link">🛒 Shop</a>
-            <a href="/inventory" class="nav-link">📦 Inventory</a>
-            <a href="/profile" class="nav-link">👤 Profile</a>
-            <a href="/prestige" class="nav-link">✨ Prestige</a>
-            <a href="/leaderboard" class="nav-link">🏆 Leaderboard</a>
+            <a href="/shop" class="nav-link">🛒 Toko</a>
+            <a href="/inventory" class="nav-link">📦 Inventaris</a>
+            <a href="/profile" class="nav-link">👤 Profil</a>
+            <a href="/prestige" class="nav-link">✨ Prestise</a>
+            <a href="/leaderboard" class="nav-link">🏆 Peringkat</a>
             <button class="nav-link logout-link" on:click={handleLogout}
-                >🚪 Log Out</button
+                >🚪 Keluar</button
             >
         </div>
 
@@ -785,22 +797,24 @@
                 <span class="value">{$profile?.level || 1}</span>
             </div>
             <div class="stat">
-                <span class="label">Gold</span>
+                <span class="label">Emas</span>
                 <span class="value text-gold"
                     >{$profile?.gold?.toLocaleString() || 0}</span
                 >
             </div>
             <div class="stat">
-                <span class="label">Gems</span>
+                <span class="label">Permata</span>
                 <span class="value text-gems">{$profile?.gems || 0}</span>
             </div>
             <div class="stat">
-                <span class="label">Harvests</span>
+                <span class="label">Panen</span>
                 <span class="value">{$profile?.total_harvests || 0}</span>
             </div>
             <div class="stat">
-                <span class="label">Plots</span>
-                <span class="value">{$farmPlots.length} / {plotsUnlocked}</span>
+                <span class="label">Petak</span>
+                <span class="value"
+                    >{$farmPlots.filter((p) => p.crop_id).length} / {plotsUnlocked}</span
+                >
             </div>
 
             <button
@@ -808,16 +822,16 @@
                 on:click={handleExpandLand}
                 disabled={($profile?.gold || 0) < nextExpansionCost}
             >
-                Expand Land ({nextExpansionCost}g)
+                Perluas Lahan ({nextExpansionCost}g)
             </button>
         </div>
 
         <div class="quick-tips">
             <h4>Tips</h4>
             <ul>
-                <li>💧 Water crops for 10% faster growth</li>
-                <li>🌾 Press H to harvest all ready crops</li>
-                <li>⬆️ Higher tier crops = more gold</li>
+                <li>💧 Siram tanaman agar tumbuh 10% lebih cepat</li>
+                <li>🌾 Tekan H untuk memanen semua tanaman siap panen</li>
+                <li>⬆️ Tanaman tingkat tinggi = lebih banyak emas</li>
             </ul>
         </div>
     </div>
@@ -833,8 +847,8 @@
         tabindex="0"
     >
         <div class="modal seed-selector" on:click|stopPropagation role="dialog">
-            <h2>🌱 Select a Seed</h2>
-            <p class="text-muted">Choose what to plant in this plot</p>
+            <h2>🌱 Pilih Benih</h2>
+            <p class="text-muted">Pilih apa yang ingin ditanam di petak ini</p>
 
             <div class="seed-grid">
                 {#each unlockedCrops as crop}
@@ -856,7 +870,7 @@
             </div>
 
             <button class="btn btn-secondary" on:click={closeSeedSelector}>
-                Cancel
+                Batal
             </button>
         </div>
     </div>
@@ -871,16 +885,16 @@
         tabindex="0"
     >
         <div class="modal seed-selector" on:click|stopPropagation role="dialog">
-            <h2>🔨 Select Item to Build</h2>
-            <p class="text-muted">Decorations & Upgrades</p>
+            <h2>🔨 Pilih Item untuk Dibangun</h2>
+            <p class="text-muted">Dekorasi & Peningkatan</p>
 
             {#if inventoryItems.length === 0}
                 <div class="empty-state">
-                    <p>No placeable items found.</p>
+                    <p>Tidak ada item yang dapat diletakkan.</p>
                     <a
                         href="/shop"
                         class="btn btn-primary"
-                        on:click={() => (isBuildMode = false)}>Go to Shop</a
+                        on:click={() => (isBuildMode = false)}>Pergi ke Toko</a
                     >
                 </div>
             {:else}
@@ -892,7 +906,7 @@
                         >
                             <span class="icon">{inv.item?.icon || "📦"}</span>
                             <span class="name">{inv.item?.name}</span>
-                            <span class="info">Owned: {inv.quantity}</span>
+                            <span class="info">Dimiliki: {inv.quantity}</span>
                         </button>
                     {/each}
                 </div>
@@ -902,7 +916,7 @@
                 class="btn btn-secondary"
                 on:click={() => (showBuildSelector = false)}
             >
-                Cancel
+                Batal
             </button>
         </div>
     </div>

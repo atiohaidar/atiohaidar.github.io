@@ -22,7 +22,7 @@
         if (res.success && res.data) {
             items = res.data;
         } else {
-            showToast(res.error || "Failed to load items", "error");
+            showToast(res.error || "Gagal memuat item", "error");
         }
         loading = false;
     }
@@ -46,21 +46,21 @@
     }
 
     async function handleDelete(id: string) {
-        if (!confirm("Are you sure you want to delete this item?")) return;
+        if (!confirm("Apakah Anda yakin ingin menghapus item ini?")) return;
 
         const res = await deleteAdminItem(id);
         if (res.success) {
-            showToast("Item deleted successfully", "success");
+            showToast("Item berhasil dihapus", "success");
             loadItems();
         } else {
-            showToast(res.error || "Failed to delete item", "error");
+            showToast(res.error || "Gagal menghapus item", "error");
         }
     }
 
     async function handleSave(event: CustomEvent<Partial<ShopItem>>) {
         const item = event.detail;
         if (!item.id || !item.name) {
-            showToast("ID and Name are required", "error");
+            showToast("ID dan Nama wajib diisi", "error");
             return;
         }
 
@@ -73,13 +73,13 @@
 
         if (res.success) {
             showToast(
-                `Item ${isEditing ? "updated" : "created"} successfully`,
+                `Item berhasil ${isEditing ? "diperbarui" : "dibuat"}`,
                 "success",
             );
             showModal = false;
             loadItems();
         } else {
-            showToast(res.error || "Operation failed", "error");
+            showToast(res.error || "Operasi gagal", "error");
         }
     }
 
@@ -90,18 +90,18 @@
 
 <div class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-bold">Shop Items</h1>
+        <h1 class="text-2xl font-bold">Item Toko</h1>
         <div class="flex gap-4">
             <a
                 href="/admin/game"
                 class="text-indigo-600 hover:text-indigo-900 py-2"
-                >Back to Dashboard</a
+                >Kembali ke Dashboard</a
             >
             <button
                 on:click={openCreateModal}
                 class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
             >
-                Add New Item
+                Tambah Item Baru
             </button>
         </div>
     </div>
@@ -119,19 +119,19 @@
                     <tr>
                         <th
                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                            >Icon</th
+                            >Ikon</th
                         >
                         <th
                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                            >Name</th
+                            >Nama</th
                         >
                         <th
                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                            >Type</th
+                            >Tipe</th
                         >
                         <th
                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                            >Price</th
+                            >Harga</th
                         >
                         <th
                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -139,7 +139,7 @@
                         >
                         <th
                             class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
-                            >Actions</th
+                            >Aksi</th
                         >
                     </tr>
                 </thead>
@@ -186,7 +186,7 @@
                                 <button
                                     on:click={() => handleDelete(item.id)}
                                     class="text-red-600 hover:text-red-900"
-                                    >Delete</button
+                                    >Hapus</button
                                 >
                             </td>
                         </tr>
@@ -205,13 +205,13 @@
             >
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-medium text-gray-900">
-                        {isEditing ? "Edit Item" : "New Item"}
+                        {isEditing ? "Edit Item" : "Item Baru"}
                     </h3>
                     <button
                         on:click={() => (showModal = false)}
                         class="text-gray-400 hover:text-gray-500"
                     >
-                        <span class="sr-only">Close</span>
+                        <span class="sr-only">Tutup</span>
                         <svg
                             class="h-6 w-6"
                             fill="none"
