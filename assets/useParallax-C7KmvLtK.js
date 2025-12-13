@@ -1,0 +1,1 @@
+import{b as r}from"./vendor-BFu755QE.js";const u=()=>{const[e,s]=r.useState(0);return r.useEffect(()=>{const t=()=>{s(window.scrollY)};return window.addEventListener("scroll",t,{passive:!0}),()=>window.removeEventListener("scroll",t)},[]),{scrollY:e,slow:e*.1,medium:e*.3,fast:e*.5,getOffset:(t,l="up")=>{const o=l==="up"?-1:1;return e*t*o}}};export{u};

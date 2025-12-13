@@ -1,0 +1,209 @@
+[
+    {
+        "name": "Web App 'Ploting Jadwal Dosen' (Latihan)",
+        "description": "Aplikasi Fullstack untuk memplot jadwal dosen secara otomatis berdasarkan data yang diunggah.",
+        "contribution": "Mempermudah proses ploting Jadwal Dosen",
+        "tech": [
+            "React JS",
+            "NestJS",
+            "Prisma",
+            "Python" 
+        ],
+        "links": [
+            {
+                "type": "github",
+                "url": "https://github.com/atiohaidar/ploting-jadwal-dosen"
+            }
+        ]
+    },
+    {
+        "name": "MCP Todolist (Latihan)",
+        "description": "Mencoba membangung MCP (Model Context Protocol) pada aplikasi todolist",
+        "contribution": "Mempelajari konsep MCP",
+        "tech": [
+            "Python"
+        ],
+        "links": [
+            {
+                "type": "github",
+                "url": "https://github.com/atiohaidar/belajar-mcp-todolist"
+            }
+        ]
+    },
+    {
+        "name": "Eksplor Teknologi untuk Software Engineering",
+        "description": "Github repository untuk eksplorasi berbagai teknologi yang relevan dengan rekayasa perangkat lunak.",
+        "contribution": "Mempelajari hal baru",
+        "tech": [
+            "Rust",
+            "Python",
+            "Go"
+        ],
+        "links": [
+            {
+                "type": "github",
+                "url": "https://github.com/atiohaidar/explore-tech"
+            }
+        ]
+    },
+    {
+        "name": "Belajar NestJS (API)",
+        "description": "Proyek dasar untuk mempelajari framework NestJS dalam membangun API.",
+        "contribution": "Memahami arsitektur backend menggunakan NestJS.",
+        "tech": [
+            "NestJS",
+            "TypeScript",
+            "TypeORM"
+        ],
+        "links": [
+            {
+                "type": "github",
+                "url": "https://github.com/TioHaidarHanif/belajar-nestjs"
+            }
+        ]
+    },
+{
+  "name": "Glosarium",
+    "description": "Aplikasi web untuk menyimpan istilah-istilah teknis dalam berbagai bidang.",
+    "contribution": "Menyediakan referensi cepat untuk istilah teknis.",
+    "tech": [
+        "React JS"
+    ],
+    "links": [
+        {
+            "type": "live",
+            "url": "https://atiohaidar.github.io/glosarium/"
+        }
+    ]
+},
+    {
+        "name": "QR Generator For Wajihah",
+        "description": "Aplikasi web sederhana untuk membuat kode QR dengan menambahkan logo pada QR tersebut serta dapat menyesuaikan style dari kode QR itu sendiri.",
+        "contribution": "Menyediakan alat yang cepat dan mudah untuk membuat kode QR yang bisa diubah logonya.",
+        "tech": [
+            "React JS",
+            "JavaScript"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://wajihah-qr-generator.pages.dev/"
+            }
+        ]
+    },
+    {
+        "name": "Backend Capstone Project",
+        "description": "Sistem backend Rest API untuk memenuhi kebutuhan tugas akhir.",
+        "contribution": "Menyediakan API untuk aplikasi capstone project.",
+        "tech": [
+            "Laravel",
+            "SQL"
+        ],
+        "links": [
+            {
+                "type": "github",
+                "url": "https://github.com/TioHaidarHanif/Draft-Tugas-Akhir"
+            },
+            {
+                "type": "postman",
+                "url": "https://capstone-bang.postman.co/"
+            }
+        ]
+    },
+    
+    {
+        "name": "Statistik Chat WA",
+        "description": "Menganalisis dan memvisualisasikan data dari ekspor riwayat obrolan WhatsApp.",
+        "contribution": "Memberikan wawasan dari data percakapan WhatsApp yang tidak terstruktur.",
+        "tech": [
+             "HTML",
+            "CSS",
+            "JavaScript"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://atiohaidar.github.io/statistik-chat-wa/"
+            }
+        ]
+    },
+    {
+        "name": "Surat Generator (Experimental)",
+        "description": "Alat untuk membuat dokumen surat formal secara otomatis berdasarkan template yang ditentukan.",
+        "contribution": "Mempercepat proses pembuatan surat yang seringkali repetitif.",
+        "tech": [
+            "HTML",
+            "CSS",
+            "JavaScript"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://tiohaidarhanif.github.io/Surat-Generator/"
+            }
+        ]
+    },
+    {
+        "name": "Extractor Metadata Penelitian",
+        "description": "Alat untuk mengekstrak metadata penting dari dokumen penelitian secara otomatis.",
+        "contribution": "Mengurangi waktu entri data manual untuk metadata penelitian.",
+        "tech": [
+            "React JS",
+            "JavaScript"
+
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://atiohaidar.github.io/extractor-metadata-of-research/"
+            }
+        ]
+    },
+    {
+        "name": "Filter data Publikasi",
+        "description": "Aplikasi untuk memfilter dan memverifikasi data publikasi dari web milik PPM.",
+        "contribution": "Memastikan akurasi dan klasifikasi data publikasi dosen.",
+        "tech": [
+              "HTML",
+            "CSS",
+            "JavaScript"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://atiohaidar.github.io/filter-data-verif-gs-ppm/"
+            }
+        ]
+    },
+    {
+        "name": "Bot Telegram Google Appscript MSDM",
+        "description": "Bot Telegram yang dibangun di atas Google Appscript.",
+        "contribution": "Otomatisasi melalui Telegram.",
+        "tech": [
+            "Google Apps Script",
+            "JavaScript"
+        ],
+        "links": [
+            {
+                "type": "github",
+                "url": "https://github.com/Al-Fath-Developer/Bot-Telegram-MSDM-Prada-1446H"
+            }
+        ]
+    },
+    {
+        "name": "Google Appscript Template for Google Sheets",
+        "description": "Template kode Google Appscript untuk menambahkan fungsionalitas kustom di Google Sheets.",
+        "contribution": "Menyediakan solusi untuk otomatisasi tugas di Spreadsheet.",
+        "tech": [
+            "Google Apps Script",
+            "JavaScript"
+        ],
+        "links": [
+            {
+                "type": "github",
+                "url": "https://github.com/Al-Fath-Developer/AlFathTemplate2024"
+            }
+        ]
+        
+    }
+]

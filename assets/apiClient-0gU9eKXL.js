@@ -1,0 +1,1 @@
+import{f as e}from"./index-BzGNHlk_.js";const o=()=>e.getToken(),r=s=>e.setToken(s),n=()=>e.removeToken(),a=()=>e.getUser(),c=s=>e.setUser(s),k=()=>e.removeUser(),m=()=>e.clear();export{a,c as b,m as c,k as d,o as g,n as r,r as s};

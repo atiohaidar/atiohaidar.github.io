@@ -1,0 +1,14 @@
+{
+  "name": "Tio Haidar Hanif",
+  "logoSrc": "./PP-Tio.jpg",
+  "heroGreeting": "Hai, ini saya",
+  "heroTagline": "",
+  "heroBio": "Saya adalah seorang lulusan S1 Rekayasa Perangkat Lunak dari Universitas Telkom dengan minat pada pengembangan perangkat lunak. Saya memiliki semangat belajar yang tinggi dan rasa ingin tahu yang besar.",
+  "contactPitch": "Saya biasanya lebih banyak buka linkedin daripada instagram, feel free jika ingin kontak saya.",
+  "socials": {
+    "github": "https://github.com/atiohaidar",
+    "linkedin": "https://www.linkedin.com/in/atiohaidar/",
+    "instagram": "https://www.instagram.com/tiohaidarhanif"
+  },
+  "copyright": "Proses pembuatan web ini dibantu langsung oleh AI (AIStudio, Github Copilot, serta Windsurf, Antigrafity)."
+}
