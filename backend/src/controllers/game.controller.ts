@@ -806,3 +806,33 @@ export class GameConstantsGet extends OpenAPIRoute {
         });
     }
 }
+
+export class GamePrestigeReset {
+    static async handle(c: AppContext) {
+        const username = await getAuthUsername(c);
+        const res = await GameService.prestigeReset(c.env.DB, username);
+        return c.json({ success: true, data: res });
+    }
+
+    static schema = {
+        tags: ["Game"],
+        summary: "Prestige reset farm for bonus",
+        security: [{ BearerAuth: [] }],
+        responses: {
+            200: {
+                description: "Prestige successful",
+                content: {
+                    "application/json": {
+                        schema: z.object({
+                            success: z.boolean(),
+                            data: z.object({
+                                new_prestige_level: z.number(),
+                                bonus_percent: z.number(),
+                            }),
+                        }),
+                    },
+                },
+            },
+        },
+    };
+}

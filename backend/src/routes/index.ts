@@ -301,7 +301,7 @@ export const registerRoutes = (openapi: any) => {
 	// Game routes
 	openapi.get("/api/game/constants", GameConstantsGet);
 	openapi.get("/api/game/profile", GameProfileGet);
-	openapi.post("/api/game/profile/reset", GameProfileReset);
+	openapi.post("/api/game/profile/reset", GamePrestigeReset, { schema: GamePrestigeReset.schema });
 	openapi.get("/api/game/farm", GameFarmGet);
 	openapi.post("/api/game/farm/plant", GameFarmPlant);
 	openapi.post("/api/game/farm/water", GameFarmWater);
@@ -310,9 +310,10 @@ export const registerRoutes = (openapi: any) => {
 	openapi.get("/api/game/crops", GameCropsList);
 	openapi.get("/api/game/shop", GameShopList);
 	openapi.post("/api/game/shop/purchase", GameShopPurchase);
-	openapi.get("/api/game/inventory", GameInventoryList, { schema: GameInventoryList.schema });
+	openapi.get("/api/game/inventory", GameInventoryList);
 
-	// Achievements routest);
+	// Achievements routes
+	openapi.get("/api/game/achievements", GameAchievementsList);
 	openapi.post("/api/game/achievements/:achievementId/claim", GameAchievementClaim);
 	openapi.get("/api/game/quests/daily", GameQuestsList);
 	openapi.post("/api/game/quests/:questId/claim", GameQuestClaim);
