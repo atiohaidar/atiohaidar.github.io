@@ -9,6 +9,7 @@ import {
     GameFarmPlot,
     GameAchievement,
     GameDailyQuest,
+    GameObstacle,
     GameLeaderboardEntry,
     PlantCropRequestSchema,
     WaterPlotRequestSchema,
@@ -173,8 +174,8 @@ export class GameFarmPlant extends OpenAPIRoute {
         try {
             const username = await getAuthUsername(c);
             const body = await c.req.json();
-            const { plot_index, crop_id } = PlantCropRequestSchema.parse(body);
-            const plot = await GameService.plantCrop(c.env.DB, username, plot_index, crop_id);
+            const { plot_index, crop_id, x, y } = PlantCropRequestSchema.parse(body);
+            const plot = await GameService.plantCrop(c.env.DB, username, plot_index, crop_id, x, y);
             return c.json({ success: true, data: plot });
         } catch (error) {
             return c.json({ success: false, error: (error as Error).message }, 400);
@@ -257,8 +258,8 @@ export class GameFarmPlaceItem extends OpenAPIRoute {
         try {
             const username = await getAuthUsername(c);
             const body = await c.req.json();
-            const { plot_index, item_id } = PlaceItemRequestSchema.parse(body);
-            const plot = await GameService.placeItem(c.env.DB, username, plot_index, item_id);
+            const { plot_index, item_id, x, y } = PlaceItemRequestSchema.parse(body);
+            const plot = await GameService.placeItem(c.env.DB, username, plot_index, item_id, x, y);
             return c.json({ success: true, data: plot });
         } catch (error) {
             return c.json({ success: false, error: (error as Error).message }, 400);
@@ -791,6 +792,44 @@ export class GameLeaderboardGet extends OpenAPIRoute {
 }
 
 // ==========================================
+// FARM EXPANSION
+// ==========================================
+export class GameFarmExpand extends OpenAPIRoute {
+    schema = {
+        tags: ["Game"],
+        summary: "Expand farm land",
+        security: [{ bearerAuth: [] }],
+        responses: {
+            "200": {
+                description: "Expansion result",
+                content: {
+                    "application/json": {
+                        schema: z.object({
+                            success: z.boolean(),
+                            data: z.object({
+                                new_plots_unlocked: z.number(),
+                                gold_spent: z.number(),
+                                remaining_gold: z.number(),
+                            }),
+                        }),
+                    },
+                },
+            },
+        },
+    };
+
+    async handle(c: AppContext) {
+        try {
+            const username = await getAuthUsername(c);
+            const result = await GameService.expandLand(c.env.DB, username);
+            return c.json({ success: true, data: result });
+        } catch (error) {
+            return c.json({ success: false, error: (error as Error).message }, 400);
+        }
+    }
+}
+
+// ==========================================
 // CURRENCY EXCHANGE
 // ==========================================
 export class GameExchangeBalanceToGems extends OpenAPIRoute {
@@ -965,4 +1004,80 @@ export class GamePrestigeReset {
             },
         },
     };
+}
+
+// ==========================================
+// OBSTACLES ENDPOINTS
+// ==========================================
+export class GameObstaclesList extends OpenAPIRoute {
+    schema = {
+        tags: ["Game"],
+        summary: "Get random obstacles",
+        security: [{ bearerAuth: [] }],
+        responses: {
+            "200": {
+                description: "List of obstacles",
+                content: {
+                    "application/json": {
+                        schema: z.object({
+                            success: z.boolean(),
+                            data: z.array(GameObstacle),
+                        }),
+                    },
+                },
+            },
+        },
+    };
+
+    async handle(c: AppContext) {
+        try {
+            const username = await getAuthUsername(c);
+            // Trigger generation (optional logic, maybe handled elsewhere?)
+            await GameService.generateObstacles(c.env.DB, username);
+
+            const obstacles = await GameService.getObstacles(c.env.DB, username);
+            return c.json({ success: true, data: obstacles });
+        } catch (error) {
+            return c.json({ success: false, error: (error as Error).message }, 400);
+        }
+    }
+}
+
+export class GameObstacleRemove extends OpenAPIRoute {
+    schema = {
+        tags: ["Game"],
+        summary: "Remove an obstacle (costs gold)",
+        security: [{ bearerAuth: [] }],
+        request: {
+            params: z.object({
+                obstacleId: z.string(),
+            }),
+        },
+        responses: {
+            "200": {
+                description: "Removal result",
+                content: {
+                    "application/json": {
+                        schema: z.object({
+                            success: z.boolean(),
+                            data: z.object({
+                                newGold: z.number(),
+                            }),
+                        }),
+                    },
+                },
+            },
+        },
+    };
+
+    async handle(c: AppContext) {
+        try {
+            const username = await getAuthUsername(c);
+            const { obstacleId } = c.req.param() as { obstacleId: string };
+            const result = await GameService.removeObstacle(c.env.DB, username, obstacleId);
+            return c.json({ success: true, data: result });
+        } catch (error) {
+            return c.json({ success: false, error: (error as Error).message }, 400);
+        }
+    }
 }

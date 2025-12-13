@@ -21,13 +21,9 @@
     let loading = true;
     let selectedCategory = "all";
     let purchaseLoading: string | null = null;
-    let topupLoading = false;
-    let goldTopupAmount = 10;
-    let gemTopupAmount = 100;
     let constants: GameConstants | null = null;
     let userBalance = 0;
 
-    const categories = [
         { id: "all", name: "All", icon: "🛒" },
         { id: "seeds", name: "Seeds", icon: "🌱" },
         { id: "tool", name: "Tools", icon: "🔧" },
@@ -35,6 +31,7 @@
         { id: "decoration", name: "Decorations", icon: "🌸" },
         { id: "premium", name: "Premium", icon: "💎" },
         { id: "booster", name: "Boosters", icon: "⚡" },
+        { id: "currency", name: "Currency", icon: "💰" },
     ];
 
     onMount(async () => {
@@ -97,51 +94,37 @@
         }
     }
 
-    async function handleTopupGold() {
-        if (
-            topupLoading ||
-            goldTopupAmount < 1 ||
-            userBalance < goldTopupAmount
-        )
-            return;
-        topupLoading = true;
+    async function handleCurrencyPurchase(item: any) {
+        if (purchaseLoading) return;
+        purchaseLoading = item.id;
 
-        const result = await exchangeBalanceToGold(goldTopupAmount);
-        topupLoading = false;
-
-        if (result.success && result.data) {
-            showToast(
-                `Top up berhasil! +${result.data.gold_received} Gold 🪙`,
-                "gold",
-            );
-            userBalance = result.data.new_balance;
-            const profileRes = await getProfile();
-            if (profileRes.success && profileRes.data) {
-                profile.set(profileRes.data);
-            }
+        let result;
+        if (item.currencyType === "gold") {
+            // Calculate amount based on cost
+            // Cost is in Saldo. We need to send amount of Saldo to exchange?
+            // The API expects 'balance_amount'.
+            result = await exchangeBalanceToGold(item.price_balance);
         } else {
-            showToast(result.error || "Top up gagal", "error");
+            result = await exchangeBalanceToGems(item.price_balance);
         }
-    }
 
-    async function handleTopupGems() {
-        if (
-            topupLoading ||
-            gemTopupAmount < 100 ||
-            userBalance < gemTopupAmount
-        )
-            return;
-        topupLoading = true;
-
-        const result = await exchangeBalanceToGems(gemTopupAmount);
-        topupLoading = false;
+        purchaseLoading = null;
 
         if (result.success && result.data) {
+            const received =
+                item.currencyType === "gold"
+                    ? result.data.gold_received
+                    : result.data.gems_received;
+            const currency =
+                item.currencyType === "gold" ? "Gold 🪙" : "Gems 💎";
+
             showToast(
-                `Top up berhasil! +${result.data.gems_received} Gems 💎`,
-                "success",
+                `Top up berhasil! +${received} ${currency}`,
+                item.currencyType === "gold" ? "gold" : "success",
             );
             userBalance = result.data.new_balance;
+
+            // Refresh profile
             const profileRes = await getProfile();
             if (profileRes.success && profileRes.data) {
                 profile.set(profileRes.data);
@@ -182,6 +165,7 @@
             decoration: "#ec4899",
             premium: "#a855f7",
             booster: "#f59e0b",
+            currency: "#fbbf24",
         };
         return colors[type] || "#64748b";
     }
@@ -215,16 +199,95 @@
         return `${Math.floor(seconds / 3600)}h`;
     }
 
+    // Dynamic Currency Packages
+    $: currencyPackages = [
+        {
+            id: "gold_small",
+            name: "Small Gold Pouch",
+            type: "currency",
+            currencyType: "gold",
+            price_balance: 10,
+            reward_amount: 10 * (constants?.gold_per_balance || 10),
+            price_gold: 0,
+            price_gems: 0,
+            icon: "🪙",
+            description: "A small pouch of gold to get you started.",
+            unlock_level: 0,
+        },
+        {
+            id: "gold_medium",
+            name: "Medium Gold Sack",
+            type: "currency",
+            currencyType: "gold",
+            price_balance: 50,
+            reward_amount: 50 * (constants?.gold_per_balance || 10),
+            price_gold: 0,
+            price_gems: 0,
+            icon: "💰",
+            description: "A decent amount of gold.",
+            unlock_level: 0,
+        },
+        {
+            id: "gold_large",
+            name: "Large Gold Chest",
+            type: "currency",
+            currencyType: "gold",
+            price_balance: 100,
+            reward_amount: 100 * (constants?.gold_per_balance || 10),
+            price_gold: 0,
+            price_gems: 0,
+            icon: "🏦",
+            description: "A chest overflowing with gold!",
+            unlock_level: 0,
+        },
+        {
+            id: "gems_small",
+            name: "Handful of Gems",
+            type: "currency",
+            currencyType: "gems",
+            price_balance: 100,
+            reward_amount: Math.floor(
+                (100 / 100) * (constants?.gems_per_100_balance || 10),
+            ),
+            price_gold: 0,
+            price_gems: 0,
+            icon: "💎",
+            description: "A handful of shiny gems.",
+            unlock_level: 0,
+        },
+        {
+            id: "gems_large",
+            name: "Bucket of Gems",
+            type: "currency",
+            currencyType: "gems",
+            price_balance: 500,
+            reward_amount: Math.floor(
+                (500 / 100) * (constants?.gems_per_100_balance || 10),
+            ),
+            price_gold: 0,
+            price_gems: 0,
+            icon: "💠",
+            description: "Enough gems to speed up your farm.",
+            unlock_level: 0,
+        },
+    ];
+
+    $: allItems = [
+        ...currencyPackages,
+        ...crops.map((c) => ({
+            ...c,
+            type: "seeds",
+            price_gold: c.seed_price,
+            price_gems: 0,
+            isCrop: true,
+        })),
+        ...shopItems,
+    ];
+
     $: filteredItems =
-        selectedCategory === "all" || selectedCategory === "seeds"
-            ? shopItems
-            : shopItems.filter((item) => item.type === selectedCategory);
-    $: filteredCrops =
-        selectedCategory === "all" || selectedCategory === "seeds" ? crops : [];
-    $: goldPreview = goldTopupAmount * (constants?.gold_per_balance || 10);
-    $: gemsPreview = Math.floor(
-        (gemTopupAmount / 100) * (constants?.gems_per_100_balance || 10),
-    );
+        selectedCategory === "all"
+            ? allItems
+            : allItems.filter((item) => item.type === selectedCategory);
 </script>
 
 <svelte:head>
@@ -233,83 +296,24 @@
 
 <div class="shop-page">
     <header class="header">
-        <a href="/play" class="back-btn">← Back to Farm</a>
-        <h1>🛒 Shop</h1>
-        <div class="currency-display">
-            <span class="currency currency-balance"
-                >💵 {userBalance.toLocaleString()} Saldo</span
-            >
-            <span class="currency currency-gold"
-                >🪙 {$profile?.gold?.toLocaleString() || 0}</span
-            >
-            <span class="currency currency-gems">💎 {$profile?.gems || 0}</span>
+        <div class="header-left">
+            <a href="/play" class="back-btn">← Back to Farm</a>
+            <h1>🛒 Shop</h1>
+        </div>
+        <div class="header-right">
+            <div class="currency-display">
+                <span class="currency currency-balance"
+                    >💵 {userBalance.toLocaleString()} Saldo</span
+                >
+                <span class="currency currency-gold"
+                    >🪙 {$profile?.gold?.toLocaleString() || 0}</span
+                >
+                <span class="currency currency-gems"
+                    >💎 {$profile?.gems || 0}</span
+                >
+            </div>
         </div>
     </header>
-
-    <!-- Top Up Section -->
-    <div class="topup-section">
-        <h2>💰 Top Up Currency</h2>
-        <p class="topup-hint">Tukar saldo akun menjadi mata uang game</p>
-
-        <div class="topup-cards">
-            <!-- Gold Top Up -->
-            <div class="topup-card gold-card">
-                <h3>🪙 Top Up Gold</h3>
-                <p class="rate">
-                    1 Saldo = {constants?.gold_per_balance || 10} Gold
-                </p>
-                <div class="topup-input-group">
-                    <input
-                        type="number"
-                        bind:value={goldTopupAmount}
-                        min="1"
-                        max={userBalance}
-                        placeholder="Jumlah saldo"
-                    />
-                    <span class="preview"
-                        >= {goldPreview.toLocaleString()} Gold</span
-                    >
-                </div>
-                <button
-                    class="btn btn-gold"
-                    disabled={topupLoading ||
-                        goldTopupAmount < 1 ||
-                        userBalance < goldTopupAmount}
-                    on:click={handleTopupGold}
-                >
-                    {topupLoading ? "Processing..." : "Top Up Gold"}
-                </button>
-            </div>
-
-            <!-- Gems Top Up -->
-            <div class="topup-card gems-card">
-                <h3>💎 Top Up Gems</h3>
-                <p class="rate">
-                    100 Saldo = {constants?.gems_per_100_balance || 10} Gems
-                </p>
-                <div class="topup-input-group">
-                    <input
-                        type="number"
-                        bind:value={gemTopupAmount}
-                        min="100"
-                        max={userBalance}
-                        step="100"
-                        placeholder="Jumlah saldo"
-                    />
-                    <span class="preview">= {gemsPreview} Gems</span>
-                </div>
-                <button
-                    class="btn btn-gems"
-                    disabled={topupLoading ||
-                        gemTopupAmount < 100 ||
-                        userBalance < gemTopupAmount}
-                    on:click={handleTopupGems}
-                >
-                    {topupLoading ? "Processing..." : "Top Up Gems"}
-                </button>
-            </div>
-        </div>
-    </div>
 
     <div class="categories">
         {#each categories as cat}
@@ -330,118 +334,111 @@
             <p>Loading shop...</p>
         </div>
     {:else}
-        <!-- Seeds Section -->
-        {#if filteredCrops.length > 0}
-            <div class="seeds-section">
-                <h2>🌱 Seeds</h2>
-                <p class="seeds-hint">
-                    Buy seeds to plant on your farm. Higher tier = more profit!
-                </p>
-                <div class="seeds-grid">
-                    {#each filteredCrops.sort((a, b) => a.tier - b.tier) as crop}
-                        <div
-                            class="seed-card"
-                            style="--tier-color: {getCropTierColor(crop.tier)}"
-                            class:locked={crop.unlock_level >
-                                ($profile?.level || 1)}
-                        >
-                            <span class="seed-icon">{crop.icon || "🌱"}</span>
-                            <div class="seed-info">
-                                <h3>{crop.name}</h3>
-                                <div class="seed-tier">Tier {crop.tier}</div>
-                            </div>
-                            <div class="seed-stats">
-                                <div class="stat">
-                                    <span class="label">Cost</span>
-                                    <span class="value"
-                                        >🪙 {crop.seed_price.toLocaleString()}</span
-                                    >
-                                </div>
-                                <div class="stat">
-                                    <span class="label">Sell</span>
-                                    <span class="value"
-                                        >🪙 {crop.sell_price.toLocaleString()}</span
-                                    >
-                                </div>
-                                <div class="stat">
-                                    <span class="label">Profit</span>
-                                    <span class="value profit"
-                                        >+{getCropProfit(crop).toLocaleString()}
-                                        ({getCropROI(crop)}%)</span
-                                    >
-                                </div>
-                                <div class="stat">
-                                    <span class="label">Time</span>
-                                    <span class="value"
-                                        >⏱️ {formatGrowTime(
-                                            crop.grow_time_seconds,
-                                        )}</span
-                                    >
-                                </div>
-                                <div class="stat">
-                                    <span class="label">XP</span>
-                                    <span class="value"
-                                        >⭐ {crop.xp_reward}</span
-                                    >
-                                </div>
-                            </div>
-                            {#if crop.unlock_level > ($profile?.level || 1)}
-                                <div class="locked-overlay">
-                                    🔒 Level {crop.unlock_level}
-                                </div>
-                            {:else}
-                                <div
-                                    class="seed-status"
-                                    class:affordable={canAffordCrop(crop)}
-                                >
-                                    {canAffordCrop(crop)
-                                        ? "✓ Unlocked"
-                                        : "💰 Need Gold"}
-                                </div>
-                            {/if}
-                        </div>
-                    {/each}
-                </div>
-            </div>
-        {/if}
-
         <div class="shop-grid">
             {#each filteredItems as item}
                 <div
                     class="shop-item"
-                    style="--item-color: {getTierColor(item.type)}"
+                    style="--item-color: {item.isCrop
+                        ? getCropTierColor(item.tier)
+                        : getTierColor(item.type)}"
                 >
-                    <div class="item-icon">{item.icon || "📦"}</div>
+                    <div class="item-icon">
+                        {item.icon || (item.isCrop ? "🌱" : "📦")}
+                    </div>
                     <h3 class="item-name">{item.name}</h3>
-                    <p class="item-desc">
-                        {item.description || "No description"}
-                    </p>
-                    <div class="item-type">{item.type.toUpperCase()}</div>
+
+                    {#if item.isCrop}
+                        <div class="item-crop-stats">
+                            <div class="stat-row">
+                                <span>Profit:</span>
+                                <span class="profit"
+                                    >+{getCropProfit(
+                                        item,
+                                    ).toLocaleString()}</span
+                                >
+                            </div>
+                            <div class="stat-row">
+                                <span>Time:</span>
+                                <span
+                                    >{formatGrowTime(
+                                        item.grow_time_seconds,
+                                    )}</span
+                                >
+                            </div>
+                            <div class="stat-row">
+                                <span>XP:</span>
+                                <span>{item.xp_reward}</span>
+                            </div>
+                        </div>
+                    {:else if item.type === "currency"}
+                        <div class="item-crop-stats">
+                            <div class="stat-row">
+                                <span>Get:</span>
+                                <span class="profit">
+                                    {item.reward_amount}
+                                    {item.currencyType === "gold"
+                                        ? "Gold"
+                                        : "Gems"}
+                                </span>
+                            </div>
+                        </div>
+                        <p class="item-desc">{item.description}</p>
+                    {:else}
+                        <p class="item-desc">
+                            {item.description || "No description"}
+                        </p>
+                    {/if}
+
+                    <div class="item-type">
+                        {item.type.toUpperCase()}
+                        {item.isCrop ? `(Tier ${item.tier})` : ""}
+                    </div>
 
                     <div class="item-price">
-                        {#if item.price_gold > 0}
-                            <span class="price-gold">🪙 {item.price_gold}</span>
-                        {/if}
-                        {#if item.price_gems > 0}
-                            <span class="price-gems">💎 {item.price_gems}</span>
+                        {#if item.type === "currency"}
+                            <span class="price-balance"
+                                >💵 {item.price_balance} Saldo</span
+                            >
+                        {:else}
+                            {#if item.price_gold > 0}
+                                <span class="price-gold"
+                                    >🪙 {item.price_gold}</span
+                                >
+                            {/if}
+                            {#if item.price_gems > 0}
+                                <span class="price-gems"
+                                    >💎 {item.price_gems}</span
+                                >
+                            {/if}
                         {/if}
                     </div>
 
                     {#if item.unlock_level > ($profile?.level || 1)}
                         <div class="locked">🔒 Level {item.unlock_level}</div>
+                    {:else if item.isCrop}
+                        <div class="unlocked-text">✓ Unlocked</div>
                     {:else}
                         <button
                             class="btn btn-primary buy-btn"
-                            disabled={!canAfford(item) ||
+                            disabled={(item.type === "currency"
+                                ? userBalance < item.price_balance
+                                : !canAfford(item)) ||
                                 purchaseLoading === item.id}
-                            on:click={() => handlePurchase(item)}
+                            on:click={() =>
+                                item.type === "currency"
+                                    ? handleCurrencyPurchase(item)
+                                    : handlePurchase(item)}
                         >
                             {#if purchaseLoading === item.id}
-                                Buying...
-                            {:else if !canAfford(item)}
+                                {item.type === "currency"
+                                    ? "Exchanging..."
+                                    : "Buying..."}
+                            {:else if item.type === "currency" && userBalance < item.price_balance}
+                                Insufficient Saldo
+                            {:else if item.type !== "currency" && !canAfford(item)}
                                 Not Enough
                             {:else}
-                                Buy
+                                {item.type === "currency" ? "Top Up" : "Buy"}
                             {/if}
                         </button>
                     {/if}
@@ -459,20 +456,30 @@
 
 <style>
     .shop-page {
-        min-height: 100vh;
-        max-height: 100vh;
+        height: 100vh;
         overflow-y: auto;
         background: var(--bg-primary);
-        padding: 2rem;
+        padding: 0 2rem 2rem 2rem; /* Remove top padding as header has it */
     }
 
     .header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(10px);
         display: flex;
         align-items: center;
         justify-content: space-between;
         margin-bottom: 2rem;
         flex-wrap: wrap;
         gap: 1rem;
+        padding: 1.5rem 0; /* Add padding here for sticky effect */
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .price-balance {
+        color: #22c55e;
     }
 
     .back-btn {
@@ -492,6 +499,13 @@
     .header h1 {
         font-size: 2rem;
         margin: 0;
+    }
+
+    .header-left,
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
     }
 
     .currency-display {
@@ -518,79 +532,6 @@
     .currency-balance {
         background: rgba(34, 197, 94, 0.2);
         color: #22c55e;
-    }
-
-    /* Top Up Section */
-    .topup-section {
-        background: var(--bg-secondary);
-        border-radius: 16px;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .topup-section h2 {
-        margin: 0 0 0.5rem 0;
-        font-size: 1.5rem;
-    }
-
-    .topup-hint {
-        color: var(--text-muted);
-        margin: 0 0 1.5rem 0;
-    }
-
-    .topup-cards {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.5rem;
-    }
-
-    .topup-card {
-        background: var(--bg-tertiary);
-        border-radius: 12px;
-        padding: 1.5rem;
-        border: 2px solid transparent;
-    }
-
-    .gold-card {
-        border-color: rgba(251, 191, 36, 0.3);
-    }
-
-    .gems-card {
-        border-color: rgba(168, 85, 247, 0.3);
-    }
-
-    .topup-card h3 {
-        margin: 0 0 0.5rem 0;
-        font-size: 1.25rem;
-    }
-
-    .topup-card .rate {
-        color: var(--text-muted);
-        margin: 0 0 1rem 0;
-        font-size: 0.9rem;
-    }
-
-    .topup-input-group {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
-
-    .topup-input-group input {
-        flex: 1;
-        padding: 0.75rem;
-        background: var(--bg-primary);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 8px;
-        color: var(--text-primary);
-        font-size: 1rem;
-    }
-
-    .topup-input-group .preview {
-        color: var(--text-muted);
-        font-size: 0.9rem;
-        white-space: nowrap;
     }
 
     .btn-gold {
@@ -766,123 +707,44 @@
         color: var(--text-muted);
     }
 
-    /* Seeds Section */
-    .seeds-section {
-        background: var(--bg-secondary);
-        border-radius: 16px;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .seeds-section h2 {
-        margin: 0 0 0.5rem 0;
-        font-size: 1.5rem;
-    }
-
-    .seeds-hint {
-        color: var(--text-muted);
-        margin: 0 0 1.5rem 0;
-    }
-
-    .seeds-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap: 1rem;
-    }
-
-    .seed-card {
-        background: var(--bg-tertiary);
-        border-radius: 12px;
-        padding: 1rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-        border-left: 4px solid var(--tier-color);
-        position: relative;
-        transition: all 0.2s;
-    }
-
-    .seed-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    }
-
-    .seed-card.locked {
-        opacity: 0.6;
-    }
-
-    .seed-icon {
-        font-size: 2rem;
-    }
-
-    .seed-info h3 {
-        margin: 0;
-        font-size: 1rem;
-        color: var(--tier-color);
-    }
-
-    .seed-tier {
-        font-size: 0.75rem;
-        color: var(--text-muted);
-    }
-
-    .seed-stats {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-
-    .seed-stats .stat {
-        display: flex;
-        flex-direction: column;
-        background: var(--bg-primary);
-        padding: 0.35rem 0.5rem;
-        border-radius: 6px;
-        font-size: 0.75rem;
-    }
-
-    .seed-stats .label {
-        color: var(--text-muted);
-        font-size: 0.65rem;
-    }
-
-    .seed-stats .value {
-        font-weight: 600;
-    }
-
-    .seed-stats .profit {
-        color: #22c55e;
-    }
-
-    .seed-status {
-        text-align: center;
-        padding: 0.35rem;
-        border-radius: 6px;
-        font-size: 0.8rem;
-        background: rgba(100, 100, 100, 0.3);
-        color: var(--text-muted);
-    }
-
-    .seed-status.affordable {
-        background: rgba(34, 197, 94, 0.2);
-        color: #22c55e;
-    }
-
-    .locked-overlay {
-        position: absolute;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.5);
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.9rem;
-        font-weight: 600;
-    }
+    /* Seeds Section Removed */
 
     @keyframes spin {
         to {
             transform: rotate(360deg);
         }
+    }
+    .item-crop-stats {
+        width: 100%;
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        padding: 0.5rem;
+        margin-bottom: 0.75rem;
+        font-size: 0.8rem;
+    }
+
+    .stat-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-row:last-child {
+        margin-bottom: 0;
+    }
+
+    .profit {
+        color: var(--gold);
+        font-weight: 600;
+    }
+
+    .unlocked-text {
+        color: var(--gold);
+        font-weight: 600;
+        padding: 0.5rem;
+        background: rgba(34, 197, 94, 0.1);
+        border-radius: 8px;
+        width: 100%;
+        border: 1px solid rgba(34, 197, 94, 0.3);
     }
 </style>

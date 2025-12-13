@@ -8,6 +8,7 @@
         getDailyQuests,
         claimAchievement,
         claimDailyQuest,
+        clearAuthToken,
         type Achievement,
         type DailyQuest,
     } from "$lib/api";
@@ -47,6 +48,12 @@
             quests = questsRes.data;
         }
         loading = false;
+    }
+
+    function handleLogout() {
+        clearAuthToken();
+        isLoggedIn.set(false);
+        goto("/");
     }
 
     async function handleClaimAchievement(ach: Achievement) {
@@ -128,7 +135,7 @@
     <header class="header">
         <a href="/play" class="back-btn">← Back to Farm</a>
         <h1>👤 Profile</h1>
-        <div class="spacer"></div>
+        <button class="logout-btn" on:click={handleLogout}>Log Out</button>
     </header>
 
     {#if loading}
@@ -309,9 +316,9 @@
 
 <style>
     .profile-page {
-        min-height: 100vh;
-        max-height: 100vh;
+        height: 100vh;
         overflow-y: auto;
+        box-sizing: border-box;
         background: var(--bg-primary);
         padding: 2rem;
     }
@@ -335,6 +342,22 @@
     .back-btn:hover {
         background: var(--bg-tertiary);
         color: var(--text-primary);
+    }
+
+    .logout-btn {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-weight: 600;
+    }
+
+    .logout-btn:hover {
+        background: #ef4444;
+        color: white;
     }
 
     .header h1 {

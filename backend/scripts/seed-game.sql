@@ -75,7 +75,6 @@ INSERT OR IGNORE INTO game_shop_items (id, name, type, price_gold, price_gems, u
 ('xp_boost_1h', 'XP Boost (1hr)', 'premium', 0, 15, 5, '{"type":"xp_multiplier","value":2,"duration":3600}', -1, '⚡', '2x XP for 1 hour'),
 ('rare_seed_pack', 'Rare Seed Pack', 'premium', 0, 50, 10, '{"type":"seed_pack","seeds":["strawberry","watermelon","grapes"],"quantity":3}', -1, '🎁', '3 random premium seeds'),
 ('fertilizer', 'Fertilizer', 'booster', 100, 0, 3, '{"type":"growth_speed","value":1.5,"duration":1800}', -1, '💩', '+50% growth speed for 30min'),
-('lucky_clover', 'Lucky Clover', 'booster', 200, 0, 7, '{"type":"double_harvest_chance","value":0.25}', -1, '🍀', '25% chance for double harvest'),
 ('plot_expansion', 'Plot Expansion', 'upgrade', 500, 0, 5, '{"type":"unlock_plot","count":1}', 40, '📐', 'Unlock 1 additional plot');
 
 -- Seed Achievements

@@ -140,6 +140,9 @@ import {
 	GameExchangeBalanceToGold,
 	GameConstantsGet,
 	GamePrestigeReset,
+	GameObstaclesList,
+	GameObstacleRemove,
+	GameFarmExpand,
 } from "../controllers/game.controller";
 import {
 	GameAdminPlayersList,
@@ -332,6 +335,13 @@ export const registerRoutes = (openapi: any) => {
 	openapi.get("/api/game/leaderboard", GameLeaderboardGet);
 	openapi.post("/api/game/exchange/gems", GameExchangeBalanceToGems);
 	openapi.post("/api/game/exchange/gold", GameExchangeBalanceToGold);
+
+	// Obstacles
+	openapi.get("/api/game/obstacles", GameObstaclesList);
+	openapi.post("/api/game/obstacles/:obstacleId/remove", GameObstacleRemove);
+
+	// Land Expansion
+	openapi.post("/api/game/farm/expand", GameFarmExpand);
 
 	// Game Admin routes
 	openapi.get("/api/game/admin/players", GameAdminPlayersList);

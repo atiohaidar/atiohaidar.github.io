@@ -174,7 +174,26 @@ const ensureInitialized = createDbInitializer(async (db: D1Database) => {
     await db.prepare("ALTER TABLE game_farm_plots ADD COLUMN placed_item_id TEXT").run().catch(() => { });
 
     // Add fertilizer_id column if it doesn't exist (migration)
+    // Add fertilizer_id column if it doesn't exist (migration)
     await db.prepare("ALTER TABLE game_farm_plots ADD COLUMN fertilizer_id TEXT").run().catch(() => { });
+
+    // Add x, y columns if they don't exist (migration for isometric view)
+    await db.prepare("ALTER TABLE game_farm_plots ADD COLUMN x INTEGER DEFAULT 0").run().catch(() => { });
+    await db.prepare("ALTER TABLE game_farm_plots ADD COLUMN y INTEGER DEFAULT 0").run().catch(() => { });
+
+    // Obstacles
+    db.prepare(`
+        CREATE TABLE IF NOT EXISTS game_obstacles (
+            id TEXT PRIMARY KEY,
+            user_username TEXT NOT NULL,
+            type TEXT NOT NULL,
+            x INTEGER NOT NULL,
+            y INTEGER NOT NULL,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            remove_cost INTEGER DEFAULT 0,
+            FOREIGN KEY (user_username) REFERENCES users(username)
+        )
+    `).run().catch(() => { });
 });
 
 // Export function to initialize game tables (for seeder)
@@ -522,15 +541,57 @@ export const getFarmPlotsWithGrowth = async (
 export const plantCrop = async (
     db: D1Database,
     username: string,
-    plotIndex: number,
-    cropId: string
+    plotIndex: number | undefined,
+    cropId: string,
+    x?: number,
+    y?: number
 ): Promise<GameFarmPlotType> => {
     await ensureInitialized(db);
 
     const profile = await getOrCreateProfile(db, username);
 
+    // Determine target index
+    let targetIndex: number | undefined = plotIndex;
+
+    // IF using coordinate system (x, y provided) and no explicit index
+    if (targetIndex === undefined && x !== undefined && y !== undefined) {
+        // 1. Try to recycle an empty plot
+        const emptyPlot = await db
+            .prepare("SELECT * FROM game_farm_plots WHERE user_username = ? AND crop_id IS NULL AND placed_item_id IS NULL ORDER BY plot_index LIMIT 1")
+            .bind(username)
+            .first();
+
+        if (emptyPlot) {
+            targetIndex = (emptyPlot as any).plot_index;
+        } else {
+            // 2. Check if we can create a NEW plot
+            const { count: rawCount } = await db.prepare("SELECT COUNT(*) as count FROM game_farm_plots WHERE user_username = ?").bind(username).first() as { count: number };
+            const count = Number(rawCount);
+            const unlocked = Number(profile.plots_unlocked);
+
+            if (count < unlocked) {
+                // Create new plot
+                const { maxIndex } = await db.prepare("SELECT MAX(plot_index) as maxIndex FROM game_farm_plots WHERE user_username = ?").bind(username).first() as { maxIndex: number };
+                const newIndex = (maxIndex ?? -1) + 1;
+
+                await db.prepare("INSERT INTO game_farm_plots (id, user_username, plot_index, x, y) VALUES (?, ?, ?, ?, ?)")
+                    .bind(generateId('plot'), username, newIndex, x, y)
+                    .run();
+
+                targetIndex = newIndex;
+            } else {
+                console.error(`[DEBUG] Plant Logic check: count=${count}, unlocked=${unlocked}`);
+                throw new Error(`Tidak ada lahan kosong! Upgrade farm untuk menambah slot. (${count}/${unlocked})`);
+            }
+        }
+    }
+
+    if (targetIndex === undefined) {
+        throw new Error("Target plot tidak valid");
+    }
+
     // Validate plot index
-    if (plotIndex < 0 || plotIndex >= profile.plots_unlocked) {
+    if (targetIndex < 0 || targetIndex >= profile.plots_unlocked) {
         throw new Error("Plot tidak valid");
     }
 
@@ -553,7 +614,7 @@ export const plantCrop = async (
     // Get plot
     const plot = await db
         .prepare("SELECT * FROM game_farm_plots WHERE user_username = ? AND plot_index = ?")
-        .bind(username, plotIndex)
+        .bind(username, targetIndex)
         .first();
 
     if (!plot) {
@@ -576,10 +637,10 @@ export const plantCrop = async (
         db
             .prepare(`
 				UPDATE game_farm_plots 
-				SET crop_id = ?, planted_at = ?, watered = 0, growth_percent = 0
+				SET crop_id = ?, planted_at = ?, watered = 0, growth_percent = 0, x = ?, y = ?
 				WHERE user_username = ? AND plot_index = ?
 			`)
-            .bind(cropId, now, username, plotIndex),
+            .bind(cropId, now, x ?? parsedPlot.x, y ?? parsedPlot.y, username, targetIndex),
     ]);
 
     // Update quest progress
@@ -588,7 +649,7 @@ export const plantCrop = async (
     // Return updated plot
     const updated = await db
         .prepare("SELECT * FROM game_farm_plots WHERE user_username = ? AND plot_index = ?")
-        .bind(username, plotIndex)
+        .bind(username, targetIndex)
         .first();
 
     return GameFarmPlot.parse(updated);
@@ -667,7 +728,7 @@ export const harvestPlot = async (
     }
 
     if (!plot.ready) {
-        throw new Error(`Tanaman belum siap panen (${plot.time_remaining}s tersisa)`);
+        throw new Error(`Tanaman belum siap panen(${plot.time_remaining}s tersisa)`);
     }
 
     const crop = plot.crop;
@@ -683,14 +744,14 @@ export const harvestPlot = async (
 				UPDATE game_farm_plots 
 				SET crop_id = NULL, planted_at = NULL, watered = 0, growth_percent = 0
 				WHERE user_username = ? AND plot_index = ?
-			`)
+            `)
             .bind(username, plotIndex),
         db
             .prepare(`
 				UPDATE game_farm_profiles 
 				SET gold = gold + ?, total_harvests = total_harvests + 1, total_gold_earned = total_gold_earned + ?
-				WHERE user_username = ?
-			`)
+            WHERE user_username = ?
+                `)
             .bind(goldEarned, goldEarned, username),
     ]);
 
@@ -853,9 +914,9 @@ export const purchaseItem = async (
         const invId = generateId("inv");
         await db
             .prepare(`
-				INSERT INTO game_inventory (id, user_username, item_id, quantity, equipped)
-				VALUES (?, ?, ?, ?, 0)
-			`)
+				INSERT INTO game_inventory(id, user_username, item_id, quantity, equipped)
+				VALUES(?, ?, ?, ?, 0)
+        `)
             .bind(invId, username, itemId, quantity)
             .run();
 
@@ -880,14 +941,56 @@ export const purchaseItem = async (
 export const placeItem = async (
     db: D1Database,
     username: string,
-    plotIndex: number,
-    inventoryItemId: string
+    plotIndex: number | undefined,
+    inventoryItemId: string,
+    x?: number,
+    y?: number
 ): Promise<GameFarmPlotType> => {
     await ensureInitialized(db);
     const profile = await getOrCreateProfile(db, username);
 
+    // Determine target index
+    let targetIndex: number | undefined = plotIndex;
+
+    // IF using coordinate system (x, y provided) and no explicit index
+    if (targetIndex === undefined && x !== undefined && y !== undefined) {
+        // 1. Try to recycle an empty plot
+        const emptyPlot = await db
+            .prepare("SELECT * FROM game_farm_plots WHERE user_username = ? AND crop_id IS NULL AND placed_item_id IS NULL ORDER BY plot_index LIMIT 1")
+            .bind(username)
+            .first();
+
+        if (emptyPlot) {
+            targetIndex = (emptyPlot as any).plot_index;
+        } else {
+            // 2. Check if we can create a NEW plot
+            const { count: rawCount } = await db.prepare("SELECT COUNT(*) as count FROM game_farm_plots WHERE user_username = ?").bind(username).first() as { count: number };
+            const count = Number(rawCount);
+            const unlocked = Number(profile.plots_unlocked);
+
+            if (count < unlocked) {
+                // Create new plot
+                const { maxIndex } = await db.prepare("SELECT MAX(plot_index) as maxIndex FROM game_farm_plots WHERE user_username = ?").bind(username).first() as { maxIndex: number };
+                const newIndex = (maxIndex ?? -1) + 1;
+
+                await db.prepare("INSERT INTO game_farm_plots (id, user_username, plot_index, x, y) VALUES (?, ?, ?, ?, ?)")
+                    .bind(generateId('plot'), username, newIndex, x, y)
+                    .run();
+
+                targetIndex = newIndex;
+            } else {
+                console.error(`[DEBUG] Place Logic check: count=${count}, unlocked=${unlocked}`);
+                throw new Error(`Tidak ada lahan kosong! Upgrade farm untuk menambah slot. (${count}/${unlocked})`);
+            }
+        }
+    }
+
+    if (targetIndex === undefined) {
+        throw new Error("Target plot tidak valid");
+    }
+
     // Validate plot index
-    if (plotIndex < 0 || plotIndex >= profile.plots_unlocked) {
+    if (targetIndex < 0 || targetIndex >= profile.plots_unlocked) {
         throw new Error("Plot tidak valid");
     }
 
@@ -920,7 +1023,7 @@ export const placeItem = async (
     // Get plot
     const plot = await db
         .prepare("SELECT * FROM game_farm_plots WHERE user_username = ? AND plot_index = ?")
-        .bind(username, plotIndex)
+        .bind(username, targetIndex)
         .first();
 
     // If plot doesn't exist, create it (should exist from profile creation, but safety check)
@@ -950,14 +1053,14 @@ export const placeItem = async (
     await db.batch([
         db.prepare("UPDATE game_inventory SET quantity = quantity - 1 WHERE user_username = ? AND item_id = ?")
             .bind(username, inventoryItemId),
-        db.prepare("UPDATE game_farm_plots SET placed_item_id = ? WHERE user_username = ? AND plot_index = ?")
-            .bind(inventoryItemId, username, plotIndex)
+        db.prepare("UPDATE game_farm_plots SET placed_item_id = ?, x = ?, y = ? WHERE user_username = ? AND plot_index = ?")
+            .bind(inventoryItemId, x ?? parsedPlot.x, y ?? parsedPlot.y, username, targetIndex)
     ]);
 
     // Return updated plot
     const updated = await db
         .prepare("SELECT * FROM game_farm_plots WHERE user_username = ? AND plot_index = ?")
-        .bind(username, plotIndex)
+        .bind(username, targetIndex)
         .first();
 
     return GameFarmPlot.parse(updated);
@@ -1098,7 +1201,7 @@ export const useItem = async (
             .bind(username, targetPlotIndex)
             .first();
         updatedPlot = GameFarmPlot.parse(updated);
-        message = `Berhasil memberi pupuk ${shopItem.name}`;
+        message = `Berhasil memberi pupuk ${shopItem.name} `;
     } else {
         throw new Error("Efek item belum didukung");
     }
@@ -1128,7 +1231,7 @@ export const getInventory = async (
 			FROM game_inventory i
 			JOIN game_shop_items s ON i.item_id = s.id
 			WHERE i.user_username = ?
-		`)
+        `)
         .bind(username)
         .all();
 
@@ -1164,7 +1267,7 @@ export const getAchievements = async (
 			SELECT a.*, COALESCE(ua.progress, 0) as user_progress, COALESCE(ua.claimed, 0) as user_claimed
 			FROM game_achievements a
 			LEFT JOIN game_user_achievements ua ON a.id = ua.achievement_id AND ua.user_username = ?
-		`)
+        `)
         .bind(username)
         .all();
 
@@ -1194,11 +1297,11 @@ export const updateAchievementProgress = async (
                 // Update progress
                 await db
                     .prepare(`
-						INSERT INTO game_user_achievements (user_username, achievement_id, progress, claimed)
-						VALUES (?, ?, ?, 0)
+						INSERT INTO game_user_achievements(user_username, achievement_id, progress, claimed)
+    VALUES(?, ?, ?, 0)
 						ON CONFLICT(user_username, achievement_id) 
 						DO UPDATE SET progress = progress + ?
-					`)
+        `)
                     .bind(username, achievement.id, value, value)
                     .run();
             }
@@ -1242,7 +1345,7 @@ export const claimAchievement = async (
     // Check if requirement met
     const requirement = JSON.parse(achievement.requirement);
     if (userAchievement.progress < requirement.value) {
-        throw new Error(`Progress belum cukup (${userAchievement.progress}/${requirement.value})`);
+        throw new Error(`Progress belum cukup(${userAchievement.progress} / ${requirement.value})`);
     }
 
     // Claim rewards
@@ -1251,8 +1354,8 @@ export const claimAchievement = async (
             .prepare(`
 				UPDATE game_user_achievements 
 				SET claimed = 1, claimed_at = ?
-				WHERE user_username = ? AND achievement_id = ?
-			`)
+        WHERE user_username = ? AND achievement_id = ?
+            `)
             .bind(new Date().toISOString(), username, achievementId),
         db
             .prepare("UPDATE game_farm_profiles SET gold = gold + ?, gems = gems + ? WHERE user_username = ?")
@@ -1304,10 +1407,10 @@ export const generateDailyQuests = async (db: D1Database, username: string): Pro
     for (const quest of selected) {
         await db
             .prepare(`
-				INSERT INTO game_daily_quests 
-				(id, user_username, quest_type, target_value, current_value, reward_gold, reward_gems, completed, quest_date)
-				VALUES (?, ?, ?, ?, 0, ?, ?, 0, ?)
-			`)
+				INSERT INTO game_daily_quests
+        (id, user_username, quest_type, target_value, current_value, reward_gold, reward_gems, completed, quest_date)
+    VALUES(?, ?, ?, ?, 0, ?, ?, 0, ?)
+        `)
             .bind(
                 generateId("quest"),
                 username,
@@ -1354,9 +1457,9 @@ export const updateQuestProgress = async (
         .prepare(`
 			UPDATE game_daily_quests 
 			SET current_value = MIN(current_value + ?, target_value),
-				completed = CASE WHEN current_value + ? >= target_value THEN 1 ELSE 0 END
+        completed = CASE WHEN current_value + ? >= target_value THEN 1 ELSE 0 END
 			WHERE user_username = ? AND quest_type = ? AND quest_date = ? AND completed = 0
-		`)
+        `)
         .bind(value, value, username, questType, today)
         .run();
 };
@@ -1410,11 +1513,11 @@ export const updateLeaderboard = async (db: D1Database, username: string): Promi
 
     await db
         .prepare(`
-			INSERT INTO game_leaderboard (user_username, total_gold_earned, level, prestige_level, updated_at)
-			VALUES (?, ?, ?, ?, ?)
+			INSERT INTO game_leaderboard(user_username, total_gold_earned, level, prestige_level, updated_at)
+    VALUES(?, ?, ?, ?, ?)
 			ON CONFLICT(user_username) 
 			DO UPDATE SET total_gold_earned = ?, level = ?, prestige_level = ?, updated_at = ?
-		`)
+        `)
         .bind(
             username,
             profile.total_gold_earned,
@@ -1437,11 +1540,11 @@ export const getLeaderboard = async (
 
     const { results } = await db
         .prepare(`
-			SELECT *, ROW_NUMBER() OVER (ORDER BY total_gold_earned DESC) as rank
+			SELECT *, ROW_NUMBER() OVER(ORDER BY total_gold_earned DESC) as rank
 			FROM game_leaderboard
 			ORDER BY total_gold_earned DESC
-			LIMIT ?
-		`)
+    LIMIT ?
+        `)
         .bind(limit)
         .all();
 
@@ -1585,10 +1688,10 @@ export const prestigeReset = async (
         db
             .prepare(`
 				UPDATE game_farm_profiles 
-				SET level = 1, experience = 0, gold = ?, total_harvests = 0, 
-					prestige_level = ?, plots_unlocked = ?, updated_at = ?
-				WHERE user_username = ?
-			`)
+				SET level = 1, experience = 0, gold = ?, total_harvests = 0,
+        prestige_level = ?, plots_unlocked = ?, updated_at = ?
+            WHERE user_username = ?
+                `)
             .bind(
                 GAME_CONSTANTS.INITIAL_GOLD,
                 newPrestigeLevel,
@@ -1646,9 +1749,9 @@ export const createShopItem = async (
 
     await db
         .prepare(`
-            INSERT INTO game_shop_items 
-            (id, name, type, price_gold, price_gems, unlock_level, effect, max_quantity, icon, description)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO game_shop_items
+        (id, name, type, price_gold, price_gems, unlock_level, effect, max_quantity, icon, description)
+    VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `)
         .bind(
             item.id,
@@ -1702,7 +1805,7 @@ export const updateShopItem = async (
     values.push(id);
 
     await db
-        .prepare(`UPDATE game_shop_items SET ${setFragments.join(", ")} WHERE id = ?`)
+        .prepare(`UPDATE game_shop_items SET ${setFragments.join(", ")} WHERE id = ? `)
         .bind(...values)
         .run();
 
@@ -1716,6 +1819,115 @@ export const deleteShopItem = async (
     db: D1Database,
     id: string
 ): Promise<void> => {
-    await ensureInitialized(db);
     await db.prepare("DELETE FROM game_shop_items WHERE id = ?").bind(id).run();
+};
+
+// ==========================================
+// OBSTACLES
+// ==========================================
+export const generateObstacles = async (
+    db: D1Database,
+    username: string
+): Promise<void> => {
+    // Chance to spawn obstacles on empty space
+    const maxObstacles = 5;
+    const { count } = await db.prepare("SELECT COUNT(*) as count FROM game_obstacles WHERE user_username = ?").bind(username).first() as any;
+
+    if (count >= maxObstacles) return;
+
+    // 20% chance to spawn
+    if (Math.random() > 0.2) return;
+
+    const types = [
+        { type: "rock", cost: 50 },
+        { type: "weed", cost: 10 },
+        { type: "stump", cost: 30 }
+    ];
+    const picked = types[Math.floor(Math.random() * types.length)];
+
+    // Find random x,y
+    // In a real gridless system, we'd need collision check. 
+    // For now, let's pick a random location (0-100)
+    const x = Math.floor(Math.random() * 90) + 5; // 5-95
+    const y = Math.floor(Math.random() * 90) + 5;
+
+    await db.prepare(`
+        INSERT INTO game_obstacles (id, user_username, type, x, y, remove_cost)
+        VALUES (?, ?, ?, ?, ?, ?)
+    `).bind(generateId('obs'), username, picked.type, x, y, picked.cost).run();
+};
+
+export const removeObstacle = async (
+    db: D1Database,
+    username: string,
+    obstacleId: string
+): Promise<{ success: boolean; newGold: number }> => {
+    const obstacle = await db.prepare("SELECT * FROM game_obstacles WHERE id = ?").bind(obstacleId).first();
+    if (!obstacle) throw new Error("Obstacle tidak ditemukan");
+
+    if ((obstacle as any).user_username !== username) throw new Error("Bukan milikmu");
+
+    const cost = (obstacle as any).remove_cost || 0;
+    const profile = await getOrCreateProfile(db, username);
+
+    if (profile.gold < cost) {
+        throw new Error(`Butuh ${cost} gold untuk menghapus ini`);
+    }
+
+    await db.batch([
+        db.prepare("DELETE FROM game_obstacles WHERE id = ?").bind(obstacleId),
+        db.prepare("UPDATE game_farm_profiles SET gold = gold - ? WHERE user_username = ?").bind(cost, username)
+    ]);
+
+    return {
+        success: true,
+        newGold: profile.gold - cost
+    };
+};
+
+export const getObstacles = async (
+    db: D1Database,
+    username: string
+): Promise<any[]> => {
+    const { results } = await db.prepare("SELECT * FROM game_obstacles WHERE user_username = ?").bind(username).all();
+    return results || [];
+};
+
+// ==========================================
+// FARM EXPANSION
+// ==========================================
+export const expandLand = async (db: D1Database, username: string) => {
+    const profile = await getOrCreateProfile(db, username);
+
+    // Calculate cost based on current plot count
+    // Base 9 plots free.
+    // 10th plot = 500
+    // 11th plot = 500 * 1.5
+    const expansions = Math.max(0, profile.plots_unlocked - GAME_CONSTANTS.INITIAL_PLOTS);
+    const cost = Math.floor(GAME_CONSTANTS.PLOT_EXPANSION_BASE_COST * Math.pow(GAME_CONSTANTS.PLOT_EXPANSION_MULTIPLIER, expansions));
+
+    if (profile.gold < cost) {
+        throw new Error(`Not enough gold! Need ${cost} gold.`);
+    }
+
+    if (profile.plots_unlocked >= GAME_CONSTANTS.MAX_PLOTS) {
+        throw new Error("Maximum farm size reached!");
+    }
+
+    // Transaction
+    const result = await db.batch([
+        db.prepare("UPDATE game_farm_profiles SET gold = gold - ?, plots_unlocked = plots_unlocked + 1 WHERE user_username = ?")
+            .bind(cost, username),
+        db.prepare("SELECT * FROM game_farm_profiles WHERE user_username = ?")
+            .bind(username)
+    ]);
+
+    const updatedProfile = result[1].results[0] as GameFarmProfileType;
+
+    return {
+        success: true,
+        new_plots_unlocked: updatedProfile.plots_unlocked,
+        gold_spent: cost,
+        remaining_gold: updatedProfile.gold
+    };
 };

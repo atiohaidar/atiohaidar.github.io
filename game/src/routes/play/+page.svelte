@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount, onDestroy } from "svelte";
+    import { get } from "svelte/store";
     import { goto } from "$app/navigation";
     import { browser } from "$app/environment";
     import {
@@ -34,13 +35,25 @@
         useItem,
         getInventory,
         type InventoryItem,
+        getShopItems,
+        type ShopItem,
+        expandLand,
+        clearAuthToken,
     } from "$lib/api";
 
     let loading = true;
     let isBuildMode = false; // Now acts as "Inventory/Build Mode"
     let inventoryItems: InventoryItem[] = [];
+
     let selectedBuildItem: InventoryItem | null = null;
+    let allShopItems: ShopItem[] = [];
+
     let showBuildSelector = false;
+    let isoMode = true; // Toggle for debug if needed, default true
+
+    let localGameLoopInterval: ReturnType<typeof setInterval> | null = null;
+
+    const MAX_PLOTS = 30; // Limit total plots to prevent clutter
 
     onMount(async () => {
         // Check auth
@@ -59,10 +72,13 @@
         // Set loading to false after data is loaded
         loading = false;
 
-        // Start game loop for real-time updates
+        // Start game loop for real-time updates (server sync every 60s)
         startGameLoop(async () => {
-            await refreshFarmPlots();
-        }, 2000);
+            await refreshGameData();
+        }, 60000);
+
+        // Start local loop for smooth animations (every 1s)
+        startLocalGameLoop();
 
         // Keyboard shortcuts (only in browser)
         if (browser) {
@@ -72,6 +88,7 @@
 
     onDestroy(() => {
         stopGameLoop();
+        stopLocalGameLoop();
         if (browser) {
             window.removeEventListener("keydown", handleKeydown);
         }
@@ -95,12 +112,17 @@
         if (plotsRes.success && plotsRes.data) {
             farmPlots.set(plotsRes.data);
         }
+
+        if (plotsRes.success && plotsRes.data) {
+            farmPlots.set(plotsRes.data);
+        }
     }
 
-    async function refreshFarmPlots() {
-        const res = await getFarmPlots();
-        if (res.success && res.data) {
-            farmPlots.set(res.data);
+    async function refreshGameData() {
+        const [plotsRes] = await Promise.all([getFarmPlots()]);
+
+        if (plotsRes.success && plotsRes.data) {
+            farmPlots.set(plotsRes.data);
         }
     }
 
@@ -155,7 +177,7 @@
             const result = await removeItem(plotIndex);
             if (result.success) {
                 showToast("Item removed! 📦", "success");
-                await refreshFarmPlots();
+                await refreshGameData();
                 await loadInventory(); // Refresh inventory count
             } else {
                 showToast(result.error || "Failed to remove", "error");
@@ -177,7 +199,7 @@
             );
             if (result.success) {
                 showToast("Item placed! 🏗️", "success");
-                await refreshFarmPlots();
+                await refreshGameData();
                 await loadInventory(); // Refresh inventory count
 
                 // Check if we still have this item
@@ -228,31 +250,12 @@
         );
     }
 
-    async function handlePlant(cropId: string) {
-        const plotIndex = $selectedPlot;
-        if (plotIndex === null) return;
-
-        showSeedSelector.set(false);
-        selectedPlot.set(null);
-
-        const result = await plantCrop(plotIndex, cropId);
-
-        if (result.success) {
-            const crop = $crops.find((c) => c.id === cropId);
-            showToast(`Planted ${crop?.name || "crop"}! 🌱`, "success");
-            await refreshFarmPlots();
-            await refreshProfile();
-        } else {
-            showToast(result.error || "Failed to plant", "error");
-        }
-    }
-
     async function handleWater(plotIndex: number) {
         const result = await waterPlot(plotIndex);
 
         if (result.success) {
             showToast("Watered! 💧 Growth +10%", "info");
-            await refreshFarmPlots();
+            await refreshGameData();
         } else {
             showToast(result.error || "Failed to water", "error");
         }
@@ -270,7 +273,7 @@
                 showToast(`🎉 Level Up! Now level ${newLevel}`, "level");
             }
 
-            await refreshFarmPlots();
+            await refreshGameData();
             await refreshProfile();
         } else {
             showToast(result.error || "Failed to harvest", "error");
@@ -298,7 +301,7 @@
                 showToast(`🎉 Level Up! Now level ${new_level}`, "level");
             }
 
-            await refreshFarmPlots();
+            await refreshGameData();
             await refreshProfile();
         } else {
             showToast(result.error || "No crops ready", "error");
@@ -333,9 +336,6 @@
     // Better yet, let's load all shop items on mount so we have the metadata.
 
     // Quick fix: Add shop items to loadGameData
-    import { getShopItems, type ShopItem } from "$lib/api";
-    let allShopItems: ShopItem[] = [];
-
     async function loadAllShopItems() {
         const res = await getShopItems();
         if (res.success && res.data) {
@@ -348,6 +348,282 @@
     function getIconForItemId(itemId: string): string {
         const item = allShopItems.find((i) => i.id === itemId);
         return item?.icon || "📦";
+    }
+
+    // Land Expansion
+    let plotsUnlocked = 9;
+    $: plotsUnlocked = $profile?.plots_unlocked || 9;
+
+    let nextExpansionCost = 500;
+    $: nextExpansionCost = Math.floor(
+        500 * Math.pow(1.5, Math.max(0, plotsUnlocked - 9)),
+    );
+
+    async function handleExpandLand() {
+        if (($profile?.gold || 0) < nextExpansionCost) {
+            showToast(`Need ${nextExpansionCost} gold to expand!`, "error");
+            return;
+        }
+
+        const result = await expandLand();
+        if (result.success && result.data) {
+            showToast(
+                `Land expanded! You now have ${result.data.new_plots_unlocked} plots.`,
+                "success",
+            );
+            await refreshProfile();
+        } else {
+            showToast(result.error || "Expansion failed", "error");
+        }
+    }
+
+    async function handleLandClick(e: MouseEvent) {
+        if (!isBuildMode && $selectedPlot === null) {
+            // If not specialized mode, maybe show info?
+            return;
+        }
+
+        if (isBuildMode && selectedBuildItem) {
+            // Calculate percentage coordinates
+            // Assuming .farm-land is the target or currentTarget
+            const rect = (
+                e.currentTarget as HTMLElement
+            ).getBoundingClientRect();
+            const x = Math.min(
+                100,
+                Math.max(0, ((e.clientX - rect.left) / rect.width) * 100),
+            );
+            const y = Math.min(
+                100,
+                Math.max(0, ((e.clientY - rect.top) / rect.height) * 100),
+            );
+
+            // Place item at x, y
+            // We pass undefined as plotIndex to create new plot
+            const result = await placeItem(
+                undefined,
+                selectedBuildItem.item_id,
+                x,
+                y,
+            );
+            if (result.success) {
+                showToast("Item placed! 🏗️", "success");
+                await refreshGameData();
+                await loadInventory();
+
+                if (selectedBuildItem.quantity <= 1) {
+                    selectedBuildItem = null;
+                } else {
+                    selectedBuildItem.quantity--;
+                }
+            } else {
+                showToast(result.error || "Failed", "error");
+            }
+        }
+    }
+
+    // Function to handle planting on empty ground click?
+    // Usually planting requires selecting a plot.
+    // In free placement, clicking IS creating a plot.
+    // But we need to distinguish "Planting Mode" vs "Building Mode".
+    // For now, let's say "Clicking Empty Land" opens Seed Selector if NOT in Build Mode?
+    // And selecting seed then asks "Where to plant?" or we click Land to Plant directly?
+    // "Click Land -> Open Selector -> Plant" is standard.
+    // The "handleLandClick" handles the click location.
+
+    // We need to store the clicked coordinates if we open selector.
+    let pendingClick: { x: number; y: number } | null = null;
+
+    function onLandClick(e: MouseEvent) {
+        // Ignore if clicking on existing plot or obstacle (handled by stopPropagation usually)
+        if (e.target !== e.currentTarget) return;
+
+        const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+        const x = Math.min(
+            100,
+            Math.max(0, ((e.clientX - rect.left) / rect.width) * 100),
+        );
+        const y = Math.min(
+            100,
+            Math.max(0, ((e.clientY - rect.top) / rect.height) * 100),
+        );
+
+        if (isBuildMode && selectedBuildItem) {
+            placeItemAt(x, y);
+            return;
+        }
+
+        if (!isBuildMode) {
+            // Check max plots based on unlocked
+            // Use local plotsUnlocked variable which is reactive
+            if ($farmPlots.length >= plotsUnlocked) {
+                showToast(
+                    `Land is full! (${$farmPlots.length}/${plotsUnlocked}) Expand your farm to plant more.`,
+                    "error",
+                );
+                return;
+            }
+
+            // Open seed selector for new crop
+            pendingClick = { x, y };
+            showSeedSelector.set(true);
+        }
+    }
+
+    async function placeItemAt(x: number, y: number) {
+        if (!selectedBuildItem) return;
+        const result = await placeItem(
+            undefined,
+            selectedBuildItem.item_id,
+            x,
+            y,
+        );
+        if (result.success) {
+            showToast("Item placed! 🏗️", "success");
+            await refreshGameData();
+            await loadInventory();
+            if (selectedBuildItem.quantity <= 1) selectedBuildItem = null;
+            else selectedBuildItem.quantity--;
+        } else {
+            showToast(result.error || "Failed", "error");
+        }
+    }
+
+    // Override handlePlant to use pendingClick if available
+    async function handlePlant(cropId: string) {
+        // If we have a pending click (new plot)
+        if (pendingClick) {
+            showSeedSelector.set(false);
+            const { x, y } = pendingClick;
+            pendingClick = null;
+
+            const result = await plantCrop(undefined, cropId, x, y);
+            if (result.success) {
+                showToast("Planted! 🌱", "success");
+                await refreshGameData();
+                await refreshProfile();
+            } else {
+                showToast(result.error || "Failed", "error");
+            }
+            return;
+        }
+
+        // Existing plot logic
+        const plotIndex = $selectedPlot;
+        if (plotIndex === null) return;
+
+        showSeedSelector.set(false);
+        selectedPlot.set(null);
+
+        const result = await plantCrop(plotIndex, cropId); // x,y undefined
+
+        if (result.success) {
+            const crop = $crops.find((c) => c.id === cropId);
+            showToast(`Planted ${crop?.name || "crop"}! 🌱`, "success");
+            await refreshGameData();
+            await refreshProfile();
+        } else {
+            showToast(result.error || "Failed to plant", "error");
+        }
+    }
+
+    // Helper for visual fallback of legacy plots
+    function getPlotStyle(plot: FarmPlot) {
+        let x = plot.x;
+        let y = plot.y;
+
+        // Fallback if no coordinates (legacy data being 0 or undefined)
+        if (!x && !y) {
+            const i = plot.plot_index ?? 0;
+            // Create a 4-column grid layout fallback
+            const cols = 4;
+            const col = i % cols;
+            const row = Math.floor(i / cols);
+
+            // Percentage spacing
+            x = 15 + col * 20; // Starts at 15%, steps 20%
+            y = 15 + row * 20; // Starts at 15%, steps 20%
+        }
+
+        return `position: absolute; left: ${x}%; top: ${y}%; z-index: ${Math.floor(y || 0)};`;
+    }
+
+    // ==========================================
+    // CLIENT SIDE SIMULATION
+    // ==========================================
+    function startLocalGameLoop() {
+        stopLocalGameLoop();
+        localGameLoopInterval = setInterval(updateCropsLocal, 1000);
+    }
+
+    function stopLocalGameLoop() {
+        if (localGameLoopInterval) {
+            clearInterval(localGameLoopInterval);
+            localGameLoopInterval = null;
+        }
+    }
+
+    function updateCropsLocal() {
+        // Run simulation to update progress bars without hitting server
+        const now = Date.now();
+        const allCrops = get(crops);
+
+        farmPlots.update((currentPlots) => {
+            return currentPlots.map((plot) => {
+                // Skip if no crop or already ready (unless we want to verify locally)
+                if (!plot.crop_id || !plot.planted_at || plot.ready)
+                    return plot;
+
+                // Find crop details (either embedded or from store)
+                const crop =
+                    plot.crop || allCrops.find((c) => c.id === plot.crop_id);
+                if (!crop) return plot;
+
+                const plantedTime = new Date(plot.planted_at).getTime();
+                const durationMs = crop.grow_time_seconds * 1000;
+
+                // Apply water bonus logic (10% faster = / 1.1 duration)
+                // This MUST match backend logic
+                const effectiveDuration = plot.watered
+                    ? durationMs / 1.1
+                    : durationMs;
+
+                const elapsed = now - plantedTime;
+
+                // Calculate new state
+                let newPercent = (elapsed / effectiveDuration) * 100;
+                let newRemaining = Math.max(
+                    0,
+                    Math.ceil((effectiveDuration - elapsed) / 1000),
+                );
+
+                // Cap at 100%
+                if (newPercent >= 100) {
+                    newPercent = 100;
+                    newRemaining = 0;
+                    // Optimistically mark ready so UI turns green
+                    // Backend will verify on harvest
+                    return {
+                        ...plot,
+                        growth_percent: 100,
+                        time_remaining: 0,
+                        ready: true,
+                    };
+                }
+
+                return {
+                    ...plot,
+                    growth_percent: newPercent,
+                    time_remaining: newRemaining,
+                };
+            });
+        });
+    }
+
+    function handleLogout() {
+        clearAuthToken();
+        isLoggedIn.set(false);
+        goto("/");
     }
 </script>
 
@@ -365,16 +641,33 @@
             </div>
         {:else}
             <!-- HTML Farm Grid Overlay for reliable click handling -->
-            <div class="html-farm-grid">
-                <h2 class="farm-title">🌾 Bercocok tanam 🌾</h2>
-                <div class="farm-plots-grid">
-                    {#each $farmPlots as plot, i}
+            <!-- Isometric Farm Land -->
+            <div class="farm-land-container">
+                <h2 class="farm-title absolute-top">🌾 Bercocok tanam 🌾</h2>
+                <div class="land-usage-badge top-right">
+                    <span>Land: {$farmPlots.length} / {plotsUnlocked}</span>
+                </div>
+
+                <!-- Farm Land Area -->
+                <div
+                    class="farm-land"
+                    on:click={onLandClick}
+                    on:keydown={() => {}}
+                    role="button"
+                    tabindex="0"
+                >
+                    <!-- Background / Grass -->
+
+                    <!-- Plots -->
+                    {#each $farmPlots as plot (plot.id || plot.plot_index)}
                         <button
-                            class="plot-cell"
+                            class="map-object plot-cell"
                             class:has-crop={plot.crop_id}
                             class:ready={plot.ready}
                             class:watered={plot.watered}
-                            on:click={() => handlePlotClick(i, plot)}
+                            style={getPlotStyle(plot)}
+                            on:click|stopPropagation={() =>
+                                handlePlotClick(plot.plot_index, plot)}
                         >
                             {#if plot.crop_id}
                                 <span class="crop-icon"
@@ -396,27 +689,37 @@
                                     <span class="water-badge">💧</span>
                                 {/if}
                             {:else if plot.placed_item_id}
-                                <!-- Placed Item -->
-                                <span class="crop-icon">
-                                    {getIconForItemId(plot.placed_item_id)}
-                                </span>
+                                <span class="crop-icon"
+                                    >{getIconForItemId(
+                                        plot.placed_item_id,
+                                    )}</span
+                                >
                                 {#if isBuildMode}
                                     <span class="remove-badge">❌</span>
                                 {/if}
                             {:else}
-                                <span class="empty-icon">+</span>
+                                <!-- Empty plot (hoed ground) -->
+                                <!-- Empty plot (invisible unless in build mode) -->
+                                <div
+                                    class="soil-patch"
+                                    style="opacity: {isBuildMode ? 0.5 : 0};"
+                                ></div>
                             {/if}
                         </button>
                     {/each}
                 </div>
+
                 <p class="farm-hint">
                     {#if isBuildMode}
-                        Select an item and click empty plots to build. Click
-                        placed items to remove.
+                        Select an item and click anywhere to build!
                     {:else}
-                        Click a plot to plant, water, or harvest!
+                        Click empty land to plant. Click crops to harvest/water.
                     {/if}
                 </p>
+
+                <div class="land-usage-badge">
+                    <span>Land: {$farmPlots.length} / {plotsUnlocked}</span>
+                </div>
             </div>
         {/if}
     </div>
@@ -467,6 +770,9 @@
             <a href="/profile" class="nav-link">👤 Profile</a>
             <a href="/prestige" class="nav-link">✨ Prestige</a>
             <a href="/leaderboard" class="nav-link">🏆 Leaderboard</a>
+            <button class="nav-link logout-link" on:click={handleLogout}
+                >🚪 Log Out</button
+            >
         </div>
 
         <div class="stats">
@@ -488,6 +794,18 @@
                 <span class="label">Harvests</span>
                 <span class="value">{$profile?.total_harvests || 0}</span>
             </div>
+            <div class="stat">
+                <span class="label">Land</span>
+                <span class="value">{$farmPlots.length} / {plotsUnlocked}</span>
+            </div>
+
+            <button
+                class="btn btn-secondary w-full mt-2"
+                on:click={handleExpandLand}
+                disabled={($profile?.gold || 0) < nextExpansionCost}
+            >
+                Expand Land ({nextExpansionCost}g)
+            </button>
         </div>
 
         <div class="quick-tips">
@@ -621,24 +939,71 @@
         animation: spin 1s linear infinite;
     }
 
-    /* HTML Farm Grid */
-    .html-farm-grid {
+    /* Farm Land */
+    .farm-land-container {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 1.5rem;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
     }
 
-    .farm-title {
-        font-size: 1.75rem;
-        color: var(--gold);
-        margin: 0;
+    .farm-land {
+        width: 80%;
+        height: 60%;
+        background: #5d4037; /* Soil color */
+        border: 4px solid #3e2723;
+        border-radius: 16px;
+        position: relative;
+        box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
+        margin-top: 1rem;
+        cursor: crosshair;
     }
 
-    .farm-plots-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
+    .absolute-top {
+        margin-bottom: 1rem;
+        z-index: 1000;
+    }
+
+    .map-object {
+        position: absolute;
+        width: 64px;
+        height: 64px;
+        transform: translate(-50%, -50%); /* Center on coordinate */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.1s;
+    }
+
+    .map-object:hover {
+        transform: translate(-50%, -50%) scale(1.1);
+        z-index: 1000 !important; /* Pop to front on hover */
+    }
+
+    .plot-cell {
+        /* Override previous plot-cell styles for map objects */
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px dashed rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+    }
+
+    .plot-cell.has-crop {
+        background: transparent;
+        border: none;
+    }
+
+    .obstacle {
+        font-size: 2.5rem;
+    }
+
+    .obj-icon {
+        font-size: 2.5rem;
+        filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.3));
     }
 
     .plot-cell {
@@ -940,6 +1305,24 @@
         background: #f57c00;
     }
 
+    .land-usage-badge {
+        position: absolute;
+        bottom: 5%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: bold;
+        backdrop-filter: blur(4px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        z-index: 1000; /* Ensure above farm-land */
+        font-size: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        pointer-events: none; /* Let clicks pass through if needed */
+    }
+
     .build-controls {
         background: var(--bg-tertiary);
         padding: 1rem;
@@ -971,5 +1354,86 @@
         text-align: center;
         padding: 2rem;
         color: var(--text-muted);
+    }
+
+    /* Farm Land */
+    .farm-land-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .farm-land {
+        width: 80%;
+        height: 60%;
+        background: #5d4037; /* Soil color */
+        border: 4px solid #3e2723;
+        border-radius: 16px;
+        position: relative;
+        box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
+        margin-top: 1rem;
+        cursor: crosshair;
+    }
+
+    .absolute-top {
+        margin-bottom: 1rem;
+        z-index: 1000;
+        pointer-events: none;
+    }
+
+    .map-object {
+        position: absolute;
+        width: 64px;
+        height: 64px;
+        transform: translate(-50%, -50%); /* Center on coordinate */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.1s;
+    }
+
+    .map-object:hover {
+        transform: translate(-50%, -50%) scale(1.1);
+        z-index: 1000 !important; /* Pop to front on hover */
+    }
+
+    .plot-cell {
+        /* Transparent by default */
+        background: transparent;
+        border: none;
+        border-radius: 12px;
+    }
+
+    .plot-cell:hover {
+        /* Subtle highlight on hover */
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px dashed rgba(255, 255, 255, 0.2);
+    }
+
+    .plot-cell.has-crop {
+        background: transparent;
+        border: none;
+    }
+
+    .obstacle {
+        font-size: 2.5rem;
+    }
+
+    .obj-icon {
+        font-size: 2.5rem;
+        filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.3));
+    }
+    .soil-patch {
+        width: 100%;
+        height: 100%;
+        background: #4e342e;
+        border-radius: 8px;
+        opacity: 0.5;
     }
 </style>

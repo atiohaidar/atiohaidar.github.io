@@ -175,16 +175,18 @@ export interface FarmPlot {
     crop?: Crop;
     ready?: boolean;
     time_remaining?: number;
+    x?: number;
+    y?: number;
 }
 
 export async function getFarmPlots(): Promise<ApiResponse<FarmPlot[]>> {
     return fetchApi<FarmPlot[]>('/game/farm');
 }
 
-export async function plantCrop(plotIndex: number, cropId: string): Promise<ApiResponse<FarmPlot>> {
+export async function plantCrop(plotIndex: number | undefined, cropId: string, x?: number, y?: number): Promise<ApiResponse<FarmPlot>> {
     return fetchApi<FarmPlot>('/game/farm/plant', {
         method: 'POST',
-        body: JSON.stringify({ plot_index: plotIndex, crop_id: cropId }),
+        body: JSON.stringify({ plot_index: plotIndex, crop_id: cropId, x, y }),
     });
 }
 
@@ -195,10 +197,10 @@ export async function waterPlot(plotIndex: number): Promise<ApiResponse<FarmPlot
     });
 }
 
-export async function placeItem(plotIndex: number, itemId: string): Promise<ApiResponse<FarmPlot>> {
+export async function placeItem(plotIndex: number | undefined, itemId: string, x?: number, y?: number): Promise<ApiResponse<FarmPlot>> {
     return fetchApi<FarmPlot>('/game/farm/place', {
         method: 'POST',
-        body: JSON.stringify({ plot_index: plotIndex, item_id: itemId }),
+        body: JSON.stringify({ plot_index: plotIndex, item_id: itemId, x, y }),
     });
 }
 
@@ -207,6 +209,10 @@ export async function removeItem(plotIndex: number): Promise<ApiResponse<FarmPlo
         method: 'POST',
         body: JSON.stringify({ plot_index: plotIndex }),
     });
+}
+
+export async function expandLand(): Promise<ApiResponse<{ new_plots_unlocked: number; gold_spent: number; remaining_gold: number }>> {
+    return fetchApi('/game/farm/expand', { method: 'POST' });
 }
 
 export async function useItem(itemId: string, targetPlotIndex?: number): Promise<ApiResponse<{ message: string; updatedPlot?: FarmPlot }>> {
@@ -441,5 +447,28 @@ export async function updateAdminItem(id: string, item: Partial<ShopItem>): Prom
 export async function deleteAdminItem(id: string): Promise<ApiResponse<{ success: boolean }>> {
     return fetchApi<{ success: boolean }>(`/game/admin/items/${id}`, {
         method: 'DELETE',
+    });
+}
+
+// ==========================================
+// OBSTACLES
+// ==========================================
+export interface Obstacle {
+    id: string;
+    user_username: string;
+    type: string;
+    x: number;
+    y: number;
+    created_at?: string;
+    remove_cost: number;
+}
+
+export async function getObstacles(): Promise<ApiResponse<Obstacle[]>> {
+    return fetchApi<Obstacle[]>('/game/obstacles');
+}
+
+export async function removeObstacle(obstacleId: string): Promise<ApiResponse<{ newGold: number }>> {
+    return fetchApi<{ newGold: number }>(`/game/obstacles/${obstacleId}/remove`, {
+        method: 'POST',
     });
 }

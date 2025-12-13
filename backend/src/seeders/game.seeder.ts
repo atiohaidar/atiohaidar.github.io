@@ -58,7 +58,6 @@ const SHOP_ITEMS = [
 
     // Boosters
     { id: "fertilizer", name: "Fertilizer", type: "booster", price_gold: 100, price_gems: 0, unlock_level: 3, effect: JSON.stringify({ type: "growth_speed", value: 1.5, duration: 1800 }), max_quantity: -1, icon: "💩", description: "+50% growth speed for 30min" },
-    { id: "lucky_clover", name: "Lucky Clover", type: "booster", price_gold: 200, price_gems: 0, unlock_level: 7, effect: JSON.stringify({ type: "double_harvest_chance", value: 0.25 }), max_quantity: -1, icon: "🍀", description: "25% chance for double harvest" },
 
     // Plot expansion
     { id: "plot_expansion", name: "Plot Expansion", type: "upgrade", price_gold: 500, price_gems: 0, unlock_level: 5, effect: JSON.stringify({ type: "unlock_plot", count: 1 }), max_quantity: 40, icon: "📐", description: "Unlock 1 additional plot" },

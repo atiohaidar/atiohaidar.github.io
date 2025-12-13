@@ -88,7 +88,9 @@ export type GameInventoryItemType = z.infer<typeof GameInventoryItem>;
 export const GameFarmPlot = z.object({
     id: Str({ description: "Plot ID" }),
     user_username: Str({ description: "Owner username" }),
-    plot_index: Num({ description: "Plot position in grid (0-based)", example: 0 }),
+    plot_index: Num({ description: "Plot position index (optional if using x,y)", example: 0 }).optional(),
+    x: Num({ description: "X coordinate (percentage 0-100)", example: 50 }).default(0),
+    y: Num({ description: "Y coordinate (percentage 0-100)", example: 50 }).default(0),
     crop_id: z.string().nullable().optional(),
     placed_item_id: z.string().nullable().optional(), // Decoration or sprinkler ID
     fertilizer_id: z.string().nullable().optional(), // Active fertilizer ID
@@ -142,6 +144,18 @@ export const GameDailyQuest = z.object({
 
 export type GameDailyQuestType = z.infer<typeof GameDailyQuest>;
 
+export const GameObstacle = z.object({
+    id: Str({ description: "Obstacle ID" }),
+    user_username: Str({ description: "Owner username" }),
+    type: Str({ description: "Type: rock, weed, etc.", example: "rock" }),
+    x: Num({ description: "X coordinate", example: 20 }),
+    y: Num({ description: "Y coordinate", example: 30 }),
+    created_at: z.string().nullable().optional(),
+    remove_cost: Num({ description: "Gold cost to remove", example: 50 }),
+});
+
+export type GameObstacleType = z.infer<typeof GameObstacle>;
+
 // ==========================================
 // GAME LEADERBOARD
 // ==========================================
@@ -160,25 +174,34 @@ export type GameLeaderboardEntryType = z.infer<typeof GameLeaderboardEntry>;
 // REQUEST SCHEMAS
 // ==========================================
 export const PlantCropRequestSchema = z.object({
-    plot_index: Num({ description: "Plot index to plant in", example: 0 }),
+    plot_index: Num({ description: "Legacy Grid Index", required: false }).optional(),
+    x: Num({ description: "X Coordinate", required: false }).optional(),
+    y: Num({ description: "Y Coordinate", required: false }).optional(),
     crop_id: Str({ description: "Crop ID to plant", example: "carrot" }),
 });
 
 export const PlaceItemRequestSchema = z.object({
-    plot_index: Num({ description: "Plot index to place item", example: 0 }),
+    plot_index: Num({ description: "Legacy Grid Index", required: false }).optional(),
+    x: Num({ description: "X Coordinate", required: false }).optional(),
+    y: Num({ description: "Y Coordinate", required: false }).optional(),
     item_id: Str({ description: "Inventory Item ID to place", example: "sprinkler" }),
 });
 
 export const RemoveItemRequestSchema = z.object({
-    plot_index: Num({ description: "Plot index to remove item from", example: 0 }),
+    plot_index: Num({ description: "Plot index or Plot ID to remove item from", example: 0 }),
+    // In coordinate system, we might remove by clicking the plot/item directly, which implies knowing the PlotID not index.
+    // For back-compat we keep plot_index but we should probably support plot_id too.
+    plot_id: Str({ description: "Plot ID target", required: false }).optional(),
 });
 
 export const WaterPlotRequestSchema = z.object({
-    plot_index: Num({ description: "Plot index to water", example: 0 }),
+    plot_index: Num({ description: "Plot index", required: false }).optional(),
+    plot_id: Str({ description: "Plot ID", required: false }).optional(),
 });
 
 export const HarvestPlotRequestSchema = z.object({
-    plot_index: Num({ description: "Plot index to harvest", example: 0 }),
+    plot_index: Num({ description: "Plot index", required: false }).optional(),
+    plot_id: Str({ description: "Plot ID", required: false }).optional(),
 });
 
 export const PurchaseItemRequestSchema = z.object({
@@ -189,6 +212,7 @@ export const PurchaseItemRequestSchema = z.object({
 export const UseItemRequestSchema = z.object({
     item_id: Str({ description: "Item ID to use", example: "growth_potion" }),
     target_plot_index: Num({ required: false, description: "Target plot index if applicable" }).optional(),
+    target_plot_id: Str({ required: false, description: "Target plot ID" }).optional(),
 });
 
 export const ExchangeBalanceRequestSchema = z.object({
