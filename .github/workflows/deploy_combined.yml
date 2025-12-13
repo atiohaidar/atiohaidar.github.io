@@ -9,102 +9,157 @@ permissions:
   contents: write
 
 jobs:
-  build-and-deploy:
+  build-flutter:
+    name: Build Flutter
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # --- 1. BUILD FLUTTER WEB ---
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
       
-      - name: Install Flutter dependencies
+      - name: Install dependencies
         working-directory: ./mobile_flutter
         run: flutter pub get
 
-      - name: Build Flutter Web
+      - name: Build Web
         working-directory: ./mobile_flutter
-        # Penting: base-href diset ke /flutter/ karena akan ditaruh di sub-folder
         run: flutter build web --release --base-href /flutter/
 
-      # --- 2. BUILD EXPO WEB ---
-      - name: Setup Node.js for Expo
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-build
+          path: mobile_flutter/build/web
+
+  build-expo:
+    name: Build Expo
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
           cache-dependency-path: expojs/package-lock.json
 
-      - name: Install Expo Dependencies
+      - name: Install Dependencies
         working-directory: ./expojs
         run: npm ci
 
-      - name: Build Expo Web
+      - name: Build Web
         working-directory: ./expojs
         env:
           EXPO_PUBLIC_API_URL: https://backend.atiohaidar.workers.dev
         run: npx expo export --platform web --output-dir dist
 
-      # --- 3. BUILD REACT FRONTEND ---
-      - name: Setup Node.js for Frontend
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: expo-build
+          path: expojs/dist
+
+  build-frontend:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
-      - name: Install Frontend Dependencies
+      - name: Install Dependencies
         working-directory: ./frontend
         run: npm ci
 
-      - name: Build Frontend
+      - name: Build
         working-directory: ./frontend
         run: npm run build
 
-      # --- 4. BUILD GAME ---
-      - name: Setup Node.js for Game
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-build
+          path: frontend/dist
+
+  build-game:
+    name: Build Game
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
           cache: 'npm'
           cache-dependency-path: game/package-lock.json
 
-      - name: Install Game Dependencies
+      - name: Install Dependencies
         working-directory: ./game
         run: npm ci
 
-      - name: Build Game
+      - name: Build
         working-directory: ./game
         run: npm run build
 
-      # --- 5. COMBINE OUTPUTS ---
-      - name: Prepare Deployment Directory
-        run: |
-          mkdir deploy_artifact
-          # Copy Frontend (Root)
-          cp -r frontend/dist/* deploy_artifact/
-        
-          # Buat folder flutter dan copy hasil Flutter
-          mkdir deploy_artifact/flutter
-          cp -r mobile_flutter/build/web/* deploy_artifact/flutter/
-          # Copy _headers to flutter folder if exists
-          
-          mkdir deploy_artifact/expo
-          cp -r expojs/dist/* deploy_artifact/expo/
-          
-          # Buat folder game dan copy hasil Game
-          mkdir deploy_artifact/game
-          cp -r game/build/* deploy_artifact/game/
-          
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: game-build
+          path: game/build
 
-      # --- 6. DEPLOY TO BRANCH 'deploy' ---
+  deploy:
+    name: Deploy
+    needs: [build-flutter, build-expo, build-frontend, build-game]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Prepare Deployment Directory
+        run: mkdir deploy_artifact
+
+      - name: Download Frontend
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-build
+          path: deploy_artifact
+
+      - name: Download Flutter
+        uses: actions/download-artifact@v4
+        with:
+          name: flutter-build
+          path: deploy_artifact/flutter
+
+      - name: Download Expo
+        uses: actions/download-artifact@v4
+        with:
+          name: expo-build
+          path: deploy_artifact/expo
+
+      - name: Download Game
+        uses: actions/download-artifact@v4
+        with:
+          name: game-build
+          path: deploy_artifact/game
+
       - name: Deploy to 'deploy' branch
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./deploy_artifact
           publish_branch: deploy
-          force_orphan: true # Opsional: buat history branch bersih
+          force_orphan: true
