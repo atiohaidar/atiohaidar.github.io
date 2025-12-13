@@ -11,6 +11,7 @@ import type { GameProfile, FarmPlot, Crop, ShopItem, InventoryItem, Achievement,
 // ==========================================
 export const isLoggedIn = writable(false);
 export const username = writable<string | null>(null);
+export const userRole = writable<string | null>(null);
 
 // ==========================================
 // GAME STATE

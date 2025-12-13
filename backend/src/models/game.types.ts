@@ -90,6 +90,8 @@ export const GameFarmPlot = z.object({
     user_username: Str({ description: "Owner username" }),
     plot_index: Num({ description: "Plot position in grid (0-based)", example: 0 }),
     crop_id: z.string().nullable().optional(),
+    placed_item_id: z.string().nullable().optional(), // Decoration or sprinkler ID
+    fertilizer_id: z.string().nullable().optional(), // Active fertilizer ID
     planted_at: z.string().nullable().optional(),
     watered: z.union([z.boolean(), z.number()]).transform(v => Boolean(v)),
     growth_percent: Num({ description: "Growth progress 0-100", example: 0 }).default(0),
@@ -162,6 +164,15 @@ export const PlantCropRequestSchema = z.object({
     crop_id: Str({ description: "Crop ID to plant", example: "carrot" }),
 });
 
+export const PlaceItemRequestSchema = z.object({
+    plot_index: Num({ description: "Plot index to place item", example: 0 }),
+    item_id: Str({ description: "Inventory Item ID to place", example: "sprinkler" }),
+});
+
+export const RemoveItemRequestSchema = z.object({
+    plot_index: Num({ description: "Plot index to remove item from", example: 0 }),
+});
+
 export const WaterPlotRequestSchema = z.object({
     plot_index: Num({ description: "Plot index to water", example: 0 }),
 });
@@ -177,7 +188,7 @@ export const PurchaseItemRequestSchema = z.object({
 
 export const UseItemRequestSchema = z.object({
     item_id: Str({ description: "Item ID to use", example: "growth_potion" }),
-    target_plot: Num({ required: false, description: "Target plot if applicable" }),
+    target_plot_index: Num({ required: false, description: "Target plot index if applicable" }).optional(),
 });
 
 export const ExchangeBalanceRequestSchema = z.object({

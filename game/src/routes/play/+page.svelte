@@ -27,7 +27,20 @@
         stopGameLoop,
     } from "$lib/stores";
 
+    // Import new API functions
+    import {
+        placeItem,
+        removeItem,
+        useItem,
+        getInventory,
+        type InventoryItem,
+    } from "$lib/api";
+
     let loading = true;
+    let isBuildMode = false; // Now acts as "Inventory/Build Mode"
+    let inventoryItems: InventoryItem[] = [];
+    let selectedBuildItem: InventoryItem | null = null;
+    let showBuildSelector = false;
 
     onMount(async () => {
         // Check auth
@@ -41,6 +54,7 @@
 
         // Load initial data
         await loadGameData();
+        loadAllShopItems(); // Load background data
 
         // Set loading to false after data is loaded
         loading = false;
@@ -98,6 +112,11 @@
     }
 
     function handlePlotClick(plotIndex: number, plotData?: FarmPlot) {
+        if (isBuildMode) {
+            handleBuildModeClick(plotIndex, plotData);
+            return;
+        }
+
         if (!plotData) {
             // Empty plot - show seed selector
             selectedPlot.set(plotIndex);
@@ -105,8 +124,14 @@
             return;
         }
 
+        if (plotData.placed_item_id) {
+            // Can't interact with decorations in normal mode yet (maybe later implement 'use')
+            showToast("Switch to Build Mode to move this item", "info");
+            return;
+        }
+
         if (!plotData.crop_id) {
-            // Empty plot
+            // Empty plot (no crop)
             selectedPlot.set(plotIndex);
             showSeedSelector.set(true);
         } else if (plotData.ready) {
@@ -119,6 +144,88 @@
             // Already watered, just show info
             showToast(`Growing... ${plotData.time_remaining}s left`, "info");
         }
+    }
+
+    async function handleBuildModeClick(
+        plotIndex: number,
+        plotData?: FarmPlot,
+    ) {
+        // If removing
+        if (plotData?.placed_item_id) {
+            const result = await removeItem(plotIndex);
+            if (result.success) {
+                showToast("Item removed! 📦", "success");
+                await refreshFarmPlots();
+                await loadInventory(); // Refresh inventory count
+            } else {
+                showToast(result.error || "Failed to remove", "error");
+            }
+            return;
+        }
+
+        // If placing
+        if (selectedBuildItem) {
+            // Check if plot is empty
+            if (plotData?.crop_id) {
+                showToast("Cannot place on crops!", "error");
+                return;
+            }
+
+            const result = await placeItem(
+                plotIndex,
+                selectedBuildItem.item_id,
+            );
+            if (result.success) {
+                showToast("Item placed! 🏗️", "success");
+                await refreshFarmPlots();
+                await loadInventory(); // Refresh inventory count
+
+                // Check if we still have this item
+                if (selectedBuildItem.quantity <= 1) {
+                    selectedBuildItem = null; // Deselect if ran out
+                } else {
+                    selectedBuildItem.quantity--; // Visually decrement
+                }
+            } else {
+                showToast(result.error || "Failed to place", "error");
+            }
+            return;
+        }
+
+        showToast("Select an item to place first!", "info");
+        showBuildSelector = true;
+    }
+
+    async function loadInventory() {
+        const res = await getInventory();
+        if (res.success && res.data) {
+            // Filter only placeable items (decorations and upgrades)
+            inventoryItems = res.data.filter(
+                (i) =>
+                    i.quantity > 0 &&
+                    ["decoration", "upgrade"].includes(i.item?.type || ""),
+            );
+        }
+    }
+
+    function toggleBuildMode() {
+        isBuildMode = !isBuildMode;
+        if (isBuildMode) {
+            loadInventory();
+            showBuildSelector = true;
+        } else {
+            selectedBuildItem = null;
+            showBuildSelector = false;
+        }
+    }
+
+    function selectBuildItem(item: InventoryItem) {
+        selectedBuildItem = item;
+        showBuildSelector = false;
+        showToast(
+            `Selected ${item.item?.name}. Click a plot to place.`,
+            "info",
+        );
     }
 
     async function handlePlant(cropId: string) {
@@ -217,6 +324,31 @@
     $: unlockedCrops = $crops.filter(
         (c) => c.unlock_level <= ($profile?.level || 1),
     );
+
+    // Helper to find icon for placed item ID
+    // We might need to fetch all shop items to have this mapping if not in inventory
+    // Currently we only load Profile, Crops, Plots. We should probably load Shop Items too or store them.
+    // Ideally we store a map of itemId -> icon.
+    // For now, let's try to find it in inventoryItems (if loaded) or fallback.
+    // Better yet, let's load all shop items on mount so we have the metadata.
+
+    // Quick fix: Add shop items to loadGameData
+    import { getShopItems, type ShopItem } from "$lib/api";
+    let allShopItems: ShopItem[] = [];
+
+    async function loadAllShopItems() {
+        const res = await getShopItems();
+        if (res.success && res.data) {
+            allShopItems = res.data;
+        }
+    }
+
+    // Call this in onMount
+
+    function getIconForItemId(itemId: string): string {
+        const item = allShopItems.find((i) => i.id === itemId);
+        return item?.icon || "📦";
+    }
 </script>
 
 <svelte:head>
@@ -263,6 +395,14 @@
                                 {#if plot.watered && !plot.ready}
                                     <span class="water-badge">💧</span>
                                 {/if}
+                            {:else if plot.placed_item_id}
+                                <!-- Placed Item -->
+                                <span class="crop-icon">
+                                    {getIconForItemId(plot.placed_item_id)}
+                                </span>
+                                {#if isBuildMode}
+                                    <span class="remove-badge">❌</span>
+                                {/if}
                             {:else}
                                 <span class="empty-icon">+</span>
                             {/if}
@@ -270,7 +410,12 @@
                     {/each}
                 </div>
                 <p class="farm-hint">
-                    Click a plot to plant, water, or harvest!
+                    {#if isBuildMode}
+                        Select an item and click empty plots to build. Click
+                        placed items to remove.
+                    {:else}
+                        Click a plot to plant, water, or harvest!
+                    {/if}
                 </p>
             </div>
         {/if}
@@ -280,9 +425,40 @@
     <div class="side-panel">
         <h3>🌾 Quick Actions</h3>
 
-        <button class="btn btn-primary w-full" on:click={handleHarvestAll}>
-            🌾 Harvest All (H)
+        <button
+            class="btn w-full"
+            class:btn-primary={!isBuildMode}
+            class:btn-warning={isBuildMode}
+            on:click={toggleBuildMode}
+        >
+            {isBuildMode ? "❌ Exit Build Mode" : "🔨 Build Mode"}
         </button>
+
+        {#if !isBuildMode}
+            <button class="btn btn-primary w-full" on:click={handleHarvestAll}>
+                🌾 Harvest All (H)
+            </button>
+        {:else}
+            <div class="build-controls">
+                {#if selectedBuildItem}
+                    <div class="selected-item">
+                        <span>Selected: {selectedBuildItem.item?.name}</span>
+                        <button
+                            class="btn-xs"
+                            on:click={() => (showBuildSelector = true)}
+                            >Change</button
+                        >
+                    </div>
+                {:else}
+                    <button
+                        class="btn btn-secondary w-full"
+                        on:click={() => (showBuildSelector = true)}
+                    >
+                        Select Item to Place
+                    </button>
+                {/if}
+            </div>
+        {/if}
 
         <!-- Navigation Links -->
         <div class="nav-links">
@@ -358,6 +534,52 @@
             </div>
 
             <button class="btn btn-secondary" on:click={closeSeedSelector}>
+                Cancel
+            </button>
+        </div>
+    </div>
+{/if}
+
+<!-- Build Item Selector Modal -->
+{#if showBuildSelector && isBuildMode}
+    <div
+        class="modal-overlay"
+        on:click={() => (showBuildSelector = false)}
+        role="button"
+        tabindex="0"
+    >
+        <div class="modal seed-selector" on:click|stopPropagation role="dialog">
+            <h2>🔨 Select Item to Build</h2>
+            <p class="text-muted">Decorations & Upgrades</p>
+
+            {#if inventoryItems.length === 0}
+                <div class="empty-state">
+                    <p>No placeable items found.</p>
+                    <a
+                        href="/shop"
+                        class="btn btn-primary"
+                        on:click={() => (isBuildMode = false)}>Go to Shop</a
+                    >
+                </div>
+            {:else}
+                <div class="seed-grid">
+                    {#each inventoryItems as inv}
+                        <button
+                            class="seed-item"
+                            on:click={() => selectBuildItem(inv)}
+                        >
+                            <span class="icon">{inv.item?.icon || "📦"}</span>
+                            <span class="name">{inv.item?.name}</span>
+                            <span class="info">Owned: {inv.quantity}</span>
+                        </button>
+                    {/each}
+                </div>
+            {/if}
+
+            <button
+                class="btn btn-secondary"
+                on:click={() => (showBuildSelector = false)}
+            >
                 Cancel
             </button>
         </div>
@@ -519,6 +741,7 @@
         flex-direction: column;
         gap: 1.5rem;
         border-left: 1px solid rgba(255, 255, 255, 0.1);
+        overflow-y: auto;
     }
 
     .side-panel h3 {
@@ -678,5 +901,75 @@
         to {
             transform: rotate(360deg);
         }
+    }
+
+    .remove-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #ff4444;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        border: 2px solid white;
+        z-index: 10;
+        animation: pulse-red 1s infinite;
+    }
+
+    @keyframes pulse-red {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.1);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    .btn-warning {
+        background: #ff9800;
+        color: white;
+    }
+    .btn-warning:hover {
+        background: #f57c00;
+    }
+
+    .build-controls {
+        background: var(--bg-tertiary);
+        padding: 1rem;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .selected-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: center;
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--gold);
+    }
+
+    .btn-xs {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        border-radius: 4px;
+        color: white;
+        cursor: pointer;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-muted);
     }
 </style>

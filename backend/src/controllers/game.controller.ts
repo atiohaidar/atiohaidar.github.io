@@ -15,6 +15,9 @@ import {
     HarvestPlotRequestSchema,
     PurchaseItemRequestSchema,
     ExchangeBalanceRequestSchema,
+    PlaceItemRequestSchema,
+    RemoveItemRequestSchema,
+    UseItemRequestSchema,
     GAME_CONSTANTS,
 } from "../models/game.types";
 import * as GameService from "../services/game";
@@ -215,6 +218,133 @@ export class GameFarmWater extends OpenAPIRoute {
             const { plot_index } = WaterPlotRequestSchema.parse(body);
             const plot = await GameService.waterPlot(c.env.DB, username, plot_index);
             return c.json({ success: true, data: plot });
+        } catch (error) {
+            return c.json({ success: false, error: (error as Error).message }, 400);
+        }
+    }
+}
+
+export class GameFarmPlaceItem extends OpenAPIRoute {
+    schema = {
+        tags: ["Game"],
+        summary: "Place a decoration or sprinkler on a plot",
+        security: [{ bearerAuth: [] }],
+        request: {
+            body: {
+                content: {
+                    "application/json": {
+                        schema: PlaceItemRequestSchema,
+                    },
+                },
+            },
+        },
+        responses: {
+            "200": {
+                description: "Placed item",
+                content: {
+                    "application/json": {
+                        schema: z.object({
+                            success: z.boolean(),
+                            data: GameFarmPlot,
+                        }),
+                    },
+                },
+            },
+        },
+    };
+
+    async handle(c: AppContext) {
+        try {
+            const username = await getAuthUsername(c);
+            const body = await c.req.json();
+            const { plot_index, item_id } = PlaceItemRequestSchema.parse(body);
+            const plot = await GameService.placeItem(c.env.DB, username, plot_index, item_id);
+            return c.json({ success: true, data: plot });
+        } catch (error) {
+            return c.json({ success: false, error: (error as Error).message }, 400);
+        }
+    }
+}
+
+export class GameFarmRemoveItem extends OpenAPIRoute {
+    schema = {
+        tags: ["Game"],
+        summary: "Remove an item from a plot",
+        security: [{ bearerAuth: [] }],
+        request: {
+            body: {
+                content: {
+                    "application/json": {
+                        schema: RemoveItemRequestSchema,
+                    },
+                },
+            },
+        },
+        responses: {
+            "200": {
+                description: "Removed item",
+                content: {
+                    "application/json": {
+                        schema: z.object({
+                            success: z.boolean(),
+                            data: GameFarmPlot,
+                        }),
+                    },
+                },
+            },
+        },
+    };
+
+    async handle(c: AppContext) {
+        try {
+            const username = await getAuthUsername(c);
+            const body = await c.req.json();
+            const { plot_index } = RemoveItemRequestSchema.parse(body);
+            const plot = await GameService.removeItem(c.env.DB, username, plot_index);
+            return c.json({ success: true, data: plot });
+        } catch (error) {
+            return c.json({ success: false, error: (error as Error).message }, 400);
+        }
+    }
+}
+
+export class GameFarmUseItem extends OpenAPIRoute {
+    schema = {
+        tags: ["Game"],
+        summary: "Use an item (consumable)",
+        security: [{ bearerAuth: [] }],
+        request: {
+            body: {
+                content: {
+                    "application/json": {
+                        schema: UseItemRequestSchema,
+                    },
+                },
+            },
+        },
+        responses: {
+            "200": {
+                description: "Item used",
+                content: {
+                    "application/json": {
+                        schema: z.object({
+                            success: z.boolean(),
+                            message: z.string(),
+                            data: GameFarmPlot.optional(),
+                        }),
+                    },
+                },
+            },
+        },
+    };
+
+    async handle(c: AppContext) {
+        try {
+            const username = await getAuthUsername(c);
+            const body = await c.req.json();
+            const { item_id, target_plot_index } = UseItemRequestSchema.parse(body);
+            const result = await GameService.useItem(c.env.DB, username, item_id, target_plot_index);
+            return c.json({ success: true, message: result.message, data: result.updatedPlot });
         } catch (error) {
             return c.json({ success: false, error: (error as Error).message }, 400);
         }

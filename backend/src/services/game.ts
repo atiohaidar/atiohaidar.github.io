@@ -101,6 +101,7 @@ const ensureInitialized = createDbInitializer(async (db: D1Database) => {
 				user_username TEXT NOT NULL,
 				plot_index INTEGER NOT NULL,
 				crop_id TEXT,
+				placed_item_id TEXT,
 				planted_at TEXT,
 				watered INTEGER DEFAULT 0,
 				growth_percent INTEGER DEFAULT 0,
@@ -110,6 +111,7 @@ const ensureInitialized = createDbInitializer(async (db: D1Database) => {
 				UNIQUE(user_username, plot_index)
 			)
 		`),
+
 
         // Achievements
         db.prepare(`
@@ -167,6 +169,12 @@ const ensureInitialized = createDbInitializer(async (db: D1Database) => {
 			)
 		`),
     ]);
+
+    // Add placed_item_id column if it doesn't exist (migration)
+    await db.prepare("ALTER TABLE game_farm_plots ADD COLUMN placed_item_id TEXT").run().catch(() => { });
+
+    // Add fertilizer_id column if it doesn't exist (migration)
+    await db.prepare("ALTER TABLE game_farm_plots ADD COLUMN fertilizer_id TEXT").run().catch(() => { });
 });
 
 // Export function to initialize game tables (for seeder)
@@ -398,6 +406,17 @@ export const getFarmPlots = async (
     return plots;
 };
 
+
+// Helper to get effect object
+const parseEffect = (effectJson: string | null | undefined) => {
+    if (!effectJson) return null;
+    try {
+        return JSON.parse(effectJson);
+    } catch {
+        return null;
+    }
+};
+
 export const getFarmPlotsWithGrowth = async (
     db: D1Database,
     username: string
@@ -406,22 +425,84 @@ export const getFarmPlotsWithGrowth = async (
     const crops = await getAllCrops(db);
     const cropMap = new Map(crops.map(c => [c.id, c]));
 
+    // Fetch all shop items to check for passive effects (sprinklers) and fertilizers
+    // Optimization: Cache this or fetch only needed? For now fetch all is fine for small item count.
+    const shopItems = await getShopItems(db);
+    const itemMap = new Map(shopItems.map(i => [i.id, i]));
+
+    // Identify Sprinklers
+    const gridWidth = 7; // Assuming 7x7 grid for 49 plots
+    const sprinklerPlots = new Set<number>(); // Plots that are watered by sprinklers
+
+    plots.forEach(plot => {
+        if (plot.placed_item_id) {
+            const item = itemMap.get(plot.placed_item_id);
+            if (item && item.type === 'upgrade' && item.effect) {
+                const effect = parseEffect(item.effect);
+                if (effect && effect.type === 'auto_water') {
+                    // Calculate area
+                    // area: 9 means 3x3, area: 25 means 5x5
+                    // Range is (sqrt(area) - 1) / 2
+                    // 3x3 -> range 1 (center +- 1)
+                    const range = (Math.sqrt(effect.area || 9) - 1) / 2;
+
+                    const centerIdx = plot.plot_index;
+                    const cx = centerIdx % gridWidth;
+                    const cy = Math.floor(centerIdx / gridWidth);
+
+                    for (let dy = -range; dy <= range; dy++) {
+                        for (let dx = -range; dx <= range; dx++) {
+                            const nx = cx + dx;
+                            const ny = cy + dy;
+                            if (nx >= 0 && nx < gridWidth && ny >= 0 && ny < gridWidth) { // Boundary check (assuming 7x7 max)
+                                const targetIdx = ny * gridWidth + nx;
+                                sprinklerPlots.add(targetIdx);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    });
+
     return plots.map(plot => {
+        // Apply sprinkler water
+        const isWatered = plot.watered || sprinklerPlots.has(plot.plot_index);
+
         if (!plot.crop_id || !plot.planted_at) {
-            return { ...plot, ready: false, time_remaining: 0 };
+            return { ...plot, watered: isWatered, ready: false, time_remaining: 0 };
         }
 
         const crop = cropMap.get(plot.crop_id);
         if (!crop) {
-            return { ...plot, ready: false, time_remaining: 0 };
+            return { ...plot, watered: isWatered, ready: false, time_remaining: 0 };
         }
 
         const plantedTime = new Date(plot.planted_at).getTime();
         const now = Date.now();
         const elapsed = (now - plantedTime) / 1000;
-        const growTime = plot.watered
-            ? crop.grow_time_seconds * (1 - GAME_CONSTANTS.WATER_SPEED_BONUS)
-            : crop.grow_time_seconds;
+
+        let growTime = crop.grow_time_seconds;
+
+        // Apply Water Bonus
+        if (isWatered) {
+            growTime *= (1 - GAME_CONSTANTS.WATER_SPEED_BONUS);
+        }
+
+        // Apply Fertilizer Bonus
+        if (plot.fertilizer_id) {
+            const fertilizer = itemMap.get(plot.fertilizer_id);
+            if (fertilizer && fertilizer.effect) {
+                const effect = parseEffect(fertilizer.effect);
+                if (effect && effect.type === 'growth_speed' && effect.value) {
+                    // value: 1.5 means 1.5x speed => time / 1.5
+                    // value: 0.5 means +50% speed => time / 1.5 ?
+                    // description says "+50% growth speed". New speed = 1.5 * old speed. 
+                    // Time = Distance / Speed. So New Time = Old Time / 1.5.
+                    growTime /= effect.value;
+                }
+            }
+        }
 
         const growthPercent = Math.min(100, Math.floor((elapsed / growTime) * 100));
         const ready = elapsed >= growTime;
@@ -429,6 +510,7 @@ export const getFarmPlotsWithGrowth = async (
 
         return {
             ...plot,
+            watered: isWatered, // Return calculated water status so frontend sees it
             growth_percent: growthPercent,
             crop,
             ready,
@@ -790,6 +872,244 @@ export const purchaseItem = async (
         newGems,
         inventoryItem,
     };
+};
+
+// ==========================================
+// ITEM PLACEMENT
+// ==========================================
+export const placeItem = async (
+    db: D1Database,
+    username: string,
+    plotIndex: number,
+    inventoryItemId: string
+): Promise<GameFarmPlotType> => {
+    await ensureInitialized(db);
+    const profile = await getOrCreateProfile(db, username);
+
+    // Validate plot index
+    if (plotIndex < 0 || plotIndex >= profile.plots_unlocked) {
+        throw new Error("Plot tidak valid");
+    }
+
+    // Get inventory item to check ownership and item type
+    // We expect inventoryItemId to be the shop item ID (e.g., 'fence_wood')
+    // We check if user has this item
+    const inventory = await db
+        .prepare("SELECT * FROM game_inventory WHERE user_username = ? AND item_id = ? AND quantity > 0")
+        .bind(username, inventoryItemId)
+        .first();
+
+    if (!inventory) {
+        throw new Error("Kamu tidak memiliki item ini");
+    }
+
+    // Get item details to verify it's placeable
+    const item = await db.prepare("SELECT * FROM game_shop_items WHERE id = ?").bind(inventoryItemId).first();
+    if (!item) {
+        throw new Error("Item tidak valid");
+    }
+
+    // Check if item is placeable type
+    const shopItem = GameShopItem.parse(item);
+    // Only decorations, sprinklers (upgrades), or tools that act as persistent objects? 
+    // Usually 'decoration' or 'upgrade' (like sprinklers) are placeable.
+    if (!['decoration', 'upgrade'].includes(shopItem.type)) {
+        throw new Error("Item ini tidak bisa diletakkan di ladang");
+    }
+
+    // Get plot
+    const plot = await db
+        .prepare("SELECT * FROM game_farm_plots WHERE user_username = ? AND plot_index = ?")
+        .bind(username, plotIndex)
+        .first();
+
+    // If plot doesn't exist, create it (should exist from profile creation, but safety check)
+    // Actually getOrCreateProfile ensures initialization.
+
+    const parsedPlot = GameFarmPlot.parse(plot);
+
+    // Check if plot is empty of other placed items
+    if (parsedPlot.placed_item_id) {
+        throw new Error("Sudah ada item di plot ini");
+    }
+
+    // Check if trying to place on top of a crop? 
+    // Decorations like fences probably shouldn't overlap with crops.
+    // Sprinklers might? Let's assume exclusive for simplicty for now, OR allow mix.
+    // "Sprinklers water 3x3 area", usually they take up a tile.
+    // So we enforce: Tile must be empty (no crop, no placed item).
+
+    if (parsedPlot.crop_id) {
+        throw new Error("Plot sedang ditanami");
+    }
+
+    // Place item logic:
+    // 1. Decrement inventory
+    // 2. Update plot with placed_item_id
+
+    await db.batch([
+        db.prepare("UPDATE game_inventory SET quantity = quantity - 1 WHERE user_username = ? AND item_id = ?")
+            .bind(username, inventoryItemId),
+        db.prepare("UPDATE game_farm_plots SET placed_item_id = ? WHERE user_username = ? AND plot_index = ?")
+            .bind(inventoryItemId, username, plotIndex)
+    ]);
+
+    // Return updated plot
+    const updated = await db
+        .prepare("SELECT * FROM game_farm_plots WHERE user_username = ? AND plot_index = ?")
+        .bind(username, plotIndex)
+        .first();
+
+    return GameFarmPlot.parse(updated);
+};
+
+export const removeItem = async (
+    db: D1Database,
+    username: string,
+    plotIndex: number
+): Promise<GameFarmPlotType> => {
+    await ensureInitialized(db);
+
+    // Get plot
+    const plot = await db
+        .prepare("SELECT * FROM game_farm_plots WHERE user_username = ? AND plot_index = ?")
+        .bind(username, plotIndex)
+        .first();
+
+    if (!plot) throw new Error("Plot tidak ditemukan");
+
+    const parsedPlot = GameFarmPlot.parse(plot);
+
+    if (!parsedPlot.placed_item_id) {
+        throw new Error("Tidak ada item di plot ini");
+    }
+
+    const itemId = parsedPlot.placed_item_id;
+
+    // Remove item logic:
+    // 1. Increment inventory (or create entry if missing?)
+    //    Ideally user keys should already exist if they bought it, but if they had 1 and placed 1, quantity is 0.
+    //    We check if row exists first.
+
+    const currInv = await db.prepare("SELECT * FROM game_inventory WHERE user_username = ? AND item_id = ?")
+        .bind(username, itemId).first();
+
+    const queries: D1PreparedStatement[] = [];
+
+    if (currInv) {
+        queries.push(
+            db.prepare("UPDATE game_inventory SET quantity = quantity + 1 WHERE user_username = ? AND item_id = ?")
+                .bind(username, itemId)
+        );
+    } else {
+        // Should not happen if they placed it, but just in case
+        queries.push(
+            db.prepare("INSERT INTO game_inventory (id, user_username, item_id, quantity) VALUES (?, ?, ?, 1)")
+                .bind(generateId('inv'), username, itemId)
+        );
+    }
+
+    queries.push(
+        db.prepare("UPDATE game_farm_plots SET placed_item_id = NULL WHERE user_username = ? AND plot_index = ?")
+            .bind(username, plotIndex)
+    );
+
+    await db.batch(queries);
+
+    // Return updated plot
+    const updated = await db
+        .prepare("SELECT * FROM game_farm_plots WHERE user_username = ? AND plot_index = ?")
+        .bind(username, plotIndex)
+        .first();
+
+    return GameFarmPlot.parse(updated);
+};
+
+export const useItem = async (
+    db: D1Database,
+    username: string,
+    itemId: string,
+    targetPlotIndex?: number
+): Promise<{ message: string; updatedPlot?: GameFarmPlotType }> => {
+    await ensureInitialized(db);
+
+    const profile = await getOrCreateProfile(db, username);
+
+    // Get inventory item
+    const inventory = await db
+        .prepare("SELECT * FROM game_inventory WHERE user_username = ? AND item_id = ? AND quantity > 0")
+        .bind(username, itemId)
+        .first();
+
+    if (!inventory) {
+        throw new Error("Kamu tidak memiliki item ini");
+    }
+
+    // Get item details
+    const item = await db.prepare("SELECT * FROM game_shop_items WHERE id = ?").bind(itemId).first();
+    if (!item) {
+        throw new Error("Item tidak valid");
+    }
+    const shopItem = GameShopItem.parse(item);
+
+    // Validate item type
+    if (shopItem.type === "seed" || shopItem.type === "tool" || shopItem.type === "decoration" || shopItem.type === "upgrade") {
+        throw new Error("Item ini tidak bisa digunakan dengan cara ini");
+    }
+
+    const effect = shopItem.effect ? JSON.parse(shopItem.effect) : null;
+    if (!effect) {
+        throw new Error("Item tidak memiliki efek guna");
+    }
+
+    let updatedPlot: GameFarmPlotType | undefined;
+    let message = "Item berhasil digunakan";
+
+    if (effect.type === "growth_speed") {
+        // Fertilizer
+        if (targetPlotIndex === undefined) {
+            throw new Error("Pilih plot untuk menggunakan pupuk");
+        }
+
+        const plot = await db
+            .prepare("SELECT * FROM game_farm_plots WHERE user_username = ? AND plot_index = ?")
+            .bind(username, targetPlotIndex)
+            .first();
+
+        if (!plot) throw new Error("Plot tidak ditemukan");
+        const parsedPlot = GameFarmPlot.parse(plot);
+
+        if (!parsedPlot.crop_id) {
+            throw new Error("Plot harus ditanami terlebih dahulu");
+        }
+        if (parsedPlot.fertilizer_id) {
+            throw new Error("Plot sudah diberi pupuk");
+        }
+
+        // Apply fertilizer
+        await db
+            .prepare("UPDATE game_farm_plots SET fertilizer_id = ? WHERE user_username = ? AND plot_index = ?")
+            .bind(itemId, username, targetPlotIndex)
+            .run();
+
+        // Get updated plot
+        const updated = await db
+            .prepare("SELECT * FROM game_farm_plots WHERE user_username = ? AND plot_index = ?")
+            .bind(username, targetPlotIndex)
+            .first();
+        updatedPlot = GameFarmPlot.parse(updated);
+        message = `Berhasil memberi pupuk ${shopItem.name}`;
+    } else {
+        throw new Error("Efek item belum didukung");
+    }
+
+    // Consume item
+    await db
+        .prepare("UPDATE game_inventory SET quantity = quantity - 1 WHERE user_username = ? AND item_id = ?")
+        .bind(username, itemId)
+        .run();
+
+    return { message, updatedPlot };
 };
 
 // ==========================================
@@ -1290,4 +1610,112 @@ export const prestigeReset = async (
         new_prestige_level: newPrestigeLevel,
         bonus_percent: bonusPercent,
     };
+};
+
+// ==========================================
+// ADMIN OPERATIONS
+// ==========================================
+export const getAllProfiles = async (
+    db: D1Database,
+    limit: number = 50,
+    offset: number = 0
+): Promise<{ profiles: GameFarmProfileType[]; total: number }> => {
+    await ensureInitialized(db);
+
+    // Get total count
+    const totalResult = await db.prepare("SELECT COUNT(*) as count FROM game_farm_profiles").first();
+    const total = totalResult ? (totalResult.count as number) : 0;
+
+    // Get profiles
+    const { results } = await db
+        .prepare("SELECT * FROM game_farm_profiles ORDER BY total_gold_earned DESC LIMIT ? OFFSET ?")
+        .bind(limit, offset)
+        .all();
+
+    return {
+        profiles: (results || []).map((r) => GameFarmProfile.parse(r)),
+        total,
+    };
+};
+
+export const createShopItem = async (
+    db: D1Database,
+    item: GameShopItemType
+): Promise<GameShopItemType> => {
+    await ensureInitialized(db);
+
+    await db
+        .prepare(`
+            INSERT INTO game_shop_items 
+            (id, name, type, price_gold, price_gems, unlock_level, effect, max_quantity, icon, description)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `)
+        .bind(
+            item.id,
+            item.name,
+            item.type,
+            item.price_gold,
+            item.price_gems,
+            item.unlock_level,
+            item.effect,
+            item.max_quantity,
+            item.icon,
+            item.description
+        )
+        .run();
+
+    return item;
+};
+
+export const updateShopItem = async (
+    db: D1Database,
+    id: string,
+    item: Partial<GameShopItemType>
+): Promise<GameShopItemType> => {
+    await ensureInitialized(db);
+
+    const setFragments: string[] = [];
+    const values: unknown[] = [];
+
+    // Helper to add field update if present
+    const addUpdate = (field: keyof GameShopItemType) => {
+        if (item[field] !== undefined) {
+            setFragments.push(`${field} = ?`);
+            values.push(item[field]);
+        }
+    };
+
+    addUpdate("name");
+    addUpdate("type");
+    addUpdate("price_gold");
+    addUpdate("price_gems");
+    addUpdate("unlock_level");
+    addUpdate("effect");
+    addUpdate("max_quantity");
+    addUpdate("icon");
+    addUpdate("description");
+
+    if (setFragments.length === 0) {
+        throw new Error("No updates provided");
+    }
+
+    values.push(id);
+
+    await db
+        .prepare(`UPDATE game_shop_items SET ${setFragments.join(", ")} WHERE id = ?`)
+        .bind(...values)
+        .run();
+
+    const updated = await db.prepare("SELECT * FROM game_shop_items WHERE id = ?").bind(id).first();
+    if (!updated) throw new Error("Item not found after update");
+
+    return GameShopItem.parse(updated);
+};
+
+export const deleteShopItem = async (
+    db: D1Database,
+    id: string
+): Promise<void> => {
+    await ensureInitialized(db);
+    await db.prepare("DELETE FROM game_shop_items WHERE id = ?").bind(id).run();
 };

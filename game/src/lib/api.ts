@@ -167,6 +167,7 @@ export interface FarmPlot {
     user_username: string;
     plot_index: number;
     crop_id?: string;
+    placed_item_id?: string;
     planted_at?: string;
     watered: boolean;
     growth_percent: number;
@@ -191,6 +192,27 @@ export async function waterPlot(plotIndex: number): Promise<ApiResponse<FarmPlot
     return fetchApi<FarmPlot>('/game/farm/water', {
         method: 'POST',
         body: JSON.stringify({ plot_index: plotIndex }),
+    });
+}
+
+export async function placeItem(plotIndex: number, itemId: string): Promise<ApiResponse<FarmPlot>> {
+    return fetchApi<FarmPlot>('/game/farm/place', {
+        method: 'POST',
+        body: JSON.stringify({ plot_index: plotIndex, item_id: itemId }),
+    });
+}
+
+export async function removeItem(plotIndex: number): Promise<ApiResponse<FarmPlot>> {
+    return fetchApi<FarmPlot>('/game/farm/remove', {
+        method: 'POST',
+        body: JSON.stringify({ plot_index: plotIndex }),
+    });
+}
+
+export async function useItem(itemId: string, targetPlotIndex?: number): Promise<ApiResponse<{ message: string; updatedPlot?: FarmPlot }>> {
+    return fetchApi<{ message: string; updatedPlot?: FarmPlot }>('/game/farm/use', {
+        method: 'POST',
+        body: JSON.stringify({ item_id: itemId, target_plot_index: targetPlotIndex }),
     });
 }
 
@@ -388,4 +410,36 @@ export interface GameConstants {
 
 export async function getGameConstants(): Promise<ApiResponse<GameConstants>> {
     return fetchApi<GameConstants>('/game/constants');
+}
+
+// ==========================================
+// ADMIN
+// ==========================================
+export interface AdminPlayerListResult {
+    profiles: GameProfile[];
+    total: number;
+}
+
+export async function getAdminPlayers(limit: number = 50, offset: number = 0): Promise<ApiResponse<AdminPlayerListResult>> {
+    return fetchApi<AdminPlayerListResult>(`/game/admin/players?limit=${limit}&offset=${offset}`);
+}
+
+export async function createAdminItem(item: ShopItem): Promise<ApiResponse<ShopItem>> {
+    return fetchApi<ShopItem>('/game/admin/items', {
+        method: 'POST',
+        body: JSON.stringify(item),
+    });
+}
+
+export async function updateAdminItem(id: string, item: Partial<ShopItem>): Promise<ApiResponse<ShopItem>> {
+    return fetchApi<ShopItem>(`/game/admin/items/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(item),
+    });
+}
+
+export async function deleteAdminItem(id: string): Promise<ApiResponse<{ success: boolean }>> {
+    return fetchApi<{ success: boolean }>(`/game/admin/items/${id}`, {
+        method: 'DELETE',
+    });
 }

@@ -124,6 +124,9 @@ import {
 	GameFarmWater,
 	GameFarmHarvest,
 	GameFarmHarvestAll,
+	GameFarmPlaceItem,
+	GameFarmRemoveItem,
+	GameFarmUseItem,
 	GameCropsList,
 	GameShopList,
 	GameShopPurchase,
@@ -138,6 +141,12 @@ import {
 	GameConstantsGet,
 	GamePrestigeReset,
 } from "../controllers/game.controller";
+import {
+	GameAdminPlayersList,
+	GameAdminItemsCreate,
+	GameAdminItemsUpdate,
+	GameAdminItemsDelete,
+} from "../controllers/gameAdmin.controller";
 import { SeedDatabase } from "../controllers/seed.controller";
 
 export const registerRoutes = (openapi: any) => {
@@ -304,6 +313,9 @@ export const registerRoutes = (openapi: any) => {
 	openapi.post("/api/game/profile/reset", GamePrestigeReset, { schema: GamePrestigeReset.schema });
 	openapi.get("/api/game/farm", GameFarmGet);
 	openapi.post("/api/game/farm/plant", GameFarmPlant);
+	openapi.post("/api/game/farm/place", GameFarmPlaceItem);
+	openapi.post("/api/game/farm/remove", GameFarmRemoveItem);
+	openapi.post("/api/game/farm/use", GameFarmUseItem);
 	openapi.post("/api/game/farm/water", GameFarmWater);
 	openapi.post("/api/game/farm/harvest", GameFarmHarvest);
 	openapi.post("/api/game/farm/harvest-all", GameFarmHarvestAll);
@@ -320,4 +332,10 @@ export const registerRoutes = (openapi: any) => {
 	openapi.get("/api/game/leaderboard", GameLeaderboardGet);
 	openapi.post("/api/game/exchange/gems", GameExchangeBalanceToGems);
 	openapi.post("/api/game/exchange/gold", GameExchangeBalanceToGold);
+
+	// Game Admin routes
+	openapi.get("/api/game/admin/players", GameAdminPlayersList);
+	openapi.post("/api/game/admin/items", GameAdminItemsCreate);
+	openapi.put("/api/game/admin/items/:id", GameAdminItemsUpdate);
+	openapi.delete("/api/game/admin/items/:id", GameAdminItemsDelete);
 };
