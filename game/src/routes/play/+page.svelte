@@ -287,7 +287,9 @@
         <!-- Navigation Links -->
         <div class="nav-links">
             <a href="/shop" class="nav-link">🛒 Shop</a>
+            <a href="/inventory" class="nav-link">📦 Inventory</a>
             <a href="/profile" class="nav-link">👤 Profile</a>
+            <a href="/prestige" class="nav-link">✨ Prestige</a>
             <a href="/leaderboard" class="nav-link">🏆 Leaderboard</a>
         </div>
 

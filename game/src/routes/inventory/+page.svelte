@@ -89,8 +89,8 @@
     $: filteredItems =
         selectedCategory === "all"
             ? inventory
-            : inventory.filter((item) => item.type === selectedCategory);
-    $: equippedItems = inventory.filter((item) => item.equipped);
+            : inventory.filter((inv) => inv.item?.type === selectedCategory);
+    $: equippedItems = inventory.filter((inv) => inv.equipped);
 </script>
 
 <svelte:head>
@@ -109,16 +109,22 @@
         <div class="equipped-section">
             <h2>⚡ Active Equipment</h2>
             <div class="equipped-grid">
-                {#each equippedItems as item}
+                {#each equippedItems as inv}
                     <div
                         class="equipped-item"
-                        style="--item-color: {getItemColor(item.type)}"
+                        style="--item-color: {getItemColor(
+                            inv.item?.type || '',
+                        )}"
                     >
-                        <span class="item-icon">{item.icon || "📦"}</span>
+                        <span class="item-icon">{inv.item?.icon || "📦"}</span>
                         <div class="item-info">
-                            <span class="item-name">{item.name}</span>
+                            <span class="item-name"
+                                >{inv.item?.name || "Unknown"}</span
+                            >
                             <span class="item-effect"
-                                >{getEffectDescription(item.effect)}</span
+                                >{getEffectDescription(
+                                    inv.item?.effect || null,
+                                )}</span
                             >
                         </div>
                     </div>
@@ -147,19 +153,21 @@
         </div>
     {:else}
         <div class="inventory-grid">
-            {#each filteredItems as item}
+            {#each filteredItems as inv}
                 <div
                     class="inventory-item"
-                    style="--item-color: {getItemColor(item.type)}"
+                    style="--item-color: {getItemColor(inv.item?.type || '')}"
                 >
-                    <div class="item-icon-lg">{item.icon || "📦"}</div>
-                    <h3 class="item-name">{item.name}</h3>
-                    <div class="item-type">{item.type.toUpperCase()}</div>
+                    <div class="item-icon-lg">{inv.item?.icon || "📦"}</div>
+                    <h3 class="item-name">{inv.item?.name || "Unknown"}</h3>
+                    <div class="item-type">
+                        {(inv.item?.type || "item").toUpperCase()}
+                    </div>
                     <p class="item-effect">
-                        {getEffectDescription(item.effect)}
+                        {getEffectDescription(inv.item?.effect || null)}
                     </p>
-                    <div class="item-quantity">x{item.quantity}</div>
-                    {#if item.equipped}
+                    <div class="item-quantity">x{inv.quantity}</div>
+                    {#if inv.equipped}
                         <div class="equipped-badge">✓ Equipped</div>
                     {/if}
                 </div>

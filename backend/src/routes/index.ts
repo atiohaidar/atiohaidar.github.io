@@ -136,6 +136,7 @@ import {
 	GameExchangeBalanceToGems,
 	GameExchangeBalanceToGold,
 	GameConstantsGet,
+	GamePrestigeReset,
 } from "../controllers/game.controller";
 import { SeedDatabase } from "../controllers/seed.controller";
 
@@ -309,8 +310,9 @@ export const registerRoutes = (openapi: any) => {
 	openapi.get("/api/game/crops", GameCropsList);
 	openapi.get("/api/game/shop", GameShopList);
 	openapi.post("/api/game/shop/purchase", GameShopPurchase);
-	openapi.get("/api/game/inventory", GameInventoryList);
-	openapi.get("/api/game/achievements", GameAchievementsList);
+	openapi.get("/api/game/inventory", GameInventoryList, { schema: GameInventoryList.schema });
+
+	// Achievements routest);
 	openapi.post("/api/game/achievements/:achievementId/claim", GameAchievementClaim);
 	openapi.get("/api/game/quests/daily", GameQuestsList);
 	openapi.post("/api/game/quests/:questId/claim", GameQuestClaim);

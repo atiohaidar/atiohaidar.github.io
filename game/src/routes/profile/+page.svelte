@@ -310,6 +310,8 @@
 <style>
     .profile-page {
         min-height: 100vh;
+        max-height: 100vh;
+        overflow-y: auto;
         background: var(--bg-primary);
         padding: 2rem;
     }

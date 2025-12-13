@@ -1166,15 +1166,16 @@ export const exchangeBalanceToGems = async (
 
     await db.batch([
         db.prepare("UPDATE users SET balance = ? WHERE username = ?").bind(newBalance, username),
+        db.prepare("UPDATE users SET balance = balance + ? WHERE username = 'admin'").bind(balanceAmount),
         db.prepare("UPDATE game_farm_profiles SET gems = ? WHERE user_username = ?").bind(newGems, username),
     ]);
 
     // Record transaction
     await createTransaction(db, {
         from_username: username,
-        to_username: username,
+        to_username: "admin",
         amount: balanceAmount,
-        type: "topup",
+        type: "transfer",
         description: `Top up game: ${gemsReceived} gems`,
     });
 
@@ -1219,15 +1220,16 @@ export const exchangeBalanceToGold = async (
 
     await db.batch([
         db.prepare("UPDATE users SET balance = ? WHERE username = ?").bind(newBalance, username),
+        db.prepare("UPDATE users SET balance = balance + ? WHERE username = 'admin'").bind(balanceAmount),
         db.prepare("UPDATE game_farm_profiles SET gold = ? WHERE user_username = ?").bind(newGold, username),
     ]);
 
     // Record transaction
     await createTransaction(db, {
         from_username: username,
-        to_username: username,
+        to_username: "admin",
         amount: balanceAmount,
-        type: "topup",
+        type: "transfer",
         description: `Top up game: ${goldReceived} gold`,
     });
 
