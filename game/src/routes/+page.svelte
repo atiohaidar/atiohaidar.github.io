@@ -48,7 +48,7 @@
 </script>
 
 <svelte:head>
-    <title>Harvest Haven - Login</title>
+    <title>Bercocok Tanam - Login</title>
 </svelte:head>
 
 <div class="login-page">
@@ -56,7 +56,7 @@
         <!-- Logo/Title -->
         <div class="logo">
             <span class="emoji">🌾</span>
-            <h1>Harvest Haven</h1>
+            <h1>Bercocok Tanam</h1>
             <p class="subtitle">Build your dream farm!</p>
         </div>
 

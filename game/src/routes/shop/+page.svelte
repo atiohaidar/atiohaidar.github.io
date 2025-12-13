@@ -228,7 +228,7 @@
 </script>
 
 <svelte:head>
-    <title>Harvest Haven - Shop</title>
+    <title>Bercocok Tanam - Shop</title>
 </svelte:head>
 
 <div class="shop-page">

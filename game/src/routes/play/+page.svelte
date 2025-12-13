@@ -352,7 +352,7 @@
 </script>
 
 <svelte:head>
-    <title>Harvest Haven - Play</title>
+    <title>Mulai Bercocok tanam</title>
 </svelte:head>
 
 <div class="game-page">
@@ -366,7 +366,7 @@
         {:else}
             <!-- HTML Farm Grid Overlay for reliable click handling -->
             <div class="html-farm-grid">
-                <h2 class="farm-title">🌾 Harvest Haven 🌾</h2>
+                <h2 class="farm-title">🌾 Bercocok tanam 🌾</h2>
                 <div class="farm-plots-grid">
                     {#each $farmPlots as plot, i}
                         <button

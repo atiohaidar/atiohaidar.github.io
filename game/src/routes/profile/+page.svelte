@@ -121,7 +121,7 @@
 </script>
 
 <svelte:head>
-    <title>Harvest Haven - Profile</title>
+    <title>Bercocok Tanam - Profile</title>
 </svelte:head>
 
 <div class="profile-page">

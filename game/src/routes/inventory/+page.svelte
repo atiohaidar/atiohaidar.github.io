@@ -94,7 +94,7 @@
 </script>
 
 <svelte:head>
-    <title>Harvest Haven - Inventory</title>
+    <title>Bercocok Tanam - Inventory</title>
 </svelte:head>
 
 <div class="inventory-page">

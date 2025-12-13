@@ -33,7 +33,7 @@ export class MainScene extends Phaser.Scene {
         this.add.rectangle(400, 300, 800, 600, 0x1e293b);
 
         // Title
-        this.add.text(400, 40, '🌾 Harvest Haven 🌾', {
+        this.add.text(400, 40, '🌾 Bercocok Tanam 🌾', {
             font: 'bold 28px Outfit',
             color: '#fbbf24',
         }).setOrigin(0.5);

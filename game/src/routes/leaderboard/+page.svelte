@@ -66,7 +66,7 @@
 </script>
 
 <svelte:head>
-    <title>Harvest Haven - Leaderboard</title>
+    <title>Bercocok Tanam - Leaderboard</title>
 </svelte:head>
 
 <div class="leaderboard-page">

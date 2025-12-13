@@ -57,7 +57,7 @@
 </script>
 
 <svelte:head>
-    <title>Harvest Haven - Prestige</title>
+    <title>Bercock tanam</title>
 </svelte:head>
 
 <div class="prestige-page">
