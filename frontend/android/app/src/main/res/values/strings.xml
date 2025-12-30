@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Tio Haidar</string>
+    <string name="title_activity_main">Tio Haidar</string>
+    <string name="package_name">com.tiohaidar.app</string>
+    <string name="custom_url_scheme">com.tiohaidar.app</string>
+</resources>

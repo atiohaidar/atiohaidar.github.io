@@ -1,15 +1,13 @@
-/**
- * @file Unified API client configuration
- * Consolidates apiClient.ts and provides centralized configuration
- */
+import { Capacitor } from '@capacitor/core';
 
 /**
  * Backend API base URL
  * - Development: http://localhost:8787 (from .env.development)
  * - Production: https://backend.atiohaidar.workers.dev (from .env.production)
+ * - Native Mobile: Always use production URL to avoid localhost issues
  */
 export const API_BASE_URL = import.meta.env.VITE_API_URL ||
-    (import.meta.env.MODE === 'production'
+    (import.meta.env.MODE === 'production' || Capacitor.isNativePlatform()
         ? 'https://backend.atiohaidar.workers.dev'
         : 'http://localhost:8787');
 
