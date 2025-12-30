@@ -73,6 +73,17 @@ const queryClient = new QueryClient({
 });
 
 const App: React.FC = () => {
+    React.useEffect(() => {
+        // Initialize notifications (Channels & Actions)
+        // Assuming notificationService and auth are imported or globally available
+        // import * as notificationService from './services/notificationService';
+        // import * as auth from './utils/auth';
+        // notificationService.init();
+
+        // Check auth status
+        // const token = auth.getToken();
+    }, []);
+
     // Cinematic Intro State
     const [introComplete, setIntroComplete] = React.useState(false);
     const [earlyMount, setEarlyMount] = React.useState(false); // Start mounting content early

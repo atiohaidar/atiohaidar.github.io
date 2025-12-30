@@ -260,7 +260,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                     {/* Mobile close button (Moved to right) */}
                     <button
                         onClick={() => setIsMobileSidebarOpen(false)}
-                        className={`md:hidden text-2xl p-2 relative z-50 rounded-lg hover:bg-white/10 ${palette.sidebar.toggleIcon}`}
+                        className={`md:hidden text-2xl p-2 relative z-[60] rounded-lg hover:bg-white/10 ${palette.sidebar.toggleIcon}`}
                     >
                         ✕
                     </button>

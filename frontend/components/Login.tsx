@@ -5,6 +5,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useLogin } from '../hooks/useApi';
 import BackendLoader from './BackendLoader';
 import type { LoginResponse } from '../lib/api/types';
+import { notificationService } from '../utils/notificationService';
 import { Link } from 'react-router-dom';
 
 // Get API base URL for server host display
@@ -54,6 +55,12 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, navigateDelay = 0 }) => {
             const latency = Math.round(performance.now() - requestStartTime.current);
             setActualLatency(latency);
             setActualStatusCode(200); // Success = 200
+
+            // Trigger Local Notification
+            notificationService.scheduleSimpleNotification(
+                'Login Berhasil',
+                `Selamat datang kembali, ${response.user.name}!`
+            );
 
             // Store response and update status
             responseRef.current = response;
