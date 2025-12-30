@@ -137,7 +137,7 @@ const LandingPage: React.FC = () => {
     return (
         <div className={`relative min-h-screen duration-300 overflow-hidden`}>
             {/* Global Background Elements */}
-            <ParallaxBackground intensity={1} zIndex={10} opacity={0.3} />
+            <ParallaxBackground intensity={1} zIndex={10} opacity={0.1} />
 
 
             {/* Particle Overlay (Optional, keep it subtle) */}

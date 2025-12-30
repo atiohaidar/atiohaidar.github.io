@@ -1,0 +1,11 @@
+# Ignore sibling Flutter project causing symlink errors
+mobile_flutter/
+../mobile_flutter/
+**/mobile_flutter/
+# Ignore global pub cache
+.pub-cache/
+**/.pub-cache/
+# Ignore specific build artifacts
+linux/
+windows/
+ephemeral/

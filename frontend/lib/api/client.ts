@@ -77,6 +77,10 @@ export const apiFetch = async <T>(
 ): Promise<T> => {
     const url = `${API_BASE_URL}${endpoint}`;
 
+    if (!navigator.onLine) {
+        throw new ApiError('Anda sedang offline. Silakan cek koneksi internet Anda.', 0);
+    }
+
     const response = await fetch(url, {
         ...options,
         headers: {

@@ -10,6 +10,9 @@ import { BackendLoaderProvider } from './contexts/BackendLoaderContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import HackerLoader from './components/HackerLoader';
 
+import { OfflineNotification } from './components/OfflineNotification';
+import { InstallPrompt } from './components/InstallPrompt';
+
 // Loading component for Suspense fallback
 const PageLoader: React.FC = () => (
     <div className="min-h-screen flex items-center justify-center bg-gray-900">
@@ -97,6 +100,8 @@ const App: React.FC = () => {
                 <LandingDataProvider onDataReady={handleDataReady}>
                     <BackendLoaderProvider>
                         <BrowserRouter>
+                            <OfflineNotification />
+                            <InstallPrompt />
                             {/* Cinematic Splash Screen - waits for data */}
                             {!introComplete && (
                                 <HackerLoader

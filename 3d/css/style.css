@@ -1,0 +1,576 @@
+/* ========================================
+   CSS Variables & Reset
+======================================== */
+:root {
+    /* Colors */
+    --color-bg: #0a0a0f;
+    --color-bg-glass: rgba(15, 15, 25, 0.85);
+    --color-border: rgba(100, 255, 218, 0.2);
+    --color-text-primary: #e6e6e6;
+    --color-text-secondary: #a0a0a0;
+    --color-accent: #64ffda;
+    --color-accent-hover: #4dd4b0;
+
+    /* Object Colors */
+    --color-avatar: #64ffda;
+    --color-education: #ff6b6b;
+    --color-experience: #ffd93d;
+    --color-skills: #6bcb77;
+    --color-contact: #4d96ff;
+
+    /* Spacing */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+
+    /* Border Radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+
+    /* Transitions */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+
+    /* Font */
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ========================================
+   Scroll Container
+======================================== */
+#scroll-container {
+    position: relative;
+    z-index: 1;
+}
+
+.scroll-section {
+    height: 100vh;
+    width: 100%;
+}
+
+/* ========================================
+   Loading Screen (Enhanced)
+======================================== */
+#loading-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--color-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+
+#loading-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.loader {
+    text-align: center;
+    max-width: 300px;
+}
+
+.loader-cube {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto var(--spacing-md);
+    background: linear-gradient(135deg, var(--color-accent), var(--color-contact));
+    animation: rotateCube 2s infinite ease-in-out;
+    border-radius: var(--radius-sm);
+}
+
+@keyframes rotateCube {
+
+    0%,
+    100% {
+        transform: rotate(0deg) scale(1);
+    }
+
+    25% {
+        transform: rotate(90deg) scale(0.8);
+    }
+
+    50% {
+        transform: rotate(180deg) scale(1);
+    }
+
+    75% {
+        transform: rotate(270deg) scale(0.8);
+    }
+}
+
+.loader-progress {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    margin-bottom: var(--spacing-md);
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--color-accent), var(--color-contact));
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}
+
+.loader-text {
+    color: var(--color-text-primary);
+    font-size: 1rem;
+    margin-bottom: var(--spacing-xs);
+}
+
+.loader-tip {
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+    opacity: 0;
+    animation: fadeInTip 0.5s ease 1s forwards;
+}
+
+@keyframes fadeInTip {
+    to {
+        opacity: 1;
+    }
+}
+
+/* ========================================
+   Canvas Container (Fixed)
+======================================== */
+#canvas-container {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: auto;
+}
+
+#canvas-container canvas {
+    display: block;
+}
+
+/* ========================================
+   Scroll Progress Indicator
+======================================== */
+#scroll-progress {
+    position: fixed;
+    right: var(--spacing-lg);
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.progress-track {
+    width: 3px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    position: relative;
+    margin-bottom: var(--spacing-sm);
+}
+
+.progress-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 0%;
+    background: linear-gradient(180deg, var(--color-accent), var(--color-contact));
+    border-radius: 2px;
+    transition: height 0.1s ease;
+}
+
+.progress-dots {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+}
+
+.dot:hover {
+    background: rgba(255, 255, 255, 0.4);
+    transform: scale(1.2);
+}
+
+.dot.active {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 10px var(--color-accent);
+}
+
+.dot::before {
+    content: attr(title);
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--color-bg-glass);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-fast);
+}
+
+.dot:hover::before {
+    opacity: 1;
+}
+
+/* ========================================
+   Section Label (Floating)
+======================================== */
+#section-label {
+    position: fixed;
+    top: var(--spacing-lg);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--color-bg-glass);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    z-index: 50;
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+    transition: all var(--transition-normal);
+}
+
+#section-label.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.label-icon {
+    font-size: 1.5rem;
+}
+
+.label-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--color-accent), var(--color-contact));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ========================================
+   Scroll Hint
+======================================== */
+#scroll-hint {
+    position: fixed;
+    bottom: var(--spacing-lg);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+    z-index: 50;
+    opacity: 1;
+    transition: opacity var(--transition-normal);
+}
+
+#scroll-hint.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.scroll-mouse {
+    width: 24px;
+    height: 40px;
+    border: 2px solid var(--color-accent);
+    border-radius: 12px;
+    position: relative;
+}
+
+.scroll-wheel {
+    width: 4px;
+    height: 8px;
+    background: var(--color-accent);
+    border-radius: 2px;
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: scrollWheel 1.5s infinite ease-in-out;
+}
+
+@keyframes scrollWheel {
+
+    0%,
+    100% {
+        opacity: 1;
+        top: 8px;
+    }
+
+    50% {
+        opacity: 0.3;
+        top: 20px;
+    }
+}
+
+#scroll-hint span {
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+}
+
+/* ========================================
+   Detail Panel
+======================================== */
+#detail-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    padding: var(--spacing-lg);
+    background: var(--color-bg-glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    z-index: 100;
+    overflow-y: auto;
+    transition: opacity var(--transition-normal), transform var(--transition-normal);
+}
+
+#detail-panel.hidden {
+    opacity: 0;
+    transform: translate(-50%, -45%);
+    pointer-events: none;
+}
+
+#close-panel {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 50%;
+    color: var(--color-text-primary);
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: background var(--transition-fast);
+}
+
+#close-panel:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+#panel-content h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-md);
+    color: var(--color-accent);
+}
+
+#panel-content h3 {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin: var(--spacing-md) 0 var(--spacing-xs);
+    color: var(--color-text-primary);
+}
+
+#panel-content p {
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--spacing-sm);
+}
+
+#panel-content ul {
+    list-style: none;
+    padding: 0;
+}
+
+#panel-content li {
+    padding: var(--spacing-xs) 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+#panel-content li:last-child {
+    border-bottom: none;
+}
+
+#panel-content .tag {
+    display: inline-block;
+    padding: 4px 10px;
+    margin: 2px;
+    background: rgba(100, 255, 218, 0.15);
+    border: 1px solid var(--color-accent);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    color: var(--color-accent);
+}
+
+#panel-content .experience-item {
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#panel-content .experience-item:last-child {
+    border-bottom: none;
+}
+
+#panel-content .experience-date {
+    font-size: 0.8rem;
+    color: var(--color-accent);
+    margin-bottom: 4px;
+}
+
+#panel-content .experience-title {
+    font-weight: 500;
+    color: var(--color-text-primary);
+}
+
+#panel-content .experience-company {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+}
+
+#panel-content .contact-link {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    margin: var(--spacing-xs) 0;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-primary);
+    text-decoration: none;
+    transition: background var(--transition-fast);
+}
+
+#panel-content .contact-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* ========================================
+   Footer
+======================================== */
+#footer-overlay {
+    position: fixed;
+    bottom: var(--spacing-lg);
+    right: var(--spacing-lg);
+    z-index: 10;
+}
+
+#footer-overlay p {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+}
+
+#footer-overlay a {
+    color: var(--color-accent);
+    text-decoration: none;
+}
+
+/* ========================================
+   Responsive
+======================================== */
+@media (max-width: 768px) {
+    #scroll-progress {
+        right: var(--spacing-sm);
+    }
+
+    .progress-track {
+        height: 150px;
+    }
+
+    #section-label {
+        top: var(--spacing-sm);
+    }
+
+    #detail-panel {
+        width: 95%;
+        max-height: 70vh;
+        padding: var(--spacing-md);
+    }
+
+    #footer-overlay {
+        display: none;
+    }
+}
+
+/* ========================================
+   Scrollbar
+======================================== */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(100, 255, 218, 0.3);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(100, 255, 218, 0.5);
+}
+
+/* ========================================
+   GSAP Animations Helper Classes
+======================================== */
+.fade-in {
+    opacity: 0;
+}
+
+.slide-up {
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.scale-in {
+    opacity: 0;
+    transform: scale(0.8);
+}
