@@ -62,6 +62,7 @@ const DashboardEventScanHistoryPage = lazy(() => import('./pages/DashboardEventS
 const FinancePage = lazy(() => import('./pages/FinancePage'));
 const FullscreenAnonymousChatPage = lazy(() => import('./pages/FullscreenAnonymousChatPage'));
 
+
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
@@ -220,7 +221,7 @@ const App: React.FC = () => {
                                                 <Route path="events/:eventId/scan" element={<DashboardEventScanPage />} />
                                                 <Route path="events/:eventId/history" element={<DashboardEventScanHistoryPage />} />
                                             </Route>
-                                            <Route path="*" element={<Navigate to="/" replace />} />
+
                                         </Routes>
                                     </Suspense>
                                 </div>
