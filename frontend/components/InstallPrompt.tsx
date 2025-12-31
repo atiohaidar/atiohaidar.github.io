@@ -59,7 +59,7 @@ export const InstallPrompt: React.FC = () => {
     if (!isVisible) return null;
 
     return (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 animate-fade-in-down">
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 animate-fade-in-up">
             <div className="bg-gray-900/90 backdrop-blur-md border border-gray-700 rounded-full px-4 py-2 shadow-2xl flex items-center gap-3">
                 <span className="text-sm font-medium text-white whitespace-nowrap">
                     Install App
