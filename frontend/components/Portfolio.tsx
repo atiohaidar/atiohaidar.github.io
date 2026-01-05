@@ -8,7 +8,8 @@ import type { Project } from '../types';
 import { GitHubIcon, ExternalLinkIcon, PostmanIcon, FolderIcon } from './Icons';
 import SpotlightCard from './SpotlightCard';
 import TiltCard from './TiltCard';
-import { COLORS, TYPOGRAPHY } from '../utils/styles';
+import { COLORS } from '../utils/styles';
+import { Typography, Heading, Text } from './ui';
 
 /**
  * Komponen kartu untuk menampilkan satu proyek.
@@ -41,9 +42,11 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
                         <FolderIcon className={`w-10 h-10 ${COLORS.TEXT_ACCENT}`} />
                     </header>
                     <main className="flex-grow">
-                        <h3 className={`${TYPOGRAPHY.HEADING_CARD} ${COLORS.TEXT_PRIMARY} mb-2 group-hover:text-blue-500 transition-colors print:text-black`}>{project.name}</h3>
-                        <p className={`text-sm ${COLORS.TEXT_SECONDARY} mb-2 leading-relaxed font-caveat text-lg`}>{project.description}</p>
-                        <p className={`text-sm ${COLORS.TEXT_SECONDARY} leading-relaxed font-caveat text-lg`}><span className={`font-semibold ${COLORS.TEXT_PRIMARY}`}>Kontribusi:</span> {project.contribution}</p>
+                        <Heading level={4} className={`${COLORS.TEXT_PRIMARY} mb-2 group-hover:text-blue-500 transition-colors print:text-black`}>{project.name}</Heading>
+                        <Text className={`${COLORS.TEXT_SECONDARY} mb-2`}>{project.description}</Text>
+                        <Text className={`${COLORS.TEXT_SECONDARY}`}>
+                            <Text as="span" className={`font-semibold ${COLORS.TEXT_PRIMARY}`}>Kontribusi:</Text> {project.contribution}
+                        </Text>
                     </main>
                     <footer className="mt-4">
                         <div className="mb-4 space-y-2">
@@ -53,16 +56,16 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
                                     href={link.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className={`flex items-center text-sm ${COLORS.TEXT_SECONDARY} hover:text-blue-500 transition-colors duration-300 group/link overflow-hidden mb-1 font-patrick`}
+                                    className={`flex items-center ${COLORS.TEXT_SECONDARY} hover:text-blue-500 transition-colors duration-300 group/link overflow-hidden mb-1`}
                                 >
                                     {getIconForLink(link.type)}
-                                    <span className="group-hover/link:underline print:underline">{link.url.replace(/^https?:\/\//, '')}</span>
+                                    <Typography variant="caption" className="group-hover/link:underline print:underline">{link.url.replace(/^https?:\/\//, '')}</Typography>
                                 </a>
                             ))}
                         </div>
                         {project.tech && (
-                            <ul className={`flex flex-wrap gap-x-4 gap-y-2 text-xs ${COLORS.TEXT_MUTED} pt-4 border-t-2 border-dashed ${COLORS.BORDER} font-mono`}>
-                                {project.tech.map(t => <li key={t}>{t}</li>)}
+                            <ul className={`flex flex-wrap gap-x-4 gap-y-2 ${COLORS.TEXT_MUTED} pt-4 border-t-2 border-dashed ${COLORS.BORDER}`}>
+                                {project.tech.map(t => <li key={t}><Typography variant="caption">{t}</Typography></li>)}
                             </ul>
                         )}
                     </footer>

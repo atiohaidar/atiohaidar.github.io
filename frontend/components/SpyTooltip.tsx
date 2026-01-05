@@ -30,7 +30,7 @@ const SpyTooltip: React.FC<SpyTooltipProps> = ({
 
     // Physics Refs
     const posRef = useRef({ x: 0, y: 0 }); // Current visual position (lerped)
-    const requestRef = useRef<number>();
+    const requestRef = useRef<number | undefined>(undefined);
 
     // Derived state for render
     const [stylePos, setStylePos] = useState({ x: 0, y: 0 });
@@ -195,14 +195,9 @@ const SpyTooltip: React.FC<SpyTooltipProps> = ({
 
     if (!render) return null;
 
-    const borderColor = color;
-    const glowColor = `${color}40`;
+    const borderColor = color === '#10b981' ? '#0f172a' : color; // Map green to dark slate for contrast in notebook theme
 
     // Calculate line path
-    // Origin is Logo (-stylePos.x, -stylePos.y)
-    // Target is Tooltip (0, 0)
-    // We want the line to draw FROM Origin TO Target.
-    // SVG Path: M originX originY L 0 0
     const lineOriginX = -stylePos.x;
     const lineOriginY = -stylePos.y;
 
@@ -213,101 +208,123 @@ const SpyTooltip: React.FC<SpyTooltipProps> = ({
                 transform: `translate3d(calc(-50% + ${stylePos.x}px), calc(-50% + ${stylePos.y}px), 0)`,
                 willChange: 'transform',
                 perspective: '1000px',
-                pointerEvents: 'none' // Wrapper handles positioning, inner handles events
+                pointerEvents: 'none'
             }}
         >
-            {/* Float Animation Wrapper - user said "tetep ada efek gerak gerakjnya" */}
+            {/* Float Animation Wrapper */}
             <div className="animate-spy-float">
 
-                {/* Connecting Line - SVG Overlay */}
+                {/* Connecting Line - SVG Overlay (Dashed Pencil Style) */}
                 <svg
                     className="absolute overflow-visible"
                     style={{ left: '50%', top: '50%', overflow: 'visible' }}
                 >
+                    {/* Shadow/Double line for sketch effect */}
+                    <path
+                        d={`M${lineOriginX} ${lineOriginY} L0 0`}
+                        stroke={borderColor}
+                        strokeWidth="2"
+                        strokeOpacity="0.1"
+                        fill="none"
+                        transform="translate(1, 1)"
+                    />
                     <path
                         d={`M${lineOriginX} ${lineOriginY} L0 0`}
                         stroke={borderColor}
                         strokeWidth="1.5"
-                        // pathLength="1" allows us to animate from 1 (empty) to 0 (full) or vice versa simply using 0-1 range
                         pathLength={1}
-                        strokeDasharray="1"
+                        strokeDasharray="4 4"
                         strokeDashoffset={showLine ? 0 : 1}
                         fill="none"
                         className="transition-[stroke-dashoffset] duration-700 ease-out"
-                        style={{ opacity: 0.6 }}
+                        style={{ opacity: 0.7 }}
                     />
 
                     {/* Origin Dot (Logo) */}
-                    <circle cx={lineOriginX} cy={lineOriginY} r="3" fill={borderColor} className="animate-pulse">
-                        <animate attributeName="opacity" values="0;1" dur="0.3s" fill="freeze" />
-                    </circle>
+                    <circle cx={lineOriginX} cy={lineOriginY} r="3" fill={borderColor} className="animate-pulse" opacity="0.5" />
 
-                    {/* Target Dot (Tooltip) */}
+                    {/* Target Dot (Tooltip) - Hand drawn circle style */}
                     {showLine && (
-                        <circle cx="0" cy="0" r="2" fill={borderColor} />
+                        <g transform="scale(1.2)">
+                            <circle cx="0" cy="0" r="2.5" fill="none" stroke={borderColor} strokeWidth="1" />
+                        </g>
                     )}
                 </svg>
 
-                {/* Main Card */}
+                {/* Main Card - Sticky Note / Scrap Paper Style */}
                 <div
                     onMouseDown={handleMouseDown}
                     className={`
-                        relative bg-[#0f172a]/90 backdrop-blur-xl border border-white/10
-                        p-4 min-w-[240px] overflow-hidden rounded-sm
-                        text-sky-400 font-mono text-xs
-                        shadow-2xl cursor-grab active:cursor-grabbing pointer-events-auto
+                        relative bg-paper-cream dark:bg-slate-800 
+                        border-2 border-dashed border-slate-600 dark:border-slate-500
+                        p-4 min-w-[240px] overflow-hidden rounded-lg
+                        font-patrick text-sm text-slate-900 dark:text-slate-100
+                        shadow-xl cursor-grab active:cursor-grabbing pointer-events-auto
                         transition-all duration-500 cubic-bezier(0.34, 1.56, 0.64, 1)
-                        ${showContent ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-50 translate-y-4'}
+                        ${showContent ? 'opacity-100 scale-100 rotate-1' : 'opacity-0 scale-50 rotate-12'}
                     `}
                     style={{
-                        borderColor: borderColor,
-                        boxShadow: `0 0 30px ${glowColor}, inset 0 0 20px -10px ${glowColor}`
+                        transformOrigin: 'top left',
+                        boxShadow: '4px 4px 0px rgba(0,0,0,0.1)'
                     }}
                 >
-                    {/* Scanline Overlay */}
-                    <div className="absolute inset-0 pointer-events-none opacity-10 bg-[linear-gradient(transparent_50%,rgba(59,130,246,0.2)_50%)] bg-[length:100%_3px] animate-scanline" />
+                    {/* Paper Texture Lines */}
+                    <div className="absolute inset-0 pointer-events-none notebook-lines opacity-10 dark:opacity-5" />
+
+                    {/* Tape Decoration */}
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-16 h-6 bg-yellow-200/50 dark:bg-yellow-800/30 -rotate-2 shadow-sm pointer-events-none" />
 
                     {/* Header */}
-                    <div className="flex items-center justify-between border-b border-dashed border-white/20 pb-2 mb-3 select-none">
-                        <span className={`font-bold tracking-[0.2em] text-sm text-[${borderColor}] ${glitchActive ? 'animate-glitch' : ''}`}>
-                            // {title}
+                    <div className="flex items-center justify-between border-b-2 border-slate-800/10 dark:border-white/10 pb-2 mb-3 select-none relative z-10">
+                        <span className={`font-bold font-caveat text-xl tracking-wide text-slate-800 dark:text-white`}>
+                            # {title}
                         </span>
-                        <div className="flex gap-1.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse delay-100" />
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse delay-200" />
+                        {/* Status Dots - Drawn style */}
+                        <div className="flex gap-1.5 opacity-80">
+                            <div className="w-2 h-2 rounded-full border border-slate-600 bg-red-400"></div>
+                            <div className="w-2 h-2 rounded-full border border-slate-600 bg-yellow-400"></div>
+                            <div className="w-2 h-2 rounded-full border border-slate-600 bg-green-400"></div>
                         </div>
                     </div>
 
                     {/* Content */}
-                    <div className="space-y-2 relative z-10 select-none">
+                    <div className="space-y-1.5 relative z-10 select-none">
                         {items.map((item, idx) => (
                             <div
                                 key={idx}
                                 className="flex justify-between items-center gap-6"
                                 style={{
-                                    animationName: showContent ? 'type-in' : 'none',
+                                    animationName: showContent ? 'slideInLeft' : 'none',
                                     animationDuration: '0.4s',
                                     animationFillMode: 'forwards',
                                     animationDelay: `${idx * 100}ms`,
                                     opacity: 0
                                 }}
                             >
-                                <span className="opacity-60 text-[0.65rem] tracking-wider uppercase text-slate-400">{item.label}</span>
-                                <span className="font-bold text-slate-100 text-xs tracking-wide">
+                                <span className="font-caveat text-lg text-slate-500 dark:text-slate-400 leading-none">{item.label}</span>
+                                <span className="font-bold font-patrick text-slate-800 dark:text-white text-sm">
                                     {item.value}
                                 </span>
                             </div>
                         ))}
                     </div>
 
-                    {/* Tech Corners */}
-                    <div className="absolute top-0 left-0 w-2 h-2 border-t border-l pointer-events-none" style={{ borderColor }} />
-                    <div className="absolute top-0 right-0 w-2 h-2 border-t border-r pointer-events-none" style={{ borderColor }} />
-                    <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l pointer-events-none" style={{ borderColor }} />
-                    <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r pointer-events-none" style={{ borderColor }} />
+                    {/* Hand-drawn Corners */}
+                    <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-40 text-slate-600" width="100%" height="100%">
+                        <path d="M5,5 L15,5 M5,5 L5,15" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+                        <path d="Mcalc(100% - 5px),5 Lcalc(100% - 15px),5 Mcalc(100% - 5px),5 Lcalc(100% - 5px),15" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+                        <path d="M5,calc(100% - 5px) L15,calc(100% - 5px) M5,calc(100% - 5px) L5,calc(100% - 15px)" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+                        <path d="Mcalc(100% - 5px),calc(100% - 5px) Lcalc(100% - 15px),calc(100% - 5px) Mcalc(100% - 5px),calc(100% - 5px) Lcalc(100% - 5px),calc(100% - 15px)" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
+                    </svg>
                 </div>
             </div>
+            {/* Inline Styles for Animation */}
+            <style>{`
+                @keyframes slideInLeft {
+                    from { opacity: 0; transform: translateX(-5px); }
+                    to { opacity: 1; transform: translateX(0); }
+                }
+            `}</style>
         </div>
     );
 };

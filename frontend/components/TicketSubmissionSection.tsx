@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { COLORS, TYPOGRAPHY, LAYOUT } from '../utils/styles';
+import { COLORS, LAYOUT } from '../utils/styles';
+import { Typography, Heading, Text } from './ui';
 import { listTicketCategories, submitTicket } from '../lib/api/services';
 import type { TicketCategory, TicketCreate, TicketPriority } from '../apiTypes';
 import BackendLoader from './BackendLoader';
@@ -145,15 +146,15 @@ const TicketSubmissionSection: React.FC = () => {
             )}
 
             <div className="container mx-auto px-4 max-w-3xl">
-                <div className={`glass-card p-8 md:p-12 relative overflow-hidden`}>
+                <div className={`glass-panel p-8 md:p-12 relative overflow-hidden`}>
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-400/50 via-purple-500/50 to-pink-500/50 opacity-30"></div>
 
-                    <h2 className={`${TYPOGRAPHY.HEADING_SECTION} ${COLORS.TEXT_PRIMARY} mb-4 text-center`}>
+                    <Heading level={2} className={`${COLORS.TEXT_PRIMARY} mb-4 text-center`}>
                         Ajukan Komplain / Keluhan
-                    </h2>
-                    <p className={`${COLORS.TEXT_SECONDARY} text-center mb-8 font-caveat text-xl`}>
+                    </Heading>
+                    <Text className={`${COLORS.TEXT_SECONDARY} text-center mb-8 text-xl`}>
                         Sampaikan keluhan atau komplain Anda. Anda akan mendapatkan token untuk melacak status pengaduan.
-                    </p>
+                    </Text>
 
                     {submitResult && !showTokenModal && (
                         <div className={`mb-6 p-4 rounded-lg transform rotate-1 border-2 border-dashed ${submitResult.success ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 border-green-300' : 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 border-red-300'} font-patrick`}>
@@ -164,9 +165,9 @@ const TicketSubmissionSection: React.FC = () => {
                     <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label htmlFor="submitter_name" className={`block ${COLORS.TEXT_PRIMARY} mb-2 font-bold font-patrick text-lg`}>
+                                <Typography variant="h4" as="label" htmlFor="submitter_name" className={`block ${COLORS.TEXT_PRIMARY} mb-2`}>
                                     Nama (Opsional)
-                                </label>
+                                </Typography>
                                 <input
                                     type="text"
                                     id="submitter_name"
@@ -179,9 +180,9 @@ const TicketSubmissionSection: React.FC = () => {
                             </div>
 
                             <div>
-                                <label htmlFor="submitter_email" className={`block ${COLORS.TEXT_PRIMARY} mb-2 font-bold font-patrick text-lg`}>
+                                <Typography variant="h4" as="label" htmlFor="submitter_email" className={`block ${COLORS.TEXT_PRIMARY} mb-2`}>
                                     Email (Opsional)
-                                </label>
+                                </Typography>
                                 <input
                                     type="email"
                                     id="submitter_email"
@@ -196,9 +197,9 @@ const TicketSubmissionSection: React.FC = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label htmlFor="category_id" className={`block ${COLORS.TEXT_PRIMARY} mb-2 font-bold font-patrick text-lg`}>
+                                <Typography variant="h4" as="label" htmlFor="category_id" className={`block ${COLORS.TEXT_PRIMARY} mb-2`}>
                                     Kategori <span className="text-red-500">*</span>
-                                </label>
+                                </Typography>
                                 <select
                                     id="category_id"
                                     name="category_id"
@@ -215,9 +216,9 @@ const TicketSubmissionSection: React.FC = () => {
                             </div>
 
                             <div>
-                                <label htmlFor="priority" className={`block ${COLORS.TEXT_PRIMARY} mb-2 font-bold font-patrick text-lg`}>
+                                <Typography variant="h4" as="label" htmlFor="priority" className={`block ${COLORS.TEXT_PRIMARY} mb-2`}>
                                     Prioritas <span className="text-red-500">*</span>
-                                </label>
+                                </Typography>
                                 <select
                                     id="priority"
                                     name="priority"
@@ -235,9 +236,9 @@ const TicketSubmissionSection: React.FC = () => {
                         </div>
 
                         <div>
-                            <label htmlFor="title" className={`block ${COLORS.TEXT_PRIMARY} mb-2 font-bold font-patrick text-lg`}>
+                            <Typography variant="h4" as="label" htmlFor="title" className={`block ${COLORS.TEXT_PRIMARY} mb-2`}>
                                 Judul <span className="text-red-500">*</span>
-                            </label>
+                            </Typography>
                             <input
                                 type="text"
                                 id="title"
@@ -251,9 +252,9 @@ const TicketSubmissionSection: React.FC = () => {
                         </div>
 
                         <div>
-                            <label htmlFor="description" className={`block ${COLORS.TEXT_PRIMARY} mb-2 font-bold font-patrick text-lg`}>
+                            <Typography variant="h4" as="label" htmlFor="description" className={`block ${COLORS.TEXT_PRIMARY} mb-2`}>
                                 Deskripsi Lengkap <span className="text-red-500">*</span>
-                            </label>
+                            </Typography>
                             <textarea
                                 id="description"
                                 name="description"
@@ -267,9 +268,9 @@ const TicketSubmissionSection: React.FC = () => {
                         </div>
 
                         <div>
-                            <label htmlFor="reference_link" className={`block ${COLORS.TEXT_PRIMARY} mb-2 font-bold font-patrick text-lg`}>
+                            <Typography variant="h4" as="label" htmlFor="reference_link" className={`block ${COLORS.TEXT_PRIMARY} mb-2`}>
                                 Link Referensi (Opsional)
-                            </label>
+                            </Typography>
                             <input
                                 type="url"
                                 id="reference_link"
@@ -295,16 +296,16 @@ const TicketSubmissionSection: React.FC = () => {
             {/* Token Modal */}
             {showTokenModal && submitResult?.success && submitResult.token && createPortal(
                 <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4 font-patrick">
-                    <div className={`glass-card p-8 max-w-md w-full shadow-2xl relative`}>
+                    <div className={`glass-panel p-8 max-w-md w-full shadow-2xl relative`}>
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-400 to-emerald-500 opacity-50"></div>
-                        <h3 className={`text-3xl font-bold ${COLORS.TEXT_PRIMARY} mb-4 text-center`}>
+                        <Heading level={3} className={`${COLORS.TEXT_PRIMARY} mb-4 text-center`}>
                             Keluhan Berhasil! ✅
-                        </h3>
-                        <p className={`${COLORS.TEXT_SECONDARY} mb-4 text-center text-lg`}>
+                        </Heading>
+                        <Text className={`${COLORS.TEXT_SECONDARY} mb-4 text-center text-lg`}>
                             Token pelacakan Anda:
-                        </p>
+                        </Text>
                         <div className={`bg-white/50 dark:bg-black/30 p-4 rounded-lg mb-6 text-center border-2 border-dashed ${COLORS.BORDER} transform -rotate-1`}>
-                            <code className={`text-3xl font-mono font-bold ${COLORS.TEXT_ACCENT} tracking-wider`}>
+                            <code className={`text-3xl font-patrick font-bold ${COLORS.TEXT_ACCENT} tracking-wider`}>
                                 {submitResult.token}
                             </code>
                         </div>

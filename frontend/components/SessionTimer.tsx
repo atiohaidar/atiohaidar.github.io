@@ -123,7 +123,7 @@ const SessionTimer: React.FC<SessionTimerProps> = ({ className = '' }) => {
             {/* Timer Display */}
             <div className="flex items-center gap-2">
                 <span className="text-accent-blue/70 text-xs">⏱</span>
-                <span className="text-light-text dark:text-white/80 font-mono text-xs tabular-nums">
+                <span className="text-light-text dark:text-white/80 font-patrick text-xs tabular-nums">
                     {formatDuration(seconds)}
                 </span>
             </div>

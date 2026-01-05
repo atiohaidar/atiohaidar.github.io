@@ -12,6 +12,7 @@ export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElemen
     helperText?: string;
     variant?: 'default' | 'glass';
     options?: { value: string | number; label: string }[];
+    containerClassName?: string;
 }
 
 export const Select: React.FC<SelectProps> = ({
@@ -21,6 +22,7 @@ export const Select: React.FC<SelectProps> = ({
     className = '',
     variant = 'glass',
     options = [],
+    containerClassName = 'w-full',
     children,
     ...props
 }) => {
@@ -34,7 +36,7 @@ export const Select: React.FC<SelectProps> = ({
         : '';
 
     return (
-        <div className="w-full">
+        <div className={containerClassName}>
             {label && (
                 <label className={`block text-lg font-bold font-patrick text-slate-900 dark:text-white mb-2 ml-1`}>
                     {label}
@@ -54,10 +56,10 @@ export const Select: React.FC<SelectProps> = ({
                 {/* Custom arrow if needed, but for now relying on browser default or keeping clean */}
             </div>
             {error && (
-                <p className="mt-1 text-sm text-red-600 font-caveat">{error}</p>
+                <p className="mt-1 text-sm text-red-600 font-patrick">{error}</p>
             )}
             {helperText && !error && (
-                <p className={`mt-1 text-sm text-slate-500 font-caveat`}>{helperText}</p>
+                <p className={`mt-1 text-sm text-slate-500 font-patrick`}>{helperText}</p>
             )}
         </div>
     );

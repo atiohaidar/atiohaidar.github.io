@@ -97,7 +97,7 @@ const LiveClock: React.FC<LiveClockProps> = ({
     return (
         <div className={`text-center ${className}`}>
             {/* Time Display */}
-            <div className={`font-mono font-bold ${sizes.time} tracking-wider`}>
+            <div className={`font-patrick font-bold ${sizes.time} tracking-wider`}>
                 <span className="inline-block tabular-nums">
                     {formatNumber(displayHours)}
                 </span>

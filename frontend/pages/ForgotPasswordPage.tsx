@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../lib/api/services';
-import ParallaxBackground from '../components/ParallaxBackground';
+
 import ThemeToggle from '../components/ThemeToggle';
 import { COLORS, TYPOGRAPHY } from '../utils/styles';
 
@@ -50,8 +50,7 @@ const ForgotPasswordPage: React.FC = () => {
 
     return (
         <div className={`min-h-screen w-full relative flex flex-col ${COLORS.BG_PRIMARY} overflow-hidden`}>
-            {/* Parallax Background */}
-            <ParallaxBackground intensity={0.6} zIndex={10} opacity={0.1} />
+
 
             {/* Notebook Lines Background Effect (Overlay) */}
             <div className="absolute inset-0 notebook-lines opacity-10 pointer-events-none z-0"></div>
@@ -76,7 +75,7 @@ const ForgotPasswordPage: React.FC = () => {
             {/* Main Content */}
             <main className={`flex-1 flex items-center justify-center p-4 sm:p-6 z-10 transition-all duration-700 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                 <div className="w-full max-w-md">
-                    <div className={`glass-card relative overflow-hidden w-full p-6 sm:p-8 rounded-lg shadow-xl border-2 border-dashed ${COLORS.BORDER}`}>
+                    <div className={`glass-panel relative overflow-hidden w-full p-6 sm:p-8`}>
                         {/* Tape Effect */}
                         <div className="absolute -top-3 right-10 w-24 h-8 bg-red-100/80 dark:bg-red-900/30 -rotate-2 shadow-sm z-20"></div>
 

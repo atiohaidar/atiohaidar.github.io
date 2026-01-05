@@ -17,7 +17,7 @@ import TicketSubmissionSection from '../components/TicketSubmissionSection';
 import TicketTrackingSection from '../components/TicketTrackingSection';
 import ScrollReveal from '../components/ScrollReveal';
 import SpyTooltip from '../components/SpyTooltip';
-import ParallaxBackground from '../components/ParallaxBackground';
+
 import { useLandingData } from '../contexts/LandingDataContext';
 import { useMultiParallax } from '../hooks/useParallax';
 import { getAuthToken, getStoredUser, clearAuth } from '../apiClient';
@@ -136,8 +136,7 @@ const LandingPage: React.FC = () => {
 
     return (
         <div className={`relative min-h-screen duration-300 overflow-hidden`}>
-            {/* Global Background Elements */}
-            <ParallaxBackground intensity={1} zIndex={10} opacity={0.1} />
+
 
 
             {/* Particle Overlay (Optional, keep it subtle) */}

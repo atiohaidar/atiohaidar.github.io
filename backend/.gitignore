@@ -50,7 +50,11 @@ build/Release
 
 # Dependency directories
 
-node_modules/
+node_modules
+node_modules_windows
+node_modules_linux
+
+
 jspm_packages/
 
 # Snowpack dependency directory (https://snowpack.dev/)

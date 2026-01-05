@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { COLORS, TYPOGRAPHY } from '../utils/styles';
+import { COLORS } from '../utils/styles';
+import { Typography, Heading, Text } from './ui';
 import { getTicketByToken, getTicketCommentsByToken, addTicketCommentByToken } from '../lib/api/services';
 import type { Ticket, TicketComment } from '../apiTypes';
 
@@ -119,21 +120,21 @@ const TicketTrackingSection: React.FC<TicketTrackingSectionProps> = ({ prefillTo
     return (
         <section id="ticket-tracking" className={`py-16 md:py-20 ${COLORS.BG_PRIMARY}`}>
             <div className="container mx-auto px-4 max-w-4xl">
-                <div className={`glass-card p-8 md:p-12 relative overflow-hidden`}>
+                <div className={`glass-panel p-8 md:p-12 relative overflow-hidden`}>
                     <div className="absolute top-0 right-0 w-24 h-24 bg-yellow-200/20 rounded-full blur-3xl -mr-12 -mt-12 pointer-events-none"></div>
 
-                    <h2 className={`${TYPOGRAPHY.HEADING_SECTION} ${COLORS.TEXT_PRIMARY} mb-4 text-center`}>
+                    <Heading level={2} className={`${COLORS.TEXT_PRIMARY} mb-4 text-center`}>
                         Lacak Status Keluhan
-                    </h2>
-                    <p className={`${COLORS.TEXT_SECONDARY} text-center mb-8 font-caveat text-xl`}>
+                    </Heading>
+                    <Text className={`${COLORS.TEXT_SECONDARY} text-center mb-8 text-xl`}>
                         Masukkan token untuk melihat progress dan status keluhan Anda
-                    </p>
+                    </Text>
 
                     <form onSubmit={handleTrack} className="space-y-6 mb-12 relative z-10">
                         <div>
-                            <label htmlFor="token" className={`block ${COLORS.TEXT_PRIMARY} mb-2 font-bold font-patrick text-lg`}>
+                            <Typography variant="h4" as="label" htmlFor="token" className={`block ${COLORS.TEXT_PRIMARY} mb-2`}>
                                 Token Pelacakan
-                            </label>
+                            </Typography>
                             <div className="flex gap-4">
                                 <input
                                     type="text"
@@ -141,7 +142,7 @@ const TicketTrackingSection: React.FC<TicketTrackingSectionProps> = ({ prefillTo
                                     value={token}
                                     onChange={(e) => setToken(e.target.value)}
                                     placeholder="Contoh: TKT-ABC12345"
-                                    className={`flex-1 px-4 py-3 bg-transparent border-b-2 ${COLORS.BORDER} ${COLORS.TEXT_PRIMARY} focus:outline-none focus:border-[${COLORS.TEXT_ACCENT}] transition-colors font-patrick placeholder:text-gray-400 dark:placeholder:text-gray-600 rounded-t-lg hover:bg-black/5 dark:hover:bg-white/5 font-mono tracking-wider`}
+                                    className={`flex-1 px-4 py-3 bg-transparent border-b-2 ${COLORS.BORDER} ${COLORS.TEXT_PRIMARY} focus:outline-none focus:border-[${COLORS.TEXT_ACCENT}] transition-colors font-patrick placeholder:text-gray-400 dark:placeholder:text-gray-600 rounded-t-lg hover:bg-black/5 dark:hover:bg-white/5 font-patrick tracking-wider`}
                                     required
                                 />
                                 <button
@@ -172,9 +173,9 @@ const TicketTrackingSection: React.FC<TicketTrackingSectionProps> = ({ prefillTo
                                 </div>
 
                                 <div className="mb-6">
-                                    <h3 className={`text-3xl font-bold font-patrick ${COLORS.TEXT_PRIMARY} mb-2`}>
+                                    <Heading level={3} className={`${COLORS.TEXT_PRIMARY} mb-2`}>
                                         {ticket.title}
-                                    </h3>
+                                    </Heading>
                                     <div className="flex gap-2 mb-4">
                                         <span className={`px-3 py-1 border rounded-full text-sm font-bold font-patrick ${getPriorityColor(ticket.priority)}`}>
                                             Prioritas: {getPriorityLabel(ticket.priority)}
@@ -214,12 +215,12 @@ const TicketTrackingSection: React.FC<TicketTrackingSectionProps> = ({ prefillTo
 
                             {/* Comments Section */}
                             <div className="mt-8">
-                                <h4 className={`text-2xl font-bold ${COLORS.TEXT_PRIMARY} mb-6 font-patrick flex items-center gap-2`}>
+                                <Heading level={4} className={`${COLORS.TEXT_PRIMARY} mb-6 flex items-center gap-2`}>
                                     <span>💬</span> Riwayat Komunikasi
-                                </h4>
+                                </Heading>
 
                                 {comments.length === 0 ? (
-                                    <p className={`${COLORS.TEXT_SECONDARY} text-center py-8 italic font-caveat text-xl border-2 border-dashed ${COLORS.BORDER} rounded-xl opacity-60`}>
+                                    <p className={`${COLORS.TEXT_SECONDARY} text-center py-8 italic font-patrick text-xl border-2 border-dashed ${COLORS.BORDER} rounded-xl opacity-60`}>
                                         Belum ada komentar
                                     </p>
                                 ) : (
@@ -233,13 +234,13 @@ const TicketTrackingSection: React.FC<TicketTrackingSectionProps> = ({ prefillTo
                                                             {comment.commenter_type === 'user' ? 'Admin' : 'Tamu'}
                                                         </span>
                                                     </span>
-                                                    <span className={`text-sm ${COLORS.TEXT_SECONDARY} font-mono`}>
+                                                    <span className={`text-sm ${COLORS.TEXT_SECONDARY} font-patrick`}>
                                                         {new Date(comment.created_at || '').toLocaleString('id-ID')}
                                                     </span>
                                                 </div>
-                                                <p className={`${COLORS.TEXT_PRIMARY} whitespace-pre-wrap leading-relaxed`}>
+                                                <Text as="p" className={`${COLORS.TEXT_PRIMARY} whitespace-pre-wrap leading-relaxed`}>
                                                     {comment.comment_text}
-                                                </p>
+                                                </Text>
                                             </div>
                                         ))}
                                     </div>
@@ -248,11 +249,11 @@ const TicketTrackingSection: React.FC<TicketTrackingSectionProps> = ({ prefillTo
                                 {/* Add Comment Form */}
                                 {ticket.status !== 'solved' && (
                                     <form onSubmit={handleAddComment} className="space-y-4 mt-8 pt-6 border-t-2 border-dashed ${COLORS.BORDER}">
-                                        <h5 className={`text-lg font-bold font-patrick ${COLORS.TEXT_PRIMARY} mb-4`}>Balas Tiket</h5>
+                                        <Heading level={4} className={`${COLORS.TEXT_PRIMARY} mb-4`}>Balas Tiket</Heading>
                                         <div>
-                                            <label htmlFor="commenterName" className={`block ${COLORS.TEXT_PRIMARY} mb-2 font-bold font-patrick`}>
+                                            <Typography variant="h4" as="label" htmlFor="commenterName" className={`block ${COLORS.TEXT_PRIMARY} mb-2`}>
                                                 Nama Anda (Opsional)
-                                            </label>
+                                            </Typography>
                                             <input
                                                 type="text"
                                                 id="commenterName"
@@ -263,9 +264,9 @@ const TicketTrackingSection: React.FC<TicketTrackingSectionProps> = ({ prefillTo
                                             />
                                         </div>
                                         <div>
-                                            <label htmlFor="newComment" className={`block ${COLORS.TEXT_PRIMARY} mb-2 font-bold font-patrick`}>
+                                            <Typography variant="h4" as="label" htmlFor="newComment" className={`block ${COLORS.TEXT_PRIMARY} mb-2`}>
                                                 Tambahkan Komentar
-                                            </label>
+                                            </Typography>
                                             <textarea
                                                 id="newComment"
                                                 value={newComment}

@@ -6,6 +6,7 @@ import React, { useState, useRef } from 'react';
 import type { SocialLinks } from '../types';
 import { GitHubIcon, LinkedInIcon, InstagramIcon } from './Icons';
 import SpyTooltip from './SpyTooltip';
+import { Typography } from './ui';
 
 /**
  * Props untuk komponen Footer.
@@ -24,7 +25,7 @@ const Footer: React.FC<FooterProps> = ({ socials, copyright }) => {
     const instagramRef = useRef<HTMLAnchorElement>(null);
 
     return (
-        <footer className="py-8 text-center text-slate-500 dark:text-slate-400 font-caveat text-lg print:hidden">
+        <footer className="py-8 text-center text-slate-500 dark:text-slate-400 print:hidden">
             <div className="flex justify-center items-center space-x-6 mb-4 md:hidden print:hidden">
                 {/* GitHub */}
                 <div
@@ -49,7 +50,7 @@ const Footer: React.FC<FooterProps> = ({ socials, copyright }) => {
                             { label: 'TYPE', value: 'Code Repository' },
                             { label: 'ACTION', value: 'View Projects' },
                         ]}
-                        targetRef={githubRef}
+                        targetRef={githubRef as React.RefObject<HTMLElement>}
                         color="#6e5494"
                     />
                 </div>
@@ -77,7 +78,7 @@ const Footer: React.FC<FooterProps> = ({ socials, copyright }) => {
                             { label: 'TYPE', value: 'Professional Network' },
                             { label: 'ACTION', value: 'Connect' },
                         ]}
-                        targetRef={linkedinRef}
+                        targetRef={linkedinRef as React.RefObject<HTMLElement>}
                         color="#0077b5"
                     />
                 </div>
@@ -106,13 +107,13 @@ const Footer: React.FC<FooterProps> = ({ socials, copyright }) => {
                                 { label: 'TYPE', value: 'Photo Sharing' },
                                 { label: 'ACTION', value: 'Follow' },
                             ]}
-                            targetRef={instagramRef}
+                            targetRef={instagramRef as React.RefObject<HTMLElement>}
                             color="#E1306C"
                         />
                     </div>
                 )}
             </div>
-            <p>{copyright}</p>
+            <Typography variant="body">{copyright}</Typography>
         </footer>
     );
 };

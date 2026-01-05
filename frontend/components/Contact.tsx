@@ -4,7 +4,8 @@
  */
 import React, { memo, useMemo } from 'react';
 import Section from './Section';
-import { COLORS, PRINT, TYPOGRAPHY } from '../utils/styles';
+import { PRINT } from '../utils/styles';
+import { Typography, Heading, Text } from './ui';
 
 interface ContactProps {
     /** Teks ajakan untuk menghubungi. */
@@ -14,10 +15,9 @@ interface ContactProps {
 }
 
 // Style constants
+// Style constants
 const STYLES = {
-    heading: `${TYPOGRAPHY.HEADING_MEDIUM} ${COLORS.TEXT_PRIMARY} mb-6 print:text-black`,
-    description: `text-xl ${COLORS.TEXT_SECONDARY} leading-relaxed mb-10 print:text-black font-caveat`,
-    button: `inline-block glass-button px-12 py-4 font-bold text-xl ${PRINT.HIDE} font-patrick`,
+    button: `inline-block glass-button px-12 py-4 ${PRINT.HIDE}`,
     printContainer: `${PRINT.SHOW} text-center mt-4`,
 } as const;
 
@@ -49,8 +49,8 @@ const Contact: React.FC<ContactProps> = memo(({ pitch, linkedinUrl }) => {
             delay={2400}
             printPageBreak={false}
         >
-            <h3 className={STYLES.heading}>Hubungi Saya</h3>
-            <p className={STYLES.description}>{pitch}</p>
+            <Heading level={2} className="mb-6 print:text-black">Hubungi Saya</Heading>
+            <Text className="text-xl mb-10 print:text-black">{pitch}</Text>
 
             {isValid && (
                 <a
@@ -60,13 +60,13 @@ const Contact: React.FC<ContactProps> = memo(({ pitch, linkedinUrl }) => {
                     className={STYLES.button}
                     aria-label="Kunjungi profil LinkedIn saya"
                 >
-                    LinkedIn
+                    <Typography variant="h4" as="span">LinkedIn</Typography>
                 </a>
             )}
 
             <div className={STYLES.printContainer}>
-                <p>Anda dapat menemukan saya di LinkedIn:</p>
-                <p className="font-semibold text-blue-600">{linkedinUrl}</p>
+                <Text>Anda dapat menemukan saya di LinkedIn:</Text>
+                <Text variant="body" className="font-semibold text-blue-600">{linkedinUrl}</Text>
             </div>
         </Section>
     );

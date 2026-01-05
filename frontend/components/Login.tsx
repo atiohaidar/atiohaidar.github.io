@@ -7,7 +7,8 @@ import BackendLoader from './BackendLoader';
 import type { LoginResponse } from '../lib/api/types';
 import { notificationService } from '../utils/notificationService';
 import { Link } from 'react-router-dom';
-import { COLORS, TYPOGRAPHY } from '../utils/styles';
+import { COLORS } from '../utils/styles';
+import { Input, Button, Typography, Heading, Text } from './ui';
 
 // Get API base URL for server host display
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787';
@@ -157,12 +158,12 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, navigateDelay = 0 }) => {
     }
 
     return (
-        <div className={`glass-panel relative w-full max-w-md mx-auto p-8 animate-fade-in-up overflow-hidden`}>
+        <div className="glass-panel relative w-full max-w-md mx-auto overflow-hidden shadow-xl p-8">
             {/* Tape Effect */}
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-32 h-8 bg-yellow-100/80 dark:bg-yellow-900/30 rotate-1 shadow-sm z-20"></div>
+            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-32 h-8 bg-marker-yellow/30 dark:bg-yellow-900/30 rotate-1 shadow-sm z-20 pointer-events-none"></div>
 
             {/* Ambient Doodle */}
-            <div className={`absolute top-0 right-0 p-4 opacity-10 pointer-events-none`}>
+            <div className={`absolute top-0 right-0 p-4 opacity-10 pointer-events-none ${COLORS.TEXT_PRIMARY}`}>
                 <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-current">
                     <path d="M10 10C20 10 20 90 30 90" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
                     <path d="M40 10C50 10 50 90 60 90" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -170,44 +171,44 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, navigateDelay = 0 }) => {
             </div>
 
             <div className="relative z-10">
-                <h2 className={`${TYPOGRAPHY.HEADING_SECTION} ${COLORS.TEXT_PRIMARY} mb-2 text-center`}>Balik Lagii</h2>
-                <p className={`${COLORS.TEXT_SECONDARY} mb-8 text-center font-caveat text-xl`}>Masuk untuk mengelola dashboard</p>
+                <Heading level={2} className={`${COLORS.TEXT_PRIMARY} mb-2 text-center`}>Balik Lagii</Heading>
+                <Text variant="h4" as="p" className={`${COLORS.TEXT_SECONDARY} mb-8 text-center`}>Masuk untuk mengelola dashboard</Text>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="space-y-2">
-                        <label className={`block ${COLORS.TEXT_PRIMARY} font-bold font-patrick text-lg`}>Username</label>
-                        <input
-                            type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            placeholder="admin atau user"
-                            required
-                            className={`w-full px-4 py-3 bg-transparent border-b-2 ${COLORS.BORDER} ${COLORS.TEXT_PRIMARY} focus:outline-none focus:border-[${COLORS.TEXT_ACCENT}] transition-colors font-patrick placeholder:text-gray-400 dark:placeholder:text-gray-600 rounded-t-lg hover:bg-black/5 dark:hover:bg-white/5 active:bg-transparent`}
-                        />
-                    </div>
+                    <Input
+                        label="Username"
+                        placeholder="admin atau user"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        required
+                        fullWidth
+                        variant="glass"
+                    />
 
-                    <div className="space-y-2">
-                        <label className={`block ${COLORS.TEXT_PRIMARY} font-bold font-patrick text-lg`}>Password</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="••••••••"
-                            required
-                            className={`w-full px-4 py-3 bg-transparent border-b-2 ${COLORS.BORDER} ${COLORS.TEXT_PRIMARY} focus:outline-none focus:border-[${COLORS.TEXT_ACCENT}] transition-colors font-patrick placeholder:text-gray-400 dark:placeholder:text-gray-600 rounded-t-lg hover:bg-black/5 dark:hover:bg-white/5 active:bg-transparent`}
-                        />
-                    </div>
+                    <Input
+                        label="Password"
+                        type="password"
+                        placeholder="••••••••"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        fullWidth
+                        variant="glass"
+                    />
 
-                    <button
+                    <Button
                         type="submit"
-                        className={`w-full glass-button ${COLORS.TEXT_PRIMARY} py-3 px-6 rounded-lg mt-4 font-bold font-patrick text-xl hover:scale-[1.02] transition-transform shadow-md`}
+                        variant="glass"
+                        fullWidth
+                        size="lg"
+                        className="mt-4 font-patrick text-xl bg-blue-100/50 hover:bg-blue-200/50 border-blue-300 dark:border-blue-700 dark:bg-blue-900/20 dark:hover:bg-blue-900/40"
                     >
-                        Masuk
-                    </button>
+                        <Typography variant="nav" as="span">Masuk</Typography>
+                    </Button>
                 </form>
 
-                <div className="text-center mt-8 space-y-3 font-patrick">
-                    <p className={`${COLORS.TEXT_SECONDARY}`}>
+                <div className="text-center mt-8 space-y-4">
+                    <Typography variant="body" className={`${COLORS.TEXT_SECONDARY}`}>
                         Belum punya akun?{' '}
                         <Link
                             to="/register"
@@ -215,15 +216,15 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, navigateDelay = 0 }) => {
                         >
                             Daftar di sini
                         </Link>
-                    </p>
-                    <p className={`${COLORS.TEXT_SECONDARY}`}>
+                    </Typography>
+                    <Typography variant="body" className={`${COLORS.TEXT_SECONDARY}`}>
                         <Link
                             to="/forgot-password"
                             className="text-amber-600 dark:text-amber-400 hover:underline font-bold transition-colors"
                         >
                             Lupa Password?
                         </Link>
-                    </p>
+                    </Typography>
                 </div>
             </div>
         </div>

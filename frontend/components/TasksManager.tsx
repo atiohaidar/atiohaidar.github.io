@@ -45,7 +45,7 @@ const TasksManager: React.FC = () => {
     if (isLoading) {
         return (
             <div className="flex justify-center py-12">
-                <p className={`${COLORS.TEXT_SECONDARY} font-caveat text-xl animate-pulse`}>Sedang memuat daftar tugas...</p>
+                <p className={`${COLORS.TEXT_SECONDARY} font-patrick text-xl animate-pulse`}>Sedang memuat daftar tugas...</p>
             </div>
         );
     }
@@ -142,7 +142,7 @@ const TasksManager: React.FC = () => {
             <div className="space-y-4">
                 {tasks && tasks.length === 0 ? (
                     <div className={`glass-panel p-12 text-center`}>
-                        <p className={`text-xl font-caveat ${COLORS.TEXT_SECONDARY}`}>Tidak ada tugas ditemukan. Buat satu untuk memulai!</p>
+                        <p className={`text-xl font-patrick ${COLORS.TEXT_SECONDARY}`}>Tidak ada tugas ditemukan. Buat satu untuk memulai!</p>
                         <p className="text-4xl mt-3">📝</p>
                     </div>
                 ) : (
@@ -152,11 +152,11 @@ const TasksManager: React.FC = () => {
                                 <div className="flex items-center gap-3 mb-2 flex-wrap">
                                     <h4 className={`text-lg font-bold font-patrick ${COLORS.TEXT_PRIMARY} leading-tight`}>{task.name}</h4>
                                     {task.completed ? (
-                                        <span className={`px-2 py-0.5 text-xs font-bold font-mono rounded border-2 border-green-400 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200`}>
+                                        <span className={`px-2 py-0.5 text-xs font-bold font-patrick rounded border-2 border-green-400 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200`}>
                                             ✓ Selesai
                                         </span>
                                     ) : (
-                                        <span className={`px-2 py-0.5 text-xs font-bold font-mono rounded border-2 border-yellow-400 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200`}>
+                                        <span className={`px-2 py-0.5 text-xs font-bold font-patrick rounded border-2 border-yellow-400 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200`}>
                                             ○ Pending
                                         </span>
                                     )}
@@ -164,7 +164,7 @@ const TasksManager: React.FC = () => {
                                 {task.description && (
                                     <p className={`${COLORS.TEXT_SECONDARY} text-sm mb-2 font-patrick`}>{task.description}</p>
                                 )}
-                                <p className={`${COLORS.TEXT_MUTED} text-xs font-mono`}>
+                                <p className={`${COLORS.TEXT_MUTED} text-xs font-patrick`}>
                                     {task.created_at && `Dibuat: ${new Date(task.created_at).toLocaleDateString()}`}
                                     {task.updated_at && ` • Diupdate: ${new Date(task.updated_at).toLocaleDateString()}`}
                                 </p>

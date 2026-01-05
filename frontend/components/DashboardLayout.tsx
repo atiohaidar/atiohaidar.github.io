@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useLogout } from '../hooks/useApi';
-import { COLORS, TYPOGRAPHY } from '../utils/styles';
+import { COLORS } from '../utils/styles';
+import { Typography, Heading, Text } from './ui';
 import { useTheme } from '../contexts/ThemeContext';
 import ThemeToggle from './ThemeToggle';
 import SpyTooltip from './SpyTooltip';
@@ -225,9 +226,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                             <span className="font-patrick text-blue-500 dark:text-blue-400">AH</span>
                         </div>
                         <div className={`overflow-hidden transition-all duration-300 ${isSidebarOpen ? 'w-auto opacity-100' : 'w-0 opacity-0 hidden md:block'}`}>
-                            <h2 className={`${TYPOGRAPHY.HEADING_SECTION} text-lg whitespace-nowrap`}>
+                            <Heading level={2} className="text-lg whitespace-nowrap">
                                 AtioHaidar
-                            </h2>
+                            </Heading>
                         </div>
 
                         <SpyTooltip
@@ -238,7 +239,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                                 { label: 'VER', value: 'NB-Theme' },
                                 { label: 'SEC', value: 'Active' }
                             ]}
-                            targetRef={logoRef}
+                            targetRef={logoRef as React.RefObject<HTMLElement>}
                         />
                     </div>
 
@@ -279,8 +280,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                         </div>
                         {isSidebarOpen && (
                             <div className="flex-1 min-w-0">
-                                <p className={`font-bold text-sm truncate font-patrick ${COLORS.TEXT_PRIMARY}`}>{user.name}</p>
-                                <p className={`text-xs truncate font-mono ${COLORS.TEXT_SECONDARY}`}>@{user.username}</p>
+                                <Typography variant="h4" className={`text-sm truncate ${COLORS.TEXT_PRIMARY}`}>{user.name}</Typography>
+                                <Typography variant="caption" className={`truncate ${COLORS.TEXT_SECONDARY}`}>@{user.username}</Typography>
                             </div>
                         )}
                     </div>
@@ -296,7 +297,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                                 to={item.path}
                                 onClick={() => setIsMobileSidebarOpen(false)}
                                 className={`
-                                    flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 font-patrick text-lg
+                                    flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200
                                     ${active
                                         ? `${COLORS.TEXT_ACCENT} font-bold bg-blue-50 dark:bg-blue-900/20 md:translate-x-1 border-l-4 border-blue-400`
                                         : `${COLORS.TEXT_SECONDARY} hover:text-blue-500 hover:bg-black/5 dark:hover:bg-white/5`
@@ -307,7 +308,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                             >
                                 <span className={`text-xl ${active ? 'scale-110' : ''} transition-transform`}>{item.icon}</span>
                                 {isSidebarOpen && (
-                                    <span className="whitespace-nowrap">{item.label}</span>
+                                    <Typography variant="nav" as="span" className="whitespace-nowrap">{item.label}</Typography>
                                 )}
                             </Link>
                         );
@@ -358,13 +359,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                             ☰
                         </button>
                         <div>
-                            <h1 className={`${TYPOGRAPHY.HEADING_SECTION} ${COLORS.TEXT_PRIMARY} flex items-center gap-2`}>
+                            <Heading level={2} className={`${COLORS.TEXT_PRIMARY} flex items-center gap-2`}>
                                 {pageTitle}
                                 <span className="hidden sm:inline-block w-8 h-0.5 bg-gray-300 dark:bg-gray-700 mx-2"></span>
-                                <span className="text-sm font-normal text-gray-500 dark:text-gray-400 font-caveat tracking-wide">
+                                <Typography variant="caption" className="font-normal text-gray-500 dark:text-gray-400 tracking-wide">
                                     {new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-                                </span>
-                            </h1>
+                                </Typography>
+                            </Heading>
                         </div>
                     </div>
 

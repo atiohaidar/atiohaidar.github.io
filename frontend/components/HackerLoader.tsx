@@ -129,42 +129,45 @@ const HackerLoader: React.FC<HackerLoaderProps> = ({
     return (
         <div
             className={`
-                fixed inset-0 bg-slate-900 z-[9999] flex flex-col items-center justify-center font-patrick overflow-hidden
+                fixed inset-0 bg-paper-cream dark:bg-slate-900 z-[9999] flex flex-col items-center justify-center font-patrick overflow-hidden
                 ${phase === 'exit' ? 'animate-cyber-zoom-out' : ''}
             `}
         >
+            {/* Notebook Background Lines */}
+            <div className="absolute inset-0 pointer-events-none notebook-lines opacity-10 dark:opacity-5"></div>
+
             <div className="relative z-10 text-center w-full max-w-md px-4">
-                {/* Decoding Name */}
-                <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-marker-blue to-blue-400 animate-pulse tracking-[0.1em] mb-4 min-h-[60px]">
+                {/* Decoding Name - Sketch Style */}
+                <h1 className="text-4xl md:text-6xl font-bold font-caveat text-slate-900 dark:text-white animate-pulse tracking-wide mb-4 min-h-[60px]">
                     {text}
+                    <span className="animate-pulse text-marker-blue">|</span>
                 </h1>
 
-                {/* Progress Bar Container */}
-                <div className="w-full h-3 bg-slate-800 rounded-full overflow-hidden mb-6 border-2 border-slate-700">
+                {/* Progress Bar Container - Hand Drawn */}
+                <div className="w-full h-4 bg-transparent rounded-full overflow-hidden mb-6 border-2 border-dashed border-slate-400 dark:border-slate-600 relative">
                     <div
-                        className="h-full bg-marker-blue shadow-lg shadow-accent-blue/50 transition-all duration-100 ease-out"
+                        className="h-full bg-marker-yellow dark:bg-yellow-600 transition-all duration-100 ease-out relative"
                         style={{ width: `${progress}%` }}
-                    />
+                    >
+                        {/* Marker Texture Overlay */}
+                        <div className="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIi8+CjxwYXRoIGQ9Ik0wIDBMNCA0Wk00IDBMMCA0WiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjEiIG9wYWNpdHk9IjAuMSIvPgo8L3N2Zz4=')]"></div>
+                    </div>
                 </div>
 
                 {/* Status Text & Logs */}
-                <div className="h-24 flex flex-col justify-end items-center gap-1">
+                <div className="h-32 flex flex-col justify-end items-center gap-2">
                     {phase === 'access' && (
-                        <div className="text-sm text-green-500 font-bold tracking-[0.2em] animate-bounce mt-2">
+                        <div className="text-xl text-ink-blue dark:text-blue-300 font-bold font-caveat animate-bounce mt-2 transform -rotate-2">
                             ꦮꦶꦭꦸꦗꦺꦁ ꦱꦸꦩ꧀ꦥꦶꦁ
                         </div>
                     )}
                     {logs.map((log, idx) => (
-                        <div key={idx} className="text-xs text-marker-blue font-bold tracking-widest animate-type-in">
-                            {'>'} {log}
+                        <div key={idx} className="text-sm text-slate-500 dark:text-slate-400 font-patrick tracking-wider animate-type-in border-b border-dashed border-slate-300/50 dark:border-slate-700/50 pb-0.5 w-full">
+                            <span className="inline-block w-4 mr-2">✏️</span> {log}
                         </div>
                     ))}
-
                 </div>
             </div>
-
-            {/* Scanline */}
-            <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] z-20 pointer-events-none" />
         </div>
     );
 };

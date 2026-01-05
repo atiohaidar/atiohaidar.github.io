@@ -8,7 +8,8 @@ import type { ResearchItem } from '../types';
 import { BookOpenIcon, ExternalLinkIcon } from './Icons';
 import SpotlightCard from './SpotlightCard';
 import TiltCard from './TiltCard';
-import { COLORS, TYPOGRAPHY } from '../utils/styles';
+import { COLORS } from '../utils/styles';
+import { Typography, Heading, Text } from './ui';
 
 /**
  * Props untuk komponen ResearchCard, yang menampilkan satu item penelitian.
@@ -34,12 +35,14 @@ const ResearchCard: React.FC<ResearchCardProps> = ({ item }) => {
             <SpotlightCard className="glass-panel h-full p-0 overflow-hidden group print:shadow-none print:border print:border-gray-300 print:rounded-none print:bg-transparent print-avoid-break">
                 <div className="p-6 flex flex-col h-full relative z-10">
                     <main className="flex-grow">
-                        <p className={`text-xs font-bold uppercase tracking-wider ${COLORS.TEXT_ACCENT} mb-2 font-patrick`}>
+                        <Typography variant="caption" className={`font-bold uppercase tracking-wider ${COLORS.TEXT_ACCENT} mb-2`}>
                             {item.type}
-                        </p>
-                        <h3 className={`${TYPOGRAPHY.HEADING_CARD} ${COLORS.TEXT_PRIMARY} mb-4 group-hover:text-blue-500 transition-colors`}>{item.title}</h3>
-                        <p className={`text-sm ${COLORS.TEXT_SECONDARY} mb-4 leading-relaxed font-caveat text-lg`}>{item.description}</p>
-                        <p className={`text-sm ${COLORS.TEXT_SECONDARY} leading-relaxed font-caveat text-lg`}><span className={`font-semibold ${COLORS.TEXT_PRIMARY}`}>Kontribusi:</span> {item.contribution}</p>
+                        </Typography>
+                        <Heading level={4} className={`${COLORS.TEXT_PRIMARY} mb-4 group-hover:text-blue-500 transition-colors`}>{item.title}</Heading>
+                        <Text className={`${COLORS.TEXT_SECONDARY} mb-4`}>{item.description}</Text>
+                        <Text className={COLORS.TEXT_SECONDARY}>
+                            <Text as="span" className={`font-semibold ${COLORS.TEXT_PRIMARY}`}>Kontribusi:</Text> {item.contribution}
+                        </Text>
                     </main>
                     <footer className={`mt-4 pt-4 border-t-2 border-dashed ${COLORS.BORDER} opacity-80`}>
                         {item.links.map(link => (
@@ -48,10 +51,10 @@ const ResearchCard: React.FC<ResearchCardProps> = ({ item }) => {
                                 href={link.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className={`flex items-center text-sm ${COLORS.TEXT_SECONDARY} hover:text-blue-500 transition-colors duration-300 group/link overflow-hidden mb-1 font-patrick`}
+                                className={`flex items-center ${COLORS.TEXT_SECONDARY} hover:text-blue-500 transition-colors duration-300 group/link overflow-hidden mb-1`}
                             >
                                 {getIconForLink(link.type)}
-                                <span className="group-hover/link:underline print:underline">{link.url.replace(/^https?:\/\//, '')}</span>
+                                <Typography variant="caption" className="group-hover/link:underline print:underline">{link.url.replace(/^https?:\/\//, '')}</Typography>
                             </a>
                         ))}
                     </footer>

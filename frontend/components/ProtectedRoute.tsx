@@ -28,7 +28,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children, requireAdmin 
                         Halaman ini hanya dapat diakses oleh administrator.
                     </p>
                     <p className={`${palette.panel.textMuted} text-base`}>
-                        Role Anda: <span className={`font-mono px-2 py-1 rounded ${palette.badges.info}`}>{user.role}</span>
+                        Role Anda: <span className={`font-patrick px-2 py-1 rounded ${palette.badges.info}`}>{user.role}</span>
                     </p>
                 </div>
             </div>
