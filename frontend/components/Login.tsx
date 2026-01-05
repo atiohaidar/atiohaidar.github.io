@@ -7,6 +7,7 @@ import BackendLoader from './BackendLoader';
 import type { LoginResponse } from '../lib/api/types';
 import { notificationService } from '../utils/notificationService';
 import { Link } from 'react-router-dom';
+import { COLORS, TYPOGRAPHY } from '../utils/styles';
 
 // Get API base URL for server host display
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787';
@@ -156,66 +157,69 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess, navigateDelay = 0 }) => {
     }
 
     return (
-        <div className="relative overflow-hidden w-full max-w-md mx-auto p-8 rounded-3xl bg-white/70 dark:bg-[#1A2230]/70 backdrop-blur-xl border border-gray-200 dark:border-white/10 shadow-2xl animate-fade-in-up">
-            {/* Ambient Glow */}
-            <div className="absolute top-0 right-0 -mr-16 -mt-16 w-32 h-32 rounded-full bg-blue-500/20 blur-3xl pointer-events-none" />
-            <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-32 h-32 rounded-full bg-cyan-500/20 blur-3xl pointer-events-none" />
+        <div className={`glass-panel relative w-full max-w-md mx-auto p-8 animate-fade-in-up overflow-hidden`}>
+            {/* Tape Effect */}
+            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-32 h-8 bg-yellow-100/80 dark:bg-yellow-900/30 rotate-1 shadow-sm z-20"></div>
+
+            {/* Ambient Doodle */}
+            <div className={`absolute top-0 right-0 p-4 opacity-10 pointer-events-none`}>
+                <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-current">
+                    <path d="M10 10C20 10 20 90 30 90" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                    <path d="M40 10C50 10 50 90 60 90" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+            </div>
 
             <div className="relative z-10">
-                <h2 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white tracking-tight">Balik Lagii</h2>
-                <p className="text-gray-500 dark:text-gray-400 mb-8">Masuk untuk mengelola dashboard</p>
+                <h2 className={`${TYPOGRAPHY.HEADING_SECTION} ${COLORS.TEXT_PRIMARY} mb-2 text-center`}>Balik Lagii</h2>
+                <p className={`${COLORS.TEXT_SECONDARY} mb-8 text-center font-caveat text-xl`}>Masuk untuk mengelola dashboard</p>
 
-                <form onSubmit={handleSubmit} className="space-y-5">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 ml-1">
-                            Username
-                        </label>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="space-y-2">
+                        <label className={`block ${COLORS.TEXT_PRIMARY} font-bold font-patrick text-lg`}>Username</label>
                         <input
                             type="text"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            className="w-full px-5 py-3 bg-white/50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all font-medium"
                             placeholder="admin atau user"
                             required
+                            className={`w-full px-4 py-3 bg-transparent border-b-2 ${COLORS.BORDER} ${COLORS.TEXT_PRIMARY} focus:outline-none focus:border-[${COLORS.TEXT_ACCENT}] transition-colors font-patrick placeholder:text-gray-400 dark:placeholder:text-gray-600 rounded-t-lg hover:bg-black/5 dark:hover:bg-white/5 active:bg-transparent`}
                         />
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 ml-1">
-                            Password
-                        </label>
+                    <div className="space-y-2">
+                        <label className={`block ${COLORS.TEXT_PRIMARY} font-bold font-patrick text-lg`}>Password</label>
                         <input
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-5 py-3 bg-white/50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all font-medium"
                             placeholder="••••••••"
                             required
+                            className={`w-full px-4 py-3 bg-transparent border-b-2 ${COLORS.BORDER} ${COLORS.TEXT_PRIMARY} focus:outline-none focus:border-[${COLORS.TEXT_ACCENT}] transition-colors font-patrick placeholder:text-gray-400 dark:placeholder:text-gray-600 rounded-t-lg hover:bg-black/5 dark:hover:bg-white/5 active:bg-transparent`}
                         />
                     </div>
 
                     <button
                         type="submit"
-                        className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all mt-2"
+                        className={`w-full glass-button ${COLORS.TEXT_PRIMARY} py-3 px-6 rounded-lg mt-4 font-bold font-patrick text-xl hover:scale-[1.02] transition-transform shadow-md`}
                     >
                         Masuk
                     </button>
                 </form>
 
-                <div className="text-sm text-center mt-6 space-y-3">
-                    <p className="text-light-muted/80 dark:text-soft-gray/60">
+                <div className="text-center mt-8 space-y-3 font-patrick">
+                    <p className={`${COLORS.TEXT_SECONDARY}`}>
                         Belum punya akun?{' '}
                         <Link
                             to="/register"
-                            className="text-accent-blue hover:text-accent-blue/80 hover:underline font-medium transition-colors"
+                            className={`${COLORS.TEXT_ACCENT} hover:underline font-bold transition-colors`}
                         >
                             Daftar di sini
                         </Link>
                     </p>
-                    <p className="text-light-muted/80 dark:text-soft-gray/60">
+                    <p className={`${COLORS.TEXT_SECONDARY}`}>
                         <Link
                             to="/forgot-password"
-                            className="text-amber-500 dark:text-amber-400 hover:underline font-medium transition-colors"
+                            className="text-amber-600 dark:text-amber-400 hover:underline font-bold transition-colors"
                         >
                             Lupa Password?
                         </Link>

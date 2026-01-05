@@ -129,20 +129,20 @@ const HackerLoader: React.FC<HackerLoaderProps> = ({
     return (
         <div
             className={`
-                fixed inset-0 bg-black z-[9999] flex flex-col items-center justify-center font-mono overflow-hidden
+                fixed inset-0 bg-slate-900 z-[9999] flex flex-col items-center justify-center font-patrick overflow-hidden
                 ${phase === 'exit' ? 'animate-cyber-zoom-out' : ''}
             `}
         >
             <div className="relative z-10 text-center w-full max-w-md px-4">
                 {/* Decoding Name */}
-                <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-600 animate-pulse tracking-[0.2em] mb-4 min-h-[60px]">
+                <h1 className="text-4xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-marker-blue to-blue-400 animate-pulse tracking-[0.1em] mb-4 min-h-[60px]">
                     {text}
                 </h1>
 
                 {/* Progress Bar Container */}
-                <div className="w-full h-1 bg-gray-900 rounded-full overflow-hidden mb-6 border border-blue-900/50">
+                <div className="w-full h-3 bg-slate-800 rounded-full overflow-hidden mb-6 border-2 border-slate-700">
                     <div
-                        className="h-full bg-cyan-500 shadow-[0_0_10px_#06b6d4] transition-all duration-100 ease-out"
+                        className="h-full bg-marker-blue shadow-lg shadow-accent-blue/50 transition-all duration-100 ease-out"
                         style={{ width: `${progress}%` }}
                     />
                 </div>
@@ -155,7 +155,7 @@ const HackerLoader: React.FC<HackerLoaderProps> = ({
                         </div>
                     )}
                     {logs.map((log, idx) => (
-                        <div key={idx} className="text-xs text-cyan-500/80 font-bold tracking-widest animate-type-in">
+                        <div key={idx} className="text-xs text-marker-blue font-bold tracking-widest animate-type-in">
                             {'>'} {log}
                         </div>
                     ))}

@@ -41,8 +41,8 @@ const MessageBubble: React.FC<MessageBubbleProps> = memo(({
             <div className="flex flex-col max-w-[70%]">
                 <div
                     className={`relative p-3 px-4 shadow-sm ${isOwnMessage
-                            ? 'bg-[#1D4ED8] text-white rounded-tl-lg rounded-tr-lg rounded-bl-lg'
-                            : 'bg-[#1f2c34] text-gray-100 rounded-tl-lg rounded-tr-lg rounded-br-lg'
+                        ? 'bg-chat-sender-bubble text-white rounded-tl-lg rounded-tr-lg rounded-bl-lg'
+                        : 'bg-chat-dark-bubble text-gray-100 rounded-tl-lg rounded-tr-lg rounded-br-lg'
                         }`}
                 >
                     {/* Sender Label */}
@@ -53,12 +53,12 @@ const MessageBubble: React.FC<MessageBubbleProps> = memo(({
                     {/* Reply Preview */}
                     {message.reply_to_id && message.reply_content && (
                         <div
-                            className={`text-xs p-3 mb-3 rounded border-l-4 ${isOwnMessage
-                                    ? 'bg-[#1E40AF] border-[#3B82F6]'
-                                    : 'bg-[#182229] border-[#3B82F6]'
+                            className={`text-xs p-3 mb-3 rounded border-l-4 border-accent-blue ${isOwnMessage
+                                ? 'bg-chat-sender-bubble-dark'
+                                : 'bg-chat-dark-panel'
                                 }`}
                         >
-                            <div className="font-medium text-[#60A5FA] mb-1">
+                            <div className="font-medium text-blue-400 mb-1">
                                 {message.reply_sender_id === currentUserId
                                     ? 'Anda'
                                     : `Anonim-${message.reply_sender_id?.slice(-6)}`}

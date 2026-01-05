@@ -5,17 +5,20 @@
 import React from 'react';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'danger' | 'success';
+  variant?: 'primary' | 'secondary' | 'danger' | 'success' | 'gradient' | 'glass' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
   fullWidth?: boolean;
 }
 
 const variantStyles = {
-  primary: 'bg-blue-600 hover:bg-blue-700 text-white',
-  secondary: 'bg-gray-600 hover:bg-gray-700 text-white',
-  danger: 'bg-red-600 hover:bg-red-700 text-white',
-  success: 'bg-green-600 hover:bg-green-700 text-white',
+  primary: 'bg-marker-blue text-slate-900 border-2 border-slate-800 hover:bg-blue-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]',
+  secondary: 'bg-white text-slate-900 border-2 border-slate-800 hover:bg-slate-50 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]',
+  danger: 'bg-marker-pink text-slate-900 border-2 border-slate-800 hover:bg-red-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]',
+  success: 'bg-marker-green text-slate-900 border-2 border-slate-800 hover:bg-green-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]',
+  gradient: 'bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30',
+  glass: 'glass-button',
+  ghost: 'bg-transparent text-slate-700 dark:text-slate-300 hover:bg-black/5 dark:hover:bg-white/10',
 };
 
 const sizeStyles = {
@@ -36,7 +39,7 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
   const baseStyles = 'font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed';
   const widthStyle = fullWidth ? 'w-full' : '';
-  
+
   return (
     <button
       className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${widthStyle} ${className}`}

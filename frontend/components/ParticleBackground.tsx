@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react';
 import { loadSlim } from '@tsparticles/slim';
 import { Particles, initParticlesEngine } from '@tsparticles/react';
 import type { ISourceOptions } from '@tsparticles/engine';
+import { COLORS } from '../constants';
 
 const ParticleBackground: React.FC = () => {
   const [init, setInit] = useState(false);
@@ -51,10 +52,10 @@ const ParticleBackground: React.FC = () => {
     },
     particles: {
       color: {
-        value: ['#3b82f6', '#8b5cf6', '#06b6d4', '#10b981'],
+        value: COLORS.particles,
       },
       links: {
-        color: '#3b82f6',
+        color: COLORS.chart.primary,
         distance: 150,
         enable: true,
         opacity: 0.3,

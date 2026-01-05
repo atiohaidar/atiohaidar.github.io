@@ -3,6 +3,7 @@ import { useAuth } from '../hooks/useAuth';
 import * as d3 from 'd3';
 import { useTheme } from '../contexts/ThemeContext';
 import { DASHBOARD_THEME } from '../utils/styles';
+import { COLORS } from '../constants';
 
 interface Transaction {
     id: number;
@@ -97,8 +98,8 @@ const FinancePage = () => {
         // Clear previous chart
         d3.select("#chart-container").selectAll("*").remove();
 
-        const chartTextColor = theme === 'dark' ? '#94a3b8' : '#64748B'; // slate-400 / slate-500
-        const gridColor = theme === 'dark' ? '#334155' : '#E2E8F0'; // slate-700 / slate-200
+        const chartTextColor = theme === 'dark' ? COLORS.chart.textDark : COLORS.chart.textLight;
+        const gridColor = theme === 'dark' ? COLORS.chart.gridDark : COLORS.chart.gridLight;
         const tooltipBgClass = theme === 'dark' ? 'bg-slate-800' : 'bg-white';
         const tooltipTextClass = theme === 'dark' ? 'text-white' : 'text-slate-800';
 
@@ -181,7 +182,7 @@ const FinancePage = () => {
         svg.append("path")
             .datum(data)
             .attr("fill", "none")
-            .attr("stroke", "#10B981")
+            .attr("stroke", COLORS.chart.success)
             .attr("stroke-width", 2)
             .attr("d", valueline);
 
@@ -194,8 +195,8 @@ const FinancePage = () => {
             .attr("x2", "0%")
             .attr("y2", "100%");
 
-        gradient.append("stop").attr("offset", "0%").attr("stop-color", "#10B981").attr("stop-opacity", 0.5);
-        gradient.append("stop").attr("offset", "100%").attr("stop-color", "#10B981").attr("stop-opacity", 0);
+        gradient.append("stop").attr("offset", "0%").attr("stop-color", COLORS.chart.success).attr("stop-opacity", 0.5);
+        gradient.append("stop").attr("offset", "100%").attr("stop-color", COLORS.chart.success).attr("stop-opacity", 0);
 
         // Tooltip interaction overlay
         // Use a persistent container or remove prev one
@@ -209,19 +210,19 @@ const FinancePage = () => {
             .attr("r", 4)
             .attr("cx", d => x(d.date))
             .attr("cy", d => y(d.volume))
-            .attr("fill", "#10B981")
-            .attr("stroke", theme === 'dark' ? "#020617" : "#ffffff")
+            .attr("fill", COLORS.chart.success)
+            .attr("stroke", theme === 'dark' ? COLORS.deepNavy : "#ffffff")
             .attr("stroke-width", 2)
             .on("mouseover", (event, d) => {
                 tooltip.transition().duration(200).style("opacity", .9);
                 tooltip.html(`Date: ${d.date.toLocaleDateString()}<br/>Vol: Rp ${d.volume.toLocaleString()}`)
                     .style("left", (event.pageX + 10) + "px")
                     .style("top", (event.pageY - 28) + "px");
-                d3.select(event.currentTarget).attr("r", 6).attr("fill", "#34d399");
+                d3.select(event.currentTarget).attr("r", 6).attr("fill", COLORS.chart.successBright);
             })
             .on("mouseout", (event) => {
                 tooltip.transition().duration(500).style("opacity", 0);
-                d3.select(event.currentTarget).attr("r", 4).attr("fill", "#10B981");
+                d3.select(event.currentTarget).attr("r", 4).attr("fill", COLORS.chart.success);
             });
     };
 

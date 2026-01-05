@@ -24,7 +24,7 @@ const Footer: React.FC<FooterProps> = ({ socials, copyright }) => {
     const instagramRef = useRef<HTMLAnchorElement>(null);
 
     return (
-        <footer className="py-8 text-center text-light-muted dark:text-soft-gray text-sm">
+        <footer className="py-8 text-center text-slate-500 dark:text-slate-400 font-caveat text-lg print:hidden">
             <div className="flex justify-center items-center space-x-6 mb-4 md:hidden print:hidden">
                 {/* GitHub */}
                 <div

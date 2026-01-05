@@ -153,7 +153,7 @@ const LandingPage: React.FC = () => {
                 onNavAction={handleNavAction}
             />
 
-            <main className="mx-auto relative  -z-12 bg-light-bg dark:bg-deep-navy transition-colors  ">
+            <main className={`mx-auto relative -z-12 ${COLORS.BG_PRIMARY} transition-colors min-h-screen`}>
                 <ScrollReveal delay={200}>
 
 

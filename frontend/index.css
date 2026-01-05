@@ -4,19 +4,65 @@
 
 @layer utilities {
   .glass-panel {
-    @apply backdrop-blur-xl bg-white/60 dark:bg-[#0f172a]/60 border border-white/20 dark:border-white/5 shadow-xl;
+    @apply bg-paper-cream dark:bg-slate-900 border-2 border-slate-800 dark:border-slate-700 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)];
+    border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
   }
 
   .glass-card {
-    @apply backdrop-blur-md bg-white/40 dark:bg-[#1e293b]/40 border border-white/20 dark:border-white/5 shadow-lg transition-all duration-300;
+    @apply bg-white dark:bg-slate-800 border-[1.5px] border-slate-800 dark:border-slate-700 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,0.05)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)];
+    border-radius: 2px 4px 5px 2px/4px 2px 3px 5px;
   }
 
   .glass-button {
-    @apply backdrop-blur-sm bg-white/20 hover:bg-white/30 dark:bg-white/5 dark:hover:bg-white/10 border border-white/10 transition-all duration-200 active:scale-95;
+    @apply bg-white dark:bg-slate-800 border-2 border-slate-800 dark:border-slate-700 px-4 py-2 text-slate-900 dark:text-white transition-all duration-200 active:scale-95 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)];
+    border-radius: 10px 5px 12px 6px/5px 12px 6px 10px;
   }
 
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-blue to-purple-500;
+    @apply text-slate-900 dark:text-white relative inline-block;
+  }
+
+  .text-gradient::after {
+    content: '';
+    @apply absolute -bottom-1 left-0 w-full h-2 bg-marker-yellow/60 -z-10;
+    transform: rotate(-1deg);
+  }
+
+  .notebook-lines {
+    background-image: linear-gradient(theme('colors.paper-line') 1px, transparent 1px);
+    background-size: 100% 2rem;
+  }
+
+  .dark .notebook-lines {
+    background-image: linear-gradient(theme('colors.paper-line-dark') 1px, transparent 1px);
+  }
+
+  .hand-drawn-underline {
+    position: relative;
+    display: inline-block;
+  }
+
+  .hand-drawn-underline::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 3px;
+    background: currentColor;
+    border-radius: 50%;
+    transform: scaleX(1) skewX(-15deg);
+  }
+
+  .hand-drawn-circle {
+    @apply relative inline-flex items-center justify-center p-2;
+  }
+
+  .hand-drawn-circle::before {
+    content: '';
+    @apply absolute inset-0 border-2 border-slate-800 dark:border-slate-400 -z-10;
+    border-radius: 50% 45% 52% 48% / 48% 52% 45% 50%;
+    transform: rotate(2deg);
   }
 }
 

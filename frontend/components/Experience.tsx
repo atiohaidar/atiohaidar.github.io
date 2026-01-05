@@ -1,28 +1,23 @@
-/**
- * @file Komponen untuk bagian "Pengalaman".
- * Menampilkan linimasa (timeline) untuk pengalaman kerja dan pendidikan.
- */
 import React from 'react';
 import Section from './Section';
 import type { Experience, Education } from '../types';
+import { COLORS, TYPOGRAPHY } from '../utils/styles';
 
 /**
  * Komponen untuk menampilkan satu item dalam linimasa.
- * Dapat digunakan untuk pengalaman kerja maupun pendidikan.
- * @param {{ item: Experience | Education }} props Props yang berisi detail item.
  */
 const TimelineItem: React.FC<{ item: Experience | Education }> = ({ item }) => (
-    <div className="relative pl-8 sm:pl-12 py-4 group print-avoid-break">
-        <div className="absolute left-0 h-full w-px bg-gray-300 dark:bg-soft-gray/30 print:bg-gray-400"></div>
-        <div className="absolute left-[-5px] top-6 w-3 h-3 rounded-full bg-gray-400 dark:bg-soft-gray group-hover:bg-light-accent dark:group-hover:bg-accent-blue transition-colors print:bg-black"></div>
-        <p className="text-sm text-light-accent dark:text-accent-blue mb-1 print:text-gray-600">{item.date}</p>
-        <h3 className="text-lg font-poppins font-bold text-light-text dark:text-white print:text-black">
+    <div className="relative pl-8 sm:pl-12 py-6 group print-avoid-break">
+        <div className={`absolute left-0 h-full w-1 border-l-2 border-dashed ${COLORS.BORDER} opacity-40 print:bg-gray-400`}></div>
+        <div className={`absolute left-[-6px] top-8 w-3 h-3 rounded-full border-2 ${COLORS.BORDER} ${COLORS.BG_ACCENT} group-hover:scale-125 transition-transform print:bg-black`}></div>
+        <p className={`text-sm ${COLORS.TEXT_ACCENT} mb-2 font-patrick tracking-wide`}>{item.date}</p>
+        <h3 className={`text-xl ${TYPOGRAPHY.WEIGHT_BOLD} ${COLORS.TEXT_PRIMARY} font-patrick`}>
             {'title' in item ? item.title : item.degree}
         </h3>
-        <p className="text-md text-light-muted dark:text-light-slate mb-2 print:text-gray-800">
+        <p className={`text-lg ${COLORS.TEXT_SECONDARY} mb-2 font-caveat opacity-80`}>
             {'company' in item ? item.company : item.institution}
         </p>
-        {'description' in item && <p className="text-sm text-light-muted dark:text-soft-gray print:text-gray-700">{item.description}</p>}
+        {'description' in item && <p className={`text-base ${COLORS.TEXT_MUTED} font-caveat leading-relaxed`}>{item.description}</p>}
     </div>
 );
 

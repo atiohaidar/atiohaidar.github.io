@@ -1,20 +1,11 @@
 /**
- * @file Komponen untuk bagian "Tentang Sa                    </div>
-                    <div>
-                        <h3 className="text-lg font-poppins font-semibold text-white mb-3 print:text-black print:text-base print:mb-2">🎯 Minat & Hobi</h3>
-                        <ul className="space-y-2 list-disc list-inside text-soft-gray print:text-black print:space-y-1 print:text-sm">
-                             {interests.map(interest => (
-                                <li key={interest.title}><span className="font-semibold text-light-slate print:text-black">{interest.title}:</span> {interest.description}</li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>mpilkan deskripsi naratif, nilai-nilai inti (core values), dan minat.
+ * @file Komponen untuk bagian "Tentang Saya"
+ * Menampilkan deskripsi naratif, nilai-nilai inti (core values), dan minat.
  */
 import React from 'react';
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
 import type { About as AboutType } from '../types';
+import { TYPOGRAPHY, COLORS, DECORATION } from '../utils/styles';
 
 /**
  * Props untuk komponen About.
@@ -35,10 +26,10 @@ const About: React.FC<AboutProps> = ({ data }) => {
             ref={ref}
             className={`py-12 container mx-auto px-6 md:px-16 lg:px-20 print:py-4 print:px-4 print-avoid-break ${animationClass}`}
         >
-            <h2 className="text-2xl md:text-3xl font-poppins font-bold text-light-text dark:text-white mb-8 flex items-center print:mb-4 print:text-xl">
-                <span className="text-light-accent dark:text-accent-blue mr-3 print:mr-2">01.</span>
+            <h2 className={`${TYPOGRAPHY.HEADING_SECTION} ${COLORS.TEXT_PRIMARY} mb-8 flex items-center print:mb-4 print:text-xl`}>
+                <span className={`${DECORATION.CIRCLE} ${COLORS.TEXT_ACCENT} mr-4 print:mr-2 text-sm`}>01.</span>
                 Tentang Saya
-                <span className="h-px w-20 sm:w-40 bg-gray-300 dark:bg-soft-gray/30 ml-4 print:bg-gray-400 print:ml-2 print:w-16"></span>
+                <span className="h-1 w-20 sm:w-40 bg-slate-800 dark:bg-slate-400/30 ml-4 print:bg-gray-400 print:ml-2 print:w-16 rounded-full opacity-50"></span>
             </h2>
             <div className="glass-panel p-8 rounded-3xl">
                 <div className="grid grid-cols-1 md:grid-cols-5 gap-12 print:gap-6">

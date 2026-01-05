@@ -76,15 +76,15 @@ const ParallaxBackground: React.FC<ParallaxBackgroundProps> = ({
 
             {/* Animated Orbs with Mouse & Scroll Parallax */}
             <div
-                className="fixed top-[20%] right-[10%] w-[600px] h-[600px] bg-accent-blue/40 rounded-full blur-[120px] animate-blob mix-blend-multiply dark:mix-blend-screen pointer-events-none"
+                className="fixed top-[20%] right-[10%] w-[600px] h-[600px] bg-marker-blue/60 rounded-full blur-[80px] animate-blob mix-blend-multiply dark:mix-blend-normal dark:bg-blue-900/20 pointer-events-none"
                 style={getLayerStyle(1.0)}
             />
             <div
-                className="fixed bottom-[20%] left-[10%] w-[600px] h-[600px] bg-purple-500/40 rounded-full blur-[120px] animate-blob animation-delay-2000 mix-blend-multiply dark:mix-blend-screen pointer-events-none"
+                className="fixed bottom-[20%] left-[10%] w-[600px] h-[600px] bg-marker-pink/60 rounded-full blur-[80px] animate-blob animation-delay-2000 mix-blend-multiply dark:mix-blend-normal dark:bg-purple-900/20 pointer-events-none"
                 style={getLayerStyle(1.5)}
             />
             <div
-                className="fixed top-[40%] left-[40%] w-[600px] h-[600px] bg-cyan-500/40 rounded-full blur-[120px] animate-blob animation-delay-4000 mix-blend-multiply dark:mix-blend-screen pointer-events-none"
+                className="fixed top-[40%] left-[40%] w-[600px] h-[600px] bg-marker-yellow/60 rounded-full blur-[80px] animate-blob animation-delay-4000 mix-blend-multiply dark:mix-blend-normal dark:bg-yellow-900/20 pointer-events-none"
                 style={getLayerStyle(2.0)}
             />
         </>

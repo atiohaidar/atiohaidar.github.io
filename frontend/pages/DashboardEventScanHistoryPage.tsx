@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import * as d3 from 'd3';
 import { getEvent, getEventScanHistory } from '../lib/api/services';
 import { COLORS } from '../utils/styles';
+import { COLORS as COLOR_CONSTANTS } from '../constants';
 import type { EventScanHistory } from '../apiTypes';
 
 type TimeGranularity = 'minute' | 'hour' | 'day';
@@ -181,7 +182,7 @@ const DashboardEventScanHistoryPage: React.FC = () => {
         g.append('path')
             .datum(chartData)
             .attr('fill', 'none')
-            .attr('stroke', '#3b82f6')
+            .attr('stroke', COLOR_CONSTANTS.chart.primary)
             .attr('stroke-width', 2)
             .attr('d', line);
 
@@ -194,7 +195,7 @@ const DashboardEventScanHistoryPage: React.FC = () => {
             .attr('cx', d => x(d.time))
             .attr('cy', d => y(d.count))
             .attr('r', 4)
-            .attr('fill', '#3b82f6')
+            .attr('fill', COLOR_CONSTANTS.chart.primary)
             .attr('stroke', 'white')
             .attr('stroke-width', 2)
             .style('cursor', 'pointer')

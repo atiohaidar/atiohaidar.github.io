@@ -3,7 +3,7 @@
  */
 import React, { useState } from 'react';
 import { useTasks, useCreateTask, useDeleteTask } from '../hooks/useApi';
-import { COLORS, DASHBOARD_THEME } from '../utils/styles';
+import { COLORS, TYPOGRAPHY } from '../utils/styles';
 import { useTheme } from '../contexts/ThemeContext';
 import type { TaskCreate } from '../apiTypes';
 
@@ -13,7 +13,6 @@ const TasksManager: React.FC = () => {
     const createTaskMutation = useCreateTask();
     const deleteTaskMutation = useDeleteTask();
     const { theme } = useTheme();
-    const palette = DASHBOARD_THEME[theme];
 
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [newTask, setNewTask] = useState<TaskCreate>({
@@ -44,41 +43,45 @@ const TasksManager: React.FC = () => {
     };
 
     if (isLoading) {
-        return <div className={`text-center py-8 ${palette.panel.textMuted}`}>Loading tasks...</div>;
+        return (
+            <div className="flex justify-center py-12">
+                <p className={`${COLORS.TEXT_SECONDARY} font-caveat text-xl animate-pulse`}>Sedang memuat daftar tugas...</p>
+            </div>
+        );
     }
 
     if (error) {
         return (
-            <div className="p-4 rounded-lg border border-status-danger/40 bg-status-danger-muted">
-                <p className="text-status-danger-dark">{error.message}</p>
+            <div className={`glass-panel p-6 border-2 border-red-300 bg-red-50 dark:bg-red-900/20`}>
+                <p className="text-red-700 dark:text-red-300 font-patrick text-lg">⚠️ {error.message}</p>
             </div>
         );
     }
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center flex-wrap gap-4">
-                <h3 className={`text-xl font-bold ${palette.panel.text}`}>Tasks Management</h3>
-                
-                <div className="flex gap-2 items-center flex-wrap">
+            <div className="glass-panel p-6 flex justify-between items-center flex-wrap gap-4">
+                <h3 className={`${TYPOGRAPHY.HEADING_SECTION} ${COLORS.TEXT_PRIMARY}`}>Daftar Tugas</h3>
+
+                <div className="flex gap-3 items-center flex-wrap">
                     <select
                         value={filter === undefined ? 'all' : filter ? 'completed' : 'incomplete'}
                         onChange={(e) => {
                             const val = e.target.value;
                             setFilter(val === 'all' ? undefined : val === 'completed');
                         }}
-                        className={`px-3 py-2 rounded-lg text-sm ${palette.input}`}
+                        className={`px-4 py-2 rounded-lg text-sm font-patrick font-bold bg-transparent border-b-2 ${COLORS.BORDER} ${COLORS.TEXT_PRIMARY} focus:outline-none focus:border-[${COLORS.TEXT_ACCENT}] cursor-pointer hover:bg-black/5 dark:hover:bg-white/5`}
                     >
-                        <option value="all">All Tasks</option>
-                        <option value="completed">Completed</option>
-                        <option value="incomplete">Incomplete</option>
+                        <option value="all" className="dark:bg-slate-800">Semua Tugas</option>
+                        <option value="completed" className="dark:bg-slate-800">Selesai</option>
+                        <option value="incomplete" className="dark:bg-slate-800">Belum Selesai</option>
                     </select>
-                    
+
                     <button
                         onClick={() => setShowCreateForm(!showCreateForm)}
-                        className={`px-4 py-2 rounded-lg font-semibold transition-colors ${palette.buttons.info}`}
+                        className={`glass-button ${COLORS.TEXT_PRIMARY} font-bold font-patrick text-sm hover:scale-[1.02]`}
                     >
-                        {showCreateForm ? 'Cancel' : 'Create Task'}
+                        {showCreateForm ? 'Batal' : 'Buat Tugas Baru'}
                     </button>
                 </div>
             </div>
@@ -86,89 +89,93 @@ const TasksManager: React.FC = () => {
             {showCreateForm && (
                 <form
                     onSubmit={handleCreateTask}
-                    className={`${palette.panel.bg} ${palette.panel.border} ${palette.panel.text} p-6 rounded-lg space-y-4`}
+                    className={`glass-panel p-6 space-y-4 relative`}
                 >
-                    <h4 className={`text-lg font-semibold ${palette.panel.text}`}>Create New Task</h4>
-                    
-                    <div className="space-y-3">
+                    {/* Tape decoration */}
+                    <div className="absolute -top-3 left-10 w-24 h-6 bg-blue-200/80 dark:bg-blue-800/50 shadow-sm -rotate-2 z-20"></div>
+
+                    <h4 className={`${TYPOGRAPHY.HEADING_SECTION} ${COLORS.TEXT_PRIMARY} text-lg`}>Buat Tugas Baru</h4>
+
+                    <div className="space-y-4">
                         <input
                             type="text"
-                            placeholder="Task name"
+                            placeholder="Nama tugas..."
                             value={newTask.name}
                             onChange={(e) => setNewTask({ ...newTask, name: e.target.value })}
-                            className={`w-full px-4 py-2 rounded-lg ${palette.input}`}
+                            className={`w-full px-4 py-3 bg-transparent border-b-2 ${COLORS.BORDER} ${COLORS.TEXT_PRIMARY} focus:outline-none focus:border-[${COLORS.TEXT_ACCENT}] transition-colors font-patrick placeholder:text-gray-400 dark:placeholder:text-gray-600 rounded-t-lg hover:bg-black/5 dark:hover:bg-white/5`}
                             required
                         />
                         <textarea
-                            placeholder="Description (optional)"
+                            placeholder="Deskripsi (opsional)..."
                             value={newTask.description}
                             onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
-                            className={`w-full px-4 py-2 rounded-lg ${palette.input} resize-none`}
+                            className={`w-full px-4 py-3 bg-transparent border-b-2 ${COLORS.BORDER} ${COLORS.TEXT_PRIMARY} focus:outline-none focus:border-[${COLORS.TEXT_ACCENT}] transition-colors font-patrick placeholder:text-gray-400 dark:placeholder:text-gray-600 rounded-t-lg hover:bg-black/5 dark:hover:bg-white/5 resize-none`}
                             rows={3}
                         />
-                        <label className="flex items-center gap-2 text-light-slate">
+                        <label className={`flex items-center gap-2 ${COLORS.TEXT_SECONDARY} font-patrick cursor-pointer`}>
                             <input
                                 type="checkbox"
                                 checked={newTask.completed}
                                 onChange={(e) => setNewTask({ ...newTask, completed: e.target.checked })}
-                                className="w-4 h-4 rounded border border-status-info/40 bg-transparent text-accent-blue focus:ring-status-info"
+                                className="w-5 h-5 rounded border-2 border-gray-400 bg-transparent text-blue-500 focus:ring-0 checked:bg-blue-500"
                             />
-                            <span>Mark as completed</span>
+                            <span>Tandai sebagai selesai</span>
                         </label>
                     </div>
 
-                    <button
-                        type="submit"
-                        disabled={createTaskMutation.isPending}
-                        className={`px-6 py-2 rounded-lg font-semibold transition-colors ${palette.buttons.success} disabled:opacity-50 disabled:cursor-not-allowed`}
-                    >
-                        {createTaskMutation.isPending ? 'Creating...' : 'Create Task'}
-                    </button>
+                    <div className="flex justify-end pt-2">
+                        <button
+                            type="submit"
+                            disabled={createTaskMutation.isPending}
+                            className={`glass-button bg-green-50 hover:bg-green-100 dark:bg-green-900/20 dark:hover:bg-green-900/30 text-green-700 dark:text-green-300 border-green-300 dark:border-green-700 font-bold font-patrick px-6 disabled:opacity-50`}
+                        >
+                            {createTaskMutation.isPending ? 'Menyimpan...' : 'Simpan Tugas'}
+                        </button>
+                    </div>
 
                     {createTaskMutation.isError && (
-                        <p className="text-sm text-status-danger-dark">{createTaskMutation.error?.message}</p>
+                        <p className="text-sm text-red-600 dark:text-red-400 font-patrick">⚠️ {createTaskMutation.error?.message}</p>
                     )}
                 </form>
             )}
 
-            <div className="space-y-3">
+            <div className="space-y-4">
                 {tasks && tasks.length === 0 ? (
-                    <div className={`text-center py-8 ${palette.panel.textMuted}`}>
-                        No tasks found. Create one to get started!
+                    <div className={`glass-panel p-12 text-center`}>
+                        <p className={`text-xl font-caveat ${COLORS.TEXT_SECONDARY}`}>Tidak ada tugas ditemukan. Buat satu untuk memulai!</p>
+                        <p className="text-4xl mt-3">📝</p>
                     </div>
                 ) : (
                     tasks?.map((task) => (
-                        <div key={task.id} className={`${palette.panel.bg} ${palette.panel.border} ${palette.panel.text} p-4 rounded-lg`}>
-                            <div className="flex justify-between items-start">
-                                <div className="flex-1">
-                                    <div className="flex items-center gap-3 mb-2">
-                                        <h4 className={`font-semibold ${palette.panel.text}`}>{task.name}</h4>
-                                        {task.completed ? (
-                                            <span className={`px-2 py-1 text-xs rounded-full ${palette.badges.success}`}>
-                                                ✓ Completed
-                                            </span>
-                                        ) : (
-                                            <span className={`px-2 py-1 text-xs rounded-full ${palette.badges.warning}`}>
-                                                ○ Pending
-                                            </span>
-                                        )}
-                                    </div>
-                                    {task.description && (
-                                        <p className={`${palette.panel.textMuted} text-sm mb-2`}>{task.description}</p>
+                        <div key={task.id} className={`glass-panel p-4 flex flex-col sm:flex-row justify-between items-start gap-4 transition-transform hover:-translate-y-1`}>
+                            <div className="flex-1">
+                                <div className="flex items-center gap-3 mb-2 flex-wrap">
+                                    <h4 className={`text-lg font-bold font-patrick ${COLORS.TEXT_PRIMARY} leading-tight`}>{task.name}</h4>
+                                    {task.completed ? (
+                                        <span className={`px-2 py-0.5 text-xs font-bold font-mono rounded border-2 border-green-400 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200`}>
+                                            ✓ Selesai
+                                        </span>
+                                    ) : (
+                                        <span className={`px-2 py-0.5 text-xs font-bold font-mono rounded border-2 border-yellow-400 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200`}>
+                                            ○ Pending
+                                        </span>
                                     )}
-                                    <p className={`${palette.panel.textMuted} text-xs`}>
-                                        {task.created_at && `Created: ${new Date(task.created_at).toLocaleDateString()}`}
-                                        {task.updated_at && ` • Updated: ${new Date(task.updated_at).toLocaleDateString()}`}
-                                    </p>
                                 </div>
-                                <button
-                                    onClick={() => handleDeleteTask(task.id, task.name)}
-                                    disabled={deleteTaskMutation.isPending}
-                                    className={`px-3 py-1 text-sm rounded transition-colors ml-4 ${palette.buttons.danger} disabled:opacity-50 disabled:cursor-not-allowed`}
-                                >
-                                    Delete
-                                </button>
+                                {task.description && (
+                                    <p className={`${COLORS.TEXT_SECONDARY} text-sm mb-2 font-patrick`}>{task.description}</p>
+                                )}
+                                <p className={`${COLORS.TEXT_MUTED} text-xs font-mono`}>
+                                    {task.created_at && `Dibuat: ${new Date(task.created_at).toLocaleDateString()}`}
+                                    {task.updated_at && ` • Diupdate: ${new Date(task.updated_at).toLocaleDateString()}`}
+                                </p>
                             </div>
+                            <button
+                                onClick={() => handleDeleteTask(task.id, task.name)}
+                                disabled={deleteTaskMutation.isPending}
+                                className={`px-3 py-1.5 text-xs font-bold font-patrick text-red-600 dark:text-red-400 border border-dashed border-red-300 dark:border-red-700 rounded hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors disabled:opacity-50`}
+                            >
+                                Hapus
+                            </button>
                         </div>
                     ))
                 )}

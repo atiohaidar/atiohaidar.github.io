@@ -6,6 +6,8 @@
  */
 import React, { useRef, useEffect, useMemo, useCallback } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
+import MessageBubble from './chat/MessageBubble';
+import DateSeparator from './chat/DateSeparator';
 
 interface Message {
     id: string;
@@ -126,66 +128,29 @@ const VirtualMessageList: React.FC<VirtualMessageListProps> = ({
 
     const renderItem = useCallback((item: VirtualItem) => {
         if (item.type === 'date-header') {
-            return (
-                <div className="flex items-center justify-center my-6">
-                    <div className="bg-[#1f2c34] text-gray-300 text-xs px-4 py-2 rounded-full border border-[#2a3942]">
-                        {item.formattedDate}
-                    </div>
-                </div>
-            );
+            return <DateSeparator dateLabel={item.formattedDate} />;
         }
 
         const msg = item.message;
         const isOwn = item.isOwn;
 
         return (
-            <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'} mb-2`}>
-                <div className="flex flex-col max-w-[70%]">
-                    <div
-                        className={`relative p-3 px-4 shadow-sm ${isOwn
-                            ? 'bg-[#1D4ED8] text-white rounded-tl-lg rounded-tr-lg rounded-bl-lg'
-                            : 'bg-[#1f2c34] text-gray-100 rounded-tl-lg rounded-tr-lg rounded-br-lg'
-                            }`}
-                    >
-                        <div className="text-sm mb-1 opacity-70 font-medium">
-                            {isOwn ? 'Anda' : `Anonim-${msg.sender_id.slice(-6)}`}
-                        </div>
-                        {msg.reply_to_id && msg.reply_content && (
-                            <div className={`text-xs p-3 mb-3 rounded border-l-4 ${isOwn
-                                ? 'bg-[#1E40AF] border-[#3B82F6]'
-                                : 'bg-[#182229] border-[#3B82F6]'
-                                }`}>
-                                <div className="font-medium text-[#60A5FA] mb-1">
-                                    {msg.reply_sender_id === currentUserId
-                                        ? 'Anda'
-                                        : `Anonim-${msg.reply_sender_id?.slice(-6)}`
-                                    }
-                                </div>
-                                <div className="truncate opacity-80">{msg.reply_content}</div>
-                            </div>
-                        )}
-                        <div className="break-words text-base leading-relaxed">
-                            {msg.content}
-                        </div>
-                        <div className="flex items-center justify-end gap-2 mt-2">
-                            <span className="text-xs opacity-60">
-                                {new Date(msg.created_at).toLocaleTimeString('id-ID', {
-                                    hour: '2-digit',
-                                    minute: '2-digit'
-                                })}
-                            </span>
-                        </div>
-                    </div>
-                    {!isOwn && (
-                        <button
-                            onClick={() => onReply(msg)}
-                            className="text-xs mt-1 ml-4 text-gray-400 hover:text-[#60A5FA] hover:underline transition-colors"
-                        >
-                            Balas
-                        </button>
-                    )}
-                </div>
-            </div>
+            <MessageBubble
+                message={{
+                    // Map Message to AnonymousMessage interface expected by MessageBubble
+                    // Assuming types are compatible or mapping is needed
+                    id: msg.id,
+                    sender_id: msg.sender_id,
+                    content: msg.content,
+                    reply_to_id: msg.reply_to_id,
+                    reply_content: msg.reply_content,
+                    reply_sender_id: msg.reply_sender_id,
+                    created_at: msg.created_at
+                }}
+                isOwnMessage={isOwn}
+                currentUserId={currentUserId}
+                onReply={() => onReply(msg)}
+            />
         );
     }, [currentUserId, onReply]);
 

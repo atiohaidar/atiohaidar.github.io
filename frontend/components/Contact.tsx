@@ -15,9 +15,9 @@ interface ContactProps {
 
 // Style constants
 const STYLES = {
-    heading: `text-4xl font-poppins font-bold ${COLORS.TEXT_PRIMARY} mb-4 print:text-black print:text-3xl`,
-    description: `${COLORS.TEXT_SECONDARY} leading-relaxed mb-8 print:text-black`,
-    button: `inline-block bg-transparent ${COLORS.TEXT_ACCENT} border ${COLORS.BORDER_ACCENT} rounded px-10 py-4 font-medium ${COLORS.HOVER_ACCENT} transition-colors duration-300 text-lg ${PRINT.HIDE}`,
+    heading: `${TYPOGRAPHY.HEADING_MEDIUM} ${COLORS.TEXT_PRIMARY} mb-6 print:text-black`,
+    description: `text-xl ${COLORS.TEXT_SECONDARY} leading-relaxed mb-10 print:text-black font-caveat`,
+    button: `inline-block glass-button px-12 py-4 font-bold text-xl ${PRINT.HIDE} font-patrick`,
     printContainer: `${PRINT.SHOW} text-center mt-4`,
 } as const;
 
@@ -51,7 +51,7 @@ const Contact: React.FC<ContactProps> = memo(({ pitch, linkedinUrl }) => {
         >
             <h3 className={STYLES.heading}>Hubungi Saya</h3>
             <p className={STYLES.description}>{pitch}</p>
-            
+
             {isValid && (
                 <a
                     href={safeUrl}
