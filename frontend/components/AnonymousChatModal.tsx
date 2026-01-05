@@ -10,6 +10,7 @@ import {
 } from '../services/chatService';
 import { webSocketService } from '../services/websocketService';
 import { ChatHeader, MessageBubble, MessageInput, DateSeparator } from './chat';
+import { Card, Button, Heading, Typography } from './ui';
 
 interface AnonymousChatModalProps {
     isOpen: boolean;
@@ -272,10 +273,10 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
     if (!isOpen) return null;
 
     const chatActions = (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1 sm:gap-2">
             <Link
                 to="/fullscreen-chat"
-                className="p-2 rounded-full text-white hover:bg-white/10 transition-colors"
+                className={`p-2 rounded-full ${COLORS.TEXT_SECONDARY} hover:bg-black/5 dark:hover:bg-white/10 transition-colors`}
                 title="Buka fullscreen chat"
                 onClick={() => {
                     webSocketService.disconnect(); // Disconnect before closing modal
@@ -287,7 +288,7 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
             <button
                 onClick={() => setShowResetConfirm(true)}
                 disabled={loading || messages.length === 0}
-                className="p-2 rounded-full text-white hover:bg-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className={`p-2 rounded-full ${COLORS.TEXT_SECONDARY} hover:bg-red-50 dark:hover:bg-red-900/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed`}
                 title="Hapus semua pesan"
             >
                 🗑️
@@ -295,21 +296,23 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
             <button
                 onClick={loadMessages}
                 disabled={loading}
-                className="p-2 rounded-full text-white hover:bg-white/10 transition-colors disabled:opacity-50"
+                className={`p-2 rounded-full ${COLORS.TEXT_SECONDARY} hover:bg-black/5 dark:hover:bg-white/10 transition-colors disabled:opacity-30`}
                 title="Muat ulang pesan"
             >
-                {loading ? '⟳' : '🔄'}
+                <span className={loading ? 'animate-spin inline-block' : ''}>
+                    🔄
+                </span>
             </button>
         </div>
     );
 
     return createPortal(
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-            <div className="glass-card rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-gray-200 dark:border-white/10">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-2 sm:p-4">
+            <Card variant="glass" padding="none" className="max-w-4xl w-full h-full max-h-[90vh] flex flex-col overflow-hidden">
 
                 <ChatHeader
                     isConnected={isConnected}
-                    onlineUsers={onlineUsers} // Pass online users if backend supports it
+                    onlineUsers={onlineUsers}
                     onClose={onClose}
                     actions={chatActions}
                 />
@@ -317,38 +320,48 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
                 {/* Messages */}
                 <div
                     ref={messagesContainerRef}
-                    className="flex-1 overflow-y-auto p-4 space-y-2 bg-[#0a1014] relative"
+                    className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-2 relative"
                 >
-                    {error && (
-                        <div className="bg-red-500 text-white p-3 rounded-lg">
-                            {error}
-                        </div>
-                    )}
-                    {messages.length === 0 && !loading && (
-                        <div className={`text-center text-gray-400 py-8`}>
-                            Belum ada pesan. Jadilah yang pertama untuk mengatakan sesuatu!
-                        </div>
-                    )}
+                    {/* Notebook Lines Background Effect */}
+                    <div className="absolute inset-0 notebook-lines opacity-10 pointer-events-none z-0"></div>
 
-                    {messages.length > 0 && Object.entries(groupMessagesByDate(messages))
-                        .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
-                        .map(([dateKey, dateMessages]) => (
-                            <div key={dateKey}>
-                                <DateSeparator dateLabel={formatDateHeader(dateKey)} />
-
-                                {dateMessages
-                                    .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
-                                    .map((msg) => (
-                                        <MessageBubble
-                                            key={msg.id}
-                                            message={msg}
-                                            currentUserId={senderId}
-                                            isOwnMessage={msg.sender_id === senderId}
-                                            onReply={handleReply}
-                                        />
-                                    ))}
+                    <div className="relative z-10 space-y-4">
+                        {error && (
+                            <div className="p-4 bg-red-100 dark:bg-red-900/30 border-2 border-dashed border-red-300 rounded-xl flex items-center gap-3 transform -rotate-1">
+                                <span className="text-xl">⚠️</span>
+                                <Typography variant="caption" className="text-red-800 dark:text-red-200 font-bold font-patrick">{error}</Typography>
                             </div>
-                        ))}
+                        )}
+
+                        {messages.length === 0 && !loading && (
+                            <div className="text-center py-20 flex flex-col items-center gap-4">
+                                <div className="text-5xl opacity-40 grayscale transform -rotate-12 animate-bounce">✍️</div>
+                                <Typography variant="h3" className={`${COLORS.TEXT_SECONDARY} font-caveat opacity-70`}>
+                                    Belum ada pesan. Jadilah yang pertama untuk mengatakan sesuatu!
+                                </Typography>
+                            </div>
+                        )}
+
+                        {messages.length > 0 && Object.entries(groupMessagesByDate(messages))
+                            .sort(([dateA], [dateB]) => dateA.localeCompare(dateB))
+                            .map(([dateKey, dateMessages]) => (
+                                <div key={dateKey}>
+                                    <DateSeparator dateLabel={formatDateHeader(dateKey)} />
+
+                                    {dateMessages
+                                        .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+                                        .map((msg) => (
+                                            <MessageBubble
+                                                key={msg.id}
+                                                message={msg}
+                                                currentUserId={senderId}
+                                                isOwnMessage={msg.sender_id === senderId}
+                                                onReply={handleReply}
+                                            />
+                                        ))}
+                                </div>
+                            ))}
+                    </div>
 
                     {/* Invisible element to scroll to */}
                     <div ref={messagesEndRef} />
@@ -357,15 +370,15 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
                     {showScrollToBottom && (
                         <button
                             onClick={scrollToBottom}
-                            className="fixed bottom-24 right-6 bg-[#2563EB] hover:bg-[#1D4ED8] text-white rounded-full p-3 shadow-lg transition-all duration-200 z-10"
+                            className="absolute bottom-6 right-6 bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/50 text-blue-600 dark:text-blue-300 rounded-full p-3 shadow-lg border-2 border-dashed border-blue-400 dark:border-blue-700 transition-all duration-200 z-30"
                             title="Lihat pesan terbaru"
                         >
                             <div className="relative">
-                                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-6 h-6 transform rotate-180" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M7 14l5-5 5 5z" />
                                 </svg>
                                 {unreadCount > 0 && (
-                                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full min-w-[20px] h-5 flex items-center justify-center px-1">
+                                    <span className="absolute -top-4 -right-4 bg-red-500 text-white text-xs rounded-full min-w-[20px] h-5 flex items-center justify-center px-1 border-2 border-white dark:border-gray-800">
                                         {unreadCount > 99 ? '99+' : unreadCount}
                                     </span>
                                 )}
@@ -382,45 +395,43 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
                     onCancelReply={cancelReply}
                     disabled={loading}
                 />
-            </div>
+            </Card>
 
             {/* Reset Confirmation Modal */}
             {showResetConfirm && (
-                <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-                    <div className="glass-card relative w-full max-w-md rounded-2xl border border-gray-200 dark:border-white/10 p-6 shadow-2xl">
-                        <button
-                            type="button"
-                            onClick={() => setShowResetConfirm(false)}
-                            className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
-                            aria-label="Tutup konfirmasi"
-                        >
-                            ✕
-                        </button>
-                        <h2 className={`text-xl font-semibold mb-4 ${COLORS.TEXT_PRIMARY}`}>
-                            Hapus Semua Pesan?
-                        </h2>
-                        <p className={`${COLORS.TEXT_SECONDARY} mb-6`}>
-                            Tindakan ini akan menghapus semua pesan anonim secara permanen.
-                            Pesan yang sudah terkirim tidak dapat dikembalikan.
-                        </p>
-                        <div className="flex flex-col gap-3 sm:flex-row">
-                            <button
-                                type="button"
-                                onClick={() => setShowResetConfirm(false)}
-                                className={`flex-1 px-4 py-3 rounded-lg font-semibold border ${COLORS.BORDER} ${COLORS.TEXT_PRIMARY} hover:bg-black/5 dark:hover:bg-white/10 transition-colors`}
-                            >
-                                Batal
-                            </button>
-                            <button
-                                type="button"
-                                onClick={handleDeleteAllMessages}
-                                disabled={loading}
-                                className={`flex-1 px-4 py-3 rounded-lg font-semibold bg-red-500 text-white hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
-                            >
-                                {loading ? 'Menghapus...' : 'Ya, Hapus Semua'}
-                            </button>
+                <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+                    <Card variant="glass" className="relative w-full max-w-md p-8 shadow-2xl overflow-hidden">
+                        {/* Tape effect */}
+                        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-32 h-8 bg-red-100/80 dark:bg-red-900/30 rotate-1 shadow-sm z-20"></div>
+
+                        <div className="relative z-10">
+                            <Heading level={2} className={`${COLORS.TEXT_PRIMARY} mb-4 text-center`}>Hapus Semua Pesan?</Heading>
+                            <Typography variant="body" className={`${COLORS.TEXT_SECONDARY} mb-8 text-center font-patrick`}>
+                                Tindakan ini akan menghapus semua pesan anonim secara permanen.
+                                Pesan yang sudah terkirim tidak dapat dikembalikan.
+                            </Typography>
+
+                            <div className="flex flex-col gap-3 sm:flex-row">
+                                <Button
+                                    onClick={() => setShowResetConfirm(false)}
+                                    variant="glass"
+                                    fullWidth
+                                    className="font-patrick"
+                                >
+                                    Batal
+                                </Button>
+                                <Button
+                                    onClick={handleDeleteAllMessages}
+                                    disabled={loading}
+                                    variant="danger"
+                                    fullWidth
+                                    className="font-patrick"
+                                >
+                                    {loading ? 'Menghapus...' : 'Ya, Hapus Semua'}
+                                </Button>
+                            </div>
                         </div>
-                    </div>
+                    </Card>
                 </div>
             )}
         </div>,
@@ -429,3 +440,4 @@ const AnonymousChatModal: React.FC<AnonymousChatModalProps> = ({ isOpen, onClose
 };
 
 export default AnonymousChatModal;
+

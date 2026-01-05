@@ -9,7 +9,7 @@ import { GitHubIcon, ExternalLinkIcon, PostmanIcon, FolderIcon } from './Icons';
 import SpotlightCard from './SpotlightCard';
 import TiltCard from './TiltCard';
 import { COLORS } from '../utils/styles';
-import { Typography, Heading, Text } from './ui';
+import { Typography, Heading, Text, DoodleWashiTape } from './ui';
 
 /**
  * Komponen kartu untuk menampilkan satu proyek.
@@ -36,7 +36,7 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
 
     return (
         <TiltCard maxTilt={8} scale={1.02} glare={true} glareMaxOpacity={0.15} className="h-full">
-            <SpotlightCard className="glass-panel h-full p-0 overflow-hidden group print:shadow-none print:border print:border-gray-300 print:rounded-none print:bg-transparent print-avoid-break">
+            <SpotlightCard className="glass-panel dog-ear h-full p-0 overflow-hidden group print:shadow-none print:border print:border-gray-300 print:rounded-none print:bg-transparent print-avoid-break">
                 <div className="p-6 flex flex-col h-full relative z-10">
                     <header className="flex justify-between items-center mb-4 print:hidden">
                         <FolderIcon className={`w-10 h-10 ${COLORS.TEXT_ACCENT}`} />
@@ -86,6 +86,10 @@ interface PortfolioProps {
 const Portfolio: React.FC<PortfolioProps> = ({ projects }) => {
     return (
         <Section id="portfolio" number="03" title="Portofolio" centerTitle delay={200} printPageBreak={false}>
+            <div className="relative mb-12 flex justify-center">
+                <DoodleWashiTape className="absolute -top-4 -left-10 -rotate-6 opacity-40" color="#fbcfe8" />
+                <DoodleWashiTape className="absolute -top-4 -right-10 rotate-6 opacity-40" color="#bbf7d0" />
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 print:grid-cols-2 print:gap-4 p-2">
                 {projects.map((project, index) => (
                     <div key={index} className="h-full">

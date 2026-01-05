@@ -15,3 +15,5 @@ export type { LoadingProps } from './Loading';
 
 export * from './Select';
 export * from './Typography';
+export * from './Doodles';
+export * from './StickyNote';

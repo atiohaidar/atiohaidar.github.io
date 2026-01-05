@@ -1,4 +1,6 @@
 import React, { memo } from 'react';
+import { Heading, Typography } from '../ui';
+import { COLORS } from '../../utils/styles';
 
 interface ChatHeaderProps {
     onlineUsers: number;
@@ -18,16 +20,16 @@ const ChatHeader: React.FC<ChatHeaderProps> = memo(({
     actions
 }) => {
     return (
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2a3942] bg-gradient-to-r from-[#1a1f25] to-[#0e1418]">
+        <div className={`flex items-center justify-between px-6 py-4 border-b-2 border-dashed ${COLORS.BORDER} bg-white/80 dark:bg-black/20 backdrop-blur-md`}>
             <div className="flex items-center gap-4">
                 {/* Avatar */}
                 <div className="relative">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#3B82F6] to-[#8B5CF6] flex items-center justify-center text-xl shadow-lg">
+                    <div className={`w-12 h-12 rounded-full border-2 border-dashed ${COLORS.BORDER} bg-white dark:bg-gray-800 flex items-center justify-center text-xl shadow-sm transform hover:rotate-12 transition-transform`}>
                         💬
                     </div>
                     {/* Connection Indicator */}
                     <div
-                        className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-[#0e1418] ${isConnected
+                        className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 ${COLORS.BORDER} ${isConnected
                             ? 'bg-green-500 animate-pulse'
                             : 'bg-yellow-500'
                             }`}
@@ -37,15 +39,20 @@ const ChatHeader: React.FC<ChatHeaderProps> = memo(({
 
                 {/* Title & Status */}
                 <div>
-                    <h2 className="text-lg font-bold text-white">
+                    <Heading level={3} className={`${COLORS.TEXT_PRIMARY}`}>
                         {title}
-                    </h2>
-                    <div className="flex items-center gap-2 text-sm text-gray-400">
-                        <span className={isConnected ? 'text-green-400' : 'text-yellow-400'}>
+                    </Heading>
+                    <div className="flex items-center gap-2 font-patrick">
+                        <Typography
+                            variant="caption"
+                            className={isConnected ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400'}
+                        >
                             {isConnected ? '● Online' : '○ Menghubungkan...'}
-                        </span>
-                        <span className="text-gray-500">•</span>
-                        <span>{onlineUsers} pengguna aktif</span>
+                        </Typography>
+                        <span className={`${COLORS.TEXT_SECONDARY} opacity-50`}>•</span>
+                        <Typography variant="caption" className={`${COLORS.TEXT_SECONDARY}`}>
+                            {onlineUsers} pengguna aktif
+                        </Typography>
                     </div>
                 </div>
             </div>
@@ -58,7 +65,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = memo(({
                 {showCloseButton && onClose && (
                     <button
                         onClick={onClose}
-                        className="p-2 text-gray-400 hover:text-white hover:bg-[#1a2228] rounded-full transition-all"
+                        className={`p-2 ${COLORS.TEXT_SECONDARY} hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-all`}
                         title="Tutup"
                     >
                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -74,3 +81,4 @@ const ChatHeader: React.FC<ChatHeaderProps> = memo(({
 ChatHeader.displayName = 'ChatHeader';
 
 export default ChatHeader;
+

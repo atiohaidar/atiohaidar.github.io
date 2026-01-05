@@ -309,13 +309,7 @@ const SpyTooltip: React.FC<SpyTooltipProps> = ({
                         ))}
                     </div>
 
-                    {/* Hand-drawn Corners */}
-                    <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-40 text-slate-600" width="100%" height="100%">
-                        <path d="M5,5 L15,5 M5,5 L5,15" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-                        <path d="Mcalc(100% - 5px),5 Lcalc(100% - 15px),5 Mcalc(100% - 5px),5 Lcalc(100% - 5px),15" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-                        <path d="M5,calc(100% - 5px) L15,calc(100% - 5px) M5,calc(100% - 5px) L5,calc(100% - 15px)" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-                        <path d="Mcalc(100% - 5px),calc(100% - 5px) Lcalc(100% - 15px),calc(100% - 5px) Mcalc(100% - 5px),calc(100% - 5px) Lcalc(100% - 5px),calc(100% - 15px)" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" />
-                    </svg>
+                    {/* Hand-drawn Corners - implied by border-dashed */}
                 </div>
             </div>
             {/* Inline Styles for Animation */}

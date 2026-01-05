@@ -3,7 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../lib/api/services';
 
 import ThemeToggle from '../components/ThemeToggle';
-import { COLORS, TYPOGRAPHY } from '../utils/styles';
+import { COLORS } from '../utils/styles';
+import { Card, Input, Button, Heading, Typography } from '../components/ui';
 
 const RegisterPage: React.FC = () => {
     const navigate = useNavigate();
@@ -76,13 +77,13 @@ const RegisterPage: React.FC = () => {
             {/* Main Content */}
             <main className={`flex-1 flex items-center justify-center p-4 sm:p-6 z-10 transition-all duration-700 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                 <div className="w-full max-w-md">
-                    <div className={`glass-panel relative overflow-hidden w-full p-6 sm:p-8`}>
+                    <Card variant="glass" className="relative overflow-hidden w-full p-6 sm:p-8" padding="none">
                         {/* Tape Effect */}
                         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-32 h-8 bg-green-100/80 dark:bg-green-900/30 rotate-1 shadow-sm z-20"></div>
 
-                        <div className="relative z-10">
-                            <h2 className={`${TYPOGRAPHY.HEADING_SECTION} ${COLORS.TEXT_PRIMARY} mb-2 text-center`}>Daftar Akun</h2>
-                            <p className={`${COLORS.TEXT_SECONDARY} mb-6 text-center font-caveat text-xl`}>Buat akun baru untuk mengakses dashboard</p>
+                        <div className="relative z-10 p-6 sm:p-8">
+                            <Heading level={2} className={`${COLORS.TEXT_PRIMARY} mb-2 text-center`}>Daftar Akun</Heading>
+                            <Typography variant="body" className={`${COLORS.TEXT_SECONDARY} mb-6 text-center font-caveat text-xl`}>Buat akun baru untuk mengakses dashboard</Typography>
 
                             {success ? (
                                 <div className="p-6 bg-green-100 dark:bg-green-900/30 border-2 border-dashed border-green-300 rounded-xl flex flex-col items-center gap-3 font-patrick transform rotate-1">
@@ -94,61 +95,43 @@ const RegisterPage: React.FC = () => {
                                 </div>
                             ) : (
                                 <form onSubmit={handleSubmit} className="space-y-5">
-                                    <div>
-                                        <label className={`block ${COLORS.TEXT_PRIMARY} font-bold font-patrick text-lg mb-1 ml-1`}>
-                                            Username
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={username}
-                                            onChange={(e) => setUsername(e.target.value)}
-                                            className={`w-full px-4 py-3 bg-transparent border-b-2 ${COLORS.BORDER} ${COLORS.TEXT_PRIMARY} focus:outline-none focus:border-[${COLORS.TEXT_ACCENT}] transition-colors font-patrick placeholder:text-gray-400 dark:placeholder:text-gray-600 rounded-t-lg hover:bg-black/5 dark:hover:bg-white/5 active:bg-transparent`}
-                                            placeholder="username"
-                                            required
-                                        />
-                                    </div>
+                                    <Input
+                                        label="Username"
+                                        placeholder="username"
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value)}
+                                        required
+                                        fullWidth
+                                    />
 
-                                    <div>
-                                        <label className={`block ${COLORS.TEXT_PRIMARY} font-bold font-patrick text-lg mb-1 ml-1`}>
-                                            Nama Lengkap
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={name}
-                                            onChange={(e) => setName(e.target.value)}
-                                            className={`w-full px-4 py-3 bg-transparent border-b-2 ${COLORS.BORDER} ${COLORS.TEXT_PRIMARY} focus:outline-none focus:border-[${COLORS.TEXT_ACCENT}] transition-colors font-patrick placeholder:text-gray-400 dark:placeholder:text-gray-600 rounded-t-lg hover:bg-black/5 dark:hover:bg-white/5 active:bg-transparent`}
-                                            placeholder="John Doe"
-                                            required
-                                        />
-                                    </div>
+                                    <Input
+                                        label="Nama Lengkap"
+                                        placeholder="John Doe"
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        required
+                                        fullWidth
+                                    />
 
-                                    <div>
-                                        <label className={`block ${COLORS.TEXT_PRIMARY} font-bold font-patrick text-lg mb-1 ml-1`}>
-                                            Password
-                                        </label>
-                                        <input
-                                            type="password"
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            className={`w-full px-4 py-3 bg-transparent border-b-2 ${COLORS.BORDER} ${COLORS.TEXT_PRIMARY} focus:outline-none focus:border-[${COLORS.TEXT_ACCENT}] transition-colors font-patrick placeholder:text-gray-400 dark:placeholder:text-gray-600 rounded-t-lg hover:bg-black/5 dark:hover:bg-white/5 active:bg-transparent`}
-                                            placeholder="••••••••"
-                                            required
-                                        />
-                                    </div>
+                                    <Input
+                                        label="Password"
+                                        type="password"
+                                        placeholder="••••••••"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required
+                                        fullWidth
+                                    />
 
-                                    <div>
-                                        <label className={`block ${COLORS.TEXT_PRIMARY} font-bold font-patrick text-lg mb-1 ml-1`}>
-                                            Konfirmasi Password
-                                        </label>
-                                        <input
-                                            type="password"
-                                            value={confirmPassword}
-                                            onChange={(e) => setConfirmPassword(e.target.value)}
-                                            className={`w-full px-4 py-3 bg-transparent border-b-2 ${COLORS.BORDER} ${COLORS.TEXT_PRIMARY} focus:outline-none focus:border-[${COLORS.TEXT_ACCENT}] transition-colors font-patrick placeholder:text-gray-400 dark:placeholder:text-gray-600 rounded-t-lg hover:bg-black/5 dark:hover:bg-white/5 active:bg-transparent`}
-                                            placeholder="••••••••"
-                                            required
-                                        />
-                                    </div>
+                                    <Input
+                                        label="Konfirmasi Password"
+                                        type="password"
+                                        placeholder="••••••••"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        required
+                                        fullWidth
+                                    />
 
                                     {error && (
                                         <div className="p-4 bg-red-100 dark:bg-red-900/30 border-2 border-dashed border-red-300 rounded-xl flex items-center gap-3 transform -rotate-1">
@@ -157,33 +140,27 @@ const RegisterPage: React.FC = () => {
                                         </div>
                                     )}
 
-                                    <button
+                                    <Button
                                         type="submit"
-                                        disabled={isLoading}
-                                        className={`w-full glass-button-green ${COLORS.TEXT_PRIMARY} py-3.5 px-4 rounded-lg shadow-lg font-bold font-patrick text-xl hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-2`}
-                                        style={{ backgroundColor: 'var(--color-button-primary)' }}
+                                        variant="success"
+                                        isLoading={isLoading}
+                                        fullWidth
+                                        size="lg"
+                                        className="mt-2 font-patrick text-xl"
                                     >
-                                        {isLoading ? (
-                                            <span className="flex items-center justify-center gap-2">
-                                                <svg className="animate-spin h-5 w-5 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                                </svg>
-                                                Mendaftarkan...
-                                            </span>
-                                        ) : 'Daftar'}
-                                    </button>
+                                        {isLoading ? 'Mendaftarkan...' : 'Daftar'}
+                                    </Button>
                                 </form>
                             )}
 
-                            <p className={`text-sm text-center mt-6 ${COLORS.TEXT_SECONDARY} font-patrick`}>
+                            <div className={`text-sm text-center mt-6 ${COLORS.TEXT_SECONDARY} font-patrick`}>
                                 Sudah punya akun?{' '}
                                 <Link to="/login" className={`${COLORS.TEXT_ACCENT} hover:underline font-bold`}>
                                     Login di sini
                                 </Link>
-                            </p>
+                            </div>
                         </div>
-                    </div>
+                    </Card>
                 </div>
             </main>
 

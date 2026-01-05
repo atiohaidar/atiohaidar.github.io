@@ -12,6 +12,7 @@ export interface CardProps {
   padding?: 'none' | 'sm' | 'md' | 'lg';
   hover?: boolean;
   variant?: 'default' | 'glass' | 'outlined';
+  onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 const paddingStyles = {
@@ -27,6 +28,7 @@ export const Card: React.FC<CardProps> = ({
   padding = 'md',
   hover = false,
   variant = 'default',
+  onClick,
 }) => {
   const { theme } = useTheme();
   const palette = DASHBOARD_THEME[theme];
@@ -48,7 +50,10 @@ export const Card: React.FC<CardProps> = ({
   }
 
   return (
-    <div className={`rounded-xl ${paddingStyles[padding]} ${variantStyles} ${hoverStyle} ${className}`}>
+    <div
+      onClick={onClick}
+      className={`rounded-xl ${paddingStyles[padding]} ${variantStyles} ${hoverStyle} ${className}`}
+    >
       {children}
     </div>
   );

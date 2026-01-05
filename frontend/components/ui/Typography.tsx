@@ -15,7 +15,7 @@ interface TypographyProps extends Omit<React.AllHTMLAttributes<HTMLElement>, 'as
     variant?: TypographyVariant;
     as?: React.ElementType;
     className?: string;
-    children: React.ReactNode;
+    children?: React.ReactNode;
     accent?: boolean;
 }
 

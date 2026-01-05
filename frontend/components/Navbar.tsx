@@ -82,8 +82,8 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
                             {NAV_LINKS.map((link, index) => (
                                 <li key={link.name}>
                                     {link.type === 'route' ? (
-                                        <Link to={link.href} className="px-4 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-200 block">
-                                            <Typography variant="nav" as="span">
+                                        <Link to={link.href} className="px-4 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-200 block group">
+                                            <Typography variant="nav" as="span" className="scribble-underline">
                                                 <span className={`${COLORS.TEXT_ACCENT} opacity-70 mr-1.5 text-sm`}>0{index + 1}.</span>
                                                 {link.name}
                                             </Typography>
@@ -92,9 +92,9 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
                                         <button
                                             type="button"
                                             onClick={() => onNavAction?.(link.action)}
-                                            className="px-4 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-200 block"
+                                            className="px-4 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-200 block group"
                                         >
-                                            <Typography variant="nav" as="span">
+                                            <Typography variant="nav" as="span" className="scribble-underline">
                                                 <span className={`${COLORS.TEXT_ACCENT} opacity-70 mr-1.5 text-sm`}>0{index + 1}.</span>
                                                 {link.name}
                                             </Typography>

@@ -64,6 +64,32 @@
     border-radius: 50% 45% 52% 48% / 48% 52% 45% 50%;
     transform: rotate(2deg);
   }
+
+  .highlighter {
+    @apply relative inline-block px-1 z-10;
+  }
+
+  .highlighter::before {
+    content: '';
+    @apply absolute inset-0 -z-10 h-[80%] bottom-0 mt-auto opacity-60 bg-marker-yellow;
+    transform: rotate(-1deg) skewX(-20deg);
+    border-radius: 2px 4px 5px 2px/4px 2px 3px 5px;
+  }
+
+  .dog-ear {
+    @apply relative overflow-hidden;
+  }
+
+  .dog-ear::before {
+    content: '';
+    @apply absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-transparent border-r-white dark:border-r-slate-800 shadow-[-1px_1px_2px_rgba(0,0,0,0.1)] transition-all duration-300 z-20;
+    border-left: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+  }
+
+  .group:hover .dog-ear::before {
+    @apply border-t-[30px] border-r-[30px];
+  }
 }
 
 /* Animations without Tailwind Utility wrapper if needed globally */
@@ -75,8 +101,38 @@
   animation-delay: 200ms;
 }
 
-.animate-delay-300 {
-  animation-delay: 300ms;
+.animate-delay-500 {
+  animation-delay: 500ms;
+}
+
+.animate-delay-700 {
+  animation-delay: 700ms;
+}
+
+.animate-delay-1000 {
+  animation-delay: 1000ms;
+}
+
+.animate-delay-1500 {
+  animation-delay: 1500ms;
+}
+
+/* Pencil & Notebook Textures */
+.pencil-smudge {
+  @apply absolute pointer-events-none opacity-[0.08] dark:opacity-[0.05] blur-xl bg-slate-500 rounded-full;
+}
+
+.notebook-binder {
+  @apply absolute left-4 top-0 bottom-0 w-8 border-r-2 border-slate-400/20 dark:border-slate-300/30 flex flex-col justify-around py-10 z-20;
+}
+
+.notebook-binder::after {
+  content: '';
+  @apply absolute right-[-4px] top-0 bottom-0 w-[2px] bg-slate-400/10 dark:bg-slate-200/20;
+}
+
+.binder-ring {
+  @apply w-6 h-6 border-2 border-slate-400/40 dark:border-slate-300/40 rounded-full -ml-3 bg-paper-cream dark:bg-slate-900 shadow-sm dark:shadow-none;
 }
 
 /* Mobile-friendly touch targets */
@@ -104,12 +160,12 @@
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: rgba(156, 163, 175, 0.3);
+  background: rgba(156,163,175,0.3);
   border-radius: 999px;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: rgba(156, 163, 175, 0.5);
+  background: rgba(156,163,175,0.5);
 }
 
 /* Global utilities migrated from inline <style> in index.html */
@@ -234,7 +290,7 @@
 
   .shadow-lg,
   .shadow-md {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3) !important;
   }
 
   .rounded-md,
@@ -452,16 +508,14 @@
   }
 
   100% {
-    transform: scale(5);
-    /* Reduced from 20 to 5 for performance */
+    transform: scale(12);
     opacity: 0;
   }
 }
 
 .animate-cyber-zoom-out {
-  animation: cyber-zoom-out 0.6s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+  animation: cyber-zoom-out 0.7s cubic-bezier(0.7, 0, 0.84, 0) forwards;
   will-change: transform, opacity;
-  /* Hint for browser optimization */
 }
 
 /* Zoom IN with blur - like diving into the screen */
@@ -588,6 +642,16 @@
   }
 }
 
-.animate-system-entry {
-  animation: system-entry 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+/* Hand-drawn SVG animation */
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-draw {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw 2s ease-out forwards;
 }
