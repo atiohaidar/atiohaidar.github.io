@@ -71,6 +71,27 @@ export const DoodleStar: React.FC<DoodleProps> = ({ className = "", color = "cur
     </svg>
 );
 
+export const DoodleCar: React.FC<DoodleProps> = ({ className = "", color = "currentColor", style }) => (
+    <svg
+        viewBox="0 0 100 60"
+        className={`fill-none stroke-current stroke-2 ${className}`}
+        style={style}
+        color={color}
+    >
+        {/* Hand-drawn car sketch */}
+        <path
+            d="M10,45 L20,45 L25,30 L70,30 L80,45 L90,45 L90,55 L80,55 M70,55 L30,55 M20,55 L10,55 L10,45 
+               M25,30 L30,20 L65,20 L70,30 
+               M48,20 L48,30"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        />
+        {/* Wheels */}
+        <circle cx="25" cy="55" r="5" strokeLinecap="round" />
+        <circle cx="75" cy="55" r="5" strokeLinecap="round" />
+    </svg>
+);
+
 export const DoodleSparkle: React.FC<DoodleProps> = ({ className = "", color = "currentColor", style }) => (
     <svg
         viewBox="0 0 40 40"

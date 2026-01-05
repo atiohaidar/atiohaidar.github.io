@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Typography, Heading } from './ui';
-import { DoodleArrow, DoodleStar, DoodleCurly, DoodleCoffeeRing, DoodleSparkle } from './ui/Doodles';
+import { DoodleArrow, DoodleCar, DoodleCurly, DoodleCoffeeRing, DoodleSparkle } from './ui/Doodles';
 
 /**
  * CONFIGURATION: Edit these values to change loading speed
@@ -167,7 +167,7 @@ const SketchLoader: React.FC<SketchLoaderProps> = ({
             <div className="relative z-10 text-center w-full max-w-lg px-8">
                 {/* Sketching Decoration */}
                 <div className={`absolute -top-16 left-1/2 -translate-x-1/2 transition-all duration-700 ${showStar ? 'opacity-100 translate-y-0 rotate-12' : 'opacity-0 -translate-y-8 rotate-0'}`}>
-                    <DoodleStar className="w-12 h-12 text-marker-yellow animate-wiggle" />
+                    <DoodleCar className="w-12 h-12 text-marker-yellow animate-wiggle" />
                 </div>
 
                 {/* Sparkling Doodles Around Name */}
@@ -202,7 +202,7 @@ const SketchLoader: React.FC<SketchLoaderProps> = ({
                     {/* Progress percentage doodle */}
                     <div className="absolute inset-0 flex items-center justify-center">
                         <span className="font-patrick text-sm font-bold opacity-40 mix-blend-multiply dark:mix-blend-overlay">
-                            {Math.floor(progress)}% Sketching...
+                            {Math.floor(progress)}% Bentar...
                         </span>
                     </div>
                 </div>

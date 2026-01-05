@@ -12,6 +12,7 @@ export interface CardProps {
   padding?: 'none' | 'sm' | 'md' | 'lg';
   hover?: boolean;
   variant?: 'default' | 'glass' | 'outlined';
+  dogEar?: boolean;
   onClick?: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
@@ -28,6 +29,7 @@ export const Card: React.FC<CardProps> = ({
   padding = 'md',
   hover = false,
   variant = 'default',
+  dogEar = false,
   onClick,
 }) => {
   const { theme } = useTheme();
@@ -38,7 +40,7 @@ export const Card: React.FC<CardProps> = ({
   let variantStyles = '';
   switch (variant) {
     case 'glass':
-      variantStyles = 'glass-card';
+      variantStyles = 'glass-panel';
       break;
     case 'outlined':
       variantStyles = `bg-transparent border-2 border-dashed ${theme === 'dark' ? 'border-slate-700' : 'border-slate-300'}`;
@@ -49,10 +51,12 @@ export const Card: React.FC<CardProps> = ({
       break;
   }
 
+  const dogEarClass = dogEar ? 'dog-ear' : '';
+
   return (
     <div
       onClick={onClick}
-      className={`rounded-xl ${paddingStyles[padding]} ${variantStyles} ${hoverStyle} ${className}`}
+      className={`rounded-xl ${paddingStyles[padding]} ${variantStyles} ${dogEarClass} ${hoverStyle} ${className}`}
     >
       {children}
     </div>

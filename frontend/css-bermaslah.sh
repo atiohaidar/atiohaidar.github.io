@@ -1,0 +1,1 @@
+sed -i 's/rgba(0, 0, 0, 1)/rgba(0,0,0,1)/g' /media/tio/Data2/Project/atiohaidar.github.io/frontend/index.css && sed -i 's/rgba(255, 255, 255, 0.1)/rgba(255,255,255,0.1)/g' /media/tio/Data2/Project/atiohaidar.github.io/frontend/index.css && sed -i 's/rgba(255, 255, 255, 0.05)/rgba(255,255,255,0.05)/g' /media/tio/Data2/Project/atiohaidar.github.io/frontend/index.css

@@ -9,7 +9,7 @@ import { BookOpenIcon, ExternalLinkIcon } from './Icons';
 import SpotlightCard from './SpotlightCard';
 import TiltCard from './TiltCard';
 import { COLORS } from '../utils/styles';
-import { Typography, Heading, Text } from './ui';
+import { Typography, Heading, Text, Card, Divider } from './ui';
 
 /**
  * Props untuk komponen ResearchCard, yang menampilkan satu item penelitian.
@@ -31,36 +31,35 @@ const ResearchCard: React.FC<ResearchCardProps> = ({ item }) => {
     };
 
     return (
-        <TiltCard maxTilt={8} scale={1.02} glare={true} glareMaxOpacity={0.15} className="h-full">
-            <SpotlightCard className="glass-panel h-full p-0 overflow-hidden group print:shadow-none print:border print:border-gray-300 print:rounded-none print:bg-transparent print-avoid-break">
-                <div className="p-6 flex flex-col h-full relative z-10">
-                    <main className="flex-grow">
-                        <Typography variant="caption" className={`font-bold uppercase tracking-wider ${COLORS.TEXT_ACCENT} mb-2`}>
-                            {item.type}
-                        </Typography>
-                        <Heading level={4} className={`${COLORS.TEXT_PRIMARY} mb-4 group-hover:text-blue-500 transition-colors`}>{item.title}</Heading>
-                        <Text className={`${COLORS.TEXT_SECONDARY} mb-4`}>{item.description}</Text>
-                        <Text className={COLORS.TEXT_SECONDARY}>
-                            <Text as="span" className={`font-semibold ${COLORS.TEXT_PRIMARY}`}>Kontribusi:</Text> {item.contribution}
-                        </Text>
-                    </main>
-                    <footer className={`mt-4 pt-4 border-t-2 border-dashed ${COLORS.BORDER} opacity-80`}>
-                        {item.links.map(link => (
-                            <a
-                                key={link.url}
-                                href={link.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={`flex items-center ${COLORS.TEXT_SECONDARY} hover:text-blue-500 transition-colors duration-300 group/link overflow-hidden mb-1`}
-                            >
-                                {getIconForLink(link.type)}
-                                <Typography variant="caption" className="group-hover/link:underline print:underline">{link.url.replace(/^https?:\/\//, '')}</Typography>
-                            </a>
-                        ))}
-                    </footer>
-                </div>
-            </SpotlightCard>
-        </TiltCard>
+        <Card variant="glass" padding="none" className="h-full overflow-hidden group print:shadow-none print:border print:border-gray-300 print:rounded-none print:bg-transparent print-avoid-break">
+            <div className="p-6 flex flex-col h-full relative z-10">
+                <main className="flex-grow">
+                    <Typography variant="caption" className={`font-bold uppercase tracking-wider ${COLORS.TEXT_ACCENT} mb-2`}>
+                        {item.type}
+                    </Typography>
+                    <Heading level={4} className={`${COLORS.TEXT_PRIMARY} mb-4 group-hover:text-blue-500 transition-colors`}>{item.title}</Heading>
+                    <Text className={`${COLORS.TEXT_SECONDARY} mb-4`}>{item.description}</Text>
+                    <Text className={COLORS.TEXT_SECONDARY}>
+                        <Text as="span" className={`font-semibold ${COLORS.TEXT_PRIMARY}`}>Kontribusi:</Text> {item.contribution}
+                    </Text>
+                </main>
+                <footer className="pt-4">
+                    <Divider variant="dashed" className="opacity-80 mb-4" />
+                    {item.links.map(link => (
+                        <a
+                            key={link.url}
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={`flex items-center ${COLORS.TEXT_SECONDARY} hover:text-blue-500 transition-colors duration-300 group/link overflow-hidden mb-1`}
+                        >
+                            {getIconForLink(link.type)}
+                            <Typography variant="caption" className="group-hover/link:underline print:underline">{link.url.replace(/^https?:\/\//, '')}</Typography>
+                        </a>
+                    ))}
+                </footer>
+            </div>
+        </Card>
     );
 };
 

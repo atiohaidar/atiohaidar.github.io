@@ -1,15 +1,16 @@
 /**
- * @file Komponen Hero dengan refactored utilities dan particle background
+ * @file Komponen Hero dengan parallax decorations dan particle background
  * Menampilkan perkenalan singkat, nama, tagline, bio, dan tombol CTA.
  */
 import React, { useRef, useState } from 'react';
 import { COLORS as STYLE_COLORS, LAYOUT, PRINT } from '../utils/styles';
 import { createAnimationStyle, ANIMATION_DELAYS } from '../utils/animations';
 import { getExternalLinkProps } from '../utils/url';
-import { DoodleArrow, DoodleStar, DoodleCurly, DoodleSparkle, DoodleUnderline, DoodleCircle } from './ui/Doodles';
+import { useMultiParallax } from '../hooks/useParallax';
+import { DoodleArrow, DoodleCar, DoodleCurly, DoodleSparkle, DoodleUnderline, DoodleCircle } from './ui/Doodles';
 import SpyTooltip from './SpyTooltip';
 import { COLORS } from '../constants';
-import { Typography, Heading, Text } from './ui';
+import { Typography, Heading, Text, HandwritingText } from './ui';
 
 /**
  * Props untuk komponen Hero.
@@ -27,9 +28,31 @@ interface HeroProps {
     linkedinUrl: string;
 }
 
+/**
+ * Helper to wrap each character with wave animation classes
+ */
+const WaveText: React.FC<{ text: string; className?: string }> = ({ text, className = '' }) => {
+    return (
+        <span className={className}>
+            {text.split('').map((char, index) => (
+                <span
+                    key={index}
+                    className={`animate-wave wave-delay-${(index % 16) + 1}`}
+                    style={{ display: 'inline-block' }}
+                >
+                    {char === ' ' ? '\u00A0' : char}
+                </span>
+            ))}
+        </span>
+    );
+};
+
 const Hero: React.FC<HeroProps> = ({ greeting, name, tagline, bio, linkedinUrl }) => {
     const backendButtonRef = useRef<HTMLAnchorElement>(null);
     const [isBackendTooltipOpen, setIsBackendTooltipOpen] = useState(false);
+
+    // Parallax effect for decorative elements
+    const parallax = useMultiParallax();
 
     return (
         <>
@@ -58,9 +81,15 @@ const Hero: React.FC<HeroProps> = ({ greeting, name, tagline, bio, linkedinUrl }
                 {/* Content Container - Background is handled by parent/layout */}
                 <div className={`container mx-auto px-6 md:px-16 lg:px-20 relative z-10 text-center`}>
                     <div className="max-w-4xl mx-auto space-y-6 relative">
-                        {/* Decorative Sparkles scattered around top */}
-                        <DoodleSparkle className="absolute -top-20 right-1/4 w-12 h-12 text-marker-pink opacity-60 dark:opacity-40 animate-pulse" />
-                        <DoodleSparkle className="absolute -top-10 left-1/4 w-8 h-8 text-marker-blue opacity-50 dark:opacity-30 animate-pulse animate-delay-700" />
+                        {/* Decorative Sparkles scattered around top - with parallax */}
+                        <DoodleSparkle
+                            className="absolute -top-20 right-1/4 w-12 h-12 text-marker-pink opacity-60 dark:opacity-40 animate-pulse"
+                            style={{ transform: `translateY(${parallax.getOffset(0.15, 'down')}px)` }}
+                        />
+                        <DoodleSparkle
+                            className="absolute -top-10 left-1/4 w-8 h-8 text-marker-blue opacity-50 dark:opacity-30 animate-pulse animate-delay-700"
+                            style={{ transform: `translateY(${parallax.getOffset(0.1, 'down')}px)` }}
+                        />
 
                         <div className="relative inline-block">
                             <Typography variant="h3" className={`md:text-2xl font-medium text-ink-blue dark:text-chalk-blue tracking-wide relative z-10`} style={createAnimationStyle(ANIMATION_DELAYS.HERO.NAME)}>
@@ -71,8 +100,19 @@ const Hero: React.FC<HeroProps> = ({ greeting, name, tagline, bio, linkedinUrl }
 
                         <Heading level={1} className="text-5xl sm:text-7xl lg:text-8xl font-caveat tracking-tight mb-4 relative z-10" style={createAnimationStyle(ANIMATION_DELAYS.HERO.TAGLINE)}>
                             <span className="inline-block relative">
-                                {name}
-                                <span className="absolute -bottom-1 left-0 w-full h-3 bg-marker-yellow/80 rounded-full opacity-0 animate-fade-in-up animate-delay-500 -z-10 transform -rotate-1"></span>
+                                {/* SVG Handwriting animation for name */}
+                                <HandwritingText
+                                    text={name}
+                                    fontSize={80}
+                                    fontFamily="Caveat, cursive"
+                                    strokeColor="currentColor"
+                                    fillColor="currentColor"
+                                    duration={2.5}
+                                    delay={0.5}
+                                    className="inline-block align-baseline"
+                                />
+                                {/* Underline draw animation for highlight */}
+                                <span className="absolute -bottom-1 left-0 w-full h-3 bg-marker-yellow/80 rounded-full -z-10 transform -rotate-1 animate-underline-draw"></span>
 
                                 {/* Decorative circle around the dot or end of name */}
                                 <DoodleCircle className="absolute -right-8 -top-4 w-16 h-16 text-marker-pink opacity-60 dark:opacity-30 animate-draw pointer-events-none" />
@@ -82,10 +122,11 @@ const Hero: React.FC<HeroProps> = ({ greeting, name, tagline, bio, linkedinUrl }
 
                         <div className="relative inline-block px-4">
                             <Heading level={2} className="text-2xl sm:text-4xl lg:text-5xl font-semibold text-light-muted dark:text-slate-300" style={createAnimationStyle(ANIMATION_DELAYS.HERO.BIO)}>
-                                {tagline}
+                                {/* Wave animation for tagline */}
+                                <WaveText text={tagline} />
                             </Heading>
-                            {/* Curly line under tagline */}
-                            <DoodleCurly className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-48 h-6 text-marker-green opacity-60 dark:opacity-40" />
+                            {/* Curly line under tagline - with gentle float */}
+                            <DoodleCurly className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-48 h-6 text-marker-green opacity-60 dark:opacity-40 animate-gentle-float" />
                         </div>
 
                         <div className={`${PRINT.SHOW} pt-2 text-sm`}>
@@ -153,22 +194,40 @@ const Hero: React.FC<HeroProps> = ({ greeting, name, tagline, bio, linkedinUrl }
                             </div>
                         </div>
 
-                        {/* Distant random doodles to fill space further out */}
-                        <div className="absolute -top-20 -left-40 opacity-40 dark:opacity-20 pointer-events-none hidden lg:block">
+                        {/* Distant random doodles to fill space further out - with parallax */}
+                        <div
+                            className="absolute -top-20 -left-40 opacity-40 dark:opacity-20 pointer-events-none hidden lg:block"
+                            style={{ transform: `translateY(${parallax.getOffset(0.2, 'down')}px)` }}
+                        >
                             <DoodleCurly className="w-40 h-10 text-marker-blue rotate-45" />
                         </div>
-                        <div className="absolute top-1/4 -right-60 opacity-30 dark:opacity-10 pointer-events-none hidden xl:block">
+                        <div
+                            className="absolute top-1/4 -right-60 opacity-30 dark:opacity-10 pointer-events-none hidden xl:block"
+                            style={{ transform: `translateY(${parallax.getOffset(0.05, 'up')}px)` }}
+                        >
                             <DoodleCircle className="w-64 h-64 text-marker-green" />
                         </div>
-                        <div className="absolute -bottom-40 right-1/3 opacity-40 dark:opacity-20 pointer-events-none hidden lg:block">
-                            <DoodleStar className="w-16 h-16 text-marker-yellow animate-float" />
+                        <div
+                            className="absolute -bottom-40 right-1/3 opacity-40 dark:opacity-20 pointer-events-none hidden lg:block"
+                            style={{ transform: `translateY(${parallax.getOffset(0.25, 'up')}px)` }}
+                        >
+                            <DoodleCar className="w-20 h-20 text-marker-yellow animate-float" />
                         </div>
                     </div>
                 </div>
-                {/* Pencil Smudges textures - adjusted positions to avoid clipping */}
-                <div className="pencil-smudge w-64 h-64 -top-20 -left-20 rotate-45"></div>
-                <div className="pencil-smudge w-96 h-96 bottom-[10%] right-[15%] -rotate-12"></div>
-                <div className="pencil-smudge w-48 h-48 top-1/2 -right-10 opacity-[0.03]"></div>
+                {/* Pencil Smudges textures - with parallax for depth */}
+                <div
+                    className="pencil-smudge w-64 h-64 -top-20 -left-20 rotate-45"
+                    style={{ transform: `translateY(${parallax.getOffset(0.08, 'down')}px) rotate(45deg)` }}
+                ></div>
+                <div
+                    className="pencil-smudge w-96 h-96 bottom-[10%] right-[15%] -rotate-12"
+                    style={{ transform: `translateY(${parallax.getOffset(0.12, 'up')}px) rotate(-12deg)` }}
+                ></div>
+                <div
+                    className="pencil-smudge w-48 h-48 top-1/2 -right-10 opacity-[0.03]"
+                    style={{ transform: `translateY(${parallax.getOffset(0.06, 'down')}px)` }}
+                ></div>
             </section>
         </>
     );

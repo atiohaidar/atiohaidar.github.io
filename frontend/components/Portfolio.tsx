@@ -9,7 +9,7 @@ import { GitHubIcon, ExternalLinkIcon, PostmanIcon, FolderIcon } from './Icons';
 import SpotlightCard from './SpotlightCard';
 import TiltCard from './TiltCard';
 import { COLORS } from '../utils/styles';
-import { Typography, Heading, Text, DoodleWashiTape } from './ui';
+import { Typography, Heading, Text, DoodleWashiTape, Card, Divider } from './ui';
 
 /**
  * Komponen kartu untuk menampilkan satu proyek.
@@ -35,43 +35,44 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
     };
 
     return (
-        <TiltCard maxTilt={8} scale={1.02} glare={true} glareMaxOpacity={0.15} className="h-full">
-            <SpotlightCard className="glass-panel dog-ear h-full p-0 overflow-hidden group print:shadow-none print:border print:border-gray-300 print:rounded-none print:bg-transparent print-avoid-break">
-                <div className="p-6 flex flex-col h-full relative z-10">
-                    <header className="flex justify-between items-center mb-4 print:hidden">
-                        <FolderIcon className={`w-10 h-10 ${COLORS.TEXT_ACCENT}`} />
-                    </header>
-                    <main className="flex-grow">
-                        <Heading level={4} className={`${COLORS.TEXT_PRIMARY} mb-2 group-hover:text-blue-500 transition-colors print:text-black`}>{project.name}</Heading>
-                        <Text className={`${COLORS.TEXT_SECONDARY} mb-2`}>{project.description}</Text>
-                        <Text className={`${COLORS.TEXT_SECONDARY}`}>
-                            <Text as="span" className={`font-semibold ${COLORS.TEXT_PRIMARY}`}>Kontribusi:</Text> {project.contribution}
-                        </Text>
-                    </main>
-                    <footer className="mt-4">
-                        <div className="mb-4 space-y-2">
-                            {project.links.map(link => (
-                                <a
-                                    key={link.url}
-                                    href={link.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className={`flex items-center ${COLORS.TEXT_SECONDARY} hover:text-blue-500 transition-colors duration-300 group/link overflow-hidden mb-1`}
-                                >
-                                    {getIconForLink(link.type)}
-                                    <Typography variant="caption" className="group-hover/link:underline print:underline">{link.url.replace(/^https?:\/\//, '')}</Typography>
-                                </a>
-                            ))}
-                        </div>
-                        {project.tech && (
-                            <ul className={`flex flex-wrap gap-x-4 gap-y-2 ${COLORS.TEXT_MUTED} pt-4 border-t-2 border-dashed ${COLORS.BORDER}`}>
+        <Card variant="glass" dogEar padding="none" className="h-full overflow-hidden group print:shadow-none print:border print:border-gray-300 print:rounded-none print:bg-transparent print-avoid-break">
+            <div className="p-6 flex flex-col h-full relative z-10">
+                <header className="flex justify-between items-center mb-4 print:hidden">
+                    <FolderIcon className={`w-10 h-10 ${COLORS.TEXT_ACCENT}`} />
+                </header>
+                <main className="flex-grow">
+                    <Heading level={4} className={`${COLORS.TEXT_PRIMARY} mb-2 group-hover:text-blue-500 transition-colors print:text-black`}>{project.name}</Heading>
+                    <Text className={`${COLORS.TEXT_SECONDARY} mb-2`}>{project.description}</Text>
+                    <Text className={`${COLORS.TEXT_SECONDARY}`}>
+                        <Text as="span" className={`font-semibold ${COLORS.TEXT_PRIMARY}`}>Kontribusi:</Text> {project.contribution}
+                    </Text>
+                </main>
+                <footer className="mt-4">
+                    <div className="mb-4 space-y-2">
+                        {project.links.map(link => (
+                            <a
+                                key={link.url}
+                                href={link.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`flex items-center ${COLORS.TEXT_SECONDARY} hover:text-blue-500 transition-colors duration-300 group/link overflow-hidden mb-1`}
+                            >
+                                {getIconForLink(link.type)}
+                                <Typography variant="caption" className="group-hover/link:underline print:underline">{link.url.replace(/^https?:\/\//, '')}</Typography>
+                            </a>
+                        ))}
+                    </div>
+                    {project.tech && (
+                        <>
+                            <Divider variant="dashed" className="mt-4" />
+                            <ul className={`flex flex-wrap gap-x-4 gap-y-2 ${COLORS.TEXT_MUTED} pt-4`}>
                                 {project.tech.map(t => <li key={t}><Typography variant="caption">{t}</Typography></li>)}
                             </ul>
-                        )}
-                    </footer>
-                </div>
-            </SpotlightCard>
-        </TiltCard>
+                        </>
+                    )}
+                </footer>
+            </div>
+        </Card>
     );
 };
 
