@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { NAV_LINKS, type NavAction } from '../constants';
 import { GitHubIcon, LinkedInIcon, InstagramIcon } from './Icons';
-import { PRINT } from '../utils/styles';
+import { COLORS, PRINT } from '../utils/styles';
 import ThemeToggle from './ThemeToggle';
 import type { SocialLinks } from '../types';
 import SpyTooltip from './SpyTooltip';
 import SessionTimer from './SessionTimer';
+import { Typography } from './ui';
 
 interface NavbarProps {
     logoSrc: string;
@@ -48,7 +49,7 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
     return (
         <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${PRINT.HIDE} ${isScrolled ? 'py-4' : 'py-6'}`}>
             <nav className={`container mx-auto px-6 md:px-12`}>
-                <div className={`rounded-full transition-all duration-300 ${isScrolled ? 'glass-panel px-6 py-3' : 'bg-transparent py-2'}`}>
+                <div className={`rounded-full transition-all duration-300 ${isScrolled ? 'glass-panel px-6 py-3 border-2 border-slate-800' : 'bg-transparent py-2'}`}>
                     <div className="flex items-center justify-between">
                         {/* Logo section */}
                         <div
@@ -59,8 +60,8 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
                             onClick={() => setIsLogoTooltipOpen(!isLogoTooltipOpen)}
                         >
                             <a href="#hero" className="block relative group">
-                                <div className="absolute inset-0 bg-accent-blue/20 rounded-full blur-md group-hover:blur-lg transition-all duration-300 opacity-0 group-hover:opacity-100" />
-                                <img src={logoSrc} alt="Logo" className="relative h-10 w-10 rounded-full object-cover border-2 border-transparent group-hover:border-accent-blue/50 transition-all duration-300" />
+                                <div className={`absolute inset-0 ${COLORS.BG_ACCENT} opacity-20 rounded-full blur-md group-hover:blur-lg transition-all duration-300 opacity-0 group-hover:opacity-100`} />
+                                <img src={logoSrc} alt="Logo" className={`relative h-10 w-10 rounded-full object-cover border-2 shadow-sm border-slate-800 dark:border-slate-600 transition-all duration-300`} />
                             </a>
 
                             <SpyTooltip
@@ -81,16 +82,22 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
                             {NAV_LINKS.map((link, index) => (
                                 <li key={link.name}>
                                     {link.type === 'route' ? (
-                                        <Link to={link.href} className="px-4 py-2 rounded-lg text-sm font-medium text-light-muted dark:text-light-slate hover:text-accent-blue hover:bg-accent-blue/5 dark:hover:bg-accent-blue/10 transition-all duration-200">
-                                            <span className="text-accent-blue/70 mr-1.5 font-mono text-xs">0{index + 1}.</span>{link.name}
+                                        <Link to={link.href} className="px-4 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-200 block group">
+                                            <Typography variant="nav" as="span" className="scribble-underline">
+                                                <span className={`${COLORS.TEXT_ACCENT} opacity-70 mr-1.5 text-sm`}>0{index + 1}.</span>
+                                                {link.name}
+                                            </Typography>
                                         </Link>
                                     ) : (
                                         <button
                                             type="button"
                                             onClick={() => onNavAction?.(link.action)}
-                                            className="px-4 py-2 rounded-lg text-sm font-medium text-light-muted dark:text-light-slate hover:text-accent-blue hover:bg-accent-blue/5 dark:hover:bg-accent-blue/10 transition-all duration-200"
+                                            className="px-4 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-all duration-200 block group"
                                         >
-                                            <span className="text-accent-blue/70 mr-1.5 font-mono text-xs">0{index + 1}.</span>{link.name}
+                                            <Typography variant="nav" as="span" className="scribble-underline">
+                                                <span className={`${COLORS.TEXT_ACCENT} opacity-70 mr-1.5 text-sm`}>0{index + 1}.</span>
+                                                {link.name}
+                                            </Typography>
                                         </button>
                                     )}
                                 </li>
@@ -103,11 +110,11 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
                             <SessionTimer />
 
                             {/* Socials Mini */}
-                            <div className="flex items-center px-3 border-l border-r border-gray-200 dark:border-white/10 space-x-1">
-                                <a href={socials.github} target="_blank" rel="noopener noreferrer" className="p-2 text-light-muted hover:text-white hover:bg-black/80 dark:text-slate-400 dark:hover:text-white dark:hover:bg-white/10 rounded-full transition-all">
+                            <div className={`flex items-center px-3 border-l border-r ${COLORS.BORDER} space-x-1`}>
+                                <a href={socials.github} target="_blank" rel="noopener noreferrer" className={`p-2 ${COLORS.TEXT_MUTED} hover:${COLORS.TEXT_PRIMARY} rounded-full transition-all`}>
                                     <GitHubIcon className="w-4 h-4" />
                                 </a>
-                                <a href={socials.linkedin} target="_blank" rel="noopener noreferrer" className="p-2 text-light-muted hover:text-white hover:bg-[#0077b5] dark:text-slate-400 dark:hover:text-white dark:hover:bg-[#0077b5] rounded-full transition-all">
+                                <a href={socials.linkedin} target="_blank" rel="noopener noreferrer" className={`p-2 ${COLORS.TEXT_MUTED} hover:${COLORS.TEXT_PRIMARY} rounded-full transition-all`}>
                                     <LinkedInIcon className="w-4 h-4" />
                                 </a>
                             </div>
@@ -118,34 +125,36 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
                                 <div className="relative user-menu-container">
                                     <button
                                         onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                                        className="flex items-center space-x-2 pl-2 pr-1 py-1 rounded-full glass-button hover:bg-accent-blue/10 border border-gray-200 dark:border-white/10"
+                                        className={`flex items-center space-x-2 pl-2 pr-1 py-1 rounded-full glass-button hover:${COLORS.BG_ACCENT} transition-colors border-2 ${COLORS.BORDER}`}
                                     >
-                                        <div className="w-8 h-8 rounded-full bg-accent-blue/10 flex items-center justify-center text-accent-blue font-bold text-xs">
+                                        <div className={`w-8 h-8 rounded-full ${COLORS.BG_ACCENT} flex items-center justify-center ${COLORS.TEXT_ACCENT} font-bold text-xs`}>
                                             {loggedInUser.substring(0, 2).toUpperCase()}
                                         </div>
                                     </button>
 
                                     {isUserMenuOpen && (
-                                        <div className="absolute top-full right-0 mt-3 glass-card min-w-[200px] rounded-xl p-2 animate-fade-in-up">
-                                            <div className="px-4 py-3 border-b border-gray-100 dark:border-white/5 mb-2">
-                                                <p className="text-xs text-light-muted dark:text-slate-400">Masuk sebagai</p>
-                                                <p className="font-semibold text-sm truncate dark:text-white">{loggedInUser}</p>
+                                        <div className="absolute top-full right-0 mt-3 glass-card min-w-[200px] p-2 animate-fade-in-up">
+                                            <div className={`px-4 py-3 border-b ${COLORS.BORDER} mb-2`}>
+                                                <Typography variant="caption" className={COLORS.TEXT_MUTED}>Masuk sebagai</Typography>
+                                                <Typography variant="body" className={`font-bold truncate ${COLORS.TEXT_PRIMARY}`}>{loggedInUser}</Typography>
                                             </div>
                                             <Link
                                                 to="/dashboard"
-                                                className="block px-4 py-2 text-sm text-light-muted dark:text-slate-300 hover:text-accent-blue hover:bg-accent-blue/5 rounded-lg transition-colors"
+                                                className={`block px-4 py-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 transition-colors`}
                                                 onClick={() => setIsUserMenuOpen(false)}
                                             >
-                                                Dashboard
+                                                <Typography variant="small" className={`${COLORS.TEXT_SECONDARY} hover:${COLORS.TEXT_ACCENT}`}>
+                                                    Dashboard
+                                                </Typography>
                                             </Link>
                                             <button
                                                 onClick={() => {
                                                     setIsUserMenuOpen(false);
                                                     onLogout?.();
                                                 }}
-                                                className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-500/10 rounded-lg transition-colors mt-1"
+                                                className="w-full text-left px-4 py-2 hover:bg-red-500/10 rounded-lg transition-colors mt-1"
                                             >
-                                                Keluar
+                                                <Typography variant="small" className="text-red-500">Keluar</Typography>
                                             </button>
                                         </div>
                                     )}
@@ -153,9 +162,9 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
                             ) : (
                                 <Link
                                     to="/login"
-                                    className="glass-button px-5 py-2 rounded-full text-sm font-medium text-accent-blue hover:text-white hover:bg-accent-blue hover:border-accent-blue transition-all"
+                                    className="glass-button px-6 py-2"
                                 >
-                                    Masuk
+                                    <Typography variant="h4" as="span">Masuk</Typography>
                                 </Link>
                             )}
                         </div>
@@ -201,10 +210,12 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
                                     <Link
                                         to={link.href}
                                         onClick={() => setIsMenuOpen(false)}
-                                        className="block px-4 py-3 rounded-xl text-lg font-medium text-light-muted dark:text-slate-300 hover:bg-white/5 hover:text-accent-blue transition-all"
+                                        className={`block px-4 py-3 rounded-xl hover:${COLORS.BG_ACCENT} transition-all`}
                                     >
-                                        <span className="text-accent-blue/50 mr-3 text-sm font-mono">0{index + 1}.</span>
-                                        {link.name}
+                                        <Typography variant="h4" className={COLORS.TEXT_SECONDARY}>
+                                            <span className={`${COLORS.TEXT_ACCENT} opacity-50 mr-3 text-sm`}>0{index + 1}.</span>
+                                            {link.name}
+                                        </Typography>
                                     </Link>
                                 ) : (
                                     <button
@@ -213,28 +224,30 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
                                             setIsMenuOpen(false);
                                             onNavAction?.(link.action);
                                         }}
-                                        className="w-full text-left px-4 py-3 rounded-xl text-lg font-medium text-light-muted dark:text-slate-300 hover:bg-white/5 hover:text-accent-blue transition-all"
+                                        className={`w-full text-left px-4 py-3 rounded-xl hover:${COLORS.BG_ACCENT} transition-all`}
                                     >
-                                        <span className="text-accent-blue/50 mr-3 text-sm font-mono">0{index + 1}.</span>
-                                        {link.name}
+                                        <Typography variant="h4" className={COLORS.TEXT_SECONDARY}>
+                                            <span className={`${COLORS.TEXT_ACCENT} opacity-50 mr-3 text-sm`}>0{index + 1}.</span>
+                                            {link.name}
+                                        </Typography>
                                     </button>
                                 )}
                             </div>
                         ))}
                     </nav>
 
-                    <div className="mt-auto pt-6 border-t border-gray-200 dark:border-white/10 space-y-4">
+                    <div className={`mt-auto pt-6 border-t ${COLORS.BORDER} space-y-4`}>
                         {/* Session Timer for Mobile */}
                         <div className="flex justify-center py-2">
                             <SessionTimer />
                         </div>
 
                         <div className="flex gap-4 justify-center py-4">
-                            <a href={socials.github} className="p-3 rounded-full bg-white/5 hover:bg-white/10 transition-colors">
-                                <GitHubIcon className="w-5 h-5 dark:text-white" />
+                            <a href={socials.github} className={`p-3 rounded-full ${COLORS.BG_ACCENT} opacity-20 hover:opacity-100 transition-opacity`}>
+                                <GitHubIcon className={`w-5 h-5 ${COLORS.TEXT_PRIMARY}`} />
                             </a>
-                            <a href={socials.linkedin} className="p-3 rounded-full bg-white/5 hover:bg-[#0077b5]/20 hover:text-[#0077b5] transition-colors">
-                                <LinkedInIcon className="w-5 h-5 dark:text-white" />
+                            <a href={socials.linkedin} className={`p-3 rounded-full ${COLORS.BG_ACCENT} opacity-20 hover:opacity-100 transition-opacity`}>
+                                <LinkedInIcon className={`w-5 h-5 ${COLORS.TEXT_PRIMARY}`} />
                             </a>
                         </div>
 
@@ -243,27 +256,27 @@ const Navbar: React.FC<NavbarProps> = ({ logoSrc, socials, loggedInUser, onLogou
                                 <Link
                                     to="/dashboard"
                                     onClick={() => setIsMenuOpen(false)}
-                                    className="block w-full text-center py-3 rounded-xl bg-accent-blue text-white font-medium shadow-lg shadow-accent-blue/25"
+                                    className={`block w-full text-center py-3 rounded-xl ${COLORS.BG_ACCENT} ${COLORS.TEXT_ON_ACCENT} border-2 ${COLORS.BORDER}`}
                                 >
-                                    Dashboard
+                                    <Typography variant="h4">Dashboard</Typography>
                                 </Link>
                                 <button
                                     onClick={() => {
                                         setIsMenuOpen(false);
                                         onLogout?.();
                                     }}
-                                    className="block w-full text-center py-3 rounded-xl border border-red-500/20 text-red-500 font-medium hover:bg-red-500/5"
+                                    className="block w-full text-center py-3 rounded-xl border-2 border-red-500/20 text-red-500 hover:bg-red-500/5 shadow-sm"
                                 >
-                                    Keluar ({loggedInUser})
+                                    <Typography variant="h4">Keluar ({loggedInUser})</Typography>
                                 </button>
                             </div>
                         ) : (
                             <Link
                                 to="/login"
                                 onClick={() => setIsMenuOpen(false)}
-                                className="block w-full text-center py-3 rounded-xl bg-accent-blue text-white font-medium shadow-lg shadow-accent-blue/25"
+                                className={`block w-full text-center py-3 rounded-xl glass-button`}
                             >
-                                Masuk
+                                <Typography variant="h3">Masuk</Typography>
                             </Link>
                         )}
                     </div>

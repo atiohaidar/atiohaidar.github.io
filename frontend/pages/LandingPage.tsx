@@ -17,11 +17,12 @@ import TicketSubmissionSection from '../components/TicketSubmissionSection';
 import TicketTrackingSection from '../components/TicketTrackingSection';
 import ScrollReveal from '../components/ScrollReveal';
 import SpyTooltip from '../components/SpyTooltip';
-import ParallaxBackground from '../components/ParallaxBackground';
+
 import { useLandingData } from '../contexts/LandingDataContext';
 import { useMultiParallax } from '../hooks/useParallax';
 import { getAuthToken, getStoredUser, clearAuth } from '../apiClient';
 import { COLORS, LAYOUT, PRINT } from '../utils/styles';
+import { Card, Heading, Typography, Input, Button, DoodleCoffeeRing } from '../components/ui';
 import type { NavAction } from '../constants';
 
 const LandingPage: React.FC = () => {
@@ -136,13 +137,11 @@ const LandingPage: React.FC = () => {
 
     return (
         <div className={`relative min-h-screen duration-300 overflow-hidden`}>
-            {/* Global Background Elements */}
-            <ParallaxBackground intensity={1} zIndex={10} opacity={0.1} />
+
 
 
             {/* Particle Overlay (Optional, keep it subtle) */}
             {/* <div className="fixed inset-0 opacity-20 dark:opacity-30 -z-10 pointer-events-none">
-                 <ParticleBackground />
             </div> */}
 
             <Navbar
@@ -153,7 +152,17 @@ const LandingPage: React.FC = () => {
                 onNavAction={handleNavAction}
             />
 
-            <main className="mx-auto relative  -z-12 bg-light-bg dark:bg-deep-navy transition-colors  ">
+            <main className={`mx-auto relative -z-12 ${COLORS.BG_PRIMARY} transition-colors min-h-screen`}>
+                {/* Background Decorations */}
+                <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+                    <DoodleCoffeeRing className="absolute -top-10 -left-10 w-64 h-64 scale-150 rotate-45" />
+                    <DoodleCoffeeRing className="absolute bottom-1/4 right-[15%] w-48 h-48 opacity-10" />
+
+                    {/* Pencil Smudges/Scribbles */}
+                    <div className="absolute top-1/4 right-10 w-40 h-1 bg-slate-400/5 rotate-12 blur-md" />
+                    <div className="absolute bottom-1/3 left-10 w-60 h-2 bg-slate-400/5 -rotate-6 blur-lg" />
+                </div>
+
                 <ScrollReveal delay={200}>
 
 
@@ -240,55 +249,63 @@ const LandingPage: React.FC = () => {
                     className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
                     onClick={() => setIsTicketModalOpen(false)}
                 >
-                    <div
-                        className={`${COLORS.BG_SECONDARY} ${COLORS.BORDER} relative w-full max-w-md rounded-xl border p-6 shadow-2xl`}
+                    <Card
+                        variant="glass"
+                        className="relative w-full max-w-md p-8 shadow-2xl overflow-hidden"
                         onClick={(e) => e.stopPropagation()}
                     >
+                        {/* Tape effect */}
+                        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-32 h-8 bg-blue-100/80 dark:bg-blue-900/30 rotate-1 shadow-sm z-20"></div>
+
                         <button
                             type="button"
                             onClick={() => setIsTicketModalOpen(false)}
-                            className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
+                            className={`absolute right-4 top-4 ${COLORS.TEXT_SECONDARY} hover:text-red-500 transition-colors p-1`}
                             aria-label="Tutup modal ticketing"
                         >
                             ✕
                         </button>
-                        <h2 className={`text-2xl font-semibold mb-2 ${COLORS.TEXT_PRIMARY}`}>
+                        <Heading level={2} className={`${COLORS.TEXT_PRIMARY} mb-4`}>
                             Lacak Tiket
-                        </h2>
-                        <p className={`${COLORS.TEXT_SECONDARY} mb-6`}>
+                        </Heading>
+                        <Typography variant="body" className={`${COLORS.TEXT_SECONDARY} mb-8 font-patrick`}>
                             Masukkan token tiket untuk melihat status pengaduan Anda atau buat tiket baru jika belum punya token.
-                        </p>
-                        <form onSubmit={handleTicketModalSubmit} className="space-y-4">
-                            <div>
-                                <label className={`block text-sm font-medium mb-2 ${COLORS.TEXT_PRIMARY}`} htmlFor="ticket-token-input">
-                                    Token Tiket
-                                </label>
-                                <input
-                                    id="ticket-token-input"
-                                    type="text"
-                                    value={ticketTokenInput}
-                                    onChange={(e) => setTicketTokenInput(e.target.value)}
-                                    placeholder="Contoh: TKT-ABC12345"
-                                    className={`w-full px-4 py-3 rounded-lg border ${COLORS.BORDER} ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} focus:outline-none focus:ring-2 focus:ring-accent-blue`}
-                                />
-                            </div>
+                        </Typography>
+                        <form onSubmit={handleTicketModalSubmit} className="space-y-6">
+                            <Input
+                                label="Token Tiket"
+                                id="ticket-token-input"
+                                type="text"
+                                value={ticketTokenInput}
+                                onChange={(e) => setTicketTokenInput(e.target.value)}
+                                placeholder="Contoh: TKT-ABC12345"
+                                fullWidth
+                                variant="glass"
+                                className="font-patrick"
+                            />
                             <div className="flex flex-col gap-3 sm:flex-row">
-                                <button
+                                <Button
                                     type="submit"
-                                    className={`flex-1 px-4 py-3 rounded-lg font-semibold ${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ON_ACCENT} hover:opacity-90 transition-opacity`}
+                                    variant="primary"
+                                    fullWidth
+                                    size="lg"
+                                    className="font-patrick text-xl"
                                 >
-                                    Lacak Tiket
-                                </button>
-                                <button
+                                    Lacak Tiket 🎫
+                                </Button>
+                                <Button
                                     type="button"
                                     onClick={handleTicketCreateNew}
-                                    className={`flex-1 px-4 py-3 rounded-lg font-semibold border ${COLORS.BORDER} ${COLORS.TEXT_PRIMARY} hover:bg-black/5 dark:hover:bg-white/10 transition-colors`}
+                                    variant="glass"
+                                    fullWidth
+                                    size="lg"
+                                    className="font-patrick text-xl"
                                 >
-                                    Buat Tiket Baru
-                                </button>
+                                    Buat Baru
+                                </Button>
                             </div>
                         </form>
-                    </div>
+                    </Card>
                 </div>,
                 document.body
             )}
@@ -299,46 +316,52 @@ const LandingPage: React.FC = () => {
                     className="fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
                     onClick={() => setIsFormModalOpen(false)}
                 >
-                    <div
-                        className={`${COLORS.BG_SECONDARY} ${COLORS.BORDER} relative w-full max-w-md rounded-xl border p-6 shadow-2xl`}
+                    <Card
+                        variant="glass"
+                        className="relative w-full max-w-md p-8 shadow-2xl overflow-hidden"
                         onClick={(e) => e.stopPropagation()}
                     >
+                        {/* Tape effect */}
+                        <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-32 h-8 bg-purple-100/80 dark:bg-purple-900/30 -rotate-1 shadow-sm z-20"></div>
+
                         <button
                             type="button"
                             onClick={() => setIsFormModalOpen(false)}
-                            className="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
+                            className={`absolute right-4 top-4 ${COLORS.TEXT_SECONDARY} hover:text-red-500 transition-colors p-1`}
                             aria-label="Tutup modal form"
                         >
                             ✕
                         </button>
-                        <h2 className={`text-2xl font-semibold mb-2 ${COLORS.TEXT_PRIMARY}`}>
+                        <Heading level={2} className={`${COLORS.TEXT_PRIMARY} mb-4`}>
                             Akses Formulir
-                        </h2>
-                        <p className={`${COLORS.TEXT_SECONDARY} mb-6`}>
+                        </Heading>
+                        <Typography variant="body" className={`${COLORS.TEXT_SECONDARY} mb-8 font-patrick`}>
                             Masukkan token formulir untuk mulai mengisi form yang tersedia.
-                        </p>
-                        <form onSubmit={handleFormModalSubmit} className="space-y-4">
-                            <div>
-                                <label className={`block text-sm font-medium mb-2 ${COLORS.TEXT_PRIMARY}`} htmlFor="form-token-input">
-                                    Token Formulir
-                                </label>
-                                <input
-                                    id="form-token-input"
-                                    type="text"
-                                    value={formTokenInput}
-                                    onChange={(e) => setFormTokenInput(e.target.value)}
-                                    placeholder="Masukkan token formulir"
-                                    className={`w-full px-4 py-3 rounded-lg border ${COLORS.BORDER} ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} focus:outline-none focus:ring-2 focus:ring-accent-blue`}
-                                />
-                            </div>
-                            <button
+                        </Typography>
+                        <form onSubmit={handleFormModalSubmit} className="space-y-6">
+                            <Input
+                                label="Token Formulir"
+                                id="form-token-input"
+                                type="text"
+                                value={formTokenInput}
+                                onChange={(e) => setFormTokenInput(e.target.value)}
+                                placeholder="Masukkan token formulir"
+                                fullWidth
+                                variant="glass"
+                                className="font-patrick"
+                            />
+                            <Button
                                 type="submit"
-                                className={`w-full px-4 py-3 rounded-lg font-semibold ${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ON_ACCENT} hover:opacity-90 transition-opacity`}
+                                variant="primary"
+                                fullWidth
+                                size="lg"
+                                className="font-patrick text-xl"
+                                style={{ backgroundColor: '#8b5cf6' }} // Purple accent
                             >
-                                Buka Formulir
-                            </button>
+                                Buka Formulir 📝
+                            </Button>
                         </form>
-                    </div>
+                    </Card>
                 </div>,
                 document.body
             )}
@@ -347,3 +370,4 @@ const LandingPage: React.FC = () => {
 };
 
 export default LandingPage;
+

@@ -77,7 +77,7 @@ const BackendLoader: React.FC<BackendLoaderProps> = ({
 
     // Initial connection phase
     useEffect(() => {
-        const timers: NodeJS.Timeout[] = [];
+        const timers: any[] = [];
 
         // Only log what we actually know
         if (serverHost) {
@@ -210,249 +210,164 @@ const BackendLoader: React.FC<BackendLoaderProps> = ({
 
     const isError = phase === 'error';
 
-    // Use portal to ensure loader stays on top of everything (including headers/transforms)
+    // Helper functions for styling
+    const paramsStyle = (isError: boolean) => ({
+        badge: isError ? 'bg-red-100 border-red-400 text-red-700' : 'bg-green-100 border-green-400 text-green-700',
+        indicator: isError ? 'bg-red-500' : 'bg-green-500'
+    });
+
+    const getLogColor = (log: string) => {
+        if (log.startsWith('✓')) return 'text-green-600 dark:text-green-400 font-bold';
+        if (log.startsWith('✗')) return 'text-red-600 dark:text-red-400 font-bold';
+        if (log.startsWith('⏳')) return 'text-amber-600 dark:text-amber-400 italic';
+        if (log.startsWith('>')) return 'text-blue-600 dark:text-blue-400';
+        return 'text-slate-600 dark:text-slate-400';
+    };
+
+    const getLogIcon = (log: string) => {
+        if (log.startsWith('✓')) return '✅';
+        if (log.startsWith('✗')) return '❌';
+        if (log.startsWith('⏳')) return '⏳';
+        if (log.startsWith('>')) return '🚀';
+        return '📝';
+    };
+
+    const cleanLog = (log: string) => {
+        return log.replace(/^[✓✗⏳>]\s*/, '');
+    };
+
+    // Use portal to ensure loader stays on top of everything
     return createPortal(
         <div
             className={`
-                fixed inset-0 z-[9999] flex flex-col items-center justify-center font-mono overflow-hidden
+                fixed inset-0 z-[9999] flex flex-col items-center justify-center font-patrick overflow-hidden
             `}
             style={{
-                animation: phase === 'exit' ? 'slideDownFadeOut 0.6s ease-in forwards' : 'fadeIn 0.4s ease-out forwards',
+                animation: phase === 'exit' ? 'fadeOut 0.6s ease-in forwards' : 'fadeIn 0.4s ease-out forwards',
             }}
         >
-            {/* Backdrop with fade-in */}
-            <div
-                className="absolute inset-0 bg-black/80 backdrop-blur-xl"
-                style={{
-                    animation: 'fadeIn 0.5s ease-out forwards',
-                }}
-            />
+            {/* Backdrop with paper texture overlay */}
+            <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300" />
 
-            {/* Subtle background orbs with scale animation */}
+            {/* Notebook / Clipboard Container */}
             <div
-                className={`absolute top-1/4 left-1/4 w-64 h-64 ${isError ? 'bg-red-500/5' : 'bg-green-500/5'} rounded-full blur-3xl`}
-                style={{
-                    animation: 'scaleIn 0.8s ease-out 0.2s forwards',
-                    opacity: 0,
-                }}
-            />
-            <div
-                className={`absolute bottom-1/4 right-1/4 w-64 h-64 ${isError ? 'bg-orange-500/5' : 'bg-cyan-500/5'} rounded-full blur-3xl`}
-                style={{
-                    animation: 'scaleIn 0.8s ease-out 0.3s forwards',
-                    opacity: 0,
-                }}
-            />
-
-            {/* Main content with slide-down animation */}
-            <div
-                className="relative z-10 w-full max-w-xl px-6"
+                className={`
+                    relative z-10 w-full max-w-md bg-paper-cream dark:bg-slate-800 
+                    border-2 border-slate-800 dark:border-slate-600 rounded-xl shadow-2xl 
+                    transform transition-all duration-500
+                    p-6 md:p-8
+                `}
                 style={{
                     animation: phase === 'exit'
                         ? 'slideDownOut 0.5s ease-in forwards'
-                        : 'slideDownFadeIn 0.5s ease-out 0.1s forwards',
-                    opacity: phase === 'exit' ? 1 : 0,
-                    transform: phase === 'exit' ? 'translateY(0)' : 'translateY(-30px)',
+                        : 'slideUpIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards',
+                    borderRadius: '2px 4px 255px 15px/255px 15px 2px 4px' // Subtle irregularity
                 }}
             >
-                {/* Header - Title from props */}
-                <div
-                    className="text-center mb-6"
-                    style={{
-                        animation: phase !== 'exit' ? 'slideDownFadeIn 0.5s ease-out 0.2s forwards' : undefined,
-                        opacity: phase === 'exit' ? 1 : 0,
-                    }}
-                >
-                    {/* Connection status badge - only show if we know */}
+                {/* Spiral/Clip Decoration at top */}
+                <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 w-32 h-12 bg-slate-800 dark:bg-slate-700 rounded-lg flex items-center justify-center shadow-md z-20">
+                    <span className="text-white font-bold tracking-widest text-xs uppercase">SYSTEM LOG</span>
+                </div>
+
+                {/* Header Section */}
+                <div className="text-center mb-6 mt-4">
+                    {/* Status Badge */}
                     {isSecureConnection !== undefined && (
-                        <div className={`inline-flex items-center gap-2 px-3 py-1.5 ${isError ? 'bg-red-500/10 border-red-500/30' : 'bg-green-500/10 border-green-500/30'} border rounded-full mb-3`}>
-                            <span className={`w-2 h-2 ${isError ? 'bg-red-500' : 'bg-green-500'} rounded-full ${phase !== 'done' && phase !== 'exit' && phase !== 'error' ? 'animate-pulse' : ''}`}></span>
-                            <span className={`${isError ? 'text-red-400' : 'text-green-400'} text-xs font-medium`}>
-                                {isError ? 'ERROR' : (isSecureConnection ? 'HTTPS' : 'HTTP')}
+                        <div className={`inline-flex items-center gap-2 px-3 py-1 mb-2 border-2 border-dashed rounded-full ${paramsStyle(isError).badge} transform -rotate-2`}>
+                            <span className={`w-2 h-2 rounded-full ${paramsStyle(isError).indicator} ${phase !== 'done' && phase !== 'exit' && phase !== 'error' ? 'animate-pulse' : ''}`}></span>
+                            <span className="text-xs font-bold font-mono">
+                                {isError ? 'ERROR' : (isSecureConnection ? 'SECURE' : 'INSECURE')}
                             </span>
                         </div>
                     )}
-                    <h1 className="text-2xl md:text-3xl font-bold text-white">
+
+                    <h2 className="text-2xl md:text-3xl font-bold font-caveat text-slate-900 dark:text-white mb-1">
                         {title}
                         {phase !== 'done' && phase !== 'exit' && phase !== 'error' && <span className="animate-pulse">...</span>}
-                    </h1>
+                    </h2>
                     {subtitle && (
-                        <p className="text-gray-400 text-sm mt-1">{subtitle}</p>
+                        <p className="text-slate-600 dark:text-slate-400 text-sm font-patrick italic">{subtitle}</p>
                     )}
                 </div>
 
-                {/* Terminal Window with slide-down */}
-                <div
-                    className={`bg-[#1a1a2e] rounded-lg border ${isError ? 'border-red-700/50' : 'border-gray-700/50'} shadow-2xl overflow-hidden`}
-                    style={{
-                        animation: phase !== 'exit' ? 'slideDownFadeIn 0.6s ease-out 0.3s forwards' : undefined,
-                        opacity: phase === 'exit' ? 1 : 0,
-                    }}
-                >
-                    {/* Terminal Header */}
-                    <div className="flex items-center gap-2 px-4 py-2.5 bg-[#0d0d15] border-b border-gray-700/50">
-                        <div className="flex gap-1.5">
-                            <div className="w-2.5 h-2.5 rounded-full bg-red-500"></div>
-                            <div className="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
-                            <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
-                        </div>
-                        {serverHost && <span className="ml-3 text-gray-500 text-xs">{serverHost}</span>}
-                    </div>
-
-                    {/* Terminal Body */}
-                    <div className="p-4 min-h-[200px] max-h-[300px] overflow-auto">
-                        {/* Logs */}
-                        <div className="space-y-1">
-                            {logs.map((log, idx) => (
-                                <div
-                                    key={idx}
-                                    className={`text-sm font-mono ${log.startsWith('✓') ? 'text-green-400' :
-                                        log.startsWith('✗') ? 'text-red-400' :
-                                            log.startsWith('⏳') ? 'text-yellow-400' :
-                                                log.startsWith('>') ? 'text-cyan-400' :
-                                                    'text-gray-400'
-                                        }`}
-                                    style={{
-                                        animation: 'slideInFromLeft 0.3s ease-out forwards',
-                                    }}
-                                >
-                                    {log}
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* JSON Response Display - only if we have real data */}
-                        {(phase === 'json' || phase === 'done' || phase === 'exit') && jsonText && (
+                {/* Log Area (Paper Lines) */}
+                <div className="relative bg-white dark:bg-slate-900/50 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-4 min-h-[200px] max-h-[300px] overflow-auto notebook-lines">
+                    <div className="space-y-2">
+                        {logs.map((log, idx) => (
                             <div
-                                className="mt-3 p-2 bg-black/30 rounded border border-green-500/20"
-                                style={{
-                                    animation: 'slideUpFadeIn 0.4s ease-out forwards',
-                                }}
+                                key={idx}
+                                className={`text-sm font-patrick flex items-start gap-2 ${getLogColor(log)}`}
+                                style={{ animation: 'slideInLeft 0.3s ease-out forwards' }}
                             >
-                                <pre className="text-green-400 text-xs overflow-hidden whitespace-pre-wrap">
-                                    {jsonText}
-                                    {phase === 'json' && <span className="animate-pulse">▌</span>}
-                                </pre>
+                                <span className="opacity-70 mt-0.5">{getLogIcon(log)}</span>
+                                <span className="leading-tight">{cleanLog(log)}</span>
                             </div>
-                        )}
+                        ))}
                     </div>
+
+                    {/* JSON Dump Area */}
+                    {(phase === 'json' || phase === 'done' || phase === 'exit') && jsonText && (
+                        <div className="mt-4 p-3 bg-slate-100 dark:bg-slate-800 rounded border border-slate-300 dark:border-slate-600 font-mono text-xs text-slate-700 dark:text-slate-300 overflow-auto whitespace-pre-wrap shadow-inner relative transform rotate-1">
+                            {jsonText}
+                            {phase === 'json' && <span className="animate-pulse border-r-2 border-slate-400 ml-1"></span>}
+                        </div>
+                    )}
                 </div>
 
-                {/* Progress Bar */}
-                <div
-                    className="mt-4"
-                    style={{
-                        animation: phase !== 'exit' ? 'slideDownFadeIn 0.5s ease-out 0.4s forwards' : undefined,
-                        opacity: phase === 'exit' ? 1 : 0,
-                    }}
-                >
-                    <div className="h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                {/* Marker Progress Bar */}
+                <div className="mt-6 relative">
+                    <div className="h-4 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden border border-slate-300 dark:border-slate-600">
                         <div
-                            className={`h-full ${isError ? 'bg-red-500' : 'bg-gradient-to-r from-green-500 to-cyan-400'} transition-all duration-300 ease-out`}
-                            style={{ width: `${getProgress()}%` }}
+                            className={`h-full ${isError ? 'bg-red-400' : 'bg-marker-blue'} transition-all duration-300 ease-out`}
+                            style={{
+                                width: `${getProgress()}%`,
+                                backgroundImage: 'linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent)',
+                                backgroundSize: '1rem 1rem'
+                            }}
                         />
                     </div>
                 </div>
 
-                {/* Success Message - only show if provided */}
+                {/* Success/Error Actions */}
                 {(phase === 'done' || phase === 'exit') && successMessage && (
-                    <div
-                        className="mt-4 text-center"
-                        style={{
-                            animation: 'scaleIn 0.4s ease-out forwards',
-                        }}
-                    >
-                        <p className="text-lg text-green-400 font-medium">
-                            {successMessage}
+                    <div className="mt-4 text-center animate-bounce">
+                        <p className="text-xl font-caveat font-bold text-green-600 dark:text-green-400 transform -rotate-1">
+                            {successMessage} 🎉
                         </p>
                     </div>
                 )}
 
-                {/* Error Message with Dismiss Button */}
                 {phase === 'error' && (
-                    <div
-                        className="mt-4 text-center"
-                        style={{
-                            animation: 'shakeIn 0.5s ease-out forwards',
-                        }}
-                    >
-                        {errorMessage && (
-                            <p className="text-red-400 text-sm mb-3">{errorMessage}</p>
-                        )}
+                    <div className="mt-4 text-center">
+                        {errorMessage && <p className="text-red-500 font-bold mb-3 font-patrick">{errorMessage}</p>}
                         <button
                             onClick={() => {
                                 if (onDismiss) onDismiss();
                                 setPhase('exit');
                             }}
-                            className="px-5 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 rounded-lg text-red-400 text-sm font-medium transition-all hover:scale-105"
+                            className="bg-red-100 hover:bg-red-200 text-red-700 font-bold py-2 px-6 rounded-lg border-2 border-red-300 border-dashed transition-transform hover:scale-105"
                         >
-                            Try Again
+                            Coba Lagi
                         </button>
                     </div>
                 )}
             </div>
 
-            {/* Inline keyframes for animations */}
+            {/* Inline keyframes */}
             <style>{`
-                @keyframes fadeIn {
-                    from { opacity: 0; }
-                    to { opacity: 1; }
+                @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+                @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+                @keyframes slideUpIn { 
+                    from { opacity: 0; transform: translateY(50px) scale(0.9); } 
+                    to { opacity: 1; transform: translateY(0) scale(1); } 
                 }
-                @keyframes slideDownFadeIn {
-                    from { 
-                        opacity: 0; 
-                        transform: translateY(-30px); 
-                    }
-                    to { 
-                        opacity: 1; 
-                        transform: translateY(0); 
-                    }
+                @keyframes slideDownOut { 
+                    from { opacity: 1; transform: translateY(0); } 
+                    to { opacity: 0; transform: translateY(50px); } 
                 }
-                @keyframes slideDownFadeOut {
-                    from { 
-                        opacity: 1; 
-                    }
-                    to { 
-                        opacity: 0; 
-                    }
-                }
-                @keyframes slideDownOut {
-                    from { 
-                        opacity: 1; 
-                        transform: translateY(0); 
-                    }
-                    to { 
-                        opacity: 0; 
-                        transform: translateY(50px); 
-                    }
-                }
-                @keyframes scaleIn {
-                    from { 
-                        opacity: 0; 
-                        transform: scale(0.8); 
-                    }
-                    to { 
-                        opacity: 1; 
-                        transform: scale(1); 
-                    }
-                }
-                @keyframes slideInFromLeft {
-                    from { 
-                        opacity: 0; 
-                        transform: translateX(-10px); 
-                    }
-                    to { 
-                        opacity: 1; 
-                        transform: translateX(0); 
-                    }
-                }
-                @keyframes shakeIn {
-                    0% { transform: translateX(-5px); opacity: 0; }
-                    20% { transform: translateX(5px); }
-                    40% { transform: translateX(-3px); }
-                    60% { transform: translateX(3px); }
-                    80% { transform: translateX(-1px); }
-                    100% { transform: translateX(0); opacity: 1; }
+                @keyframes slideInLeft {
+                    from { opacity: 0; transform: translateX(-10px); }
+                    to { opacity: 1; transform: translateX(0); }
                 }
             `}</style>
         </div>,

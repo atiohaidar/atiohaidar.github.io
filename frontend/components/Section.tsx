@@ -8,8 +8,9 @@
  */
 import React from 'react';
 import { useIntersectionObserver } from '../hooks/useIntersectionObserver';
-import { COLORS, LAYOUT, PRINT, SPACING, TYPOGRAPHY } from '../utils/styles';
+import { COLORS, LAYOUT, PRINT, SPACING } from '../utils/styles';
 import { createAnimationStyle } from '../utils/animations';
+import { Typography, Heading } from './ui';
 
 interface SectionProps {
   /** ID unik untuk section, digunakan untuk navigasi. */
@@ -38,16 +39,16 @@ const Section: React.FC<SectionProps> = ({ id, number, title, children, centerTi
   const pageBreakClass = printPageBreak ? PRINT.PAGE_BREAK : PRINT.NO_BREAK;
 
   return (
-    <section 
-      id={id} 
-      ref={ref} 
+    <section
+      id={id}
+      ref={ref}
       className={`${SPACING.SECTION_PADDING} ${pageBreakClass} ${SPACING.SECTION_PADDING_PRINT} ${animationClass} ${className}`}
     >
-      <h2 className={`${TYPOGRAPHY.HEADING_SECTION} text-light-text dark:text-white mb-8 ${LAYOUT.FLEX_CENTER} ${titleAlignment}`}>
-        <span className={`text-light-accent dark:text-accent-blue mr-3`}>{number}.</span>
+      <Heading level={2} className={`${COLORS.TEXT_PRIMARY} mb-8 flex items-center ${titleAlignment} print:mb-4 print:text-xl`}>
+        <span className={`hand-drawn-circle ${COLORS.TEXT_ACCENT} mr-4 print:mr-2 text-sm`}>{number}.</span>
         {title}
-        {!centerTitle && <span className="h-px w-20 sm:w-40 bg-gray-300 dark:bg-soft-gray/30 ml-4 print:bg-gray-400"></span>}
-      </h2>
+        {!centerTitle && <span className="h-1 w-20 sm:w-40 bg-slate-800 dark:bg-slate-400/30 ml-4 print:bg-gray-400 print:ml-2 print:w-16 rounded-full opacity-50"></span>}
+      </Heading>
       {children}
     </section>
   );

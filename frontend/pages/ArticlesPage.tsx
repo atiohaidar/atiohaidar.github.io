@@ -12,6 +12,8 @@ import { getAuthToken, getStoredUser, clearAuth } from '../apiClient';
 import { useLandingData } from '../contexts/LandingDataContext';
 import { useMultiParallax } from '../hooks/useParallax';
 import type { Article } from '../apiTypes';
+import { Card, Button, Typography, Heading, Text } from '../components/ui';
+import { COLORS, LAYOUT } from '../utils/styles';
 
 const EXCERPT_MAX_CHARS = 400;
 const EXCERPT_MAX_BLOCKS = 3;
@@ -48,7 +50,7 @@ const renderCodeBlock = (props: any) => {
     const { className, children, inline = false, ...rest } = props ?? {};
     return (
         <code
-            className={`${className ?? ''} ${inline ? 'bg-gray-100 dark:bg-light-navy px-1 py-0.5 rounded' : ''}`.trim()}
+            className={`${className ?? ''} ${inline ? 'bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded font-mono' : 'block bg-gray-50 dark:bg-gray-900 p-4 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-800 my-4 overflow-x-auto font-mono'}`.trim()}
             {...rest}
         >
             {children}
@@ -58,44 +60,35 @@ const renderCodeBlock = (props: any) => {
 
 const detailComponents: Components = {
     a: ({ node, ...props }) => (
-        <a className="text-accent-blue hover:underline" {...props} />
+        <a className="text-blue-600 dark:text-blue-400 hover:underline font-patrick" {...props} />
     ),
     code: renderCodeBlock,
+    p: ({ node, ...props }) => <p className="mb-4 leading-relaxed font-patrick text-lg" {...props} />,
+    h1: ({ node, ...props }) => <Heading level={1} className="mt-8 mb-4" {...props} />,
+    h2: ({ node, ...props }) => <Heading level={2} className="mt-6 mb-3" {...props} />,
+    h3: ({ node, ...props }) => <Heading level={3} className="mt-4 mb-2" {...props} />,
 };
 
 const listComponents: Components = {
     h1: ({ node, ...props }) => (
-        <h3 className="text-xl font-semibold text-light-text dark:text-white" {...props} />
+        <Heading level={3} className="text-xl mb-2" {...props} />
     ),
     h2: ({ node, ...props }) => (
-        <h4 className="text-lg font-semibold text-light-text dark:text-white" {...props} />
-    ),
-    h3: ({ node, ...props }) => (
-        <h5 className="text-base font-semibold text-light-text dark:text-white" {...props} />
+        <Heading level={4} className="text-lg mb-2" {...props} />
     ),
     p: ({ node, ...props }) => (
-        <p className="text-sm text-light-text dark:text-light-slate" {...props} />
+        <Typography variant="body" className="text-sm line-clamp-3 mb-2 font-patrick" {...props} />
     ),
     a: ({ node, ...props }) => (
-        <a className="text-accent-blue hover:underline" {...props} />
+        <span className="text-blue-600 dark:text-blue-400 font-patrick" {...props} />
     ),
     code: renderCodeBlock,
-    ul: ({ node, ...props }) => (
-        <ul className="list-disc pl-5 text-sm text-light-text dark:text-light-slate" {...props} />
-    ),
-    ol: ({ node, ...props }) => (
-        <ol className="list-decimal pl-5 text-sm text-light-text dark:text-light-slate" {...props} />
-    ),
 };
 
 const ArticlesPage: React.FC = () => {
     const navigate = useNavigate();
-
-    // Get pre-fetched data from context for Navbar/Footer
     const { data } = useLandingData();
     const { profile } = data;
-
-    // Parallax effect for background layers
     const parallax = useMultiParallax();
 
     const [articles, setArticles] = useState<Article[]>([]);
@@ -151,6 +144,7 @@ const ArticlesPage: React.FC = () => {
         try {
             const detail = await getArticle(article.slug);
             setSelectedArticle(detail);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         } catch (err) {
             console.error(err);
             setDetailError('Gagal memuat detail artikel.');
@@ -164,8 +158,7 @@ const ArticlesPage: React.FC = () => {
         setDetailError(null);
     };
 
-    // Default profile if data not loaded yet
-    const defaultProfile = {
+    const activeProfile = profile || {
         logoSrc: './PP-Tio.jpg',
         socials: {
             github: 'https://github.com/atiohaidar',
@@ -175,25 +168,19 @@ const ArticlesPage: React.FC = () => {
         copyright: 'Sebuah website random'
     };
 
-    const activeProfile = profile || defaultProfile;
-
     return (
-        <div className="relative min-h-screen bg-light-bg dark:bg-deep-navy transition-colors duration-300 overflow-hidden">
+        <div className={`relative min-h-screen ${COLORS.BG_PRIMARY} transition-colors duration-300 overflow-hidden`}>
             {/* Global Background Elements */}
-            <div className="fixed inset-0 bg-gradient-to-br from-blue-500/5 via-cyan-500/5 to-purple-500/5 -z-10" />
+            <div className="fixed inset-0 notebook-lines opacity-10 pointer-events-none -z-10" />
 
-            {/* Animated Orbs with Parallax (Fixed) */}
+            {/* Animated Orbs with Parallax */}
             <div
-                className="fixed top-[20%] right-[10%] w-[600px] h-[600px] bg-accent-blue/40 rounded-full blur-[120px] animate-blob mix-blend-multiply dark:mix-blend-screen opacity-90 -z-10 pointer-events-none"
+                className="fixed top-[-10%] right-[-5%] w-[500px] h-[500px] bg-blue-400/20 dark:bg-blue-600/10 rounded-full blur-[100px] animate-blob -z-10 pointer-events-none"
                 style={{ transform: `translateY(${parallax.getOffset(0.05, 'down')}px)` }}
             />
             <div
-                className="fixed bottom-[20%] left-[10%] w-[600px] h-[600px] bg-purple-500/40 rounded-full blur-[120px] animate-blob animation-delay-2000 mix-blend-multiply dark:mix-blend-screen opacity-90 -z-10 pointer-events-none"
+                className="fixed bottom-[10%] left-[-5%] w-[500px] h-[500px] bg-purple-400/20 dark:bg-purple-600/10 rounded-full blur-[100px] animate-blob animation-delay-2000 -z-10 pointer-events-none"
                 style={{ transform: `translateY(${parallax.getOffset(0.08, 'down')}px)` }}
-            />
-            <div
-                className="fixed top-[40%] left-[40%] w-[600px] h-[600px] bg-cyan-500/40 rounded-full blur-[120px] animate-blob animation-delay-4000 mix-blend-multiply dark:mix-blend-screen opacity-90 -z-10 pointer-events-none"
-                style={{ transform: `translateY(${parallax.getOffset(0.12, 'down')}px)` }}
             />
 
             {/* Navbar */}
@@ -205,51 +192,53 @@ const ArticlesPage: React.FC = () => {
             />
 
             {/* Main Content */}
-            <main className="mx-auto relative z-10 pt-32 pb-16">
+            <main className="mx-auto relative z-10 pt-32 pb-24">
                 <div className="container mx-auto px-6 md:px-12">
                     {/* Loading State */}
                     {loading ? (
-                        <div className="text-center py-16">
-                            <div className="inline-block w-8 h-8 border-2 border-accent-blue/30 border-t-accent-blue rounded-full animate-spin mb-4" />
-                            <p className="text-light-muted dark:text-soft-gray">Memuat artikel...</p>
+                        <div className="text-center py-32">
+                            <div className="inline-block w-12 h-12 border-4 border-dashed border-blue-400 border-t-transparent rounded-full animate-spin mb-6" />
+                            <Typography variant="h3" className={`${COLORS.TEXT_SECONDARY} font-caveat opacity-70`}>Memuat rak buku...</Typography>
                         </div>
                     ) : error ? (
-                        <div className="glass-card border-red-500/30 px-6 py-4 rounded-xl text-red-500 text-center max-w-2xl mx-auto">
-                            {error}
-                        </div>
+                        <Card variant="glass" className="border-red-500/30 px-6 py-4 rounded-xl text-red-500 text-center max-w-2xl mx-auto transform rotate-1">
+                            <span className="text-2xl mr-2">⚠️</span> {error}
+                        </Card>
                     ) : (
                         <>
                             {/* Header */}
-                            <ScrollReveal delay={100}>
-                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-                                    <div className="text-center md:text-left w-full md:w-auto">
-                                        <h1 className="text-4xl md:text-5xl font-bold text-light-text dark:text-white mb-2">
-                                            <span className="text-gradient">📰</span> Articles
-                                        </h1>
-                                        <p className="text-light-muted dark:text-soft-gray">
-                                            Berbagi pemikiran, pengalaman, dan pembelajaran dalam teknologi
-                                        </p>
+                            {!selectedArticle && (
+                                <ScrollReveal delay={100}>
+                                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12 border-b-2 border-dashed border-gray-200 dark:border-gray-800 pb-8">
+                                        <div className="text-left w-full md:w-auto">
+                                            <Heading level={1} className={`${COLORS.TEXT_PRIMARY} mb-4 flex items-center gap-3`}>
+                                                <span className="text-4xl">📰</span> Articles
+                                            </Heading>
+                                            <Typography variant="h4" className={`${COLORS.TEXT_SECONDARY} font-patrick italic opacity-80 max-w-xl`}>
+                                                Catatan perjalanan, pemikiran, dan eksperimen dalam dunia teknologi dan kehidupan.
+                                            </Typography>
+                                        </div>
+                                        <Button
+                                            as={Link}
+                                            to="/dashboard/articles"
+                                            variant="glass"
+                                            size="md"
+                                            className="font-patrick text-lg transform hover:-rotate-1 transition-transform"
+                                        >
+                                            📝 Kelola Artikel
+                                        </Button>
                                     </div>
-                                    <Link
-                                        to="/dashboard/articles"
-                                        className="glass-button px-5 py-2.5 rounded-full text-sm font-medium text-accent-blue hover:bg-accent-blue hover:text-white transition-all"
-                                    >
-                                        📝 Kelola Artikel
-                                    </Link>
-                                </div>
-                            </ScrollReveal>
+                                </ScrollReveal>
+                            )}
 
                             {/* Content */}
                             {articles.length === 0 ? (
                                 <ScrollReveal delay={200}>
-                                    <div className="glass-card rounded-2xl p-12 text-center max-w-2xl mx-auto">
-                                        <div className="text-5xl mb-4">📝</div>
-                                        <h3 className="text-xl font-semibold text-light-text dark:text-white mb-2">
-                                            Belum ada artikel
-                                        </h3>
-                                        <p className="text-light-muted dark:text-soft-gray">
-                                            Belum ada artikel yang dipublikasikan.
-                                        </p>
+                                    <div className="text-center py-20 flex flex-col items-center gap-6">
+                                        <div className="text-7xl opacity-30 grayscale transform -rotate-12">📚</div>
+                                        <Heading level={2} className={`${COLORS.TEXT_SECONDARY} font-caveat opacity-60`}>
+                                            Rak ini masih kosong semilir...
+                                        </Heading>
                                     </div>
                                 </ScrollReveal>
                             ) : selectedArticle ? (
@@ -258,94 +247,111 @@ const ArticlesPage: React.FC = () => {
                                     <div className="max-w-4xl mx-auto">
                                         <button
                                             onClick={handleBackToList}
-                                            className="flex items-center gap-2 text-light-muted dark:text-slate-400 hover:text-accent-blue transition-colors mb-6"
+                                            className="flex items-center gap-2 text-gray-400 hover:text-blue-500 transition-all mb-8 font-patrick group"
                                         >
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                                            </svg>
+                                            <span className="transform group-hover:-translate-x-1 transition-transform">←</span>
                                             Kembali ke daftar artikel
                                         </button>
 
                                         {detailLoading ? (
-                                            <div className="glass-card rounded-2xl p-8 text-center">
-                                                <div className="inline-block w-8 h-8 border-2 border-accent-blue/30 border-t-accent-blue rounded-full animate-spin mb-4" />
-                                                <p className="text-light-muted dark:text-soft-gray">Memuat artikel…</p>
+                                            <div className="text-center py-32">
+                                                <div className="inline-block w-12 h-12 border-4 border-dashed border-blue-400 border-t-transparent rounded-full animate-spin mb-6" />
+                                                <Typography variant="h3" className={`${COLORS.TEXT_SECONDARY} font-caveat opacity-70`}>Membuka lembaran...</Typography>
                                             </div>
                                         ) : detailError ? (
-                                            <div className="glass-card border-red-500/30 rounded-2xl p-6 text-red-500 text-center">
+                                            <Card variant="glass" className="border-red-500/30 p-8 text-red-500 text-center transform rotate-1">
                                                 {detailError}
-                                            </div>
+                                            </Card>
                                         ) : (
-                                            <article className="glass-card rounded-2xl p-6 md:p-8 lg:p-12">
-                                                <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-light-text dark:text-white mb-4">
-                                                    {selectedArticle.title}
-                                                </h1>
-                                                <div className="flex flex-wrap items-center gap-4 text-light-muted dark:text-soft-gray text-sm mb-8 pb-6 border-b border-gray-200 dark:border-white/10">
-                                                    <span className="flex items-center gap-1">
-                                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                        </svg>
-                                                        {formatDate(selectedArticle.created_at)}
-                                                    </span>
-                                                    {selectedArticle.updated_at && selectedArticle.updated_at !== selectedArticle.created_at && (
-                                                        <span className="flex items-center gap-1">
-                                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                            </svg>
-                                                            Updated: {formatDate(selectedArticle.updated_at)}
-                                                        </span>
-                                                    )}
-                                                </div>
+                                            <article className="relative">
+                                                {/* Tape deco */}
+                                                <div className="absolute -top-4 left-1/4 w-32 h-10 bg-blue-100/40 dark:bg-blue-900/10 -rotate-2 z-20"></div>
 
-                                                <div className="prose dark:prose-invert prose-sm md:prose-base lg:prose-lg max-w-none text-light-text dark:text-light-slate">
-                                                    <ReactMarkdown
-                                                        remarkPlugins={[remarkGfm]}
-                                                        rehypePlugins={[rehypeRaw]}
-                                                        components={detailComponents}
-                                                    >
-                                                        {selectedArticle.content}
-                                                    </ReactMarkdown>
-                                                </div>
+                                                <Card variant="glass" padding="none" className="overflow-hidden border-2 border-dashed border-gray-200 dark:border-gray-800 shadow-xl">
+                                                    <div className="p-8 md:p-12 lg:p-16">
+                                                        <Heading level={1} className={`${COLORS.TEXT_PRIMARY} mb-6 leading-tight`}>
+                                                            {selectedArticle.title}
+                                                        </Heading>
+
+                                                        <div className="flex flex-wrap items-center gap-6 text-gray-500 dark:text-gray-400 text-sm mb-12 pb-8 border-b-2 border-dashed border-gray-100 dark:border-gray-900">
+                                                            <span className="flex items-center gap-2 font-patrick italic">
+                                                                📅 {formatDate(selectedArticle.created_at)}
+                                                            </span>
+                                                            {selectedArticle.updated_at && selectedArticle.updated_at !== selectedArticle.created_at && (
+                                                                <span className="flex items-center gap-2 font-patrick italic opacity-60">
+                                                                    ✏️ Diperbarui: {formatDate(selectedArticle.updated_at)}
+                                                                </span>
+                                                            )}
+                                                            <div className="ml-auto flex items-center gap-4">
+                                                                <span className="px-3 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-full text-xs font-bold border border-blue-100 dark:border-blue-800">
+                                                                    PUBLISHED
+                                                                </span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="max-w-none text-gray-800 dark:text-gray-200">
+                                                            <ReactMarkdown
+                                                                remarkPlugins={[remarkGfm]}
+                                                                rehypePlugins={[rehypeRaw]}
+                                                                components={detailComponents}
+                                                            >
+                                                                {selectedArticle.content}
+                                                            </ReactMarkdown>
+                                                        </div>
+                                                    </div>
+                                                </Card>
                                             </article>
                                         )}
                                     </div>
                                 </ScrollReveal>
                             ) : (
                                 /* Articles Grid */
-                                <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
                                     {articles.map((article, index) => (
                                         <ScrollReveal key={article.slug} delay={150 + index * 50}>
-                                            <div
-                                                className="glass-card rounded-2xl p-6 cursor-pointer hover:scale-[1.02] hover:shadow-xl transition-all duration-300 group h-full"
+                                            <Card
+                                                variant="glass"
+                                                padding="none"
+                                                className={`group cursor-pointer hover:shadow-2xl transition-all duration-500 h-full border-2 border-dashed border-gray-200 dark:border-gray-800 ${index % 2 === 0 ? 'rotate-1' : '-rotate-1'} hover:rotate-0 transform`}
                                                 onClick={() => handleSelectArticle(article)}
                                             >
-                                                <h2 className="text-xl md:text-2xl font-bold text-light-text dark:text-white mb-3 group-hover:text-accent-blue transition-colors line-clamp-2">
-                                                    {article.title}
-                                                </h2>
+                                                <div className="p-8 flex flex-col h-full">
+                                                    <div className="mb-4">
+                                                        <span className="text-xs font-bold text-blue-500/60 dark:text-blue-400/50 uppercase tracking-widest font-mono">
+                                                            #{index + 1} ARTICLE
+                                                        </span>
+                                                    </div>
 
-                                                <p className="text-light-muted dark:text-soft-gray text-sm mb-4 flex items-center gap-1">
-                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                    </svg>
-                                                    {formatDate(article.created_at)}
-                                                </p>
+                                                    <Heading level={2} className={`text-2xl md:text-3xl ${COLORS.TEXT_PRIMARY} mb-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 leading-tight`}>
+                                                        {article.title}
+                                                    </Heading>
 
-                                                <div className="mb-4 overflow-hidden">
-                                                    <ReactMarkdown
-                                                        remarkPlugins={[remarkGfm]}
-                                                        rehypePlugins={[rehypeRaw]}
-                                                        className="prose prose-sm dark:prose-invert max-w-none text-light-text dark:text-light-slate line-clamp-3"
-                                                        components={listComponents}
-                                                    >
-                                                        {buildArticleExcerpt(article.content)}
-                                                    </ReactMarkdown>
+                                                    <Typography variant="caption" className="flex items-center gap-2 text-gray-400 italic mb-6 font-patrick">
+                                                        <span>📅</span> {formatDate(article.created_at)}
+                                                    </Typography>
+
+                                                    <div className="mb-8 overflow-hidden relative">
+                                                        <ReactMarkdown
+                                                            remarkPlugins={[remarkGfm]}
+                                                            rehypePlugins={[rehypeRaw]}
+                                                            className="text-gray-600 dark:text-gray-400 line-clamp-4"
+                                                            components={listComponents}
+                                                        >
+                                                            {buildArticleExcerpt(article.content)}
+                                                        </ReactMarkdown>
+                                                        <div className="absolute bottom-0 left-0 w-full h-8 bg-gradient-to-t from-white dark:from-gray-900 via-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                    </div>
+
+                                                    <div className="mt-auto flex items-center justify-between pointer-events-none">
+                                                        <span className={`text-blue-500 font-bold font-patrick underline decoration-dashed decoration-2 underline-offset-4 transform group-hover:scale-110 transition-transform origin-left`}>
+                                                            Baca selengkapnya
+                                                        </span>
+                                                        <span className="text-3xl opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all duration-300">
+                                                            📎
+                                                        </span>
+                                                    </div>
                                                 </div>
-
-                                                <div className="flex items-center text-accent-blue text-sm font-medium group-hover:gap-2 transition-all mt-auto">
-                                                    <span>Baca selengkapnya</span>
-                                                    <span className="inline-block group-hover:translate-x-1 transition-transform">→</span>
-                                                </div>
-                                            </div>
+                                            </Card>
                                         </ScrollReveal>
                                     ))}
                                 </div>
@@ -362,3 +368,4 @@ const ArticlesPage: React.FC = () => {
 };
 
 export default ArticlesPage;
+

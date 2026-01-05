@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DASHBOARD_THEME } from '../utils/styles';
+import { COLORS as COLOR_CONSTANTS } from '../constants';
 import { useTheme } from '../contexts/ThemeContext';
 import { getStoredUser } from '../apiClient';
 import GroupManagementModal from '../components/GroupManagementModal';
@@ -225,7 +226,7 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                 <div className={`flex ${palette.sidebar.border}`}>
                     <button
                         className={`flex-1 py-3 px-4 font-medium transition-colors ${activeTab === 'direct'
-                            ? `${theme === 'dark' ? 'bg-[#111b21] text-[#9333EA]' : 'bg-white text-[#9333EA]'} border-b-2 border-[#9333EA]`
+                            ? `${theme === 'dark' ? 'bg-chat-dark-panel text-active-purple' : 'bg-white text-active-purple'} border-b-2 border-active-purple`
                             : `${palette.sidebar.textMuted} hover:${palette.sidebar.hover}`
                             }`}
                         onClick={() => setActiveTab('direct')}
@@ -234,7 +235,7 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                     </button>
                     <button
                         className={`flex-1 py-3 px-4 font-medium transition-colors ${activeTab === 'group'
-                            ? `${theme === 'dark' ? 'bg-[#111b21] text-[#9333EA]' : 'bg-white text-[#9333EA]'} border-b-2 border-[#9333EA]`
+                            ? `${theme === 'dark' ? 'bg-chat-dark-panel text-active-purple' : 'bg-white text-active-purple'} border-b-2 border-active-purple`
                             : `${palette.sidebar.textMuted} hover:${palette.sidebar.hover}`
                             }`}
                         onClick={() => setActiveTab('group')}
@@ -248,20 +249,20 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                     <button
                         onClick={loadChats}
                         disabled={loading}
-                        className={`w-full py-2 px-4 rounded-lg bg-[#2563EB] text-white hover:bg-[#1D4ED8] transition-colors disabled:opacity-50`}
+                        className={`w-full py-2 px-4 rounded-lg bg-light-accent text-white hover:bg-chat-sender-bubble transition-colors disabled:opacity-50`}
                     >
                         {loading ? '⟳ Memuat ulang...' : '🔄 Muat Ulang'}
                     </button>
                     <button
                         onClick={openNewChatModal}
-                        className={`w-full py-2 px-4 rounded-lg ${theme === 'dark' ? 'bg-[#2a3942] text-white hover:bg-[#374850]' : 'bg-white text-gray-700 hover:bg-gray-100'} transition-colors`}
+                        className={`w-full py-2 px-4 rounded-lg ${theme === 'dark' ? 'bg-chat-dark-input text-white hover:bg-chat-dark-hover' : 'bg-white text-gray-700 hover:bg-gray-100'} transition-colors`}
                     >
                         ➕ Chat Baru
                     </button>
                     {activeTab === 'group' && (
                         <button
                             onClick={() => setIsGroupManagementOpen(true)}
-                            className={`w-full py-2 px-4 rounded-lg ${theme === 'dark' ? 'bg-[#2a3942] text-white hover:bg-[#374850]' : 'bg-white text-gray-700 hover:bg-gray-100'} transition-colors`}
+                            className={`w-full py-2 px-4 rounded-lg ${theme === 'dark' ? 'bg-chat-dark-input text-white hover:bg-chat-dark-hover' : 'bg-white text-gray-700 hover:bg-gray-100'} transition-colors`}
                         >
                             ⚙️ Kelola Grup
                         </button>
@@ -286,7 +287,7 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                                             }`}
                                         onClick={() => selectChat(conv.id, 'conversation')}
                                     >
-                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0 ${theme === 'dark' ? 'bg-[#2a3942]' : 'bg-gray-400'}`}>
+                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0 ${theme === 'dark' ? 'bg-chat-dark-input' : 'bg-gray-400'}`}>
                                             {(conv.other_name || conv.other_username).charAt(0).toUpperCase()}
                                         </div>
                                         <div className="flex-1 min-w-0">
@@ -317,7 +318,7 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                                             }`}
                                         onClick={() => selectChat(group.id, 'group')}
                                     >
-                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0 ${theme === 'dark' ? 'bg-[#2a3942]' : 'bg-gray-400'}`}>
+                                        <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0 ${theme === 'dark' ? 'bg-chat-dark-input' : 'bg-gray-400'}`}>
                                             👥
                                         </div>
                                         <div className="flex-1 min-w-0">
@@ -352,7 +353,7 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                                 >
                                     ←
                                 </button>
-                                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 ${theme === 'dark' ? 'bg-[#2a3942]' : 'bg-gray-400'}`}>
+                                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 ${theme === 'dark' ? 'bg-chat-dark-input' : 'bg-gray-400'}`}>
                                     {chatType === 'group' ? '👥' : getChatName().charAt(0).toUpperCase()}
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -365,7 +366,7 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                             <button
                                 onClick={() => loadMessages()}
                                 disabled={loading}
-                                className={`p-2 rounded-full ${theme === 'dark' ? 'hover:bg-[#2a3942]' : 'hover:bg-gray-200'} transition-colors disabled:opacity-50`}
+                                className={`p-2 rounded-full ${theme === 'dark' ? 'hover:bg-chat-dark-input' : 'hover:bg-gray-200'} transition-colors disabled:opacity-50`}
                                 title="Muat ulang pesan"
                             >
                                 {loading ? '⟳' : '🔄'}
@@ -392,13 +393,13 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                                         )}
                                         <div
                                             className={`relative p-2 px-3 shadow-sm ${msg.sender_username === user?.username
-                                                ? 'bg-[#1D4ED8] text-white rounded-tl-lg rounded-tr-lg rounded-bl-lg'
-                                                : theme === 'dark' ? 'bg-[#1f2c34] text-gray-100 rounded-tl-lg rounded-tr-lg rounded-br-lg' : 'bg-white text-gray-900 rounded-tl-lg rounded-tr-lg rounded-br-lg'
+                                                ? 'bg-chat-sender-bubble text-white rounded-tl-lg rounded-tr-lg rounded-bl-lg'
+                                                : theme === 'dark' ? 'bg-chat-dark-bubble text-gray-100 rounded-tl-lg rounded-tr-lg rounded-br-lg' : 'bg-white text-gray-900 rounded-tl-lg rounded-tr-lg rounded-br-lg'
                                                 }`}
                                         >
                                             {msg.reply_to_id && msg.reply_content && (
-                                                <div className={`text-xs p-2 mb-2 rounded border-l-4 ${msg.sender_username === user?.username ? 'bg-[#1E40AF] border-[#3B82F6]' : theme === 'dark' ? 'bg-[#182229] border-[#3B82F6]' : 'bg-gray-100 border-[#3B82F6]'}`}>
-                                                    <div className="font-medium text-[#60A5FA]">{msg.reply_sender_name}</div>
+                                                <div className={`text-xs p-2 mb-2 rounded border-l-4 ${msg.sender_username === user?.username ? 'bg-chat-sender-bubble-dark border-chat-reply-border' : theme === 'dark' ? 'bg-chat-dark-panel border-chat-reply-border' : 'bg-gray-100 border-chat-reply-border'}`}>
+                                                    <div className="font-medium text-chat-reply-text">{msg.reply_sender_name}</div>
                                                     <div className="truncate opacity-80">{msg.reply_content}</div>
                                                 </div>
                                             )}
@@ -423,11 +424,11 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                         </div>
 
                         {/* Message Input */}
-                        <div className={`flex-shrink-0 p-3 ${palette.header.border} ${theme === 'dark' ? 'bg-[#1f2c34]' : 'bg-[#f0f2f5]'}`}>
+                        <div className={`flex-shrink-0 p-3 ${palette.header.border} ${theme === 'dark' ? 'bg-chat-dark-bubble' : 'bg-[#f0f2f5]'}`}>
                             {replyTo && (
-                                <div className={`mb-2 p-2 rounded-lg ${theme === 'dark' ? 'bg-[#2a3942]' : 'bg-white'} flex justify-between items-start border-l-4 border-[#3B82F6]`}>
+                                <div className={`mb-2 p-2 rounded-lg ${theme === 'dark' ? 'bg-chat-dark-input' : 'bg-white'} flex justify-between items-start border-l-4 border-chat-reply-border`}>
                                     <div className="flex-1">
-                                        <div className="text-xs font-medium text-[#60A5FA]">Membalas {replyTo.sender_name}</div>
+                                        <div className="text-xs font-medium text-chat-reply-text">Membalas {replyTo.sender_name}</div>
                                         <div className="text-sm truncate opacity-80">{replyTo.content}</div>
                                     </div>
                                     <button
@@ -450,12 +451,12 @@ const ChatPage: React.FC<ChatPageProps> = () => {
                                         }
                                     }}
                                     placeholder="Ketik pesan..."
-                                    className={`flex-1 px-4 py-3 rounded-full ${theme === 'dark' ? 'bg-[#2a3942] text-white' : 'bg-white text-gray-900'} focus:ring-2 focus:ring-[#3B82F6] focus:outline-none`}
+                                    className={`flex-1 px-4 py-3 rounded-full ${theme === 'dark' ? 'bg-chat-dark-input text-white' : 'bg-white text-gray-900'} focus:ring-2 focus:ring-accent-blue focus:outline-none`}
                                 />
                                 <button
                                     onClick={handleSendMessage}
                                     disabled={!messageContent.trim() || loading}
-                                    className={`p-3 rounded-full bg-[#2563EB] text-white hover:bg-[#1D4ED8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
+                                    className={`p-3 rounded-full bg-light-accent text-white hover:bg-chat-sender-bubble transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
                                     title="Kirim"
                                 >
                                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

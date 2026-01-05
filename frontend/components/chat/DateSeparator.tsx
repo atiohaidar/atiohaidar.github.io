@@ -1,4 +1,6 @@
 import React, { memo } from 'react';
+import { Typography } from '../ui';
+import { COLORS } from '../../utils/styles';
 
 interface DateSeparatorProps {
     dateLabel: string;
@@ -6,9 +8,14 @@ interface DateSeparatorProps {
 
 const DateSeparator: React.FC<DateSeparatorProps> = memo(({ dateLabel }) => {
     return (
-        <div className="flex items-center justify-center my-6">
-            <div className="bg-[#1f2c34] text-gray-300 text-xs px-4 py-2 rounded-full border border-[#2a3942] shadow-sm">
-                {dateLabel}
+        <div className="flex items-center justify-center my-8 relative">
+            <div className={`absolute inset-0 flex items-center px-4`} aria-hidden="true">
+                <div className={`w-full border-t-2 border-dashed ${COLORS.BORDER} opacity-30`}></div>
+            </div>
+            <div className={`relative px-4 py-1 rounded-full border-2 border-dashed ${COLORS.BORDER} bg-white dark:bg-gray-800 shadow-sm transform -rotate-1`}>
+                <Typography variant="caption" className={`font-bold font-patrick ${COLORS.TEXT_SECONDARY}`}>
+                    {dateLabel}
+                </Typography>
             </div>
         </div>
     );
@@ -17,3 +24,4 @@ const DateSeparator: React.FC<DateSeparatorProps> = memo(({ dateLabel }) => {
 DateSeparator.displayName = 'DateSeparator';
 
 export default DateSeparator;
+

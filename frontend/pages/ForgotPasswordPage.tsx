@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../lib/api/services';
-import ParallaxBackground from '../components/ParallaxBackground';
+
 import ThemeToggle from '../components/ThemeToggle';
+import { COLORS } from '../utils/styles';
+import { Card, Input, Button, Heading, Typography } from '../components/ui';
 
 const ForgotPasswordPage: React.FC = () => {
     const navigate = useNavigate();
@@ -48,20 +50,22 @@ const ForgotPasswordPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen w-full relative flex flex-col bg-light-bg dark:bg-deep-navy overflow-hidden">
-            {/* Parallax Background */}
-            <ParallaxBackground intensity={0.6} zIndex={10} />
+        <div className={`min-h-screen w-full relative flex flex-col ${COLORS.BG_PRIMARY} overflow-hidden`}>
+
+
+            {/* Notebook Lines Background Effect (Overlay) */}
+            <div className="absolute inset-0 notebook-lines opacity-10 pointer-events-none z-0"></div>
 
             {/* Header */}
             <header className="relative px-6 py-5 flex justify-between items-center z-20">
                 <Link
                     to="/login"
-                    className="flex items-center gap-3 text-light-text dark:text-white hover:text-amber-500 dark:hover:text-amber-400 transition-all duration-300 group"
+                    className={`flex items-center gap-3 ${COLORS.TEXT_PRIMARY} hover:scale-105 transition-all duration-300 group font-patrick font-bold text-lg`}
                 >
-                    <span className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-all duration-300">
+                    <span className={`w-10 h-10 rounded-full border-2 border-dashed ${COLORS.BORDER} flex items-center justify-center group-hover:bg-black/5 dark:group-hover:bg-white/10 transition-all duration-300`}>
                         ←
                     </span>
-                    <span className="hidden sm:inline font-medium">Kembali ke Login</span>
+                    <span className="hidden sm:inline">Kembali ke Login</span>
                 </Link>
 
                 <div className="flex items-center gap-4">
@@ -72,107 +76,89 @@ const ForgotPasswordPage: React.FC = () => {
             {/* Main Content */}
             <main className={`flex-1 flex items-center justify-center p-4 sm:p-6 z-10 transition-all duration-700 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                 <div className="w-full max-w-md">
-                    <div className="glass-panel relative overflow-hidden w-full p-6 sm:p-8 rounded-2xl shadow-xl">
-                        {/* Ambient Glow */}
-                        <div className="absolute top-0 right-0 -mr-16 -mt-16 w-32 h-32 rounded-full bg-amber-500/20 blur-3xl pointer-events-none" />
-                        <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-32 h-32 rounded-full bg-orange-500/20 blur-3xl pointer-events-none" />
+                    <Card variant="glass" className="relative overflow-hidden w-full p-6 sm:p-8" padding="none">
+                        {/* Tape Effect */}
+                        <div className="absolute -top-3 right-10 w-24 h-8 bg-red-100/80 dark:bg-red-900/30 -rotate-2 shadow-sm z-20"></div>
 
-                        <div className="relative z-10">
-                            Pemulihan Password
-                            <h2 className="text-2xl sm:text-3xl font-bold mb-2 text-gray-900 dark:text-white tracking-tight">Reset Password</h2>
-                            <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">Masukkan username dan password baru</p>
+                        <div className="relative z-10 p-6 sm:p-8">
+                            <Heading level={2} className={`${COLORS.TEXT_PRIMARY} mb-2 text-center`}>Reset Password</Heading>
+                            <Typography variant="body" className={`${COLORS.TEXT_SECONDARY} mb-6 text-center font-caveat text-xl`}>Masukkan username dan password baru</Typography>
 
                             {success ? (
-                                <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-xl flex items-center gap-3">
-                                    <span className="text-xl">✅</span>
-                                    <p className="text-green-600 dark:text-green-400 text-sm font-medium">
-                                        Password berhasil direset! Mengalihkan ke halaman login...
+                                <div className="p-6 bg-green-100 dark:bg-green-900/30 border-2 border-dashed border-green-300 rounded-xl flex flex-col items-center gap-3 font-patrick transform rotate-1">
+                                    <span className="text-3xl">✅</span>
+                                    <p className="text-green-800 dark:text-green-200 text-lg font-bold text-center">
+                                        Password berhasil direset! <br />
+                                        <span className="text-base font-normal">Mengalihkan ke halaman login...</span>
                                     </p>
                                 </div>
                             ) : (
-                                <form onSubmit={handleSubmit} className="space-y-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 ml-1">
-                                            Username
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={username}
-                                            onChange={(e) => setUsername(e.target.value)}
-                                            className="w-full px-4 py-3 bg-white/50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all font-medium"
-                                            placeholder="username"
-                                            required
-                                        />
-                                    </div>
+                                <form onSubmit={handleSubmit} className="space-y-5">
+                                    <Input
+                                        label="Username"
+                                        placeholder="username"
+                                        value={username}
+                                        onChange={(e) => setUsername(e.target.value)}
+                                        required
+                                        fullWidth
+                                    />
 
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 ml-1">
-                                            Password Baru
-                                        </label>
-                                        <input
-                                            type="password"
-                                            value={newPassword}
-                                            onChange={(e) => setNewPassword(e.target.value)}
-                                            className="w-full px-4 py-3 bg-white/50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all font-medium"
-                                            placeholder="••••••••"
-                                            required
-                                        />
-                                    </div>
+                                    <Input
+                                        label="Password Baru"
+                                        type="password"
+                                        placeholder="••••••••"
+                                        value={newPassword}
+                                        onChange={(e) => setNewPassword(e.target.value)}
+                                        required
+                                        fullWidth
+                                    />
 
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 ml-1">
-                                            Konfirmasi Password Baru
-                                        </label>
-                                        <input
-                                            type="password"
-                                            value={confirmPassword}
-                                            onChange={(e) => setConfirmPassword(e.target.value)}
-                                            className="w-full px-4 py-3 bg-white/50 dark:bg-black/20 border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all font-medium"
-                                            placeholder="••••••••"
-                                            required
-                                        />
-                                    </div>
+                                    <Input
+                                        label="Konfirmasi Password Baru"
+                                        type="password"
+                                        placeholder="••••••••"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        required
+                                        fullWidth
+                                    />
 
                                     {error && (
-                                        <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3">
+                                        <div className="p-4 bg-red-100 dark:bg-red-900/30 border-2 border-dashed border-red-300 rounded-xl flex items-center gap-3 transform -rotate-1">
                                             <span className="text-xl">⚠️</span>
-                                            <p className="text-red-600 dark:text-red-400 text-sm font-medium">{error}</p>
+                                            <p className="text-red-800 dark:text-red-200 text-sm font-bold font-patrick">{error}</p>
                                         </div>
                                     )}
 
-                                    <button
+                                    <Button
                                         type="submit"
-                                        disabled={isLoading}
-                                        className="w-full py-3.5 px-4 bg-gradient-to-r from-amber-600 to-orange-500 hover:from-amber-700 hover:to-orange-600 text-white font-bold rounded-xl shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:hover:scale-100 disabled:shadow-none mt-2"
+                                        variant="primary"
+                                        isLoading={isLoading}
+                                        fullWidth
+                                        size="lg"
+                                        className="mt-2 text-white font-patrick text-xl"
+                                        style={{ backgroundColor: 'rgb(245 158 11)' }} // Keep specific inline style for warning color match if variant warning isn't exact match or to be safe
                                     >
-                                        {isLoading ? (
-                                            <span className="flex items-center justify-center gap-2">
-                                                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                                </svg>
-                                                Mereset Password...
-                                            </span>
-                                        ) : 'Reset Password'}
-                                    </button>
+                                        {isLoading ? 'Mereset Password...' : 'Reset Password'}
+                                    </Button>
                                 </form>
                             )}
 
-                            <p className="text-sm text-center mt-6 text-gray-500 dark:text-gray-400">
+                            <div className={`text-sm text-center mt-6 ${COLORS.TEXT_SECONDARY} font-patrick`}>
                                 Ingat password?{' '}
-                                <Link to="/login" className="text-amber-600 dark:text-amber-400 hover:underline font-medium">
+                                <Link to="/login" className="text-amber-600 dark:text-amber-400 hover:underline font-bold">
                                     Login di sini
                                 </Link>
-                            </p>
+                            </div>
                         </div>
-                    </div>
+                    </Card>
                 </div>
             </main>
 
             {/* Footer */}
-            <footer className="relative z-20 py-4 px-6 text-center">
-                <p className="text-xs text-light-muted/60 dark:text-soft-gray/40">
-                    Sebuah website random
+            <footer className="relative z-20 py-6 px-6 text-center">
+                <p className={`text-sm ${COLORS.TEXT_SECONDARY} font-caveat`}>
+                    Sebuah website random &copy; {new Date().getFullYear()}
                 </p>
             </footer>
         </div>

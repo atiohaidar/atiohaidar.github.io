@@ -8,6 +8,8 @@ import {
     type AnonymousMessage,
 } from '../services/chatService';
 import { webSocketService } from '../services/websocketService';
+import MessageBubble from '../components/chat/MessageBubble';
+import DateSeparator from '../components/chat/DateSeparator';
 
 const FullscreenAnonymousChatPage: React.FC = () => {
     const [messages, setMessages] = useState<AnonymousMessage[]>([]);
@@ -284,8 +286,8 @@ const FullscreenAnonymousChatPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#0a1014] text-white">
-            <div className="bg-[#1D4ED8] p-4 border-b border-[#2563EB]">
+        <div className="min-h-screen bg-chat-dark-bg text-white">
+            <div className="bg-chat-sender-bubble p-4 border-b border-light-accent">
                 <div className="flex items-center justify-between max-w-6xl mx-auto">
                     <div className="flex items-center gap-4">
                         <Link to="/" className="text-white hover:text-gray-300 text-xl">←</Link>
@@ -351,55 +353,17 @@ const FullscreenAnonymousChatPage: React.FC = () => {
                         {messages.length > 0 && sortedDateEntries.map(({ dateKey, messages: dateMessages }) => (
                             <div key={dateKey}>
                                 {/* Date Header */}
-                                <div className="flex items-center justify-center my-6">
-                                    <div className="bg-[#1f2c34] text-gray-300 text-xs px-4 py-2 rounded-full border border-[#2a3942]">
-                                        {formatDateHeader(dateKey)}
-                                    </div>
-                                </div>
+                                <DateSeparator dateLabel={formatDateHeader(dateKey)} />
 
                                 {/* Messages for this date */}
                                 {dateMessages.map((msg) => (
-                                    <div
+                                    <MessageBubble
                                         key={msg.id}
-                                        className={`flex ${msg.sender_id === senderId ? 'justify-end' : 'justify-start'} mb-2`}
-                                    >
-                                        <div className="flex flex-col max-w-[70%]">
-                                            <div
-                                                className={`relative p-3 px-4 shadow-sm ${msg.sender_id === senderId
-                                                    ? 'bg-[#1D4ED8] text-white rounded-tl-lg rounded-tr-lg rounded-bl-lg'
-                                                    : 'bg-[#1f2c34] text-gray-100 rounded-tl-lg rounded-tr-lg rounded-br-lg'
-                                                    }`}
-                                            >
-                                                <div className="text-sm mb-1 opacity-70 font-medium">
-                                                    {msg.sender_id === senderId ? 'Anda' : `Anonim-${msg.sender_id.slice(-6)}`}
-                                                </div>
-                                                {msg.reply_to_id && msg.reply_content && (
-                                                    <div className={`text-xs p-3 mb-3 rounded border-l-4 ${msg.sender_id === senderId ? 'bg-[#1E40AF] border-[#3B82F6]' : 'bg-[#182229] border-[#3B82F6]'}`}>
-                                                        <div className="font-medium text-[#60A5FA] mb-1">
-                                                            {msg.reply_sender_id === senderId ? 'Anda' : `Anonim-${msg.reply_sender_id?.slice(-6)}`}
-                                                        </div>
-                                                        <div className="truncate opacity-80">{msg.reply_content}</div>
-                                                    </div>
-                                                )}
-                                                <div className="break-words text-base leading-relaxed">
-                                                    {msg.content}
-                                                </div>
-                                                <div className="flex items-center justify-end gap-2 mt-2">
-                                                    <span className="text-xs opacity-60">
-                                                        {new Date(msg.created_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            {msg.sender_id !== senderId && (
-                                                <button
-                                                    onClick={() => handleReply(msg)}
-                                                    className="text-xs mt-1 ml-4 text-gray-400 hover:text-[#60A5FA] hover:underline transition-colors"
-                                                >
-                                                    Balas
-                                                </button>
-                                            )}
-                                        </div>
-                                    </div>
+                                        message={msg}
+                                        isOwnMessage={msg.sender_id === senderId}
+                                        currentUserId={senderId}
+                                        onReply={handleReply}
+                                    />
                                 ))}
                             </div>
                         ))}
@@ -408,11 +372,11 @@ const FullscreenAnonymousChatPage: React.FC = () => {
                     </div>
 
                     {/* Message Input */}
-                    <div className="p-6 bg-[#1f2c34] border-t border-[#2a3942]">
+                    <div className="p-6 bg-chat-dark-bubble border-t border-chat-dark-border">
                         {replyTo && (
-                            <div className="mb-4 p-3 rounded-lg bg-[#2a3942] flex justify-between items-start border-l-4 border-[#3B82F6]">
+                            <div className="mb-4 p-3 rounded-lg bg-chat-dark-input flex justify-between items-start border-l-4 border-accent-blue">
                                 <div className="flex-1">
-                                    <div className="text-sm font-medium text-[#60A5FA] mb-1">
+                                    <div className="text-sm font-medium text-blue-400 mb-1">
                                         Membalas {replyTo.sender_id === senderId ? 'Anda' : `Anonim-${replyTo.sender_id.slice(-6)}`}
                                     </div>
                                     <div className="text-sm truncate opacity-80 text-gray-300">{replyTo.content}</div>
@@ -438,12 +402,12 @@ const FullscreenAnonymousChatPage: React.FC = () => {
                                     }
                                 }}
                                 placeholder="Ketik pesan anonim Anda..."
-                                className="flex-1 px-4 py-3 rounded-full bg-[#2a3942] text-white focus:ring-2 focus:ring-[#3B82F6] focus:outline-none text-base"
+                                className="flex-1 px-4 py-3 rounded-full bg-chat-dark-input text-white focus:ring-2 focus:ring-accent-blue focus:outline-none text-base"
                             />
                             <button
                                 onClick={handleSendMessage}
                                 disabled={!messageContent.trim() || loading}
-                                className="p-3 rounded-full bg-[#2563EB] text-white hover:bg-[#1D4ED8] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="p-3 rounded-full bg-light-accent text-white hover:bg-chat-sender-bubble transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                 title="Kirim"
                             >
                                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -453,15 +417,15 @@ const FullscreenAnonymousChatPage: React.FC = () => {
                         </div>
 
                         <div className="text-xs text-gray-400 mt-3 flex items-center justify-between">
-                            <span>Pesan Anda bersifat anonim. ID Anda: <span className="font-mono text-[#60A5FA]">Anonim-{senderId.slice(-6)}</span></span>
+                            <span>Pesan Anda bersifat anonim. ID Anda: <span className="font-mono text-blue-400">Anonim-{senderId.slice(-6)}</span></span>
                             <span>{messages.length} pesan total</span>
                         </div>
                     </div>
                 </div>
 
                 {/* Online Users Sidebar */}
-                <div className="w-64 bg-[#1f2c34] border-l border-[#2a3942] flex flex-col">
-                    <div className="p-4 border-b border-[#2a3942]">
+                <div className="w-64 bg-chat-dark-bubble border-l border-chat-dark-border flex flex-col">
+                    <div className="p-4 border-b border-chat-dark-border">
                         <h3 className="text-lg font-semibold text-white mb-2">Pengguna Online</h3>
                         <p className="text-sm text-gray-400">{onlineUsers} pengguna aktif</p>
                     </div>
@@ -469,7 +433,7 @@ const FullscreenAnonymousChatPage: React.FC = () => {
                     <div className="flex-1 p-4">
                         <div className="space-y-3">
                             {/* Current user */}
-                            <div className="flex items-center gap-3 p-3 rounded-lg bg-[#1D4ED8] border border-[#2563EB]">
+                            <div className="flex items-center gap-3 p-3 rounded-lg bg-chat-sender-bubble border border-light-accent">
                                 <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white font-bold text-sm">
                                     👤
                                 </div>
@@ -481,8 +445,8 @@ const FullscreenAnonymousChatPage: React.FC = () => {
 
                             {/* Other users */}
                             {Array.from({ length: Math.max(0, onlineUsers - 1) }, (_, i) => (
-                                <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-[#2a3942] border border-[#37474f]">
-                                    <div className="w-8 h-8 rounded-full bg-[#2563EB]/20 flex items-center justify-center text-[#60A5FA] font-bold text-sm">
+                                <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-chat-dark-input border border-chat-dark-hover">
+                                    <div className="w-8 h-8 rounded-full bg-light-accent/20 flex items-center justify-center text-blue-400 font-bold text-sm">
                                         {['😊', '🤔', '😄', '🤗', '😎'][i % 5]}
                                     </div>
                                     <div className="flex-1">
@@ -506,7 +470,7 @@ const FullscreenAnonymousChatPage: React.FC = () => {
             {/* Reset Confirmation Modal */}
             {showResetConfirm && (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
-                    <div className="bg-[#1f2c34] border border-[#2a3942] relative w-full max-w-md rounded-xl p-6 shadow-2xl">
+                    <div className="bg-chat-dark-bubble border border-chat-dark-border relative w-full max-w-md rounded-xl p-6 shadow-2xl">
                         <button
                             type="button"
                             onClick={() => setShowResetConfirm(false)}
@@ -526,7 +490,7 @@ const FullscreenAnonymousChatPage: React.FC = () => {
                             <button
                                 type="button"
                                 onClick={() => setShowResetConfirm(false)}
-                                className="flex-1 px-4 py-3 rounded-lg font-semibold border border-[#2a3942] text-white hover:bg-black/20 transition-colors"
+                                className="flex-1 px-4 py-3 rounded-lg font-semibold border border-chat-dark-border text-white hover:bg-black/20 transition-colors"
                             >
                                 Batal
                             </button>

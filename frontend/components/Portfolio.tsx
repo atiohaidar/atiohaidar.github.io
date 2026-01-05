@@ -6,9 +6,10 @@ import React from 'react';
 import Section from './Section';
 import type { Project } from '../types';
 import { GitHubIcon, ExternalLinkIcon, PostmanIcon, FolderIcon } from './Icons';
-import ScrollReveal from './ScrollReveal';
 import SpotlightCard from './SpotlightCard';
 import TiltCard from './TiltCard';
+import { COLORS } from '../utils/styles';
+import { Typography, Heading, Text, DoodleWashiTape } from './ui';
 
 /**
  * Komponen kartu untuk menampilkan satu proyek.
@@ -35,15 +36,17 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
 
     return (
         <TiltCard maxTilt={8} scale={1.02} glare={true} glareMaxOpacity={0.15} className="h-full">
-            <SpotlightCard className="glass-card h-full rounded-2xl border border-white/10 dark:border-white/5 bg-white/50 dark:bg-slate-900/50 hover:bg-white/60 dark:hover:bg-slate-900/60 transition-colors p-0 overflow-hidden group print:shadow-none print:border print:border-gray-300 print:rounded-none print:bg-transparent print-avoid-break">
+            <SpotlightCard className="glass-panel dog-ear h-full p-0 overflow-hidden group print:shadow-none print:border print:border-gray-300 print:rounded-none print:bg-transparent print-avoid-break">
                 <div className="p-6 flex flex-col h-full relative z-10">
                     <header className="flex justify-between items-center mb-4 print:hidden">
-                        <FolderIcon className="w-10 h-10 text-accent-blue" />
+                        <FolderIcon className={`w-10 h-10 ${COLORS.TEXT_ACCENT}`} />
                     </header>
                     <main className="flex-grow">
-                        <h3 className="text-xl font-poppins font-bold text-light-text dark:text-white mb-2 group-hover:text-accent-blue transition-colors print:text-black">{project.name}</h3>
-                        <p className="text-sm text-light-muted dark:text-gray-300 mb-2 leading-relaxed">{project.description}</p>
-                        <p className="text-sm text-light-muted dark:text-gray-300 leading-relaxed"><span className="font-semibold text-light-text dark:text-white">Kontribusi:</span> {project.contribution}</p>
+                        <Heading level={4} className={`${COLORS.TEXT_PRIMARY} mb-2 group-hover:text-blue-500 transition-colors print:text-black`}>{project.name}</Heading>
+                        <Text className={`${COLORS.TEXT_SECONDARY} mb-2`}>{project.description}</Text>
+                        <Text className={`${COLORS.TEXT_SECONDARY}`}>
+                            <Text as="span" className={`font-semibold ${COLORS.TEXT_PRIMARY}`}>Kontribusi:</Text> {project.contribution}
+                        </Text>
                     </main>
                     <footer className="mt-4">
                         <div className="mb-4 space-y-2">
@@ -53,16 +56,16 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
                                     href={link.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center text-sm text-light-muted dark:text-gray-300 hover:text-accent-blue transition-colors duration-300 group/link overflow-hidden mb-1"
+                                    className={`flex items-center ${COLORS.TEXT_SECONDARY} hover:text-blue-500 transition-colors duration-300 group/link overflow-hidden mb-1`}
                                 >
                                     {getIconForLink(link.type)}
-                                    <span className="group-hover/link:underline print:underline">{link.url.replace(/^https?:\/\//, '')}</span>
+                                    <Typography variant="caption" className="group-hover/link:underline print:underline">{link.url.replace(/^https?:\/\//, '')}</Typography>
                                 </a>
                             ))}
                         </div>
                         {project.tech && (
-                            <ul className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-light-muted dark:text-gray-400 pt-4 border-t border-gray-300 dark:border-white/10">
-                                {project.tech.map(t => <li key={t}>{t}</li>)}
+                            <ul className={`flex flex-wrap gap-x-4 gap-y-2 ${COLORS.TEXT_MUTED} pt-4 border-t-2 border-dashed ${COLORS.BORDER}`}>
+                                {project.tech.map(t => <li key={t}><Typography variant="caption">{t}</Typography></li>)}
                             </ul>
                         )}
                     </footer>
@@ -83,7 +86,11 @@ interface PortfolioProps {
 const Portfolio: React.FC<PortfolioProps> = ({ projects }) => {
     return (
         <Section id="portfolio" number="03" title="Portofolio" centerTitle delay={200} printPageBreak={false}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 print:grid-cols-2 print:gap-4 p-2">
+            <div className="relative mb-12 flex justify-center">
+                <DoodleWashiTape className="absolute -top-4 -left-10 -rotate-6 opacity-40" color="#fbcfe8" />
+                <DoodleWashiTape className="absolute -top-4 -right-10 rotate-6 opacity-40" color="#bbf7d0" />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 print:grid-cols-2 print:gap-4 p-2">
                 {projects.map((project, index) => (
                     <div key={index} className="h-full">
                         <ProjectCard project={project} />

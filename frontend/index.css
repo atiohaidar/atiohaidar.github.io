@@ -4,19 +4,91 @@
 
 @layer utilities {
   .glass-panel {
-    @apply backdrop-blur-xl bg-white/60 dark:bg-[#0f172a]/60 border border-white/20 dark:border-white/5 shadow-xl;
+    @apply bg-paper-cream dark:bg-slate-900 border-2 border-slate-800 dark:border-slate-700 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] dark:shadow-[4px_4px_0px_0px_rgba(255,255,255,0.1)];
+    border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
   }
 
   .glass-card {
-    @apply backdrop-blur-md bg-white/40 dark:bg-[#1e293b]/40 border border-white/20 dark:border-white/5 shadow-lg transition-all duration-300;
+    @apply bg-white dark:bg-slate-800 border-[1.5px] border-slate-800 dark:border-slate-700 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] dark:shadow-[3px_3px_0px_0px_rgba(255,255,255,0.05)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[5px_5px_0px_0px_rgba(0,0,0,1)];
+    border-radius: 2px 4px 5px 2px/4px 2px 3px 5px;
   }
 
   .glass-button {
-    @apply backdrop-blur-sm bg-white/20 hover:bg-white/30 dark:bg-white/5 dark:hover:bg-white/10 border border-white/10 transition-all duration-200 active:scale-95;
+    @apply bg-white dark:bg-slate-800 border-2 border-slate-800 dark:border-slate-700 px-4 py-2 text-slate-900 dark:text-white transition-all duration-200 active:scale-95 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)];
+    border-radius: 10px 5px 12px 6px/5px 12px 6px 10px;
   }
 
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-blue to-purple-500;
+    @apply text-slate-900 dark:text-white relative inline-block;
+  }
+
+  .text-gradient::after {
+    content: '';
+    @apply absolute -bottom-1 left-0 w-full h-2 bg-marker-yellow/60 -z-10;
+    transform: rotate(-1deg);
+  }
+
+  .notebook-lines {
+    background-image: linear-gradient(theme('colors.paper-line') 1px, transparent 1px);
+    background-size: 100% 2rem;
+  }
+
+  .dark .notebook-lines {
+    background-image: linear-gradient(theme('colors.paper-line-dark') 1px, transparent 1px);
+  }
+
+  .hand-drawn-underline {
+    position: relative;
+    display: inline-block;
+  }
+
+  .hand-drawn-underline::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    width: 100%;
+    height: 3px;
+    background: currentColor;
+    border-radius: 50%;
+    transform: scaleX(1) skewX(-15deg);
+  }
+
+  .hand-drawn-circle {
+    @apply relative inline-flex items-center justify-center p-2;
+  }
+
+  .hand-drawn-circle::before {
+    content: '';
+    @apply absolute inset-0 border-2 border-slate-800 dark:border-slate-400 -z-10;
+    border-radius: 50% 45% 52% 48% / 48% 52% 45% 50%;
+    transform: rotate(2deg);
+  }
+
+  .highlighter {
+    @apply relative inline-block px-1 z-10;
+  }
+
+  .highlighter::before {
+    content: '';
+    @apply absolute inset-0 -z-10 h-[80%] bottom-0 mt-auto opacity-60 bg-marker-yellow;
+    transform: rotate(-1deg) skewX(-20deg);
+    border-radius: 2px 4px 5px 2px/4px 2px 3px 5px;
+  }
+
+  .dog-ear {
+    @apply relative overflow-hidden;
+  }
+
+  .dog-ear::before {
+    content: '';
+    @apply absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-transparent border-r-white dark:border-r-slate-800 shadow-[-1px_1px_2px_rgba(0,0,0,0.1)] transition-all duration-300 z-20;
+    border-left: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+  }
+
+  .group:hover .dog-ear::before {
+    @apply border-t-[30px] border-r-[30px];
   }
 }
 
@@ -29,8 +101,38 @@
   animation-delay: 200ms;
 }
 
-.animate-delay-300 {
-  animation-delay: 300ms;
+.animate-delay-500 {
+  animation-delay: 500ms;
+}
+
+.animate-delay-700 {
+  animation-delay: 700ms;
+}
+
+.animate-delay-1000 {
+  animation-delay: 1000ms;
+}
+
+.animate-delay-1500 {
+  animation-delay: 1500ms;
+}
+
+/* Pencil & Notebook Textures */
+.pencil-smudge {
+  @apply absolute pointer-events-none opacity-[0.08] dark:opacity-[0.05] blur-xl bg-slate-500 rounded-full;
+}
+
+.notebook-binder {
+  @apply absolute left-4 top-0 bottom-0 w-8 border-r-2 border-slate-400/20 dark:border-slate-300/30 flex flex-col justify-around py-10 z-20;
+}
+
+.notebook-binder::after {
+  content: '';
+  @apply absolute right-[-4px] top-0 bottom-0 w-[2px] bg-slate-400/10 dark:bg-slate-200/20;
+}
+
+.binder-ring {
+  @apply w-6 h-6 border-2 border-slate-400/40 dark:border-slate-300/40 rounded-full -ml-3 bg-paper-cream dark:bg-slate-900 shadow-sm dark:shadow-none;
 }
 
 /* Mobile-friendly touch targets */
@@ -58,12 +160,12 @@
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: rgba(156, 163, 175, 0.3);
+  background: rgba(156,163,175,0.3);
   border-radius: 999px;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: rgba(156, 163, 175, 0.5);
+  background: rgba(156,163,175,0.5);
 }
 
 /* Global utilities migrated from inline <style> in index.html */
@@ -188,7 +290,7 @@
 
   .shadow-lg,
   .shadow-md {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3) !important;
   }
 
   .rounded-md,
@@ -406,16 +508,14 @@
   }
 
   100% {
-    transform: scale(5);
-    /* Reduced from 20 to 5 for performance */
+    transform: scale(12);
     opacity: 0;
   }
 }
 
 .animate-cyber-zoom-out {
-  animation: cyber-zoom-out 0.6s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+  animation: cyber-zoom-out 0.7s cubic-bezier(0.7, 0, 0.84, 0) forwards;
   will-change: transform, opacity;
-  /* Hint for browser optimization */
 }
 
 /* Zoom IN with blur - like diving into the screen */
@@ -542,6 +642,16 @@
   }
 }
 
-.animate-system-entry {
-  animation: system-entry 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+/* Hand-drawn SVG animation */
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-draw {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw 2s ease-out forwards;
 }

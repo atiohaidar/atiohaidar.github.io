@@ -8,7 +8,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { LandingDataProvider } from './contexts/LandingDataContext';
 import { BackendLoaderProvider } from './contexts/BackendLoaderContext';
 import ProtectedRoute from './components/ProtectedRoute';
-import HackerLoader from './components/HackerLoader';
+import SketchLoader from './components/SketchLoader';
 
 import { OfflineNotification } from './components/OfflineNotification';
 import { InstallPrompt } from './components/InstallPrompt';
@@ -116,7 +116,7 @@ const App: React.FC = () => {
                             <InstallPrompt />
                             {/* Cinematic Splash Screen - waits for data */}
                             {!introComplete && (
-                                <HackerLoader
+                                <SketchLoader
                                     onComplete={() => setIntroComplete(true)}
                                     onEarlyLoad={() => setEarlyMount(true)}
                                     earlyLoadOffset={1250} // Start mounting content 100ms before intro ends
@@ -127,11 +127,11 @@ const App: React.FC = () => {
                             {/* Main Content (Start mounting early, visible after intro) */}
                             {(earlyMount || introComplete) && (
                                 <div
-                                    className={isEntryAnimComplete ? "" : "animate-fade-in-up"}
+                                    className={`transition-opacity duration-1000 ${introComplete ? 'opacity-100' : 'opacity-0'} ${introComplete && !isEntryAnimComplete ? 'animate-fade-in-up animate-zoom-in' : ''}`}
                                     style={{
-                                        visibility: introComplete ? 'visible' : 'hidden',
                                         position: introComplete ? 'relative' : 'absolute',
-                                        inset: introComplete ? undefined : 0
+                                        inset: introComplete ? undefined : 0,
+                                        zIndex: introComplete ? 1 : -1
                                     }}
                                 >
                                     <Suspense fallback={<PageLoader />}>

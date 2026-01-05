@@ -1,11 +1,12 @@
 import React, { useState, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useLogout } from '../hooks/useApi';
-import { DASHBOARD_THEME } from '../utils/styles';
+import { COLORS } from '../utils/styles';
+import { Typography, Heading, Text } from './ui';
 import { useTheme } from '../contexts/ThemeContext';
 import ThemeToggle from './ThemeToggle';
 import SpyTooltip from './SpyTooltip';
-import BackendLoader from './BackendLoader';
+import { useBackendLoader } from '../contexts/BackendLoaderContext';
 
 // Get API base URL for server host display
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787';
@@ -115,27 +116,23 @@ const menuItems: MenuItem[] = [
     },
 ];
 
-import { useBackendLoader } from '../contexts/BackendLoaderContext';
-
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const logout = useLogout();
-    const { showLoader, updateLoader, hideLoader } = useBackendLoader(); // Use global hook
+    const { showLoader, updateLoader } = useBackendLoader(); // Use global hook
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
     const [isLogoTooltipOpen, setIsLogoTooltipOpen] = useState(false);
-    const logoRef = React.useRef<HTMLDivElement>(null);
+    const logoRef = useRef<HTMLDivElement>(null);
     const { theme } = useTheme();
-    const palette = DASHBOARD_THEME[theme];
-    const baseText = theme === 'light' ? 'text-[#1A2136]' : 'text-white';
 
-    // Modern Glass Styles (Overrides basic utilities mostly)
-    const glassPanel = theme === 'dark'
-        ? 'bg-[#121721]/80 backdrop-blur-xl border border-white/5'
-        : 'bg-white/80 backdrop-blur-xl border border-white/40';
-
-    const navItemBase = 'flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300';
+    // Determine current section title
+    const currentMenuItem = menuItems.find((item) => {
+        if (item.path === '/dashboard') return location.pathname === '/dashboard';
+        return location.pathname.startsWith(item.path);
+    });
+    const pageTitle = currentMenuItem?.label || 'Dashboard';
 
     const handleLogout = async () => {
         const startTime = performance.now();
@@ -164,16 +161,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
             actualLatency: latency,
             actualStatusCode: 200,
             successMessage: "Sampai jumpa lagi."
-            // NOTE: We don't wait for 'onComplete' to navigate.
-            // We navigate NOW implicitly or via a slight timeout to let success show for a split second.
-            // But since the user wants the page to change behind the animation, we navigate immediately after success update.
         });
 
         // Navigate immediately behind the loader!
         navigate('/login', { replace: true });
-
-        // The loader will handle its own exit animation due to 'completeDelay' and internal phase logic in BackendLoader,
-        // which eventually calls onComplete -> hideLoader (handled by context)
     };
 
     const filteredMenuItems = menuItems.filter(
@@ -189,50 +180,55 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
     };
 
     return (
-        <div className={`min-h-screen flex ${palette.appBg} ${baseText} transition-colors duration-500 overflow-hidden`}>
-            {/* Ambient Background Gradient (Animated) */}
-            <div className={`fixed inset-0 z-0 opacity-40 pointer-events-none`}>
-                <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-600/20 blur-[120px] animate-pulse" />
-                <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] rounded-full bg-cyan-600/20 blur-[120px] animate-pulse" style={{ animationDelay: '2s' }} />
-            </div>
+        <div className={`min-h-screen flex ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} transition-colors duration-500 overflow-hidden relative`}>
+            {/* Notebook Lines Overlay for the whole dashboard background */}
+            <div className="absolute inset-0 notebook-lines opacity-10 pointer-events-none z-0"></div>
 
             {/* Mobile Overlay */}
             {isMobileSidebarOpen && (
                 <div
-                    className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+                    className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden animate-fade-in-up"
                     onClick={() => setIsMobileSidebarOpen(false)}
                 />
             )}
 
-            {/* Sidebar (Floating & Glass on Desktop) */}
+            {/* Sidebar (Note: styling as a notebook margin/binder) */}
             <aside
                 className={`fixed md:relative z-50 flex flex-col transition-all duration-300 ease-spring
                     ${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
                     ${isSidebarOpen ? 'w-72' : 'w-24'}
                     h-[100dvh] md:h-[calc(100vh-2rem)] md:my-4 md:ml-4
-                    rounded-r-3xl md:rounded-3xl shadow-2xl md:shadow-xl
-                    ${glassPanel}
-                    animate-slide-in-left animation-delay-200 opacity-0
+                    rounded-r-xl md:rounded-2xl border-r-2 md:border-2 border-dashed ${COLORS.BORDER}
+                    ${theme === 'dark' ? 'bg-slate-900' : 'bg-white/90'}
+                    shadow-xl
+                    animate-slide-in-left animation-delay-200
+                    overflow-hidden
                 `}
             >
+                {/* Spiral/Binder holes visual (Left side) */}
+                <div className="absolute left-0 top-0 bottom-0 w-8 flex flex-col items-center justify-evenly py-4 pointer-events-none opacity-50 z-0 border-r border-dashed border-gray-300 dark:border-gray-700">
+                    {[...Array(15)].map((_, i) => (
+                        <div key={i} className={`w-3 h-3 rounded-full ${theme === 'dark' ? 'bg-slate-800' : 'bg-gray-200'} border border-gray-400 dark:border-gray-600`}></div>
+                    ))}
+                </div>
+
                 {/* Sidebar Header */}
-                <div className="p-6 flex items-center justify-between">
-                    {/* ... */}
+                <div className={`p-6 flex items-center justify-between relative z-10 ${isSidebarOpen ? 'pl-10' : 'pl-2 justify-center'}`}>
                     {/* Logo Area */}
                     <div
                         ref={logoRef}
-                        className={`flex items-center gap-3 relative ${!isSidebarOpen && 'md:justify-center w-full'}`}
+                        className={`flex items-center gap-3 relative cursor-pointer group`}
                         onMouseEnter={() => setIsLogoTooltipOpen(true)}
                         onMouseLeave={() => setIsLogoTooltipOpen(false)}
                         onClick={() => setIsLogoTooltipOpen(!isLogoTooltipOpen)}
                     >
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-500/20">
-                            A
+                        <div className={`w-10 h-10 rounded-lg border-2 border-dashed ${COLORS.BORDER} flex items-center justify-center font-bold text-xl group-hover:rotate-6 transition-transform shadow-sm`}>
+                            <span className="font-patrick text-blue-500 dark:text-blue-400">AH</span>
                         </div>
                         <div className={`overflow-hidden transition-all duration-300 ${isSidebarOpen ? 'w-auto opacity-100' : 'w-0 opacity-0 hidden md:block'}`}>
-                            <h2 className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400">
+                            <Heading level={2} className="text-lg whitespace-nowrap">
                                 AtioHaidar
-                            </h2>
+                            </Heading>
                         </div>
 
                         <SpyTooltip
@@ -240,10 +236,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                             title="SYSTEM"
                             items={[
                                 { label: 'APP', value: 'Dashboard' },
-                                { label: 'VER', value: 'v2.5.0' },
-                                { label: 'SEC', value: 'Encrypted' }
+                                { label: 'VER', value: 'NB-Theme' },
+                                { label: 'SEC', value: 'Active' }
                             ]}
-                            targetRef={logoRef}
+                            targetRef={logoRef as React.RefObject<HTMLElement>}
                         />
                     </div>
 
@@ -251,48 +247,48 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                     {isSidebarOpen && (
                         <button
                             onClick={() => setIsSidebarOpen(false)}
-                            className={`hidden md:flex w-8 h-8 items-center justify-center rounded-lg hover:bg-white/10 ${palette.sidebar.toggleIcon}`}
+                            className={`hidden md:flex w-8 h-8 items-center justify-center rounded-lg hover:bg-black/5 dark:hover:bg-white/10 transition-colors ${COLORS.TEXT_SECONDARY}`}
                         >
                             ◀
                         </button>
                     )}
 
-                    {/* Mobile close button (Moved to right) */}
+                    {/* Mobile close button */}
                     <button
                         onClick={() => setIsMobileSidebarOpen(false)}
-                        className={`md:hidden text-2xl p-2 relative z-[60] rounded-lg hover:bg-white/10 ${palette.sidebar.toggleIcon}`}
+                        className={`md:hidden text-2xl p-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 ${COLORS.TEXT_PRIMARY}`}
                     >
                         ✕
                     </button>
                 </div>
 
-                {/* Collapsed Toggle (Centered) */}
+                {/* Collapsed Toggle (Center) */}
                 {!isSidebarOpen && (
                     <button
                         onClick={() => setIsSidebarOpen(true)}
-                        className={`hidden md:flex w-full items-center justify-center py-2 hover:text-white transition-colors text-gray-400`}
+                        className={`hidden md:flex w-full items-center justify-center py-2 hover:bg-black/5 dark:hover:bg-white/10 transition-colors ${COLORS.TEXT_SECONDARY}`}
                     >
                         ▶
                     </button>
                 )}
 
-                {/* User Info Card */}
-                <div className={`mx-4 mb-4 p-4 rounded-2xl ${theme === 'dark' ? 'bg-white/5' : 'bg-black/5'} transition-all`}>
+                {/* User Info Card (Sticker Style) */}
+                <div className={`mx-4 mb-4 p-3 rounded-xl border-2 border-dashed ${COLORS.BORDER} ${theme === 'dark' ? 'bg-white/5' : 'bg-yellow-50'} transform rotate-1 transition-all hover:rotate-0 relative z-10 ${!isSidebarOpen && 'mx-2 p-2'}`}>
                     <div className={`flex items-center gap-3 ${!isSidebarOpen && 'justify-center'}`}>
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-gray-700 to-gray-600 flex items-center justify-center text-white font-semibold shadow-md">
+                        <div className={`w-8 h-8 rounded-full border-2 ${COLORS.BORDER} flex items-center justify-center ${theme === 'dark' ? 'bg-slate-800' : 'bg-white'} text-sm font-bold shadow-sm`}>
                             {user.name.charAt(0).toUpperCase()}
                         </div>
                         {isSidebarOpen && (
                             <div className="flex-1 min-w-0">
-                                <p className={`font-semibold text-sm truncate ${palette.sidebar.text}`}>{user.name}</p>
-                                <p className={`text-xs truncate ${palette.sidebar.textMuted}`}>@{user.username}</p>
+                                <Typography variant="h4" className={`text-sm truncate ${COLORS.TEXT_PRIMARY}`}>{user.name}</Typography>
+                                <Typography variant="caption" className={`truncate ${COLORS.TEXT_SECONDARY}`}>@{user.username}</Typography>
                             </div>
                         )}
                     </div>
                 </div>
 
                 {/* Navigation Menu */}
-                <nav className="flex-1 px-4 space-y-2 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent py-2">
+                <nav className="flex-1 px-3 space-y-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400/20 scrollbar-track-transparent py-2 relative z-10 pl-8">
                     {filteredMenuItems.map((item) => {
                         const active = isActive(item.path);
                         return (
@@ -300,19 +296,19 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                                 key={item.id}
                                 to={item.path}
                                 onClick={() => setIsMobileSidebarOpen(false)}
-                                className={`${navItemBase} ${active
-                                    ? `bg-blue-600/10 text-blue-500 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)]`
-                                    : `text-gray-400 hover:bg-white/5 hover:text-gray-200`
-                                    } ${isSidebarOpen ? 'justify-start' : 'justify-center'
-                                    }`}
+                                className={`
+                                    flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200
+                                    ${active
+                                        ? `${COLORS.TEXT_ACCENT} font-bold bg-blue-50 dark:bg-blue-900/20 md:translate-x-1 border-l-4 border-blue-400`
+                                        : `${COLORS.TEXT_SECONDARY} hover:text-blue-500 hover:bg-black/5 dark:hover:bg-white/5`
+                                    }
+                                    ${isSidebarOpen ? 'justify-start' : 'justify-center px-0'}
+                                `}
                                 title={!isSidebarOpen ? item.label : undefined}
                             >
-                                <span className={`text-xl ${active ? 'scale-110 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]' : ''} transition-transform`}>{item.icon}</span>
+                                <span className={`text-xl ${active ? 'scale-110' : ''} transition-transform`}>{item.icon}</span>
                                 {isSidebarOpen && (
-                                    <span className="font-medium whitespace-nowrap">{item.label}</span>
-                                )}
-                                {active && isSidebarOpen && (
-                                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_5px_#3b82f6]" />
+                                    <Typography variant="nav" as="span" className="whitespace-nowrap">{item.label}</Typography>
                                 )}
                             </Link>
                         );
@@ -320,7 +316,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                 </nav>
 
                 {/* Sidebar Footer */}
-                <div className="p-4 space-y-2 mt-auto">
+                <div className="p-4 space-y-3 mt-auto relative z-10 pl-8">
                     <div className={`${isSidebarOpen ? 'px-2' : 'flex justify-center'}`}>
                         <ThemeToggle />
                     </div>
@@ -330,56 +326,65 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, children }) => 
                             setIsMobileSidebarOpen(false);
                             handleLogout();
                         }}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-red-400 hover:bg-red-500/10 hover:text-red-300 ${!isSidebarOpen && 'justify-center'}`}
+                        className={`w-full flex items-center gap-3 px-4 py-2 rounded-lg transition-all text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 font-patrick font-bold ${!isSidebarOpen && 'justify-center px-0'}`}
                         title={!isSidebarOpen ? 'Logout' : undefined}
                     >
                         <span className="text-xl">🚪</span>
-                        {isSidebarOpen && <span className="font-medium">Keluar</span>}
+                        {isSidebarOpen && <span>Keluar</span>}
                     </button>
                 </div>
             </aside>
 
-            {/* Main Content Area (Also Floating glass on Desktop) */}
+            {/* Main Content Area */}
             <main
                 className={`
                     relative flex-1 flex flex-col 
-                    min-h-[100dvh] md:h-[calc(100vh-2rem)] md:my-4 md:mr-4 md:ml-6
-                    md:rounded-3xl shadow-2xl overflow-hidden
+                    min-h-[100dvh] md:h-[calc(100vh-2rem)] md:my-4 md:mr-4 md:ml-2
+                    md:rounded-2xl overflow-hidden
                     transition-all duration-300
-                    ${theme === 'dark' ? 'bg-[#0D111A]/60' : 'bg-[#F3F4F6]/80'}
-                    backdrop-blur-sm
+                    ${theme === 'dark' ? 'bg-[#151a23]/90' : 'bg-white/80'}
+                    border-2 border-dashed ${COLORS.BORDER}
+                    md:shadow-xl
                     z-10
                     animate-fade-in-up animation-delay-500 opacity-0
                 `}
             >
-                {/* Top Header (Floating inside main) */}
-                <header className={`px-6 py-4 flex items-center justify-between sticky top-0 z-20 backdrop-blur-xl border-b ${theme === 'dark' ? 'border-white/5 bg-[#0D111A]/80' : 'border-gray-200/50 bg-white/60'}`}>
+                {/* Top Header (Paper Header) */}
+                <header className={`px-6 py-4 flex items-center justify-between sticky top-0 z-20 backdrop-blur-md border-b-2 border-dotted ${COLORS.BORDER} bg-opacity-90 ${theme === 'dark' ? 'bg-[#0D111A]' : 'bg-white'}`}>
                     <div className="flex items-center gap-4">
                         <button
                             onClick={() => setIsMobileSidebarOpen(true)}
-                            className="md:hidden text-2xl p-2 rounded-lg hover:bg-white/10"
+                            className={`md:hidden text-2xl p-2 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 ${COLORS.TEXT_PRIMARY}`}
                         >
                             ☰
                         </button>
                         <div>
-                            <h1 className={`text-xl font-bold tracking-tight ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                                {filteredMenuItems.find((item) => isActive(item.path))?.label || 'Dashboard'}
-                            </h1>
+                            <Heading level={2} className={`${COLORS.TEXT_PRIMARY} flex items-center gap-2`}>
+                                {pageTitle}
+                                <span className="hidden sm:inline-block w-8 h-0.5 bg-gray-300 dark:bg-gray-700 mx-2"></span>
+                                <Typography variant="caption" className="font-normal text-gray-500 dark:text-gray-400 tracking-wide">
+                                    {new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                                </Typography>
+                            </Heading>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-4">
                         {/* Notification Bell (Mock) */}
-                        <button className={`p-2 rounded-full relative ${theme === 'dark' ? 'hover:bg-white/10 text-gray-400' : 'hover:bg-black/5 text-gray-600'}`}>
+                        <button className={`p-2 rounded-full relative hover:scale-110 transition-transform ${COLORS.TEXT_SECONDARY}`}>
                             🔔
-                            <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-red-500 border border-[#0D111A]"></span>
+                            <span className="absolute top-1 right-2 w-2.5 h-2.5 rounded-full bg-red-500 border-2 border-white dark:border-black animate-pulse"></span>
                         </button>
                     </div>
                 </header>
 
                 {/* Scrollable Content */}
-                <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-600/20 scrollbar-track-transparent p-4 md:p-8">
-                    {children}
+                <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400/30 scrollbar-track-transparent p-4 md:p-8">
+                    {/* Inner Paper background visual */}
+                    <div className="absolute inset-0 notebook-lines opacity-5 pointer-events-none -z-10"></div>
+                    <div className="max-w-7xl mx-auto">
+                        {children}
+                    </div>
                 </div>
             </main>
         </div>

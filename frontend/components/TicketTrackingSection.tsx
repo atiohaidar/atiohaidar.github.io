@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { COLORS } from '../utils/styles';
+import { Typography, Heading, Text } from './ui';
 import { getTicketByToken, getTicketCommentsByToken, addTicketCommentByToken } from '../lib/api/services';
 import type { Ticket, TicketComment } from '../apiTypes';
 
@@ -78,11 +79,11 @@ const TicketTrackingSection: React.FC<TicketTrackingSectionProps> = ({ prefillTo
 
     const getStatusColor = (status: string) => {
         switch (status) {
-            case 'open': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100';
-            case 'in_progress': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100';
-            case 'waiting': return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100';
-            case 'solved': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100';
-            default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-100';
+            case 'open': return 'bg-blue-100/80 text-blue-900 border-blue-300 dark:bg-blue-900/50 dark:text-blue-100 dark:border-blue-700';
+            case 'in_progress': return 'bg-yellow-100/80 text-yellow-900 border-yellow-300 dark:bg-yellow-900/50 dark:text-yellow-100 dark:border-yellow-700';
+            case 'waiting': return 'bg-orange-100/80 text-orange-900 border-orange-300 dark:bg-orange-900/50 dark:text-orange-100 dark:border-orange-700';
+            case 'solved': return 'bg-green-100/80 text-green-900 border-green-300 dark:bg-green-900/50 dark:text-green-100 dark:border-green-700';
+            default: return 'bg-gray-100/80 text-gray-900 border-gray-300 dark:bg-gray-700/50 dark:text-gray-100 dark:border-gray-600';
         }
     };
 
@@ -98,11 +99,11 @@ const TicketTrackingSection: React.FC<TicketTrackingSectionProps> = ({ prefillTo
 
     const getPriorityColor = (priority: string) => {
         switch (priority) {
-            case 'low': return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-100';
-            case 'medium': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100';
-            case 'high': return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-100';
-            case 'critical': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100';
-            default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-100';
+            case 'low': return 'bg-gray-100/80 text-gray-900 border-gray-300 dark:bg-gray-700/50 dark:text-gray-100 dark:border-gray-600';
+            case 'medium': return 'bg-blue-100/80 text-blue-900 border-blue-300 dark:bg-blue-900/50 dark:text-blue-100 dark:border-blue-700';
+            case 'high': return 'bg-orange-100/80 text-orange-900 border-orange-300 dark:bg-orange-900/50 dark:text-orange-100 dark:border-orange-700';
+            case 'critical': return 'bg-red-100/80 text-red-900 border-red-300 dark:bg-red-900/50 dark:text-red-100 dark:border-red-700';
+            default: return 'bg-gray-100/80 text-gray-900 border-gray-300 dark:bg-gray-700/50 dark:text-gray-100 dark:border-gray-600';
         }
     };
 
@@ -119,19 +120,21 @@ const TicketTrackingSection: React.FC<TicketTrackingSectionProps> = ({ prefillTo
     return (
         <section id="ticket-tracking" className={`py-16 md:py-20 ${COLORS.BG_PRIMARY}`}>
             <div className="container mx-auto px-4 max-w-4xl">
-                <div className={`${COLORS.BG_SECONDARY} rounded-lg shadow-xl p-8 md:p-12`}>
-                    <h2 className={`text-3xl md:text-4xl font-bold ${COLORS.TEXT_PRIMARY} mb-4 text-center`}>
-                        Lacak Status Keluhan
-                    </h2>
-                    <p className={`${COLORS.TEXT_SECONDARY} text-center mb-8`}>
-                        Masukkan token untuk melihat progress dan status keluhan Anda
-                    </p>
+                <div className={`glass-panel p-8 md:p-12 relative overflow-hidden`}>
+                    <div className="absolute top-0 right-0 w-24 h-24 bg-yellow-200/20 rounded-full blur-3xl -mr-12 -mt-12 pointer-events-none"></div>
 
-                    <form onSubmit={handleTrack} className="space-y-6 mb-8">
+                    <Heading level={2} className={`${COLORS.TEXT_PRIMARY} mb-4 text-center`}>
+                        Lacak Status Keluhan
+                    </Heading>
+                    <Text className={`${COLORS.TEXT_SECONDARY} text-center mb-8 text-xl`}>
+                        Masukkan token untuk melihat progress dan status keluhan Anda
+                    </Text>
+
+                    <form onSubmit={handleTrack} className="space-y-6 mb-12 relative z-10">
                         <div>
-                            <label htmlFor="token" className={`block ${COLORS.TEXT_PRIMARY} mb-2 font-medium`}>
+                            <Typography variant="h4" as="label" htmlFor="token" className={`block ${COLORS.TEXT_PRIMARY} mb-2`}>
                                 Token Pelacakan
-                            </label>
+                            </Typography>
                             <div className="flex gap-4">
                                 <input
                                     type="text"
@@ -139,13 +142,13 @@ const TicketTrackingSection: React.FC<TicketTrackingSectionProps> = ({ prefillTo
                                     value={token}
                                     onChange={(e) => setToken(e.target.value)}
                                     placeholder="Contoh: TKT-ABC12345"
-                                    className={`flex-1 px-4 py-3 rounded-lg ${COLORS.BG_PRIMARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue`}
+                                    className={`flex-1 px-4 py-3 bg-transparent border-b-2 ${COLORS.BORDER} ${COLORS.TEXT_PRIMARY} focus:outline-none focus:border-[${COLORS.TEXT_ACCENT}] transition-colors font-patrick placeholder:text-gray-400 dark:placeholder:text-gray-600 rounded-t-lg hover:bg-black/5 dark:hover:bg-white/5 font-patrick tracking-wider`}
                                     required
                                 />
                                 <button
                                     type="submit"
                                     disabled={isLoading}
-                                    className={`${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ON_ACCENT} py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed`}
+                                    className={`glass-button ${COLORS.TEXT_PRIMARY} py-3 px-8 rounded-lg font-bold font-patrick text-lg hover:scale-[1.05] transition-transform disabled:opacity-50 disabled:cursor-not-allowed`}
                                 >
                                     {isLoading ? 'Memuat...' : 'Lacak'}
                                 </button>
@@ -154,30 +157,33 @@ const TicketTrackingSection: React.FC<TicketTrackingSectionProps> = ({ prefillTo
                     </form>
 
                     {error && (
-                        <div className="mb-6 p-4 rounded-lg bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-100">
+                        <div className="mb-8 p-4 rounded-lg transform -rotate-1 border-2 border-dashed bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 border-red-300 font-patrick text-center">
                             {error}
                         </div>
                     )}
 
                     {ticket && (
-                        <div className="space-y-6">
+                        <div className="space-y-8 animate-fade-in-up">
                             {/* Ticket Details */}
-                            <div className={`${COLORS.BG_PRIMARY} rounded-lg p-6 border ${COLORS.BORDER}`}>
-                                <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-                                    <h3 className={`text-2xl font-bold ${COLORS.TEXT_PRIMARY}`}>
+                            <div className={`p-6 border-2 border-dashed ${COLORS.BORDER} rounded-xl relative`}>
+                                <div className="absolute top-0 right-0 transform translate-x-1/3 -translate-y-1/3 rotate-12">
+                                    <div className={`px-4 py-1 ${getStatusColor(ticket.status)} border-2 rounded-lg font-bold font-patrick shadow-sm`}>
+                                        {getStatusLabel(ticket.status)}
+                                    </div>
+                                </div>
+
+                                <div className="mb-6">
+                                    <Heading level={3} className={`${COLORS.TEXT_PRIMARY} mb-2`}>
                                         {ticket.title}
-                                    </h3>
-                                    <div className="flex gap-2">
-                                        <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getStatusColor(ticket.status)}`}>
-                                            {getStatusLabel(ticket.status)}
-                                        </span>
-                                        <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getPriorityColor(ticket.priority)}`}>
-                                            {getPriorityLabel(ticket.priority)}
+                                    </Heading>
+                                    <div className="flex gap-2 mb-4">
+                                        <span className={`px-3 py-1 border rounded-full text-sm font-bold font-patrick ${getPriorityColor(ticket.priority)}`}>
+                                            Prioritas: {getPriorityLabel(ticket.priority)}
                                         </span>
                                     </div>
                                 </div>
 
-                                <div className={`${COLORS.TEXT_SECONDARY} space-y-2 mb-4`}>
+                                <div className={`${COLORS.TEXT_SECONDARY} space-y-2 mb-6 font-patrick border-b-2 border-dashed ${COLORS.BORDER} pb-4`}>
                                     <p><strong>Kategori:</strong> {ticket.category_name}</p>
                                     <p><strong>Dibuat:</strong> {new Date(ticket.created_at || '').toLocaleString('id-ID')}</p>
                                     <p><strong>Terakhir diperbarui:</strong> {new Date(ticket.updated_at || '').toLocaleString('id-ID')}</p>
@@ -186,9 +192,11 @@ const TicketTrackingSection: React.FC<TicketTrackingSectionProps> = ({ prefillTo
                                     )}
                                 </div>
 
-                                <div className={`${COLORS.TEXT_PRIMARY} whitespace-pre-wrap`}>
-                                    <strong>Deskripsi:</strong>
-                                    <p className="mt-2">{ticket.description}</p>
+                                <div className={`${COLORS.TEXT_PRIMARY} whitespace-pre-wrap font-sans`}>
+                                    <strong className="font-patrick text-lg block mb-2">Deskripsi:</strong>
+                                    <p className="leading-relaxed bg-white/50 dark:bg-black/20 p-4 rounded-lg border border-dashed ${COLORS.BORDER}">
+                                        {ticket.description}
+                                    </p>
                                 </div>
 
                                 {ticket.reference_link && (
@@ -197,42 +205,42 @@ const TicketTrackingSection: React.FC<TicketTrackingSectionProps> = ({ prefillTo
                                             href={ticket.reference_link}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className={`${COLORS.TEXT_ACCENT} hover:underline`}
+                                            className={`${COLORS.TEXT_ACCENT} hover:underline font-patrick font-bold flex items-center gap-2`}
                                         >
-                                            🔗 Link Referensi
+                                            <span className="text-xl">🔗</span> Link Referensi
                                         </a>
                                     </div>
                                 )}
                             </div>
 
                             {/* Comments Section */}
-                            <div className={`${COLORS.BG_PRIMARY} rounded-lg p-6 border ${COLORS.BORDER}`}>
-                                <h4 className={`text-xl font-bold ${COLORS.TEXT_PRIMARY} mb-4`}>
-                                    Riwayat Komunikasi
-                                </h4>
+                            <div className="mt-8">
+                                <Heading level={4} className={`${COLORS.TEXT_PRIMARY} mb-6 flex items-center gap-2`}>
+                                    <span>💬</span> Riwayat Komunikasi
+                                </Heading>
 
                                 {comments.length === 0 ? (
-                                    <p className={`${COLORS.TEXT_SECONDARY} text-center py-4`}>
+                                    <p className={`${COLORS.TEXT_SECONDARY} text-center py-8 italic font-patrick text-xl border-2 border-dashed ${COLORS.BORDER} rounded-xl opacity-60`}>
                                         Belum ada komentar
                                     </p>
                                 ) : (
-                                    <div className="space-y-4 mb-6">
+                                    <div className="space-y-6 mb-8">
                                         {comments.map((comment) => (
-                                            <div key={comment.id} className={`${COLORS.BG_SECONDARY} rounded-lg p-4 border ${COLORS.BORDER}`}>
-                                                <div className="flex items-center justify-between mb-2">
-                                                    <span className={`font-semibold ${COLORS.TEXT_PRIMARY}`}>
+                                            <div key={comment.id} className={`p-5 rounded-xl border-2 ${comment.commenter_type === 'user' ? `border-blue-200 dark:border-blue-800 bg-blue-50/50 dark:bg-blue-900/10 ml-8` : `border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30 mr-8`}`}>
+                                                <div className="flex items-center justify-between mb-3 border-b border-dashed border-gray-300 dark:border-gray-600 pb-2">
+                                                    <span className={`font-bold font-patrick text-lg ${COLORS.TEXT_PRIMARY}`}>
                                                         {comment.commenter_name}
-                                                        <span className={`ml-2 text-xs ${COLORS.TEXT_SECONDARY}`}>
-                                                            ({comment.commenter_type === 'user' ? 'Admin' : 'Tamu'})
+                                                        <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${comment.commenter_type === 'user' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' : 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200'}`}>
+                                                            {comment.commenter_type === 'user' ? 'Admin' : 'Tamu'}
                                                         </span>
                                                     </span>
-                                                    <span className={`text-sm ${COLORS.TEXT_SECONDARY}`}>
+                                                    <span className={`text-sm ${COLORS.TEXT_SECONDARY} font-patrick`}>
                                                         {new Date(comment.created_at || '').toLocaleString('id-ID')}
                                                     </span>
                                                 </div>
-                                                <p className={`${COLORS.TEXT_PRIMARY} whitespace-pre-wrap`}>
+                                                <Text as="p" className={`${COLORS.TEXT_PRIMARY} whitespace-pre-wrap leading-relaxed`}>
                                                     {comment.comment_text}
-                                                </p>
+                                                </Text>
                                             </div>
                                         ))}
                                     </div>
@@ -240,24 +248,25 @@ const TicketTrackingSection: React.FC<TicketTrackingSectionProps> = ({ prefillTo
 
                                 {/* Add Comment Form */}
                                 {ticket.status !== 'solved' && (
-                                    <form onSubmit={handleAddComment} className="space-y-4">
+                                    <form onSubmit={handleAddComment} className="space-y-4 mt-8 pt-6 border-t-2 border-dashed ${COLORS.BORDER}">
+                                        <Heading level={4} className={`${COLORS.TEXT_PRIMARY} mb-4`}>Balas Tiket</Heading>
                                         <div>
-                                            <label htmlFor="commenterName" className={`block ${COLORS.TEXT_PRIMARY} mb-2 font-medium`}>
+                                            <Typography variant="h4" as="label" htmlFor="commenterName" className={`block ${COLORS.TEXT_PRIMARY} mb-2`}>
                                                 Nama Anda (Opsional)
-                                            </label>
+                                            </Typography>
                                             <input
                                                 type="text"
                                                 id="commenterName"
                                                 value={commenterName}
                                                 onChange={(e) => setCommenterName(e.target.value)}
                                                 placeholder={ticket.submitter_name || 'Guest'}
-                                                className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_SECONDARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue`}
+                                                className={`w-full px-4 py-2 bg-transparent border-b-2 ${COLORS.BORDER} ${COLORS.TEXT_PRIMARY} focus:outline-none focus:border-[${COLORS.TEXT_ACCENT}] transition-colors font-patrick rounded-t-lg hover:bg-black/5 dark:hover:bg-white/5`}
                                             />
                                         </div>
                                         <div>
-                                            <label htmlFor="newComment" className={`block ${COLORS.TEXT_PRIMARY} mb-2 font-medium`}>
+                                            <Typography variant="h4" as="label" htmlFor="newComment" className={`block ${COLORS.TEXT_PRIMARY} mb-2`}>
                                                 Tambahkan Komentar
-                                            </label>
+                                            </Typography>
                                             <textarea
                                                 id="newComment"
                                                 value={newComment}
@@ -265,22 +274,25 @@ const TicketTrackingSection: React.FC<TicketTrackingSectionProps> = ({ prefillTo
                                                 placeholder="Tambahkan informasi atau pertanyaan..."
                                                 required
                                                 rows={4}
-                                                className={`w-full px-4 py-2 rounded-lg ${COLORS.BG_SECONDARY} ${COLORS.TEXT_PRIMARY} border ${COLORS.BORDER} focus:outline-none focus:ring-2 focus:ring-accent-blue resize-none`}
+                                                className={`w-full px-4 py-3 bg-transparent border-2 border-dashed ${COLORS.BORDER} ${COLORS.TEXT_PRIMARY} focus:outline-none focus:border-[${COLORS.TEXT_ACCENT}] transition-colors font-patrick rounded-lg hover:bg-black/5 dark:hover:bg-white/5 resize-none`}
                                             />
                                         </div>
-                                        <button
-                                            type="submit"
-                                            disabled={isSubmittingComment}
-                                            className={`${COLORS.BUTTON_PRIMARY} ${COLORS.TEXT_ON_ACCENT} py-2 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed`}
-                                        >
-                                            {isSubmittingComment ? 'Mengirim...' : 'Kirim Komentar'}
-                                        </button>
+                                        <div className="flex justify-end">
+                                            <button
+                                                type="submit"
+                                                disabled={isSubmittingComment}
+                                                className={`glass-button ${COLORS.TEXT_PRIMARY} py-2 px-6 rounded-lg font-bold font-patrick hover:scale-[1.02] transition-transform disabled:opacity-50 disabled:cursor-not-allowed`}
+                                            >
+                                                {isSubmittingComment ? 'Mengirim...' : 'Kirim Komentar'}
+                                            </button>
+                                        </div>
                                     </form>
                                 )}
 
                                 {ticket.status === 'solved' && (
-                                    <div className="mt-4 p-4 rounded-lg bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 text-center">
-                                        ✅ Tiket ini telah diselesaikan. Komentar tidak dapat ditambahkan lagi.
+                                    <div className="mt-8 p-6 rounded-xl border-2 border-dashed border-green-300 bg-green-50/50 dark:bg-green-900/20 text-green-800 dark:text-green-100 text-center font-patrick text-xl">
+                                        ✅ Tiket ini telah diselesaikan. <br />
+                                        <span className="text-base opacity-80">Komentar tidak dapat ditambahkan lagi.</span>
                                     </div>
                                 )}
                             </div>

@@ -3,11 +3,13 @@
  * Menampilkan perkenalan singkat, nama, tagline, bio, dan tombol CTA.
  */
 import React, { useRef, useState } from 'react';
-import { COLORS, LAYOUT, PRINT, SPACING, TYPOGRAPHY } from '../utils/styles';
+import { COLORS as STYLE_COLORS, LAYOUT, PRINT } from '../utils/styles';
 import { createAnimationStyle, ANIMATION_DELAYS } from '../utils/animations';
 import { getExternalLinkProps } from '../utils/url';
-import ParticleBackground from './ParticleBackground';
+import { DoodleArrow, DoodleStar, DoodleCurly, DoodleSparkle, DoodleUnderline, DoodleCircle } from './ui/Doodles';
 import SpyTooltip from './SpyTooltip';
+import { COLORS } from '../constants';
+import { Typography, Heading, Text } from './ui';
 
 /**
  * Props untuk komponen Hero.
@@ -33,51 +35,76 @@ const Hero: React.FC<HeroProps> = ({ greeting, name, tagline, bio, linkedinUrl }
         <>
             {/* Header untuk print dengan URL portfolio */}
             <div className={`${PRINT.SHOW} text-center py-4 border-b border-soft-gray/30`} style={createAnimationStyle(ANIMATION_DELAYS.HERO.GREETING)}>
-                <h3 className={`text-lg ${TYPOGRAPHY.WEIGHT_SEMIBOLD} ${COLORS.TEXT_WHITE} mb-2`}>Portfolio Online</h3>
-                <p className={`${TYPOGRAPHY.SMALL_TEXT}`}>
+                <Heading level={3} className={`${STYLE_COLORS.TEXT_WHITE} mb-2`}>Portfolio Online</Heading>
+                <Text variant="small">
                     Portfolio:
-                    <a className={`${COLORS.TEXT_ACCENT} underline ml-1`} {...getExternalLinkProps('https://atiohaidar.github.io')}>
+                    <a className={`${STYLE_COLORS.TEXT_ACCENT} underline ml-1`} {...getExternalLinkProps('https://atiohaidar.github.io')}>
                         https://atiohaidar.github.io 🔗
                     </a>
-                </p>
+                </Text>
             </div>
 
             <section
                 id="hero"
                 className={`min-h-screen ${LAYOUT.FLEX_CENTER} relative overflow-hidden pt-20 pb-0 md:pt-0`}
             >
+                {/* Notebook Binder Effect (Left Side) - Only on Desktop */}
+                <div className="notebook-binder hidden lg:flex">
+                    {[...Array(8)].map((_, i) => (
+                        <div key={i} className="binder-ring shadow-inner"></div>
+                    ))}
+                </div>
+
                 {/* Content Container - Background is handled by parent/layout */}
                 <div className={`container mx-auto px-6 md:px-16 lg:px-20 relative z-10 text-center`}>
-                    <div className="max-w-4xl mx-auto space-y-6">
-                        <p className={`text-lg md:text-xl font-medium text-accent-blue dark:text-cyan-400 tracking-wide uppercase`} style={createAnimationStyle(ANIMATION_DELAYS.HERO.NAME)}>
-                            {greeting}
-                        </p>
+                    <div className="max-w-4xl mx-auto space-y-6 relative">
+                        {/* Decorative Sparkles scattered around top */}
+                        <DoodleSparkle className="absolute -top-20 right-1/4 w-12 h-12 text-marker-pink opacity-60 dark:opacity-40 animate-pulse" />
+                        <DoodleSparkle className="absolute -top-10 left-1/4 w-8 h-8 text-marker-blue opacity-50 dark:opacity-30 animate-pulse animate-delay-700" />
 
-                        <h1 className="text-5xl sm:text-7xl lg:text-8xl font-bold tracking-tight text-light-text dark:text-white mb-4" style={createAnimationStyle(ANIMATION_DELAYS.HERO.TAGLINE)}>
-                            <span className="inline-block relative">
-                                {name}
-                                <span className="absolute -bottom-2 left-0 w-full h-2 bg-accent-blue rounded-full opacity-0 animate-fade-in-up animation-delay-500"></span>
-                            </span>
-                            <span className="text-accent-blue">.</span>
-                        </h1>
-
-                        <h2 className="text-2xl sm:text-4xl lg:text-5xl font-semibold text-light-muted dark:text-slate-300" style={createAnimationStyle(ANIMATION_DELAYS.HERO.BIO)}>
-                            {tagline}
-                        </h2>
-
-                        <div className={`${PRINT.SHOW} pt-2 text-sm`}>
-                            <p>Portfolio: <a className={`${COLORS.TEXT_ACCENT} underline`} {...getExternalLinkProps('https://atiohaidar.github.io')}>https://atiohaidar.github.io</a></p>
-                            <p>LinkedIn: <a className={`${COLORS.TEXT_ACCENT} underline`} {...getExternalLinkProps(linkedinUrl)}>{linkedinUrl}</a></p>
+                        <div className="relative inline-block">
+                            <Typography variant="h3" className={`md:text-2xl font-medium text-ink-blue dark:text-chalk-blue tracking-wide relative z-10`} style={createAnimationStyle(ANIMATION_DELAYS.HERO.NAME)}>
+                                {greeting}
+                            </Typography>
+                            <DoodleUnderline className="absolute -bottom-2 left-0 w-full h-4 text-marker-blue opacity-60 dark:opacity-40" />
                         </div>
 
-                        <p className={`max-w-2xl mx-auto text-lg sm:text-xl leading-relaxed text-gray-600 dark:text-slate-400 pt-6`} style={createAnimationStyle(ANIMATION_DELAYS.HERO.CTA)}>
-                            {bio}
-                        </p>
+                        <Heading level={1} className="text-5xl sm:text-7xl lg:text-8xl font-caveat tracking-tight mb-4 relative z-10" style={createAnimationStyle(ANIMATION_DELAYS.HERO.TAGLINE)}>
+                            <span className="inline-block relative">
+                                {name}
+                                <span className="absolute -bottom-1 left-0 w-full h-3 bg-marker-yellow/80 rounded-full opacity-0 animate-fade-in-up animate-delay-500 -z-10 transform -rotate-1"></span>
 
-                        <div className={`pt-10 flex flex-col sm:flex-row gap-4 justify-center ${PRINT.HIDE}`} style={createAnimationStyle(1000)}>
-                            <a href="#portfolio" className="glass-button px-8 py-4 rounded-full text-lg font-medium text-light-text dark:text-white hover:text-accent-blue hover:border-accent-blue/50">
-                                Lihat Portofolio
-                            </a>
+                                {/* Decorative circle around the dot or end of name */}
+                                <DoodleCircle className="absolute -right-8 -top-4 w-16 h-16 text-marker-pink opacity-60 dark:opacity-30 animate-draw pointer-events-none" />
+                            </span>
+                            <span className="text-ink-blue dark:text-chalk-blue">.</span>
+                        </Heading>
+
+                        <div className="relative inline-block px-4">
+                            <Heading level={2} className="text-2xl sm:text-4xl lg:text-5xl font-semibold text-light-muted dark:text-slate-300" style={createAnimationStyle(ANIMATION_DELAYS.HERO.BIO)}>
+                                {tagline}
+                            </Heading>
+                            {/* Curly line under tagline */}
+                            <DoodleCurly className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-48 h-6 text-marker-green opacity-60 dark:opacity-40" />
+                        </div>
+
+                        <div className={`${PRINT.SHOW} pt-2 text-sm`}>
+                            <p>Portfolio: <a className={`${STYLE_COLORS.TEXT_ACCENT} underline`} {...getExternalLinkProps('https://atiohaidar.github.io')}>https://atiohaidar.github.io</a></p>
+                            <p>LinkedIn: <a className={`${STYLE_COLORS.TEXT_ACCENT} underline`} {...getExternalLinkProps(linkedinUrl)}>{linkedinUrl}</a></p>
+                        </div>
+
+                        <Typography variant="body" className={`max-w-2xl mx-auto text-lg sm:text-xl text-gray-600 dark:text-slate-400 pt-6`} style={createAnimationStyle(ANIMATION_DELAYS.HERO.CTA)}>
+                            {bio}
+                        </Typography>
+
+                        <div className={`pt-12 flex flex-col sm:flex-row gap-6 justify-center relative ${PRINT.HIDE}`} style={createAnimationStyle(1000)}>
+                            <div className="relative group">
+                                <a href="#portfolio" className="glass-button px-8 py-4 hover:text-accent-blue hover:border-accent-blue/50 block">
+                                    <Typography variant="h4" className="text-light-text dark:text-white">Lihat Portofolio</Typography>
+                                </a>
+                                {/* Arrow pointing from Portofolio downward */}
+                                <DoodleArrow className="absolute -bottom-12 left-1/2 -translate-x-1/2 w-12 h-12 text-marker-pink rotate-90 hidden sm:block opacity-40 group-hover:opacity-100 transition-opacity" />
+                            </div>
                             <div
                                 className="relative"
                                 onMouseEnter={() => setIsBackendTooltipOpen(true)}
@@ -86,9 +113,9 @@ const Hero: React.FC<HeroProps> = ({ greeting, name, tagline, bio, linkedinUrl }
                                 <a
                                     ref={backendButtonRef}
                                     href="#backend"
-                                    className="block px-8 py-4 rounded-full text-lg font-medium bg-accent-blue text-white shadow-lg shadow-accent-blue/30 hover:bg-accent-blue/90 hover:-translate-y-1 transition-all duration-300"
+                                    className="glass-button block px-8 py-4 bg-accent-blue text-white hover:bg-accent-blue/90 relative z-10"
                                 >
-                                    ⚡ Coba Backend
+                                    <Typography variant="h4">⚡ Coba Backend</Typography>
                                 </a>
                                 <SpyTooltip
                                     visible={isBackendTooltipOpen}
@@ -101,18 +128,47 @@ const Hero: React.FC<HeroProps> = ({ greeting, name, tagline, bio, linkedinUrl }
                                         { label: 'SUPPORT', value: 'Ticketing System' },
                                     ]}
                                     targetRef={backendButtonRef as React.RefObject<HTMLElement>}
-                                    color="#10b981"
+                                    color={COLORS.success}
                                 />
+                                {/* Sparkles on backend button */}
+                                <DoodleSparkle className="absolute -top-4 -right-4 w-8 h-8 text-marker-yellow animate-wiggle" />
                             </div>
-                            <a
-                                href="#form-token"
-                                className="px-8 py-4 rounded-full text-lg font-medium border border-gray-300 dark:border-white/20 hover:bg-white/5 hover:border-accent-blue hover:text-accent-blue transition-all duration-300"
-                            >
-                                Akses Form
-                            </a>
+                            <div className="relative group">
+                                <a
+                                    href="#form-token"
+                                    className="glass-button px-8 py-4 bg-transparent hover:bg-white/5 hover:text-accent-blue block"
+                                >
+                                    <Typography variant="h4">Akses Form</Typography>
+                                </a>
+                                {/* Arrow pointing back to Portofolio on mobile or just decorative */}
+                                <DoodleArrow className="absolute -top-12 left-1/2 -translate-x-1/2 w-10 h-10 text-marker-blue -rotate-90 hidden sm:block opacity-30" />
+                            </div>
+
+                            {/* Call-out Arrow pointing to CTA (Desktop) */}
+                            <div className="absolute -left-40 bottom-10 hidden xl:block pointer-events-none transition-transform group-hover:translate-x-2">
+                                <span className="font-patrick text-2xl text-ink-blue dark:text-chalk-blue absolute -top-12 -left-4 -rotate-12 w-48">
+                                    Ada Emot Roket! 🚀
+                                </span>
+                                <DoodleArrow className="w-24 h-24 text-marker-orange opacity-90 dark:text-marker-yellow dark:opacity-100 rotate-[15deg]" />
+                            </div>
+                        </div>
+
+                        {/* Distant random doodles to fill space further out */}
+                        <div className="absolute -top-20 -left-40 opacity-40 dark:opacity-20 pointer-events-none hidden lg:block">
+                            <DoodleCurly className="w-40 h-10 text-marker-blue rotate-45" />
+                        </div>
+                        <div className="absolute top-1/4 -right-60 opacity-30 dark:opacity-10 pointer-events-none hidden xl:block">
+                            <DoodleCircle className="w-64 h-64 text-marker-green" />
+                        </div>
+                        <div className="absolute -bottom-40 right-1/3 opacity-40 dark:opacity-20 pointer-events-none hidden lg:block">
+                            <DoodleStar className="w-16 h-16 text-marker-yellow animate-float" />
                         </div>
                     </div>
                 </div>
+                {/* Pencil Smudges textures - adjusted positions to avoid clipping */}
+                <div className="pencil-smudge w-64 h-64 -top-20 -left-20 rotate-45"></div>
+                <div className="pencil-smudge w-96 h-96 bottom-[10%] right-[15%] -rotate-12"></div>
+                <div className="pencil-smudge w-48 h-48 top-1/2 -right-10 opacity-[0.03]"></div>
             </section>
         </>
     );
