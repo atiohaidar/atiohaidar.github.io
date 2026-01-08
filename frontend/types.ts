@@ -20,6 +20,7 @@ export interface Project {
   contribution: string;
   tech?: string[];
   links: ProjectLink[];
+  screenshot?: string;
 }
 
 /**
@@ -34,11 +35,11 @@ export interface ResearchLink {
  * Merepresentasikan satu item penelitian.
  */
 export interface ResearchItem {
-    type: string;
-    title: string;
-    description: string;
-    contribution: string;
-    links: ResearchLink[];
+  type: string;
+  title: string;
+  description: string;
+  contribution: string;
+  links: ResearchLink[];
 }
 
 /**
@@ -55,9 +56,9 @@ export interface Experience {
  * Merepresentasikan riwayat pendidikan.
  */
 export interface Education {
-    date: string;
-    degree: string;
-    institution: string;
+  date: string;
+  degree: string;
+  institution: string;
 }
 
 /**

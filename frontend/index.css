@@ -91,6 +91,70 @@
   .group:hover .dog-ear::before {
     @apply border-t-[30px] border-r-[30px];
   }
+
+  /* Research Card Enhanced Styles */
+  .research-card-enhanced {
+    @apply relative overflow-hidden transition-all duration-300;
+    border: 1.5px solid theme('colors.slate.800');
+    box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 0.1);
+  }
+
+  .dark .research-card-enhanced {
+    border-color: theme('colors.slate.700');
+    box-shadow: 3px 3px 0px 0px rgba(255,255,255,0.05);
+  }
+
+  .research-card-enhanced:hover {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 0.15);
+  }
+
+  .dark .research-card-enhanced:hover {
+    box-shadow: 6px 6px 0px 0px rgba(255, 255, 255, 0.08);
+  }
+
+  /* Category Badge Styles */
+  .category-badge {
+    @apply inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider;
+    background: linear-gradient(135deg, theme('colors.accent-purple'), theme('colors.accent-teal'));
+    color: white;
+    box-shadow: 0 2px 8px rgba(147, 51, 234, 0.3);
+  }
+
+  .category-badge-sharing {
+    background: linear-gradient(135deg, theme('colors.accent-teal'), theme('colors.accent-orange'));
+    box-shadow: 0 2px 8px rgba(20, 184, 166, 0.3);
+  }
+
+  /* Link Button Styles */
+  .link-button {
+    @apply inline-flex items-center px-4 py-2 rounded-lg font-medium transition-all duration-300;
+    background: linear-gradient(135deg, theme('colors.gradient-start'), theme('colors.gradient-end'));
+    color: white;
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+  }
+
+  .link-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+  }
+
+  /* Card Gradient Overlay */
+  .card-gradient-overlay {
+    @apply absolute inset-0 opacity-0 transition-opacity duration-300 pointer-events-none;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.05));
+  }
+
+  .group:hover .card-gradient-overlay {
+    @apply opacity-100;
+  }
+
+  /* Sticker Accent */
+  .sticker-accent {
+    @apply absolute -top-2 -right-2 w-12 h-12 rounded-full opacity-80;
+    background: radial-gradient(circle, theme('colors.marker-yellow'), theme('colors.marker-orange'));
+    transform: rotate(15deg);
+  }
 }
 
 /* Animations without Tailwind Utility wrapper if needed globally */
@@ -804,6 +868,84 @@
     transform: translateX(0);
   }
 }
+
+/* ============================================
+   RESEARCH CARD ANIMATIONS
+   ============================================ */
+
+/* Card Entrance Animation - staggered from bottom */
+@keyframes card-entrance {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-card-entrance {
+  animation: card-entrance 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Gradient Shift Animation - subtle background movement */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient-shift {
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* Link Underline Animation - draws from left to right */
+@keyframes link-underline {
+  from {
+    transform: scaleX(0);
+    transform-origin: left center;
+  }
+
+  to {
+    transform: scaleX(1);
+    transform-origin: left center;
+  }
+}
+
+.animate-link-underline {
+  animation: link-underline 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Badge Pulse Animation - subtle breathing effect */
+@keyframes badge-pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 2px 8px rgba(147, 51, 234, 0.3);
+  }
+
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(147, 51, 234, 0.5);
+  }
+}
+
+.animate-badge-pulse {
+  animation: badge-pulse 2s ease-in-out infinite;
+}
+
 
 .animate-text-reveal {
   animation: text-reveal 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;

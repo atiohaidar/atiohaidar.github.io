@@ -76,10 +76,15 @@ const config: Config = {
         'chart-tertiary': '#06b6d4',
         'chart-success': '#10b981',
         'chart-success-bright': '#34d399',
-        'chart-text-dark': '#94a3b8',
         'chart-text-light': '#64748B',
         'chart-grid-dark': '#334155',
         'chart-grid-light': '#E2E8F0',
+        // Research section accent colors
+        'accent-purple': '#9333EA',
+        'accent-teal': '#14B8A6',
+        'accent-orange': '#F97316',
+        'gradient-start': '#3B82F6',
+        'gradient-end': '#8B5CF6',
       },
       animation: {
         'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
