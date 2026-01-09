@@ -56,7 +56,7 @@ const ResearchCard: React.FC<ResearchCardProps> = ({ item }) => {
                         {/* Title with Gradient on Hover */}
                         <Heading
                             level={4}
-                            className={`${COLORS.TEXT_PRIMARY} group-hover:bg-gradient-to-r group-hover:from-gradient-start group-hover:to-gradient-end group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300 leading-tight`}
+                            className={`${COLORS.TEXT_PRIMARY} group-hover:text-blue-600 transition-colors duration-300 leading-tight`}
                         >
                             {item.title}
                         </Heading>

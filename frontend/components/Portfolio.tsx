@@ -6,8 +6,6 @@ import React from 'react';
 import Section from './Section';
 import type { Project } from '../types';
 import { GitHubIcon, ExternalLinkIcon, PostmanIcon, FolderIcon } from './Icons';
-import SpotlightCard from './SpotlightCard';
-import TiltCard from './TiltCard';
 import { COLORS } from '../utils/styles';
 import { Typography, Heading, Text, DoodleWashiTape, Card, Divider } from './ui';
 
@@ -35,10 +33,10 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
     };
 
     return (
-        <Card variant="glass" dogEar padding="none" className="h-full overflow-hidden group print:shadow-none print:border print:border-gray-300 print:rounded-none print:bg-transparent print-avoid-break">
+        <Card variant="glass" dogEar padding="none" className="h-full flex flex-col overflow-hidden group print:shadow-none print:border print:border-gray-300 print:rounded-none print:bg-transparent print-avoid-break">
             {/* Screenshot Image */}
             {project.screenshot && (
-                <div className="relative w-full h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
+                <div className="relative w-full h-48 overflow-hidden bg-slate-100 dark:bg-slate-800">
                     <img
                         src={project.screenshot}
                         alt={`Screenshot of ${project.name}`}
@@ -50,12 +48,12 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
                 </div>
             )}
 
-            <div className="p-6 flex flex-col h-full relative z-10">
+            <div className="p-6 flex flex-col flex-1 relative z-10">
                 <header className="flex justify-between items-center mb-4 print:hidden">
                     <FolderIcon className={`w-10 h-10 ${COLORS.TEXT_ACCENT}`} />
                 </header>
                 <main className="flex-grow">
-                    <Heading level={4} className={`${COLORS.TEXT_PRIMARY} mb-3 group-hover:text-blue-500 transition-colors print:text-black`}>{project.name}</Heading>
+                    <Heading level={4} className={`${COLORS.TEXT_PRIMARY} mb-3 group-hover:text-blue-600 transition-colors print:text-black`}>{project.name}</Heading>
                     <Text className={`${COLORS.TEXT_SECONDARY} mb-4 font-sans leading-relaxed`}>{project.description}</Text>
                     <Text className={`${COLORS.TEXT_SECONDARY} font-sans`}>
                         <Text as="span" className={`font-semibold ${COLORS.TEXT_PRIMARY}`}>Kontribusi:</Text> {project.contribution}
@@ -69,7 +67,7 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
                                 href={link.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className={`flex items-center ${COLORS.TEXT_SECONDARY} hover:text-blue-500 transition-colors duration-300 group/link overflow-hidden mb-1`}
+                                className={`flex items-center ${COLORS.TEXT_SECONDARY} hover:text-blue-600 transition-colors duration-300 group/link overflow-hidden mb-1`}
                             >
                                 {getIconForLink(link.type)}
                                 <Typography variant="caption" className="group-hover/link:underline print:underline">{link.url.replace(/^https?:\/\//, '')}</Typography>
@@ -81,7 +79,7 @@ const ProjectCard: React.FC<{ project: Project }> = ({ project }) => {
                             <Divider variant="dashed" className="mt-4" />
                             <ul className={`flex flex-wrap gap-2 pt-4`}>
                                 {project.tech.map(t => (
-                                    <li key={t} className="bg-gray-100/60 dark:bg-gray-800/60 border border-gray-300/50 dark:border-gray-600/50 rounded-full px-3 py-1 backdrop-blur-sm">
+                                    <li key={t} className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full px-3 py-1 shadow-sm">
                                         <Typography variant="caption" className={`${COLORS.TEXT_MUTED} font-sans text-xs`}>{t}</Typography>
                                     </li>
                                 ))}

@@ -1,5 +1,349 @@
 [
     {
+        "screenshot": "images/projects/al-fath.png",
+        "name": "Latihan Web App LDK Al-Fath",
+        "description": "Web App latihan menggunakan style guide yang sudah ada pada web app",
+        "contribution": "Mempelajari konsep style guide",
+        "tech": [
+            "React JS",
+            "Tailwind CSS",
+            "Lovable",
+            "Antigravity"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://ldkalfathunitel.pages.dev/app/"
+            },
+            {
+                "type": "github",
+                "url": "https://github.com/atiohaidar/al-fath"
+            }
+        ]
+    },
+    {
+        "screenshot": "images/projects/urus-diri-sendiri.png",
+        "name": "Urus Diri Sendiri",
+        "description": "Aplikasi Self Improvement untuk diri sendiri. terdiri dari web app serta mobile app menggunakn capasitor.",
+        "contribution": "Tracking produktivitas serta manajemen diri",
+        "tech": [
+            "React JS",
+            "Tailwind CSS",
+            "Capacitor"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://urus-diri-sendiri.pages.dev/"
+            },
+            {
+                "type": "github",
+                "url": "https://github.com/atiohaidar/urus-diri-sendiri"
+            }
+        ]
+    },
+    {
+        "name": "Leuweung",
+        "description": "Projek web Leuweung. dengan Konsep 3D",
+        "contribution": "Eksplorasi cara membuat frontend dengan konsep 3D",
+        "tech": [
+            "HTML",
+            "CSS",
+            "JavaScript",
+            "Three.js"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://atiohaidar.github.io/leuweung"
+            },
+            {
+                "type": "github",
+                "url": "https://github.com/atiohaidar/leuweung"
+            }
+        ]
+    },
+    {
+        "name": "Tembak Dor",
+        "description": "Game browser sederhana dengan konsep 2D.",
+        "contribution": "Ekplorasi membuat Game berbasis web.",
+        "tech": [
+            "React JS",
+            "Phaser"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://atiohaidar.github.io/Tembak-Dor"
+            },
+            {
+                "type": "github",
+                "url": "https://github.com/atiohaidar/Tembak-Dor"
+            }
+        ]
+    },
+    {
+        "screenshot": "images/projects/belajar-fisika-dengan-visualisasi.png",
+        "name": "Belajar Fisika dengan Visualisasi",
+        "description": "Simulasi fisika interaktif berbasis web.",
+        "contribution": "Membuat visualisasi konsep fisika.",
+        "tech": [
+            "HTML",
+            "JavaScript + Animasi",
+            "Antigravity"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://atiohaidar.github.io/belajar-fisika-dengan-visualisasi/"
+            },
+            {
+                "type": "github",
+                "url": "https://github.com/atiohaidar/belajar-fisika-dengan-visualisasi"
+            }
+        ]
+    },
+    {
+        "screenshot": "images/projects/expo.png",
+        "name": "Expo Portfolio",
+        "description": "Showcase projek menggunakan Expo.",
+        "contribution": "Eksplorasi Expo framework.",
+        "tech": [
+            "Expo"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://atiohaidar-portofolio.pages.dev/expo/"
+            }
+        ]
+    },
+    {
+        "name": "Flutter Portfolio",
+        "description": "Showcase projek menggunakan Flutter.",
+        "contribution": "Pengembangan aplikasi mobile cross-platform.",
+        "tech": [
+            "Flutter",
+            "Dart"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://atiohaidar-portofolio.pages.dev/flutter"
+            }
+        ]
+    },
+    {
+        "name": "Game Portfolio",
+        "description": "Showcase projek menggunakan game.",
+        "contribution": "Eksplorasi Cara membuat Game.",
+        "tech": [
+            "JavaScript",
+            "HTML5 Canvas"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://atiohaidar-portofolio.pages.dev/game/"
+            }
+        ]
+    },
+    {
+        "name": "Kirim Data Lokal",
+        "description": "Eksperimen pengiriman data lokal.",
+        "contribution": "Implementasi transfer data peer-to-peer atau lokal.",
+        "tech": [
+            "WebRTC",
+            "JavaScript"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://atiohaidar.github.io/kirim-data-lokal"
+            },
+            {
+                "type": "github",
+                "url": "https://github.com/atiohaidar/kirim-data-lokal"
+            }
+        ]
+    },
+    {
+        "name": "Project Charter",
+        "description": "Dokumen dan manajemen project charter.",
+        "contribution": "Dokumentasi proyek.",
+        "tech": [
+            "HTML"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://atiohaidar.github.io/Project-Charter"
+            },
+            {
+                "type": "github",
+                "url": "https://github.com/atiohaidar/Project-Charter"
+            }
+        ]
+    },
+    {
+        "name": "Style Option",
+        "description": "Eksplorasi opsi styling CSS.",
+        "contribution": "Eksperimen desain frontend.",
+        "tech": [
+            "CSS",
+            "HTML"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://atiohaidar.github.io/Style-Option/"
+            },
+            {
+                "type": "github",
+                "url": "https://github.com/atiohaidar/Style-Option"
+            }
+        ]
+    },
+    {
+        "name": "Belajar Jaringan",
+        "description": "Catatan dan simulasi konsep jaringan.",
+        "contribution": "Visualisasi materi networking.",
+        "tech": [
+            "HTML",
+            "JavaScript"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://atiohaidar.github.io/belajar-jaringan"
+            },
+            {
+                "type": "github",
+                "url": "https://github.com/atiohaidar/belajar-jaringan"
+            }
+        ]
+    },
+    {
+        "name": "Belajar TensorFlowJS",
+        "description": "Implementasi Machine Learning di browser.",
+        "contribution": "Penerapan model ML pada web.",
+        "tech": [
+            "TensorFlow.js",
+            "JavaScript"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://atiohaidar.github.io/belajar-tensorflowjs/"
+            },
+            {
+                "type": "github",
+                "url": "https://github.com/atiohaidar/belajar-tensorflowjs"
+            }
+        ]
+    },
+    {
+        "name": "Belajar Konsep dengan Visualisasi",
+        "description": "Menjelaskan konsep teknis melalui visualisasi.",
+        "contribution": "Membuat media pembelajaran interaktif.",
+        "tech": [
+            "NextJS"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://atiohaidar.github.io/belajar-konsep-dengan-visualisasi"
+            },
+            {
+                "type": "github",
+                "url": "https://github.com/atiohaidar/belajar-konsep-dengan-visualisasi"
+            }
+        ]
+    },
+    {
+        "name": "Text Merge",
+        "description": "Tools untuk menggabungkan teks.",
+        "contribution": "Utilitas pemrosesan teks.",
+        "tech": [
+            "JavaScript",
+            "RegEx"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://atiohaidar.github.io/text-merge"
+            },
+            {
+                "type": "github",
+                "url": "https://github.com/atiohaidar/text-merge"
+            }
+        ]
+    },
+    {
+        "name": "Upload File To Google Drive",
+        "description": "Integrasi upload file ke Google Drive API.",
+        "contribution": "Implementasi Google API.",
+        "tech": [
+            "Google API",
+            "JavaScript"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://atiohaidar.github.io/UploadFileToGoogleDrive/"
+            },
+            {
+                "type": "github",
+                "url": "https://github.com/atiohaidar/UploadFileToGoogleDrive"
+            }
+        ]
+    },
+    {
+        "name": "Backend Workers",
+        "description": "Backend service menggunakan Cloudflare Workers.",
+        "contribution": "Serverless API development.",
+        "tech": [
+            "Cloudflare Workers",
+            "TypeScript"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://backend.atiohaidar.workers.dev/"
+            }
+        ]
+    },
+    {
+        "name": "Deteksi Index Jurnal",
+        "description": "Tools deteksi status indeksasi jurnal.",
+        "contribution": "Otomatisasi pengecekan jurnal.",
+        "tech": [
+            "Cloudflare Workers",
+            "Cheerio"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://deteksi-index-jurnal-nasional-internasional.atiohaidar.workers.dev/"
+            }
+        ]
+    },
+    {
+        "name": "API Ekstrak Web Jurnal",
+        "description": "API untuk scraping data web jurnal.",
+        "contribution": "Membangun service ekstraksi data.",
+        "tech": [
+            "Node.js",
+            "Puppeteer"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://api-ekstrak-web-jurnal.atiohaidar.workers.dev/"
+            }
+        ]
+    },
+    {
         "name": "Web App 'Ploting Jadwal Dosen' (Latihan)",
         "description": "Aplikasi Fullstack untuk memplot jadwal dosen secara otomatis berdasarkan data yang diunggah.",
         "contribution": "Mempermudah proses ploting Jadwal Dosen",
@@ -7,7 +351,7 @@
             "React JS",
             "NestJS",
             "Prisma",
-            "Python" 
+            "Python"
         ],
         "links": [
             {
@@ -62,20 +406,20 @@
             }
         ]
     },
-{
-  "name": "Glosarium",
-    "description": "Aplikasi web untuk menyimpan istilah-istilah teknis dalam berbagai bidang.",
-    "contribution": "Menyediakan referensi cepat untuk istilah teknis.",
-    "tech": [
-        "React JS"
-    ],
-    "links": [
-        {
-            "type": "live",
-            "url": "https://atiohaidar.github.io/glosarium/"
-        }
-    ]
-},
+    {
+        "name": "Glosarium",
+        "description": "Aplikasi web untuk menyimpan istilah-istilah teknis dalam berbagai bidang.",
+        "contribution": "Menyediakan referensi cepat untuk istilah teknis.",
+        "tech": [
+            "React JS"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://atiohaidar.github.io/glosarium/"
+            }
+        ]
+    },
     {
         "name": "QR Generator For Wajihah",
         "description": "Aplikasi web sederhana untuk membuat kode QR dengan menambahkan logo pada QR tersebut serta dapat menyesuaikan style dari kode QR itu sendiri.",
@@ -110,13 +454,12 @@
             }
         ]
     },
-    
     {
         "name": "Statistik Chat WA",
         "description": "Menganalisis dan memvisualisasikan data dari ekspor riwayat obrolan WhatsApp.",
         "contribution": "Memberikan wawasan dari data percakapan WhatsApp yang tidak terstruktur.",
         "tech": [
-             "HTML",
+            "HTML",
             "CSS",
             "JavaScript"
         ],
@@ -124,6 +467,10 @@
             {
                 "type": "live",
                 "url": "https://atiohaidar.github.io/statistik-chat-wa/"
+            },
+            {
+                "type": "github",
+                "url": "https://github.com/atiohaidar/statistik-chat-wa"
             }
         ]
     },
@@ -150,7 +497,6 @@
         "tech": [
             "React JS",
             "JavaScript"
-
         ],
         "links": [
             {
@@ -164,7 +510,7 @@
         "description": "Aplikasi untuk memfilter dan memverifikasi data publikasi dari web milik PPM.",
         "contribution": "Memastikan akurasi dan klasifikasi data publikasi dosen.",
         "tech": [
-              "HTML",
+            "HTML",
             "CSS",
             "JavaScript"
         ],
@@ -204,6 +550,5 @@
                 "url": "https://github.com/Al-Fath-Developer/AlFathTemplate2024"
             }
         ]
-        
     }
 ]

@@ -116,27 +116,32 @@
   /* Category Badge Styles */
   .category-badge {
     @apply inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider;
-    background: linear-gradient(135deg, theme('colors.accent-purple'), theme('colors.accent-teal'));
-    color: white;
-    box-shadow: 0 2px 8px rgba(147, 51, 234, 0.3);
+    background: theme('colors.marker-blue');
+    color: theme('colors.slate.900');
+    box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
+    border: 1px solid theme('colors.blue.200');
   }
 
   .category-badge-sharing {
-    background: linear-gradient(135deg, theme('colors.accent-teal'), theme('colors.accent-orange'));
-    box-shadow: 0 2px 8px rgba(20, 184, 166, 0.3);
+    @apply inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider;
+    background: theme('colors.marker-orange');
+    color: theme('colors.slate.900');
+    box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.1);
+    border: 1px solid theme('colors.orange.200');
   }
 
   /* Link Button Styles */
   .link-button {
     @apply inline-flex items-center px-4 py-2 rounded-lg font-medium transition-all duration-300;
-    background: linear-gradient(135deg, theme('colors.gradient-start'), theme('colors.gradient-end'));
+    background: theme('colors.ink-blue');
     color: white;
-    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+    box-shadow: 2px 2px 0px rgba(30, 58, 138, 0.2);
   }
 
   .link-button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    box-shadow: 4px 4px 0px rgba(30, 58, 138, 0.3);
+    background: theme('colors.blue.800');
   }
 
   /* Card Gradient Overlay */
