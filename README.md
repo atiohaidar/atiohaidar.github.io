@@ -1,239 +1,236 @@
-# Atiohaidar Portfolio Application APLIKASI MODAL PENASARAN KWKWKWK. ini full bisa berapa bulan dikerjain? coba cek git history nya update fiturnya berapa menit sekali
+# Atiohaidar Portfolio & Management Application
 
-A full-stack portfolio and management application with web and mobile support.
+Aplikasi full-stack untuk portfolio personal dan manajemen organisasi dengan dukungan web dan mobile.
 
+## Daftar Isi
 
+- [Tentang Proyek](#tentang-proyek)
+- [Fitur](#fitur)
+- [Teknologi](#teknologi)
+- [Struktur Proyek](#struktur-proyek)
+- [Memulai](#memulai)
+- [Dokumentasi](#dokumentasi)
+- [Deployment](#deployment)
+- [Penulis](#penulis)
 
-## 🚀 Quick Start
+## Tentang Proyek
 
-### For Developers
+Aplikasi ini terdiri dari tiga komponen utama:
 
-**New to the project?** Start with the [Maintenance Guide](MAINTENANCE.md) for complete setup and development instructions.
+1. **Backend API** — Serverless API menggunakan Cloudflare Workers dengan database D1 (SQLite).
+2. **Frontend Web** — Aplikasi web berbasis React 19 + Vite dengan Tailwind CSS.
+3. **Mobile App** — Aplikasi mobile berbasis React Native + Expo dengan NativeWind.
 
-### Running the Application
+Selain itu terdapat modul tambahan:
+- **Game** — Mini-game berbasis Svelte + Vite (direktori `game/`).
+- **3D** — Halaman web statis untuk konten 3D (direktori `3d/`).
+- **Flutter Mobile** — Versi alternatif aplikasi mobile menggunakan Flutter (direktori `mobile_flutter/`).
+- **Android Native** — Proyek Android native dengan Gradle (direktori `android/`).
 
-```bash
-# Backend (Cloudflare Workers)
-cd backend
-npm install
-npm run dev
+## Fitur
 
-# Frontend (React Web App)
-cd frontend
-npm install
-npm run dev
+| Fitur | Deskripsi |
+|-------|-----------|
+| **Manajemen Tugas** | Membuat, mengedit, dan menghapus tugas dengan status dan tenggat waktu |
+| **Blog / Artikel** | Sistem artikel dengan fitur draft dan publish, termasuk halaman publik |
+| **Pemesanan Ruangan** | Booking ruangan dengan jadwal, status persetujuan, dan manajemen kapasitas |
+| **Chat** | Percakapan langsung antar pengguna, grup chat, dan chat anonim |
+| **WebSocket Real-time** | Komunikasi real-time untuk chat melalui Cloudflare Durable Objects |
+| **Manajemen Pengguna** | CRUD pengguna dengan peran admin dan member |
+| **Dashboard Statistik** | Ringkasan data dan analitik di halaman dashboard |
+| **Formulir Dinamis** | Membuat dan mengisi formulir dengan token akses publik |
+| **Peminjaman Barang** | Manajemen inventaris dan alur peminjaman barang |
+| **Forum Diskusi** | Forum diskusi dengan dukungan anonim dan balasan |
+| **Sistem Tiket** | Tiket dukungan dengan kategori, prioritas, dan penugasan |
+| **Manajemen Event** | Acara dengan registrasi peserta, scan kehadiran QR, dan admin event |
+| **Keuangan** | Saldo pengguna, transfer antar pengguna, dan top-up |
+| **Farming Game** | Mini-game simulasi pertanian dengan tanaman, toko, inventaris, quest, dan leaderboard |
+| **Dark / Light Theme** | Dukungan tema gelap dan terang di web dan mobile |
 
-# Mobile App (Expo)
-cd expojs
-npm install
-npx expo start
-```
+## Teknologi
 
-## 📚 Documentation
+### Backend
 
-### Essential Guides
-- **[MAINTENANCE.md](MAINTENANCE.md)** - Complete maintenance and development guide 👈 START HERE
-- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** - System architecture and design patterns
-- **[docs/README.md](docs/README.md)** - Documentation index
+| Komponen | Teknologi |
+|----------|-----------|
+| Runtime | Cloudflare Workers |
+| Bahasa | TypeScript |
+| Framework | Hono + Chanfana (OpenAPI) |
+| Database | Cloudflare D1 (SQLite) |
+| Autentikasi | JWT (jose) + bcryptjs |
+| Validasi | Zod |
+| Real-time | WebSocket via Durable Objects |
 
-### Feature-Specific
-- [Chat System Documentation](CHAT_DOCUMENTATION.md)
-- [Mobile App Guide](expojs/MOBILE_APP_GUIDE.md)
-- [Dashboard Guide](frontend/DASHBOARD_GUIDE.md)
+### Frontend Web
 
-## 🏗️ Project Structure
+| Komponen | Teknologi |
+|----------|-----------|
+| Framework | React 19 |
+| Build Tool | Vite |
+| Bahasa | TypeScript |
+| Styling | Tailwind CSS |
+| Routing | React Router v7 |
+| State | React Query (TanStack) |
+| Animasi | tsParticles, D3.js |
+| Mobile Wrapper | Capacitor |
+
+### Mobile (Expo)
+
+| Komponen | Teknologi |
+|----------|-----------|
+| Framework | React Native + Expo 54 |
+| Bahasa | TypeScript |
+| Styling | NativeWind (Tailwind CSS) |
+| Navigasi | Expo Router |
+| HTTP Client | Axios |
+| State | TanStack React Query |
+| Native | Camera, Barcode Scanner, Location, Haptics |
+
+## Struktur Proyek
 
 ```
 atiohaidar.github.io/
-├── backend/           # Cloudflare Workers API (TypeScript)
+├── backend/              # Cloudflare Workers API
 │   ├── src/
-│   │   ├── common/   # Shared utilities & base classes
-│   │   ├── controllers/
-│   │   ├── services/
-│   │   ├── models/
-│   │   └── routes/
-│   └── migrations/   # Database schemas
+│   │   ├── common/       # BaseController & shared schemas
+│   │   ├── controllers/  # 23 controller files (request handler)
+│   │   ├── services/     # 15 service files (business logic)
+│   │   ├── models/       # Type definitions (types.ts, game.types.ts)
+│   │   ├── middlewares/   # Autentikasi JWT (auth.ts)
+│   │   ├── routes/       # Registrasi route (index.ts)
+│   │   └── durable-objects/ # WebSocket ChatRoom
+│   └── migrations/       # 12 file migrasi database SQL
 │
-├── frontend/         # React web application (Vite)
-│   ├── lib/
-│   │   └── api/     # Consolidated API client
-│   ├── components/
-│   │   └── ui/      # Reusable UI components
-│   ├── hooks/       # Custom React hooks
-│   ├── pages/
-│   └── utils/
+├── frontend/             # React web application
+│   ├── lib/api/          # API client terpusat (client, services, types)
+│   ├── components/       # 71+ komponen UI
+│   │   └── ui/           # Komponen reusable (Button, Input, Card, dll.)
+│   ├── pages/            # 37 halaman
+│   ├── hooks/            # 7 custom hooks
+│   ├── contexts/         # 3 context provider (Theme, BackendLoader, LandingData)
+│   └── utils/            # Utilitas
 │
-└── expojs/          # React Native mobile app (Expo)
-    ├── app/         # File-based routing
-    ├── screens/
-    ├── components/
-    └── services/
+├── expojs/               # React Native mobile app (Expo)
+│   ├── app/              # File-based routing (auth, tabs, public)
+│   ├── screens/          # 18 direktori screen
+│   ├── components/       # Komponen mobile
+│   ├── services/         # 18 modul API + 5 utilitas
+│   └── hooks/            # 5 custom hooks
+│
+├── game/                 # Svelte mini-game
+├── 3d/                   # Halaman web 3D statis
+├── mobile_flutter/       # Aplikasi Flutter (alternatif)
+├── android/              # Proyek Android native
+├── docs/                 # Dokumentasi
+└── run_dev.sh            # Script menjalankan backend + frontend
 ```
 
-## 🛠️ Technology Stack
+## Memulai
 
-### Backend
-- **Runtime**: Cloudflare Workers (Edge Computing)
-- **Language**: TypeScript
-- **Framework**: Hono + Chanfana (OpenAPI)
-- **Database**: Cloudflare D1 (SQLite)
+### Prasyarat
 
-### Frontend
-- **Framework**: React 19 + Vite
-- **Styling**: Tailwind CSS
-- **Routing**: React Router v7
-- **State**: React Query
-
-### Mobile
-- **Framework**: React Native + Expo
-- **Styling**: NativeWind
-- **Navigation**: Expo Router
-
-## 🎯 Key Features
-
-- 📝 Task Management
-- 📰 Blog/Articles System
-- 🏢 Room Booking
-- 💬 Chat System (Private & Group)
-- 👥 User Management
-- 📊 Dashboard Analytics
-- 🌓 Dark/Light Theme
-- 📱 Mobile App Support
-
-## 🔧 Development
-
-### Prerequisites
 - Node.js 18+
-- npm or yarn
-- Cloudflare account (for backend deployment)
-- Expo account (for mobile deployment)
+- npm
+- Akun Cloudflare (untuk deployment backend)
+- Akun Expo (untuk deployment mobile)
 
-### Installation
+### Instalasi
 
 ```bash
-# Clone the repository
+# Clone repository
 git clone https://github.com/atiohaidar/atiohaidar.github.io.git
 cd atiohaidar.github.io
 
-# Install dependencies for all projects
+# Install semua dependensi
 cd backend && npm install && cd ..
 cd frontend && npm install && cd ..
 cd expojs && npm install && cd ..
 ```
 
+### Menjalankan Development Server
+
+```bash
+# Jalankan backend dan frontend sekaligus
+./run_dev.sh
+
+# Atau jalankan terpisah:
+
+# Backend (port 8787)
+cd backend && npm run dev
+
+# Frontend
+cd frontend && npm run dev
+
+# Mobile
+cd expojs && npx expo start
+```
+
 ### Environment Variables
 
 ```bash
-# Backend - backend/wrangler.jsonc
-# Configure Cloudflare D1 database binding
-
 # Frontend - frontend/.env.development
 VITE_API_URL=http://localhost:8787
 
 # Frontend - frontend/.env.production
 VITE_API_URL=https://backend.atiohaidar.workers.dev
 
-# Mobile - expojs/.env (optional)
+# Mobile - expojs/.env (opsional)
 EXPO_PUBLIC_API_BASE_URL=https://backend.atiohaidar.workers.dev
 ```
 
-## 📦 Building & Deployment
+Backend dikonfigurasi melalui `backend/wrangler.jsonc` untuk binding database D1.
+
+## Dokumentasi
+
+### Untuk Pengguna Umum
+
+- **[Panduan Pengguna](docs/USER_GUIDE.md)** — Penjelasan fitur-fitur aplikasi untuk pengguna umum
+
+### Untuk Developer
+
+- **[Dokumentasi Teknis](docs/TECHNICAL.md)** — Arsitektur, API, database, dan panduan pengembangan
+- **[Indeks Dokumentasi](docs/README.md)** — Daftar lengkap semua dokumentasi
+- **[Panduan Maintenance](MAINTENANCE.md)** — Panduan pemeliharaan dan tugas umum development
+
+### Dokumentasi Fitur
+
+| Dokumen | Deskripsi |
+|---------|-----------|
+| [Sistem Chat](CHAT_DOCUMENTATION.md) | Dokumentasi fitur chat (private, grup, anonim) |
+| [WebSocket Guide](WEBSOCKET_IMPLEMENTATION_GUIDE.md) | Implementasi WebSocket dengan Durable Objects |
+| [Sistem Tiket](TICKETING_SYSTEM_DOCUMENTATION.md) | Dokumentasi sistem tiket dukungan |
+| [Dashboard Guide](frontend/DASHBOARD_GUIDE.md) | Panduan penggunaan dan pengembangan dashboard |
+| [Mobile App Guide](expojs/MOBILE_APP_GUIDE.md) | Panduan pengembangan aplikasi mobile |
+| [Arsitektur](docs/ARCHITECTURE.md) | Arsitektur sistem dan pola desain |
+
+## Deployment
 
 ### Backend
+
 ```bash
 cd backend
-npm run deploy  # Deploy to Cloudflare Workers
+npm run deploy  # Deploy ke Cloudflare Workers
 ```
 
 ### Frontend
+
 ```bash
 cd frontend
-npm run build   # Build for production
-# Deploy via GitHub Pages (automatic on push to main)
+npm run build   # Build untuk production
+# Deploy otomatis via GitHub Pages saat push ke branch main
 ```
 
 ### Mobile
-```bash
-cd expojs
-eas build --platform android  # Build for Android
-eas build --platform ios       # Build for iOS
-```
-
-## 🧪 Testing
 
 ```bash
-# Backend
-cd backend
-npm run dev  # Test locally with wrangler
-
-# Frontend
-cd frontend
-npm run dev     # Development server
-npm run build   # Test production build
-
-# Mobile
 cd expojs
-npx expo start  # Start Expo dev server
+eas build --platform android  # Build APK Android
+eas build --platform ios       # Build untuk iOS
 ```
 
-## 📖 Code Organization Principles
-
-This project follows **DRY (Don't Repeat Yourself)** principles:
-
-### Backend
-- ✅ Base controller class for common patterns
-- ✅ Shared response schemas
-- ✅ Service layer for business logic
-
-### Frontend
-- ✅ Consolidated API client (`lib/api/`)
-- ✅ Reusable hooks (`hooks/`)
-- ✅ UI component library (`components/ui/`)
-- ✅ Backwards compatibility maintained
-
-### Mobile
-- ✅ Singleton API service
-- ✅ File-based routing
-- ✅ Shared components
-
-## 🤝 Contributing
-
-1. Follow existing code patterns
-2. Apply DRY principles
-3. Update documentation
-4. Test across all platforms
-5. Maintain backwards compatibility
-
-See [MAINTENANCE.md](MAINTENANCE.md) for detailed guidelines.
-
-## 🐛 Troubleshooting
-
-Common issues and solutions are documented in:
-- [MAINTENANCE.md - Troubleshooting](MAINTENANCE.md#troubleshooting)
-
-Quick tips:
-- Clear `node_modules` and reinstall if builds fail
-- Check environment variables are set correctly
-- Ensure all services are running on correct ports
-- Review console/logs for detailed error messages
-
-## 📄 License
-
-[Add your license here]
-
-## 👤 Author
+## Penulis
 
 **Atio Haidar Hanif**
 
 - GitHub: [@atiohaidar](https://github.com/atiohaidar)
-- Website: https://atiohaidar.github.io
-
-## 🌟 Acknowledgments
-
-- Cloudflare Workers for serverless computing
-- React and React Native communities
-- Expo for mobile development tools
-
----
-
-For detailed documentation, see [MAINTENANCE.md](MAINTENANCE.md) and [docs/](docs/).
+- Website: [atiohaidar.github.io](https://atiohaidar.github.io)

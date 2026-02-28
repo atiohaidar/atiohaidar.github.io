@@ -1,99 +1,72 @@
-# Documentation Index
+# Indeks Dokumentasi
 
-This directory contains comprehensive documentation for the Atiohaidar Portfolio Application.
+Daftar lengkap dokumentasi untuk proyek Atiohaidar Portfolio & Management Application.
 
-## Quick Links
+## Dokumentasi Utama
 
-### Getting Started
-- [**MAINTENANCE.md**](../MAINTENANCE.md) - Complete maintenance guide for all platforms (Start here!)
+| Dokumen | Deskripsi |
+|---------|-----------|
+| [README.md](../README.md) | Overview proyek, fitur, teknologi, dan quick start |
+| [Panduan Pengguna](USER_GUIDE.md) | Panduan fitur aplikasi untuk pengguna umum |
+| [Dokumentasi Teknis](TECHNICAL.md) | Arsitektur, API, database, dan panduan pengembangan |
+| [Panduan Maintenance](../MAINTENANCE.md) | Pemeliharaan, setup development, dan troubleshooting |
+| [Arsitektur Sistem](ARCHITECTURE.md) | Diagram arsitektur dan pola desain |
 
-### Architecture & Implementation
-- [**IMPLEMENTATION_SUMMARY.md**](../IMPLEMENTATION_SUMMARY.md) - Overall system architecture and implementation details
+## Dokumentasi Fitur
 
-### Feature-Specific Documentation
+| Dokumen | Deskripsi |
+|---------|-----------|
+| [Sistem Chat](../CHAT_DOCUMENTATION.md) | Chat private, grup, dan anonim |
+| [WebSocket Guide](../WEBSOCKET_IMPLEMENTATION_GUIDE.md) | Implementasi WebSocket dengan Durable Objects |
+| [Sistem Tiket](../TICKETING_SYSTEM_DOCUMENTATION.md) | Tiket dukungan dengan kategori dan prioritas |
+| [Implementasi Tiket](../TICKETING_SYSTEM_IMPLEMENTATION_SUMMARY.md) | Detail implementasi sistem tiket |
+| [Chat Anonim (Expo)](../EXPOJS_ANONYMOUS_CHAT.md) | Fitur chat anonim di aplikasi mobile |
 
-#### Chat System
-- [**CHAT_DOCUMENTATION.md**](../CHAT_DOCUMENTATION.md) - Chat feature user guide and functionality
-- [**CHAT_IMPLEMENTATION_SUMMARY.md**](../CHAT_IMPLEMENTATION_SUMMARY.md) - Technical implementation details for chat
+## Dokumentasi Frontend
 
-#### Mobile Application
-- [**MOBILE_APP_SUMMARY.md**](../MOBILE_APP_SUMMARY.md) - Mobile app overview and features
-- [**MOBILE_APP_IMPROVEMENTS_SUMMARY.md**](../MOBILE_APP_IMPROVEMENTS_SUMMARY.md) - Recent improvements and updates
-- [**expojs/MOBILE_APP_GUIDE.md**](../expojs/MOBILE_APP_GUIDE.md) - Mobile development guide
+| Dokumen | Deskripsi |
+|---------|-----------|
+| [Frontend README](../frontend/README.md) | Dokumentasi frontend web |
+| [Dashboard Guide](../frontend/DASHBOARD_GUIDE.md) | Panduan penggunaan dashboard |
+| [Dashboard Summary](../frontend/DASHBOARD_SUMMARY.md) | Ringkasan implementasi dashboard |
+| [Dashboard Changelog](../frontend/DASHBOARD_CHANGELOG.md) | Riwayat perubahan dashboard |
+| [API Config](../frontend/API_CONFIG.md) | Konfigurasi API frontend |
+| [Quick Reference](../frontend/QUICK_REFERENCE.md) | Referensi cepat untuk penambahan fitur |
 
-#### Dashboard
-- [**frontend/DASHBOARD_GUIDE.md**](../frontend/DASHBOARD_GUIDE.md) - Dashboard usage guide
-- [**frontend/DASHBOARD_SUMMARY.md**](../frontend/DASHBOARD_SUMMARY.md) - Dashboard implementation summary
+## Dokumentasi Backend
 
-## Documentation Structure
+| Dokumen | Deskripsi |
+|---------|-----------|
+| [Backend README](../backend/README.md) | Dokumentasi backend API |
 
-```
-atiohaidar.github.io/
-├── MAINTENANCE.md              # 👈 START HERE - Complete maintenance guide
-├── IMPLEMENTATION_SUMMARY.md   # Overall architecture
-├── CHAT_DOCUMENTATION.md       # Chat feature guide
-├── CHAT_IMPLEMENTATION_SUMMARY.md
-├── MOBILE_APP_SUMMARY.md
-├── MOBILE_APP_IMPROVEMENTS_SUMMARY.md
-│
-├── backend/
-│   └── README.md               # Backend-specific documentation
-│
-├── frontend/
-│   ├── DASHBOARD_GUIDE.md      # Dashboard usage guide
-│   ├── DASHBOARD_SUMMARY.md
-│   ├── API_CONFIG.md
-│   ├── DASHBOARD_CHANGELOG.md
-│   └── QUICK_REFERENCE.md
-│
-└── expojs/
-    ├── MOBILE_APP_GUIDE.md     # Mobile development guide
-    └── README.md
-```
+## Dokumentasi Mobile
 
-## For Developers
+| Dokumen | Deskripsi |
+|---------|-----------|
+| [Expo README](../expojs/README.md) | Dokumentasi aplikasi Expo |
+| [Mobile App Guide](../expojs/MOBILE_APP_GUIDE.md) | Panduan pengembangan mobile |
+| [Mobile UI Features](../expojs/MOBILE_UI_FEATURES.md) | Fitur UI mobile |
+| [TanStack Query](../expojs/TANSTACK_QUERY_IMPLEMENTATION.md) | Implementasi TanStack Query |
+| [New API Features](../expojs/NEW_API_FEATURES.md) | Fitur API baru di mobile |
+| [Events Implementation](../expojs/EVENTS_IMPLEMENTATION_SUMMARY.md) | Implementasi fitur events |
+| [Flutter README](../mobile_flutter/README.md) | Dokumentasi aplikasi Flutter (alternatif) |
 
-### New to the Project?
-1. Read [MAINTENANCE.md](../MAINTENANCE.md) first
-2. Set up your development environment following the guide
-3. Read [IMPLEMENTATION_SUMMARY.md](../IMPLEMENTATION_SUMMARY.md) for architecture overview
-4. Check feature-specific docs as needed
+## Dokumentasi Ringkasan
 
-### Common Tasks
-- **Maintenance**: See [MAINTENANCE.md](../MAINTENANCE.md)
-- **Adding Features**: See [MAINTENANCE.md - Common Tasks](../MAINTENANCE.md#common-tasks)
-- **API Integration**: See [frontend/API_CONFIG.md](../frontend/API_CONFIG.md)
-- **Mobile Development**: See [expojs/MOBILE_APP_GUIDE.md](../expojs/MOBILE_APP_GUIDE.md)
+| Dokumen | Deskripsi |
+|---------|-----------|
+| [Implementation Summary](../IMPLEMENTATION_SUMMARY.md) | Ringkasan implementasi keseluruhan |
+| [Chat Implementation](../CHAT_IMPLEMENTATION_SUMMARY.md) | Ringkasan implementasi chat |
+| [Anonymous Chat Summary](../ANONYMOUS_CHAT_SUMMARY.md) | Ringkasan fitur chat anonim |
+| [Mobile App Summary](../MOBILE_APP_SUMMARY.md) | Ringkasan aplikasi mobile |
+| [Mobile App Improvements](../MOBILE_APP_IMPROVEMENTS_SUMMARY.md) | Peningkatan aplikasi mobile |
+| [Mobile Responsive](../MOBILE_RESPONSIVE_IMPROVEMENTS.md) | Peningkatan responsif mobile |
+| [Flutter Improvements](../MOBILE_FLUTTER_IMPROVEMENTS.md) | Peningkatan aplikasi Flutter |
+| [Refactoring Summary](../REFACTORING_SUMMARY.md) | Ringkasan refactoring DRY |
 
-## Project Structure
+## Untuk Developer Baru
 
-The application consists of three main components:
-
-1. **Backend** - Cloudflare Workers API (TypeScript)
-   - Location: `/backend`
-   - Documentation: `backend/README.md`
-
-2. **Frontend** - React web application (Vite + TypeScript)
-   - Location: `/frontend`
-   - Documentation: `frontend/DASHBOARD_GUIDE.md`
-
-3. **Mobile App** - React Native (Expo)
-   - Location: `/expojs`
-   - Documentation: `expojs/MOBILE_APP_GUIDE.md`
-
-## Contributing
-
-When adding new features or making changes:
-
-1. Follow the patterns established in [MAINTENANCE.md](../MAINTENANCE.md)
-2. Apply DRY principles (Don't Repeat Yourself)
-3. Update relevant documentation
-4. Test across all affected platforms
-5. Maintain backwards compatibility where possible
-
-## Need Help?
-
-1. Check [MAINTENANCE.md - Troubleshooting](../MAINTENANCE.md#troubleshooting)
-2. Review related feature documentation
-3. Check existing code for similar patterns
-4. Verify environment configuration
+1. Baca [README.md](../README.md) untuk gambaran umum proyek
+2. Ikuti panduan instalasi di [Panduan Maintenance](../MAINTENANCE.md)
+3. Pelajari arsitektur di [Dokumentasi Teknis](TECHNICAL.md)
+4. Lihat dokumentasi fitur spesifik sesuai kebutuhan
