@@ -9,6 +9,7 @@ import { LandingDataProvider } from './contexts/LandingDataContext';
 import { BackendLoaderProvider } from './contexts/BackendLoaderContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import SketchLoader from './components/SketchLoader';
+import EmojiProvider from './components/EmojiProvider';
 
 import { OfflineNotification } from './components/OfflineNotification';
 import { InstallPrompt } from './components/InstallPrompt';
@@ -107,6 +108,7 @@ const App: React.FC = () => {
     }, [introComplete]);
 
     return (
+        <EmojiProvider>
         <ThemeProvider>
             <QueryClientProvider client={queryClient}>
                 <LandingDataProvider onDataReady={handleDataReady}>
@@ -231,6 +233,7 @@ const App: React.FC = () => {
                 </LandingDataProvider>
             </QueryClientProvider>
         </ThemeProvider>
+        </EmojiProvider>
     );
 };
 

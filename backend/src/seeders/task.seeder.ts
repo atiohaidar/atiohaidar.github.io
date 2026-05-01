@@ -1,4 +1,5 @@
 import { D1Database } from '@cloudflare/workers-types';
+import { get as emoji } from 'node-emoji';
 
 export const TaskSeeder: import('./index').Seeder = {
   name: 'task-seed',
@@ -9,7 +10,7 @@ export const TaskSeeder: import('./index').Seeder = {
     ).bind('admin').first<{id: number}>();
 
     if (!admin) {
-      console.log('⚠️  Admin user not found, skipping task seeder');
+      console.log(`${emoji('warning')}  Admin user not found, skipping task seeder`);
       return;
     }
 

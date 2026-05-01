@@ -2,6 +2,7 @@ import { D1Database } from '@cloudflare/workers-types';
 import { UserSeeder } from './user.seeder';
 import { TaskSeeder } from './task.seeder';
 import { seedGameData } from './game.seeder';
+import { get as emoji } from 'node-emoji';
 
 export interface Seeder {
   name: string;
@@ -13,7 +14,7 @@ const GameSeeder: Seeder = {
   name: 'GameSeeder',
   async run(db: D1Database) {
     const result = await seedGameData(db);
-    console.log(`🎮 Seeded game data: ${result.crops} crops, ${result.items} items, ${result.achievements} achievements`);
+    console.log(`${emoji('video_game')} Seeded game data: ${result.crops} crops, ${result.items} items, ${result.achievements} achievements`);
   }
 };
 
@@ -25,7 +26,7 @@ const seeders: Seeder[] = [
 ];
 
 export async function runSeeders(db: D1Database) {
-  console.log('🔍 Checking for seeders to run...');
+  console.log(`${emoji('mag')} Checking for seeders to run...`);
 
   // Buat tabel untuk melacak seed yang sudah dijalankan
   await db.exec(`
@@ -46,7 +47,7 @@ export async function runSeeders(db: D1Database) {
   // Jalankan seed yang belum dijalankan
   for (const seeder of seeders) {
     if (!executedSeedNames.has(seeder.name)) {
-      console.log(`🌱 Running seeder: ${seeder.name}`);
+      console.log(`${emoji('seedling')} Running seeder: ${seeder.name}`);
       await seeder.run(db);
 
       // Tandai seed ini sudah dijalankan
@@ -55,15 +56,15 @@ export async function runSeeders(db: D1Database) {
       ).bind(seeder.name).run();
 
       seededCount++;
-      console.log(`✅ Seeded: ${seeder.name}`);
+      console.log(`${emoji('white_check_mark')} Seeded: ${seeder.name}`);
     } else {
-      console.log(`⏩ Skipping already executed seeder: ${seeder.name}`);
+      console.log(`${emoji('fast_forward')} Skipping already executed seeder: ${seeder.name}`);
     }
   }
 
   if (seededCount > 0) {
-    console.log(`\n✨ Successfully ran ${seededCount} seeders`);
+    console.log(`\n${emoji('sparkles')} Successfully ran ${seededCount} seeders`);
   } else {
-    console.log('\n✅ All seeders have already been executed');
+    console.log(`\n${emoji('white_check_mark')} All seeders have already been executed`);
   }
 }

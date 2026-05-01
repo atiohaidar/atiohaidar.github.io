@@ -974,3 +974,14 @@
 .animate-gentle-float {
   animation: gentle-float 4s ease-in-out infinite;
 }
+
+/* Twemoji – styling untuk gambar emoji dari library eksternal */
+img.emoji {
+  display: inline-block;
+  height: 1.2em;
+  width: 1.2em;
+  margin: 0 0.05em 0 0.1em;
+  vertical-align: -0.2em;
+  pointer-events: none;
+  user-select: none;
+}

@@ -4,6 +4,7 @@ import { runSeeders } from '../src/seeders';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import dotenv from 'dotenv';
+import { get as emoji } from 'node-emoji';
 
 // Load environment variables from .env file
 const __filename = fileURLToPath(import.meta.url);
@@ -17,7 +18,7 @@ interface Env {
 
 // Handler untuk menjalankan seeder
 async function main() {
-  console.log('🚀 Starting database seeding...');
+  console.log(`${emoji('rocket')} Starting database seeding...`);
   
   // Inisialisasi database
   // Di production, gunakan binding D1 yang sebenarnya
@@ -45,10 +46,10 @@ async function main() {
   try {
     // Jalankan seeder
     await runSeeders(db);
-    console.log('✅ Database seeding completed successfully!');
+    console.log(`${emoji('white_check_mark')} Database seeding completed successfully!`);
     process.exit(0);
   } catch (error) {
-    console.error('❌ Error seeding database:');
+    console.error(`${emoji('x')} Error seeding database:`);
     console.error(error);
     process.exit(1);
   }
