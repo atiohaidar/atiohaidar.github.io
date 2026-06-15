@@ -1,5 +1,97 @@
 [
     {
+        "screenshot": "images/projects/s2if.png",
+        "name": "S2IF Notebook",
+        "description": "Platform catatan kuliah interaktif dan tersinkronisasi video secara dua arah untuk mahasiswa Magister Informatika (S2IF). Menyediakan binder visual bertema retro, anotasi teks persisten di sisi klien, dan validasi prasyarat graf asiklik (DFS).",
+        "contribution": "Mengembangkan visual binder layout retro, mesin sinkronisasi dua arah video-teks, inline annotator persisten di localStorage, serta engine validasi kurikulum berbasis DFS CLI.",
+        "tech": [
+            "SvelteKit",
+            "Svelte",
+            "Vite",
+            "D3",
+            "KaTeX",
+            "PrismJS",
+            "TypeScript",
+            "CodeMirror"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://atiohaidar.github.io/s2if"
+            },
+            {
+                "type": "github",
+                "url": "https://github.com/atiohaidar/s2if"
+            }
+        ]
+    },
+    {
+        "screenshot": "images/projects/xenkio.png",
+        "name": "Xenkio",
+        "description": "Platform utilitas web gratis yang berjalan 100% di sisi klien (privacy-first, zero uploads) untuk mengompresi/menggabungkan PDF, manipulasi gambar, alat developer, dan konverter data.",
+        "contribution": "Mengembangkan fitur Markdown Editor profesional dengan visualisasi real-time (live preview), split-view mode, statistik kata/karakter, proteksi XSS (DOMPurify), dan ekspor file HTML/MD.",
+        "tech": [
+            "Next.js",
+            "React",
+            "TypeScript",
+            "Tailwind CSS",
+            "Framer Motion",
+            "Marked",
+            "DOMPurify"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://xenkio.com"
+            },
+            {
+                "type": "github",
+                "url": "https://github.com/irham3/xenkio"
+            }
+        ]
+    },
+    {
+        "screenshot": "images/projects/music_remover.png",
+        "name": "Music Remover",
+        "description": "Aplikasi CLI Windows untuk menghilangkan musik latar (background music) secara real-time dari sistem audio menggunakan AI (DeepFilterNet 48kHz atau DTLN 16kHz) dan menyisakan suara manusia (speech).",
+        "contribution": "Implementasi WASAPI loopback capture, mesin inferensi overlap-add & crossfade untuk menghindari stuttering, serta setup menu interaktif dan real-time filter attenuation.",
+        "tech": [
+            "Python",
+            "DeepFilterNet",
+            "DTLN",
+            "ONNX",
+            "PyTorch",
+            "PyAudioWPatch"
+        ],
+        "links": [
+            {
+                "type": "github",
+                "url": "https://github.com/atiohaidar/music_remover"
+            }
+        ]
+    },
+    {
+        "screenshot": "images/projects/timekeeper.png",
+        "url": "https://atiohaidar.github.io/timekeeper",
+        "name": "Timekeeper",
+        "description": "Aplikasi untuk mempermudah jobdesk timekeeper di sebuah acara.",
+        "contribution": "Belajar Nuxt JS",
+        "tech": [
+            "Nuxt JS",
+            "Tailwind CSS"
+        ],
+        "links": [
+            {
+                "type": "live",
+                "url": "https://atiohaidar.github.io/timekeeper"
+            },
+            {
+                "type": "github",
+                "url": "https://github.com/atiohaidar/timekeeper"
+            }
+        ]
+    },
+    {
         "screenshot": "images/projects/al-fath.png",
         "name": "Latihan Web App LDK Al-Fath",
         "description": "Web App latihan menggunakan style guide yang sudah ada pada web app",
@@ -43,6 +135,7 @@
         ]
     },
     {
+        "screenshot": "images/projects/leuweung.png",
         "name": "Leuweung",
         "description": "Projek web Leuweung. dengan Konsep 3D",
         "contribution": "Eksplorasi cara membuat frontend dengan konsep 3D",
@@ -64,12 +157,14 @@
         ]
     },
     {
+        "screenshot": "images/projects/tembak-dor.png",
         "name": "Tembak Dor",
-        "description": "Game browser sederhana dengan konsep 2D.",
-        "contribution": "Ekplorasi membuat Game berbasis web.",
+        "description": "Game browser 2D sederhana bertema tembak-menembak berbasis HTML5 Canvas menggunakan framework Phaser.",
+        "contribution": "Membangun game loop, sistem deteksi tabrakan (collision), manajemen state skor, kontrol input keyboard/mouse, serta rendering aset sprite menggunakan Phaser JS.",
         "tech": [
             "React JS",
-            "Phaser"
+            "Phaser",
+            "JavaScript"
         ],
         "links": [
             {
@@ -150,11 +245,13 @@
     },
     {
         "name": "Kirim Data Lokal",
-        "description": "Eksperimen pengiriman data lokal.",
-        "contribution": "Implementasi transfer data peer-to-peer atau lokal.",
+        "description": "Aplikasi transfer file dan pesan peer-to-peer (P2P) antar perangkat dalam jaringan lokal yang sama tanpa melalui server perantara menggunakan WebRTC.",
+        "contribution": "Implementasi signaling WebRTC lokal via web sockets, pembacaan file stream biner (Blob/ArrayBuffer) di browser, dan optimasi kecepatan transfer data langsung.",
         "tech": [
             "WebRTC",
-            "JavaScript"
+            "JavaScript",
+            "HTML",
+            "CSS"
         ],
         "links": [
             {
@@ -210,6 +307,7 @@
         "contribution": "Visualisasi materi networking.",
         "tech": [
             "HTML",
+            "CSS",
             "JavaScript"
         ],
         "links": [

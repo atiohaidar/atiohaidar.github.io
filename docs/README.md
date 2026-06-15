@@ -24,6 +24,16 @@ This directory contains comprehensive documentation for the Atiohaidar Portfolio
 #### Dashboard
 - [**frontend/DASHBOARD_GUIDE.md**](../frontend/DASHBOARD_GUIDE.md) - Dashboard usage guide
 - [**frontend/DASHBOARD_SUMMARY.md**](../frontend/DASHBOARD_SUMMARY.md) - Dashboard implementation summary
+- [**Fitur Dashboard (Overview)**](./fitur_dashboard.md)
+- [**Fitur Otentikasi**](./fitur_otentikasi.md)
+- [**Fitur Artikel**](./fitur_artikel.md)
+- [**Fitur Chat Internal**](./fitur_chat_internal.md)
+- [**Fitur Chat Anonim**](./fitur_chat_anonim.md)
+- [**Fitur Manajemen Tugas**](./fitur_tugas.md)
+- [**Fitur Manajemen Tiket**](./fitur_tiket.md)
+- [**Fitur Manajemen Acara**](./fitur_acara.md)
+- [**Fitur Peminjaman Ruangan**](./fitur_ruangan.md)
+- [**Fitur Manajemen Barang**](./fitur_barang.md)
 
 ## Documentation Structure
 

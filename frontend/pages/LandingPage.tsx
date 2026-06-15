@@ -136,7 +136,7 @@ const LandingPage: React.FC = () => {
     }
 
     return (
-        <div className={`relative min-h-screen duration-300 overflow-hidden`}>
+        <div className={`relative min-h-screen duration-300 overflow-x-hidden`}>
 
 
 

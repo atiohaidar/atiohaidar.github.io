@@ -32,7 +32,7 @@ interface SectionProps {
 }
 
 const Section: React.FC<SectionProps> = ({ id, number, title, children, centerTitle = false, className = '', delay = 0, printPageBreak = false }) => {
-  const [ref, isIntersecting] = useIntersectionObserver({ threshold: 0.1 }, delay);
+  const [ref, isIntersecting] = useIntersectionObserver({ threshold: 0.01 }, delay);
   const animationClass = isIntersecting ? 'animate-fade-in-up' : 'opacity-0';
 
   const titleAlignment = centerTitle ? 'justify-center' : '';
