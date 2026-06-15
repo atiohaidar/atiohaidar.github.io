@@ -1,0 +1,1 @@
+import{w as e}from"./index-C4PgZIQ1.js";const o=()=>e.getToken(),r=s=>e.setToken(s),n=()=>e.removeToken(),a=()=>e.getUser(),c=s=>e.setUser(s),k=()=>e.removeUser(),m=()=>e.clear();export{a,c as b,m as c,k as d,o as g,n as r,r as s};
