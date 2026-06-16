@@ -35,6 +35,7 @@ npx expo start
 - **[MAINTENANCE.md](MAINTENANCE.md)** - Complete maintenance and development guide 👈 START HERE
 - **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** - System architecture and design patterns
 - **[docs/README.md](docs/README.md)** - Documentation index
+- **[docs/IEEE_PAPER.md](docs/IEEE_PAPER.md)** - Academic paper (IEEE style): research questions, SOTA, methods & conclusion
 
 ### Feature-Specific
 - [Chat System Documentation](CHAT_DOCUMENTATION.md)

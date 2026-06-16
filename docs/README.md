@@ -8,6 +8,7 @@ This directory contains comprehensive documentation for the Atiohaidar Portfolio
 - [**MAINTENANCE.md**](../MAINTENANCE.md) - Complete maintenance guide for all platforms (Start here!)
 
 ### Architecture & Implementation
+- [**IEEE_PAPER.md**](IEEE_PAPER.md) - Academic paper (IEEE conference style): research questions, state of the art, methods & conclusion
 - [**IMPLEMENTATION_SUMMARY.md**](../IMPLEMENTATION_SUMMARY.md) - Overall system architecture and implementation details
 
 ### Feature-Specific Documentation
